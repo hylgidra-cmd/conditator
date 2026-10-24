@@ -14,8 +14,8 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 - zod 4 (formalar, API kirishi, AI javobi)
 - ESLint 9 + Prettier 3
 - Docker Compose (dev: app + postgres + Mailpit; `migrate` xizmati migratsiya va seed ni bajaradi)
-- argon2 (`@node-rs/argon2`), tsx (seed)
-- Keyingi qadamlarda: nodemailer, `@anthropic-ai/sdk`, Playwright (PDF), Vitest
+- argon2 (`@node-rs/argon2`), tsx (seed), nodemailer (SMTP), Vitest (testlar)
+- Keyingi qadamlarda: `@anthropic-ai/sdk`, Playwright (PDF), Vitest
 
 ## Buyruqlar
 
@@ -42,14 +42,19 @@ messages/              kk.json uz.json ru.json en.json
 scripts/               check-messages.mjs
 src/
   app/[locale]/        sahifalar: auth, student, company, admin
-  app/api/             REST endpointlar (hozir: health)
+  app/[locale]/(auth)/ register, verify, login, forgot, reset
+  app/[locale]/account vaqtinchalik kabinet
+  app/api/             REST: auth/{register,verify,resend,login,logout,forgot,reset}, me, health
   i18n/                routing.ts, navigation.ts, request.ts
   lib/db.ts            Prisma client
   lib/ai/              provider.ts, anthropic.ts, cv.ts, match.ts, budget.ts (1.5)
-  lib/auth/            password.ts (argon2id); sessiya, email kodlari, ruxsat tekshiruvi (1.4)
+  lib/auth/            password, session (requireRole), current-user, email-code, rate-limit, schemas, service
+  lib/http/            route() o'rami, ApiError va xato kodlari, Origin (CSRF) tekshiruvi
+  lib/client/api.ts    brauzerdan API ga so'rov
   lib/pdf/             CV shablon va PDF (1.8)
-  lib/email/           SMTP (1.4)
-  components/          UI
+  lib/email/           mailer.ts (SMTP), auth-emails.ts (4 tilli xatlar)
+  components/          UI (auth/ formalar, ui/form.tsx)
+tests/                 Vitest integratsiya testlari
   middleware.ts        til yo'naltirish
 ```
 
@@ -69,6 +74,15 @@ src/
 12. **MVP dan tashqari narsa qo'shilmaydi:** kurslar, testlar, to'lov, Telegram bot, SMS, mobil ilova, community, kengaytirilgan statistika.
 13. **Baza:** sxema o'zgarsa yangi migratsiya (`npm run db:migrate`) va `docs/DB-SCHEMA.md` yangilanadi. Mavjud migratsiya fayllari tahrirlanmaydi.
 14. Har qadam oxirida: `npm run check`, ishga tushirib tekshirish, `PROGRESS.md` va shu faylni yangilash, alohida commit.
+
+## Auth qanday ishlaydi
+
+- Sessiya: tasodifiy token `jumis_session` cookie da (httpOnly, SameSite=Lax, prod da Secure, 7 kun); bazada faqat SHA-256 xeshi. Bloklangan foydalanuvchining sessiyasi ishlamaydi.
+- Har bir himoyalangan API: `const user = await requireRole(request, "COMPANY")` (sessiyasiz 401, rol mos emas 403). Handler `route()` bilan o'raladi: xatolar `{ error: "KOD", fields? }` ko'rinishida, o'zgartiruvchi so'rovlarda Origin tekshiriladi.
+- Email kodlari: 6 xonali, HMAC-SHA256 (`AUTH_SECRET`) xeshi, 10 daqiqa, 5 noto'g'ri urinishdan keyin bloklanadi, qayta yuborish 60 soniyada 1 marta. Kod faqat emailga ketadi.
+- Rate limit xotirada (`lib/auth/rate-limit.ts`): bitta ilova nusxasi uchun. Bir nechta nusxaga o'tilsa, Redis/bazaga ko'chirish kerak.
+- Xato kodlari ro'yxati: `src/lib/http/errors.ts` + `messages/*.json` → `Errors`. Yangi kod qo'shilsa, 4 tilga tarjima ham qo'shiladi.
+- Kirgan foydalanuvchi auth sahifalaridan `/account` ga yo'naltiriladi.
 
 ## Eslatmalar
 

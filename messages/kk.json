@@ -9,7 +9,11 @@
   },
   "Header": {
     "brand": "Jumis AI",
-    "homeAria": "Jumis AI bas beti"
+    "homeAria": "Jumis AI bas beti",
+    "login": "Kiriw",
+    "register": "Dizimnen ótiw",
+    "account": "Kabinet",
+    "logout": "Shıǵıw"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -48,5 +52,105 @@
   "NotFound": {
     "title": "Bet tabılmadı",
     "back": "Bas betke qaytıw"
+  },
+  "Auth": {
+    "submitting": "Jiberilmekte…",
+    "register": {
+      "title": "Dizimnen ótiw",
+      "subtitle": "Jumis AI ǵa qosılıń",
+      "email": "Email",
+      "password": "Parol",
+      "passwordHint": "Keminde 8 belgi",
+      "role": "Siz kimsiz?",
+      "roleStudent": "Student / jumıs izlewshi",
+      "roleCompany": "Kompaniya / jumıs beriwshi",
+      "consent": "Jeke maǵlıwmatlarımdı qayta islewge razıman",
+      "submit": "Dizimnen ótiw",
+      "haveAccount": "Akkauntıńız bar ma?",
+      "loginLink": "Kiriw"
+    },
+    "verify": {
+      "title": "Emaildı tastıyıqlaw",
+      "subtitle": "{email} mánzilge 6 sanlı kod jiberdik. Kod {minutes} minut ámel etedi.",
+      "code": "Kod",
+      "submit": "Tastıyıqlaw",
+      "resend": "Kodtı qayta jiberiw",
+      "resendIn": "Qayta jiberiw: {seconds} s",
+      "resent": "Jańa kod jiberildi",
+      "toLogin": "Kiriwge qaytıw"
+    },
+    "login": {
+      "title": "Kiriw",
+      "email": "Email",
+      "password": "Parol",
+      "submit": "Kiriw",
+      "forgot": "Paroldı umıttıńız ba?",
+      "noAccount": "Akkauntıńız joq pa?",
+      "registerLink": "Dizimnen ótiw",
+      "resetDone": "Parol jańalandı. Jańa parol menen kiriń."
+    },
+    "forgot": {
+      "title": "Paroldı tiklew",
+      "subtitle": "Emailıńızdı kirgiziń, oǵan tiklew kodın jiberemiz.",
+      "email": "Email",
+      "submit": "Kod jiberiw",
+      "backToLogin": "Kiriwge qaytıw"
+    },
+    "reset": {
+      "title": "Jańa parol",
+      "subtitle": "Emailǵa kelgen 6 sanlı kodtı hám jańa paroldı kirgiziń.",
+      "email": "Email",
+      "code": "Kod",
+      "password": "Jańa parol",
+      "submit": "Paroldı saqlaw"
+    }
+  },
+  "Account": {
+    "title": "Kabinet",
+    "email": "Email",
+    "role": "Rol",
+    "roles": {
+      "STUDENT": "Student",
+      "COMPANY": "Kompaniya",
+      "ADMIN": "Administrator"
+    },
+    "companyPending": "Kompaniyańız admin tastıyıǵın kútpekte.",
+    "comingSoon": "Kabinet keyingi basqıshlarda toltırıladı.",
+    "logout": "Shıǵıw"
+  },
+  "Errors": {
+    "VALIDATION": "Maǵlıwmatlardı tekserip shıǵıń.",
+    "BAD_ORIGIN": "Soraw qabıllanbadı.",
+    "UNAUTHORIZED": "Aldın kiriń.",
+    "FORBIDDEN": "Bul bólimge ruqsatıńız joq.",
+    "RATE_LIMITED": "Urınıslar júdá kóp. Biraz waqıttan soń qaytadan urınıp kóriń.",
+    "EMAIL_TAKEN": "Bul email menen akkaunt bar.",
+    "INVALID_CREDENTIALS": "Email yamasa parol qáte.",
+    "EMAIL_NOT_VERIFIED": "Email tastıyıqlanbaǵan. Kodtı kirgiziń.",
+    "ALREADY_VERIFIED": "Email aldın tastıyıqlanǵan. Kiriń.",
+    "ACCOUNT_BLOCKED": "Akkauntıńız bloklanǵan.",
+    "CODE_INVALID": "Kod qáte.",
+    "CODE_EXPIRED": "Kodtıń múddeti ótken. Jańa kod sorań.",
+    "CODE_LOCKED": "Qáte urınıslar júdá kóp. Jańa kod sorań.",
+    "RESEND_TOO_SOON": "Jańa kodtı bir minuttan soń sorań.",
+    "SERVER_ERROR": "Serverde qátelik. Keyinirek urınıp kóriń.",
+    "INVALID_EMAIL": "Email durıs emes.",
+    "PASSWORD_TOO_SHORT": "Parol keminde 8 belgiden ibarat bolıwı kerek.",
+    "PASSWORD_TOO_LONG": "Parol júdá uzın.",
+    "PASSWORD_REQUIRED": "Paroldı kirgiziń.",
+    "CODE_FORMAT": "Kod 6 sannan ibarat bolıwı kerek.",
+    "ROLE_REQUIRED": "Rolińizdi tańlań.",
+    "CONSENT_REQUIRED": "Dizimnen ótiw ushın razılıq beriń.",
+    "NETWORK": "Tarmaq qáteligi. Internetti tekseriń."
+  },
+  "Email": {
+    "verify": {
+      "subject": "Jumis AI: tastıyıqlaw kodı",
+      "body": "Assalawma áleykum!\n\nJumis AI daǵı emailıńızdı tastıyıqlaw kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz dizimnen ótpegen bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"
+    },
+    "reset": {
+      "subject": "Jumis AI: paroldı tiklew kodı",
+      "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"
+    }
   }
 }

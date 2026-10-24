@@ -21,13 +21,22 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - `docs/DB-SCHEMA.md`
   - Tekshirildi: toza bazada (`docker compose down -v` dan keyin) migratsiya va seed o'tdi, admin argon2id xesh bilan yaratildi, qayta seed paroli o'zgartirmadi, qisqa parol rad etildi, logda parol yo'q; sxema va migratsiya o'rtasida farq yo'q
 
+- [x] **1.3 Autentifikatsiya** (24.10.2026)
+  - Ro'yxat (email, parol ≥ 8, rol talaba/kompaniya, majburiy rozilik → consentAt), kompaniyaga PENDING profil
+  - Email tasdiqlash: 6 xonali kod faqat emailga (dev: Mailpit), HMAC xesh, 10 daqiqa, 5 urinish, qayta yuborish 60 s
+  - Login, logout, parolni tiklash (kod bilan, eski sessiyalar o'chadi); argon2id
+  - Sessiya cookie (httpOnly, SameSite=Lax, prod da Secure), rate limit (login, kod tekshirish, kod yuborish, ro'yxat), Origin tekshiruvi
+  - `requireRole()`, `GET /api/me`, bloklangan foydalanuvchi kira olmaydi
+  - Sahifalar 4 tilda: register, verify, login, forgot, reset, vaqtinchalik account; xato xabarlari `Errors` dan
+  - Testlar: 23 ta (kod xeshi va muddati, noto'g'ri urinishlar, kod javob/logda yo'qligi, 401/403, bloklash, rate limit, CSRF, parol tiklash)
+  - Tekshirildi: `npm test` 23/23; `npm run check` o'tdi; Docker'da brauzer orqali to'liq ssenariy (kk ro'yxat → Mailpit kodi → tasdiqlash → kabinet → chiqish → ru noto'g'ri parol → en parol tiklash → kirish); kod sahifada va app logida yo'q
+
 ## Keyingi qadam
 
-- [ ] **1.3 / 1.4 Auth** (ro'yxat, email kod, kirish, chiqish, parol tiklash)
-- [ ] 1.5 AI moduli
-- [ ] 1.6 AI bilan CV yaratish
-- [ ] 1.7 CV tahriri, saqlash, ochiq/yashirin
-- [ ] 1.8 CV shabloni va PDF
+- [ ] AI moduli (rejada 1.5)
+- [ ] AI bilan CV yaratish (rejada 1.6)
+- [ ] CV tahriri, saqlash, ochiq/yashirin (rejada 1.7)
+- [ ] CV shabloni va PDF (rejada 1.8)
 - [ ] 1.9 1-bosqich tekshiruvi
 - [ ] 2.1–2.8 Kompaniya, admin, saralash, deploy
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -8,6 +9,8 @@ export function LocaleSwitcher() {
   const t = useTranslations("LocaleSwitcher");
   const pathname = usePathname();
   const current = useLocale();
+  // ?email=... kabi parametrlar til almashganda yo'qolmasligi uchun.
+  const query = Object.fromEntries(useSearchParams());
 
   return (
     <nav aria-label={t("label")} className="flex flex-wrap gap-1 text-sm">
@@ -16,7 +19,7 @@ export function LocaleSwitcher() {
         return (
           <Link
             key={locale}
-            href={pathname}
+            href={{ pathname, query }}
             locale={locale}
             lang={locale}
             aria-current={active ? "page" : undefined}

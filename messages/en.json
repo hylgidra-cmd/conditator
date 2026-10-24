@@ -9,7 +9,11 @@
   },
   "Header": {
     "brand": "Jumis AI",
-    "homeAria": "Jumis AI home page"
+    "homeAria": "Jumis AI home page",
+    "login": "Log in",
+    "register": "Sign up",
+    "account": "Dashboard",
+    "logout": "Log out"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -48,5 +52,105 @@
   "NotFound": {
     "title": "Page not found",
     "back": "Back to home page"
+  },
+  "Auth": {
+    "submitting": "Sending…",
+    "register": {
+      "title": "Sign up",
+      "subtitle": "Join Jumis AI",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters",
+      "role": "Who are you?",
+      "roleStudent": "Student / job seeker",
+      "roleCompany": "Company / employer",
+      "consent": "I agree to the processing of my personal data",
+      "submit": "Sign up",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in"
+    },
+    "verify": {
+      "title": "Confirm your email",
+      "subtitle": "We sent a 6-digit code to {email}. The code is valid for {minutes} minutes.",
+      "code": "Code",
+      "submit": "Confirm",
+      "resend": "Resend code",
+      "resendIn": "Resend in {seconds} s",
+      "resent": "A new code has been sent",
+      "toLogin": "Back to log in"
+    },
+    "login": {
+      "title": "Log in",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Log in",
+      "forgot": "Forgot your password?",
+      "noAccount": "No account yet?",
+      "registerLink": "Sign up",
+      "resetDone": "Password updated. Log in with your new password."
+    },
+    "forgot": {
+      "title": "Reset password",
+      "subtitle": "Enter your email and we will send you a reset code.",
+      "email": "Email",
+      "submit": "Send code",
+      "backToLogin": "Back to log in"
+    },
+    "reset": {
+      "title": "New password",
+      "subtitle": "Enter the 6-digit code from the email and your new password.",
+      "email": "Email",
+      "code": "Code",
+      "password": "New password",
+      "submit": "Save password"
+    }
+  },
+  "Account": {
+    "title": "Dashboard",
+    "email": "Email",
+    "role": "Role",
+    "roles": {
+      "STUDENT": "Student",
+      "COMPANY": "Company",
+      "ADMIN": "Administrator"
+    },
+    "companyPending": "Your company is waiting for admin approval.",
+    "comingSoon": "The dashboard will be filled in the next steps.",
+    "logout": "Log out"
+  },
+  "Errors": {
+    "VALIDATION": "Please check the entered data.",
+    "BAD_ORIGIN": "Request rejected.",
+    "UNAUTHORIZED": "Please log in first.",
+    "FORBIDDEN": "You do not have access to this section.",
+    "RATE_LIMITED": "Too many attempts. Please try again later.",
+    "EMAIL_TAKEN": "An account with this email already exists.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "EMAIL_NOT_VERIFIED": "Email not confirmed. Enter the code.",
+    "ALREADY_VERIFIED": "Email already confirmed. Please log in.",
+    "ACCOUNT_BLOCKED": "Your account is blocked.",
+    "CODE_INVALID": "Incorrect code.",
+    "CODE_EXPIRED": "The code has expired. Request a new one.",
+    "CODE_LOCKED": "Too many incorrect attempts. Request a new code.",
+    "RESEND_TOO_SOON": "You can request a new code in a minute.",
+    "SERVER_ERROR": "Server error. Please try again later.",
+    "INVALID_EMAIL": "Invalid email.",
+    "PASSWORD_TOO_SHORT": "Password must be at least 8 characters.",
+    "PASSWORD_TOO_LONG": "Password is too long.",
+    "PASSWORD_REQUIRED": "Enter your password.",
+    "CODE_FORMAT": "The code must be 6 digits.",
+    "ROLE_REQUIRED": "Choose your role.",
+    "CONSENT_REQUIRED": "Please give your consent to sign up.",
+    "NETWORK": "Network error. Check your connection."
+  },
+  "Email": {
+    "verify": {
+      "subject": "Jumis AI: confirmation code",
+      "body": "Hello!\n\nYour Jumis AI email confirmation code: {code}\n\nThe code is valid for {minutes} minutes. If you did not sign up, please ignore this email.\n\nThe Jumis AI team"
+    },
+    "reset": {
+      "subject": "Jumis AI: password reset code",
+      "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Jumis AI team"
+    }
   }
 }

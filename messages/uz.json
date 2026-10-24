@@ -9,7 +9,11 @@
   },
   "Header": {
     "brand": "Jumis AI",
-    "homeAria": "Jumis AI bosh sahifasi"
+    "homeAria": "Jumis AI bosh sahifasi",
+    "login": "Kirish",
+    "register": "Roʻyxatdan oʻtish",
+    "account": "Kabinet",
+    "logout": "Chiqish"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -48,5 +52,105 @@
   "NotFound": {
     "title": "Sahifa topilmadi",
     "back": "Bosh sahifaga qaytish"
+  },
+  "Auth": {
+    "submitting": "Yuborilmoqda…",
+    "register": {
+      "title": "Roʻyxatdan oʻtish",
+      "subtitle": "Jumis AI ga qoʻshiling",
+      "email": "Email",
+      "password": "Parol",
+      "passwordHint": "Kamida 8 belgi",
+      "role": "Siz kimsiz?",
+      "roleStudent": "Talaba / ish izlovchi",
+      "roleCompany": "Kompaniya / ish beruvchi",
+      "consent": "Shaxsiy maʼlumotlarimni qayta ishlashga roziman",
+      "submit": "Roʻyxatdan oʻtish",
+      "haveAccount": "Akkauntingiz bormi?",
+      "loginLink": "Kirish"
+    },
+    "verify": {
+      "title": "Emailni tasdiqlash",
+      "subtitle": "{email} manziliga 6 xonali kod yubordik. Kod {minutes} daqiqa amal qiladi.",
+      "code": "Kod",
+      "submit": "Tasdiqlash",
+      "resend": "Kodni qayta yuborish",
+      "resendIn": "Qayta yuborish: {seconds} s",
+      "resent": "Yangi kod yuborildi",
+      "toLogin": "Kirishga qaytish"
+    },
+    "login": {
+      "title": "Kirish",
+      "email": "Email",
+      "password": "Parol",
+      "submit": "Kirish",
+      "forgot": "Parolni unutdingizmi?",
+      "noAccount": "Akkauntingiz yoʻqmi?",
+      "registerLink": "Roʻyxatdan oʻtish",
+      "resetDone": "Parol yangilandi. Yangi parol bilan kiring."
+    },
+    "forgot": {
+      "title": "Parolni tiklash",
+      "subtitle": "Emailingizni kiriting, unga tiklash kodini yuboramiz.",
+      "email": "Email",
+      "submit": "Kod yuborish",
+      "backToLogin": "Kirishga qaytish"
+    },
+    "reset": {
+      "title": "Yangi parol",
+      "subtitle": "Emailga kelgan 6 xonali kodni va yangi parolni kiriting.",
+      "email": "Email",
+      "code": "Kod",
+      "password": "Yangi parol",
+      "submit": "Parolni saqlash"
+    }
+  },
+  "Account": {
+    "title": "Kabinet",
+    "email": "Email",
+    "role": "Rol",
+    "roles": {
+      "STUDENT": "Talaba",
+      "COMPANY": "Kompaniya",
+      "ADMIN": "Administrator"
+    },
+    "companyPending": "Kompaniyangiz admin tasdigʻini kutmoqda.",
+    "comingSoon": "Kabinet keyingi qadamlarda toʻldiriladi.",
+    "logout": "Chiqish"
+  },
+  "Errors": {
+    "VALIDATION": "Maʼlumotlarni tekshirib chiqing.",
+    "BAD_ORIGIN": "Soʻrov qabul qilinmadi.",
+    "UNAUTHORIZED": "Avval tizimga kiring.",
+    "FORBIDDEN": "Bu boʻlimga ruxsatingiz yoʻq.",
+    "RATE_LIMITED": "Urinishlar juda koʻp. Birozdan keyin qayta urinib koʻring.",
+    "EMAIL_TAKEN": "Bu email bilan akkaunt allaqachon bor.",
+    "INVALID_CREDENTIALS": "Email yoki parol notoʻgʻri.",
+    "EMAIL_NOT_VERIFIED": "Email tasdiqlanmagan. Kodni kiriting.",
+    "ALREADY_VERIFIED": "Email allaqachon tasdiqlangan. Tizimga kiring.",
+    "ACCOUNT_BLOCKED": "Akkauntingiz bloklangan.",
+    "CODE_INVALID": "Kod notoʻgʻri.",
+    "CODE_EXPIRED": "Kod muddati oʻtgan. Yangi kod soʻrang.",
+    "CODE_LOCKED": "Notoʻgʻri urinishlar juda koʻp. Yangi kod soʻrang.",
+    "RESEND_TOO_SOON": "Yangi kodni bir daqiqadan keyin soʻrang.",
+    "SERVER_ERROR": "Serverda xatolik. Keyinroq urinib koʻring.",
+    "INVALID_EMAIL": "Email notoʻgʻri.",
+    "PASSWORD_TOO_SHORT": "Parol kamida 8 belgidan iborat boʻlishi kerak.",
+    "PASSWORD_TOO_LONG": "Parol juda uzun.",
+    "PASSWORD_REQUIRED": "Parolni kiriting.",
+    "CODE_FORMAT": "Kod 6 ta raqamdan iborat boʻlishi kerak.",
+    "ROLE_REQUIRED": "Rolingizni tanlang.",
+    "CONSENT_REQUIRED": "Roʻyxatdan oʻtish uchun rozilik bering.",
+    "NETWORK": "Tarmoq xatosi. Internetni tekshiring."
+  },
+  "Email": {
+    "verify": {
+      "subject": "Jumis AI: tasdiqlash kodi",
+      "body": "Assalomu alaykum!\n\nJumis AI dagi emailingizni tasdiqlash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar siz roʻyxatdan oʻtmagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nJumis AI jamoasi"
+    },
+    "reset": {
+      "subject": "Jumis AI: parolni tiklash kodi",
+      "body": "Assalomu alaykum!\n\nParolni tiklash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar buni siz soʻramagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nJumis AI jamoasi"
+    }
   }
 }

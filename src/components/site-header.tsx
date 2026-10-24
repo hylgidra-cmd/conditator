@@ -1,13 +1,19 @@
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { currentUser } from "@/lib/auth/current-user";
+import { LogoutButton } from "./auth/logout-button";
 import { LocaleSwitcher } from "./locale-switcher";
 
-export function SiteHeader() {
-  const t = useTranslations("Header");
+const NAV_LINK =
+  "text-muted hover:text-foreground rounded-md px-2 py-1 text-sm";
+
+export async function SiteHeader() {
+  const t = await getTranslations("Header");
+  const user = await currentUser();
 
   return (
     <header className="border-border bg-surface border-b">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3">
         <Link
           href="/"
           aria-label={t("homeAria")}
@@ -15,7 +21,31 @@ export function SiteHeader() {
         >
           {t("brand")}
         </Link>
-        <LocaleSwitcher />
+        <div className="flex flex-wrap items-center gap-2">
+          <nav className="flex items-center gap-1">
+            {user ? (
+              <>
+                <Link href="/account" className={NAV_LINK}>
+                  {t("account")}
+                </Link>
+                <LogoutButton className={NAV_LINK} />
+              </>
+            ) : (
+              <>
+                <Link href="/login" className={NAV_LINK}>
+                  {t("login")}
+                </Link>
+                <Link
+                  href="/register"
+                  className="bg-brand rounded-md px-3 py-1 text-sm font-semibold text-white"
+                >
+                  {t("register")}
+                </Link>
+              </>
+            )}
+          </nav>
+          <LocaleSwitcher />
+        </div>
       </div>
     </header>
   );

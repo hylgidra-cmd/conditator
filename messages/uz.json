@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "status": "TODO-review",
+    "note": "Qoralama tarjima. Mutaxassis tekshirgach status 'reviewed' ga oʻzgartiriladi."
+  },
+  "Metadata": {
+    "title": "Jumis AI — mos nomzodlarni AI topadi",
+    "description": "Kompaniyalar uchun AI platforma: 100 ta rezyume oʻrniga 5 ta mos nomzod."
+  },
+  "Header": {
+    "brand": "Jumis AI",
+    "homeAria": "Jumis AI bosh sahifasi"
+  },
+  "LocaleSwitcher": {
+    "label": "Til",
+    "kk": "Qaraqalpaqsha",
+    "uz": "Oʻzbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
+  "Home": {
+    "badge": "MVP · tez orada",
+    "title": "100 ta rezyume oʻrniga 5 ta mos nomzod",
+    "subtitle": "Jumis AI talabalarga bir necha daqiqada CV tuzib beradi, kompaniyalarga esa bazadan eng mos nomzodlarni ball va izoh bilan saralab beradi.",
+    "students": {
+      "title": "Talabalar uchun",
+      "item1": "Oʻzingiz haqingizda oddiy matn yozing",
+      "item2": "AI uni tayyor CV shabloniga joylaydi",
+      "item3": "Tahrirlang, saqlang va PDF yuklab oling"
+    },
+    "companies": {
+      "title": "Kompaniyalar uchun",
+      "item1": "Talablaringizni istalgan tilda yozing",
+      "item2": "AI 5–10 ta eng mos nomzodni tanlaydi",
+      "item3": "Har bir nomzod uchun 0–100 ball va qisqa izoh"
+    },
+    "how": {
+      "title": "Qanday ishlaydi",
+      "step1": "Roʻyxatdan oʻting",
+      "step2": "Maʼlumot yoki talab kiriting",
+      "step3": "AI natijasini oling"
+    },
+    "trust": "Kompaniyalar faqat admin tasdiqlagandan keyin nomzodlarni koʻradi."
+  },
+  "Footer": {
+    "rights": "© {year} Jumis AI. Barcha huquqlar himoyalangan."
+  },
+  "NotFound": {
+    "title": "Sahifa topilmadi",
+    "back": "Bosh sahifaga qaytish"
+  }
+}

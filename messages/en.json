@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "status": "TODO-review",
+    "note": "Draft translation. Change status to 'reviewed' after a specialist checks it."
+  },
+  "Metadata": {
+    "title": "Jumis AI — AI finds the right candidates",
+    "description": "AI platform for companies: 5 matching candidates instead of 100 résumés."
+  },
+  "Header": {
+    "brand": "Jumis AI",
+    "homeAria": "Jumis AI home page"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "kk": "Qaraqalpaqsha",
+    "uz": "Oʻzbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
+  "Home": {
+    "badge": "MVP · coming soon",
+    "title": "5 matching candidates instead of 100 résumés",
+    "subtitle": "Jumis AI builds a CV for students in minutes and ranks the best-matching candidates for companies, each with a score and a short explanation.",
+    "students": {
+      "title": "For students",
+      "item1": "Describe yourself in plain text",
+      "item2": "AI fills in a ready-made CV template",
+      "item3": "Edit, save and download it as PDF"
+    },
+    "companies": {
+      "title": "For companies",
+      "item1": "Write your requirements in any language",
+      "item2": "AI picks the 5–10 best-matching candidates",
+      "item3": "A 0–100 score and a short reason for each"
+    },
+    "how": {
+      "title": "How it works",
+      "step1": "Sign up",
+      "step2": "Enter your details or requirements",
+      "step3": "Get the AI result"
+    },
+    "trust": "Companies see candidates only after an admin approves them."
+  },
+  "Footer": {
+    "rights": "© {year} Jumis AI. All rights reserved."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "back": "Back to home page"
+  }
+}

@@ -1,0 +1,53 @@
+# Dev muhiti: docker compose up --build
+# Ilova: http://localhost:3000 · Mailpit (dev xatlar): http://localhost:8025
+
+services:
+  app:
+    build: .
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jumis}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jumis}
+      POSTGRES_DB: ${POSTGRES_DB:-jumis}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-jumis} -d ${POSTGRES_DB:-jumis}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  # Faqat dev uchun: barcha chiquvchi xatlarni ushlab qoladi, hech kimga yubormaydi.
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    restart: unless-stopped
+
+volumes:
+  db-data:

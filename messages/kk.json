@@ -1,0 +1,52 @@
+{
+  "_meta": {
+    "status": "TODO-review",
+    "note": "Qoralama awdarma (qaraqalpaq tili, latın jazıwı). Qánige tekserip shıqqannan keyin status 'reviewed' bolıp ózgertiledi."
+  },
+  "Metadata": {
+    "title": "Jumis AI — sáykes kandidatlardı AI tabadı",
+    "description": "Kompaniyalar ushın AI platforma: 100 rezyume ornına 5 sáykes kandidat."
+  },
+  "Header": {
+    "brand": "Jumis AI",
+    "homeAria": "Jumis AI bas beti"
+  },
+  "LocaleSwitcher": {
+    "label": "Til",
+    "kk": "Qaraqalpaqsha",
+    "uz": "Oʻzbekcha",
+    "ru": "Русский",
+    "en": "English"
+  },
+  "Home": {
+    "badge": "MVP · jaqın arada",
+    "title": "100 rezyume ornına 5 sáykes kandidat",
+    "subtitle": "Jumis AI studentlerge bir neshe minutta CV dúzip beredi, al kompaniyalarǵa bazadan eń sáykes kandidatlardı ball hám túsindirme menen saralap beredi.",
+    "students": {
+      "title": "Studentler ushın",
+      "item1": "Ózińiz haqqıńızda ápiwayı tekst jazıń",
+      "item2": "AI onı tayar CV úlgisine jaylastıradı",
+      "item3": "Ózgertiń, saqlań hám PDF túrinde júklep alıń"
+    },
+    "companies": {
+      "title": "Kompaniyalar ushın",
+      "item1": "Talaplarıńızdı qálegen tilde jazıń",
+      "item2": "AI eń sáykes 5–10 kandidattı tańlaydı",
+      "item3": "Hár bir kandidat ushın 0–100 ball hám qısqa túsindirme"
+    },
+    "how": {
+      "title": "Qalay isleydi",
+      "step1": "Dizimnen ótiń",
+      "step2": "Maǵlıwmat yamasa talap kirgiziń",
+      "step3": "AI nátiyjesin alıń"
+    },
+    "trust": "Kompaniyalar kandidatlardı tek admin tastıyıqlaǵannan keyin ǵana kóredi."
+  },
+  "Footer": {
+    "rights": "© {year} Jumis AI. Barlıq huqıqlar qorǵalǵan."
+  },
+  "NotFound": {
+    "title": "Bet tabılmadı",
+    "back": "Bas betke qaytıw"
+  }
+}

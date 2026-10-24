@@ -14,11 +14,27 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       mailpit:
         condition: service_started
     restart: unless-stopped
+
+  # Bir martalik: migratsiyalarni qo'llaydi va seed (admin, sozlamalar) ni bajaradi, keyin to'xtaydi.
+  migrate:
+    build:
+      context: .
+      target: build
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
 
   db:
     image: postgres:16-alpine

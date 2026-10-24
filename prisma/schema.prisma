@@ -1,5 +1,5 @@
 // Jumis AI ma'lumotlar bazasi sxemasi.
-// Modellar 1.3-qadamda qo'shiladi (docs/PLAN.md, 2-bo'lim).
+// Tavsif va aloqalar: docs/DB-SCHEMA.md. Reja: docs/PLAN.md, 2-bo'lim.
 
 generator client {
   provider      = "prisma-client-js"
@@ -9,4 +9,228 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ---------- Enumlar ----------
+
+enum Role {
+  STUDENT
+  COMPANY
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BLOCKED
+}
+
+/// Interfeys va CV tillari. kk = qoraqalpoq (loyiha kelishuvi).
+enum Lang {
+  kk
+  uz
+  ru
+  en
+}
+
+enum EmailCodePurpose {
+  VERIFY
+  RESET
+}
+
+enum Approval {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum WorkType {
+  FULL_TIME
+  PART_TIME
+  REMOTE
+  INTERNSHIP
+}
+
+enum MatchDecision {
+  NONE
+  SELECTED
+  REJECTED
+}
+
+enum AiTask {
+  CV_GEN
+  MATCH
+}
+
+// ---------- Foydalanuvchilar va kirish ----------
+
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique /// har doim kichik harflarda saqlanadi
+  passwordHash    String /// argon2id
+  role            Role
+  status          UserStatus @default(ACTIVE)
+  emailVerifiedAt DateTime?
+  locale          Lang       @default(uz)
+  consentAt       DateTime? /// shaxsiy ma'lumotlarni qayta ishlashga rozilik
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  sessions   Session[]
+  emailCodes EmailCode[]
+  cv         Cv?
+  company    Company?
+  aiLogs     AiLog[]
+
+  @@index([role, status])
+}
+
+/// Bazadagi sessiya: cookie da tasodifiy token, bazada faqat uning xeshi.
+/// Bloklanganda yoki parol tiklanganda foydalanuvchining sessiyalari o'chiriladi.
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Email tasdiqlash va parol tiklash kodlari. Kodning o'zi hech qachon saqlanmaydi.
+model EmailCode {
+  id        String           @id @default(cuid())
+  userId    String
+  purpose   EmailCodePurpose
+  codeHash  String
+  expiresAt DateTime
+  attempts  Int              @default(0)
+  usedAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose])
+}
+
+// ---------- Talaba ----------
+
+model Cv {
+  id            String     @id @default(cuid()) /// AI ga anonim ID sifatida shu yuboriladi
+  userId        String     @unique
+  language      Lang       @default(en)
+  sourceText    String? /// talabaning erkin matni (≤ 3000 belgi)
+  /// CV maydonlari: ism, aloqa, maqsad, ta'lim, tajriba, ko'nikmalar, tillar, sertifikatlar.
+  /// Tuzilmasi zod sxemasi bilan belgilanadi (src/lib/cv).
+  data          Json       @default("{}")
+  missingFields String[] /// AI to'ldira olmagan maydonlar ("to'ldiring" belgisi)
+  isVisible     Boolean    @default(false)
+  savedAt       DateTime? /// null = hech saqlanmagan, kompaniyaga ko'rinmaydi. CV versiyasi ham shu.
+  // Filtr maydonlari (data dan saqlashda to'ldiriladi)
+  skills        String[]
+  languages     String[]
+  location      String?
+  workTypes     WorkType[]
+  searchText    String     @default("") /// kalit so'z qidiruvi uchun (kichik harflarda, aloqa ma'lumotisiz)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches Match[]
+
+  @@index([isVisible, language])
+  @@index([skills], type: Gin)
+  @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "Cv_searchText_trgm_idx")
+}
+
+// ---------- Kompaniya ----------
+
+model Company {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  name              String?
+  country           String?
+  industry          String?
+  size              String? /// xodimlar soni oralig'i, masalan "11-50"
+  contactPerson     String?
+  logoPath          String?
+  approval          Approval  @default(PENDING)
+  approvedAt        DateTime?
+  subscriptionUntil DateTime? /// obuna faol = subscriptionUntil > hozir
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vacancies Vacancy[]
+
+  @@index([approval])
+}
+
+model Vacancy {
+  id                 String    @id @default(cuid())
+  companyId          String
+  title              String
+  rawText            String? /// erkin matnli talab (istalgan tilda)
+  skills             String[]
+  languages          String[]
+  minExperienceYears Int?
+  location           String?
+  workType           WorkType?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  matches Match[]
+
+  @@index([companyId, createdAt])
+}
+
+/// Saralash natijasi. hash = xesh(talab + CV versiyasi): o'zgarmagan bo'lsa AI qayta chaqirilmaydi.
+model Match {
+  id        String        @id @default(cuid())
+  vacancyId String
+  cvId      String
+  score     Int /// 0–100
+  reason    String /// 1–2 gaplik izoh
+  hash      String
+  decision  MatchDecision @default(NONE)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  vacancy Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  cv      Cv      @relation(fields: [cvId], references: [id], onDelete: Cascade)
+
+  @@unique([vacancyId, cvId])
+  @@index([vacancyId, score])
+  @@index([cvId, decision])
+}
+
+// ---------- AI va sozlamalar ----------
+
+/// Har bir AI so'rovi (har bir urinish) shu yerga yoziladi.
+model AiLog {
+  id           String   @id @default(cuid())
+  task         AiTask
+  provider     String
+  model        String
+  inputTokens  Int      @default(0)
+  outputTokens Int      @default(0)
+  costUsd      Decimal  @default(0) @db.Decimal(10, 6)
+  durationMs   Int      @default(0)
+  ok           Boolean
+  errorCode    String?
+  userId       String?
+  createdAt    DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+/// Kalit-qiymat sozlamalar, masalan monthlyAiLimitUsd.
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }

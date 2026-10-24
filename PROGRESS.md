@@ -13,10 +13,17 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - JSX da qo'lda yozilgan matnni taqiqlovchi ESLint qoidasi, `npm run check:i18n` skripti
   - Tekshirildi: `npm run check` o'tdi; konteynerlar ko'tarildi; `/kk /uz /ru /en` 200, `/` → `/uz`, `/api/health` → `{"status":"ok","db":"ok"}`, Mailpit UI ochiladi; brauzerda til almashtirgich bosilganda sahifa tili o'zgaradi; telefon kengligida gorizontal scroll yo'q
 
+- [x] **1.2 Ma'lumotlar bazasi** (24.10.2026)
+  - `prisma/schema.prisma`: User, Session, EmailCode, Cv, Company, Vacancy, Match, AiLog, Setting (2-kun jadvallari ham)
+  - Indekslar: User.email unique, Cv(isVisible, language), Match(vacancyId, cvId) unique, AiLog(createdAt), qo'shimcha: Cv.skills GIN, Cv.searchText trigram, Match(vacancyId, score), Match(cvId, decision)
+  - Birinchi migratsiya `init` (+ `pg_trgm`), seed: admin (.env dan) va `monthlyAiLimitUsd`
+  - `migrate` xizmati: `docker compose up` migratsiya va seed ni o'zi bajaradi
+  - `docs/DB-SCHEMA.md`
+  - Tekshirildi: toza bazada (`docker compose down -v` dan keyin) migratsiya va seed o'tdi, admin argon2id xesh bilan yaratildi, qayta seed paroli o'zgartirmadi, qisqa parol rad etildi, logda parol yo'q; sxema va migratsiya o'rtasida farq yo'q
+
 ## Keyingi qadam
 
-- [ ] **1.2 Ma'lumotlar bazasi:** to'liq sxema (2-kun jadvallari bilan), migratsiya, admin seed, docs/DB-SCHEMA.md
-- [ ] 1.4 Auth (ro'yxat, email kod, kirish, chiqish, parol tiklash)
+- [ ] **1.3 / 1.4 Auth** (ro'yxat, email kod, kirish, chiqish, parol tiklash)
 - [ ] 1.5 AI moduli
 - [ ] 1.6 AI bilan CV yaratish
 - [ ] 1.7 CV tahriri, saqlash, ochiq/yashirin

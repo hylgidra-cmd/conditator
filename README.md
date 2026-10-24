@@ -7,13 +7,14 @@ Kompaniyalarga mos nomzodlarni topib beradigan B2B AI platforma (MVP).
 Talab: Docker va Docker Compose.
 
 ```bash
-cp .env.example .env
+cp .env.example .env   # ADMIN_EMAIL va ADMIN_PASSWORD (≥12 belgi) ni to'ldiring
 docker compose up --build
 ```
 
 - Sayt: http://localhost:3000 (`/kk`, `/uz`, `/ru`, `/en`)
 - Dev xatlar (Mailpit): http://localhost:8025
 - Sog'liq tekshiruvi: http://localhost:3000/api/health
+- `migrate` xizmati migratsiya va seed (admin akkaunt) ni avtomatik bajaradi. Sxema: `docs/DB-SCHEMA.md`
 
 ## Dasturchilar uchun
 

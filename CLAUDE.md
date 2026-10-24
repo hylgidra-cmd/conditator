@@ -13,8 +13,9 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 - next-intl 4 (yo'llar `/{locale}/...`, tarjimalar `messages/*.json`)
 - zod 4 (formalar, API kirishi, AI javobi)
 - ESLint 9 + Prettier 3
-- Docker Compose (dev: app + postgres + Mailpit)
-- Keyingi qadamlarda: argon2, nodemailer, `@anthropic-ai/sdk`, Playwright (PDF), Vitest
+- Docker Compose (dev: app + postgres + Mailpit; `migrate` xizmati migratsiya va seed ni bajaradi)
+- argon2 (`@node-rs/argon2`), tsx (seed)
+- Keyingi qadamlarda: nodemailer, `@anthropic-ai/sdk`, Playwright (PDF), Vitest
 
 ## Buyruqlar
 
@@ -36,7 +37,7 @@ Manzillar: ilova http://localhost:3000, Mailpit http://localhost:8025, sog'liq t
 
 ```
 docs/                  topshiriq, design/, PLAN.md, DB-SCHEMA.md
-prisma/                schema.prisma, migrations/
+prisma/                schema.prisma, migrations/, seed.ts
 messages/              kk.json uz.json ru.json en.json
 scripts/               check-messages.mjs
 src/
@@ -45,7 +46,7 @@ src/
   i18n/                routing.ts, navigation.ts, request.ts
   lib/db.ts            Prisma client
   lib/ai/              provider.ts, anthropic.ts, cv.ts, match.ts, budget.ts (1.5)
-  lib/auth/            sessiya, parol, email kodlari, ruxsat tekshiruvi (1.4)
+  lib/auth/            password.ts (argon2id); sessiya, email kodlari, ruxsat tekshiruvi (1.4)
   lib/pdf/             CV shablon va PDF (1.8)
   lib/email/           SMTP (1.4)
   components/          UI
@@ -66,7 +67,8 @@ src/
 10. **AI:** telefon, email, to'liq ism AI ga yuborilmaydi (saralashda faqat anonim `Cv.id` va kasbiy ma'lumot). AI to'qimaydi: yo'q maydon bo'sh qoladi. Javob qat'iy JSON, zod bilan tekshiriladi, 2 martagacha qayta urinish. Provayder faqat `src/lib/ai/provider.ts` interfeysi orqali. Har so'rov `AiLog` ga. Oylik limitga yetsa AI to'xtaydi va kalit so'z qidiruviga o'tiladi.
 11. **Saralash natijasi saqlanadi:** bir xil talab va CV lar uchun AI qayta chaqirilmaydi.
 12. **MVP dan tashqari narsa qo'shilmaydi:** kurslar, testlar, to'lov, Telegram bot, SMS, mobil ilova, community, kengaytirilgan statistika.
-13. Har qadam oxirida: `npm run check`, ishga tushirib tekshirish, `PROGRESS.md` va shu faylni yangilash, alohida commit.
+13. **Baza:** sxema o'zgarsa yangi migratsiya (`npm run db:migrate`) va `docs/DB-SCHEMA.md` yangilanadi. Mavjud migratsiya fayllari tahrirlanmaydi.
+14. Har qadam oxirida: `npm run check`, ishga tushirib tekshirish, `PROGRESS.md` va shu faylni yangilash, alohida commit.
 
 ## Eslatmalar
 

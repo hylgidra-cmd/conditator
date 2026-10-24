@@ -141,7 +141,13 @@
     "CODE_FORMAT": "Kod 6 ta raqamdan iborat boʻlishi kerak.",
     "ROLE_REQUIRED": "Rolingizni tanlang.",
     "CONSENT_REQUIRED": "Roʻyxatdan oʻtish uchun rozilik bering.",
-    "NETWORK": "Tarmoq xatosi. Internetni tekshiring."
+    "NETWORK": "Tarmoq xatosi. Internetni tekshiring.",
+    "AI_LIMIT_REACHED": "AI ning shu oylik limiti tugadi. CV maydonlarini qoʻlda toʻldiring yoki keyingi oyda urinib koʻring.",
+    "AI_UNAVAILABLE": "AI hozir javob bermadi. Birozdan keyin qayta urinib koʻring yoki maydonlarni qoʻlda toʻldiring.",
+    "TEXT_REQUIRED": "Oʻzingiz haqingizda matn yozing.",
+    "TEXT_TOO_LONG": "Matn 3000 belgidan oshmasligi kerak.",
+    "LANGUAGE_REQUIRED": "CV tilini tanlang.",
+    "FIELD_TOO_LONG": "Matn juda uzun."
   },
   "Email": {
     "verify": {

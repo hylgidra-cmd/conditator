@@ -36,3 +36,24 @@ export function serverEnv(): ServerEnv {
   cached = env;
   return env;
 }
+
+const aiSchema = z.object({
+  AI_PROVIDER: z.enum(["anthropic"]).default("anthropic"),
+  ANTHROPIC_API_KEY: z.string().optional(),
+  AI_MODEL_CV: z.string().min(1).default("claude-haiku-5-5"),
+  AI_MODEL_MATCH: z.string().min(1).default("claude-sonnet-5-5"),
+});
+
+export type AiEnv = z.infer<typeof aiSchema>;
+
+/** AI sozlamalari (auth ishlashi uchun shart emas, shuning uchun alohida). */
+export function aiEnv(): AiEnv {
+  const parsed = aiSchema.safeParse(process.env);
+  if (!parsed.success) {
+    const fields = parsed.error.issues
+      .map((issue) => issue.path.join("."))
+      .join(", ");
+    throw new Error(`AI sozlamalari noto'g'ri: ${fields}`);
+  }
+  return parsed.data;
+}

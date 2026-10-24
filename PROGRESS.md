@@ -31,6 +31,16 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 23 ta (kod xeshi va muddati, noto'g'ri urinishlar, kod javob/logda yo'qligi, 401/403, bloklash, rate limit, CSRF, parol tiklash)
   - Tekshirildi: `npm test` 23/23; `npm run check` o'tdi; Docker'da brauzer orqali to'liq ssenariy (kk ro'yxat → Mailpit kodi → tasdiqlash → kabinet → chiqish → ru noto'g'ri parol → en parol tiklash → kirish); kod sahifada va app logida yo'q
 
+- [x] **1.4 AI moduli va `POST /api/cv/generate`** (24.10.2026)
+  - `AiProvider` interfeysi, Anthropic adapter (strukturali JSON), fake provayder testlar uchun
+  - `runJsonTask`: oylik limit, zod tekshiruvi, 2 martagacha qayta urinish, har urinish AiLog ga (vazifa, model, token, narx, vaqt, ok)
+  - CV sxemasi (ism, aloqa, maqsad, ta'lim, tajriba, ko'nikmalar, tillar, sertifikatlar), `missingFields`
+  - PII tozalash (telefon, email, messenjer, ism), prompt injection himoyasi
+  - Endpoint: faqat talaba, matn ≤ 3000 belgi (serverda), til kk/uz/ru/en, soatiga 10 ta; natija bazaga yozilmaydi
+  - Testlar: 38/38 (qayta urinish, limit, o'tgan oy, PII, 401/403, uzunlik, rate limit)
+  - Tekshirildi: `npm test`, `npm run check`, `npm run build`; haqiqiy API ga kalitsiz so'rov AUTH xatosi bilan to'g'ri ushlandi
+  - **Haqiqiy Claude javobi hali sinalmagan**: API kaliti yo'q
+
 ## Keyingi qadam
 
 - [ ] AI moduli (rejada 1.5)
@@ -41,6 +51,8 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
 - [ ] 2.1–2.8 Kompaniya, admin, saralash, deploy
 
 ## Ochiq savollar
+
+0. **Inglizcha CV:** variant tanlanmagan (doim EN + tanlangan til / faqat tanlangan til / faqat EN). Hozir CV bitta, tanlangan tilda yaratiladi.
 
 1. GitHub repo nomi (Gulgina hisobida). Hozircha kod faqat lokal git da.
 2. Dizayn maketlari (`docs/design/`) yo'q: hozir oddiy toza dizayn.

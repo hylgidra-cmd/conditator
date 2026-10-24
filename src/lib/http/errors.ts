@@ -17,6 +17,8 @@ export type ErrorCode =
   | "CODE_EXPIRED"
   | "CODE_LOCKED"
   | "RESEND_TOO_SOON"
+  | "AI_LIMIT_REACHED"
+  | "AI_UNAVAILABLE"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

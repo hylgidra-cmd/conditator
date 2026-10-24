@@ -15,7 +15,8 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 - ESLint 9 + Prettier 3
 - Docker Compose (dev: app + postgres + Mailpit; `migrate` xizmati migratsiya va seed ni bajaradi)
 - argon2 (`@node-rs/argon2`), tsx (seed), nodemailer (SMTP), Vitest (testlar)
-- Keyingi qadamlarda: `@anthropic-ai/sdk`, Playwright (PDF), Vitest
+- `@anthropic-ai/sdk` (Claude, strukturali JSON javob)
+- Keyingi qadamlarda: Playwright (PDF), Vitest
 
 ## Buyruqlar
 
@@ -44,10 +45,13 @@ src/
   app/[locale]/        sahifalar: auth, student, company, admin
   app/[locale]/(auth)/ register, verify, login, forgot, reset
   app/[locale]/account vaqtinchalik kabinet
-  app/api/             REST: auth/{register,verify,resend,login,logout,forgot,reset}, me, health
+  app/api/             REST: auth/{register,verify,resend,login,logout,forgot,reset}, me, cv/generate, health
   i18n/                routing.ts, navigation.ts, request.ts
   lib/db.ts            Prisma client
-  lib/ai/              provider.ts, anthropic.ts, cv.ts, match.ts, budget.ts (1.5)
+  lib/ai/              provider.ts (interfeys + tanlash), anthropic.ts (adapter), fake.ts (testlar),
+                       run.ts (limit → chaqiruv → zod → qayta urinish → AiLog), budget.ts (narx, oylik limit),
+                       log.ts, pii.ts (shaxsiy ma'lumotni olib tashlash), cv.ts (matndan CV), match.ts (2-kun)
+  lib/cv/schema.ts     CV zod sxemalari (AI qoralamasi va to'liq CV), missingFields
   lib/auth/            password, session (requireRole), current-user, email-code, rate-limit, schemas, service
   lib/http/            route() o'rami, ApiError va xato kodlari, Origin (CSRF) tekshiruvi
   lib/client/api.ts    brauzerdan API ga so'rov
@@ -83,6 +87,16 @@ tests/                 Vitest integratsiya testlari
 - Rate limit xotirada (`lib/auth/rate-limit.ts`): bitta ilova nusxasi uchun. Bir nechta nusxaga o'tilsa, Redis/bazaga ko'chirish kerak.
 - Xato kodlari ro'yxati: `src/lib/http/errors.ts` + `messages/*.json` → `Errors`. Yangi kod qo'shilsa, 4 tilga tarjima ham qo'shiladi.
 - Kirgan foydalanuvchi auth sahifalaridan `/account` ga yo'naltiriladi.
+
+## AI qanday ishlaydi
+
+- Barcha chaqiruvlar `runJsonTask()` (`lib/ai/run.ts`) orqali: oylik limit (`Setting.monthlyAiLimitUsd`, shu oy UTC bo'yicha `AiLog.costUsd` yig'indisi) → provayder → zod tekshiruvi → noto'g'ri javobda 2 martagacha qayta urinish. Har urinish `AiLog` ga yoziladi.
+- Provayder `AI_PROVIDER` (.env) bo'yicha tanlanadi. Yangi provayder: `AiProvider` ni bajaradigan adapter fayli + `provider.ts` dagi `switch` ga bitta qator + .env. Modellar: `AI_MODEL_CV`, `AI_MODEL_MATCH`. Narxlar: `budget.ts` (noma'lum model qimmat hisoblanadi).
+- Shaxsiy ma'lumot: `redactPii()` telefon, email, messenjer manzili va formadagi ismni AI ga yuborishdan oldin olib tashlaydi. CV dagi ism va aloqa AI dan emas, forma va akkauntdan olinadi.
+- Talaba matni `<student_text>` teglari ichida ma'lumot sifatida beriladi; system prompt to'qimaslik va matndagi ko'rsatmalarni bajarmaslikni talab qiladi.
+- Xatolar: limit tugasa `AI_LIMIT_REACHED` (503), AI ishlamasa `AI_UNAVAILABLE` (503). CV yaratishda foydalanuvchiga "qo'lda to'ldiring" deyiladi; saralashda (2-kun) kalit so'z qidiruviga o'tiladi.
+- `POST /api/cv/generate` natijani bazaga yozmaydi: CV faqat `PUT /api/cv/me` (saqlash) dan keyin saqlanadi.
+- Testlarda haqiqiy API chaqirilmaydi: `setAiProviderForTests(new FakeAiProvider([...]))`.
 
 ## Eslatmalar
 

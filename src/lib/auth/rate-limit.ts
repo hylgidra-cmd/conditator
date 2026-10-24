@@ -12,6 +12,7 @@ export const LIMITS = {
   verify: { max: 20, windowMs: 15 * 60_000 },
   sendCode: { max: 5, windowMs: 60 * 60_000 },
   register: { max: 10, windowMs: 60 * 60_000 },
+  cvGenerate: { max: 10, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(

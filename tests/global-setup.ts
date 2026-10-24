@@ -5,8 +5,15 @@ export default function setup() {
   const url =
     process.env.TEST_DATABASE_URL ??
     "postgresql://jumis:jumis@localhost:5432/jumis_test?schema=public";
-  execSync("npx prisma migrate deploy", {
-    env: { ...process.env, DATABASE_URL: url },
-    stdio: "ignore",
-  });
+  try {
+    execSync("npx prisma migrate deploy", {
+      env: { ...process.env, DATABASE_URL: url },
+      stdio: "pipe",
+    });
+  } catch (error) {
+    const output = (error as { stdout?: Buffer }).stdout?.toString() ?? "";
+    throw new Error(
+      `Test bazasini tayyorlab bo'lmadi. Baza ishlayaptimi? (docker compose up -d db)\n${output}`,
+    );
+  }
 }

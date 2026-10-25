@@ -127,7 +127,8 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Xatolar logi bitta JSON qatorda, Docker loglari aylanadi (5 × 10 MB)
   - README: o'rnatish, IT Park serveriga bosqichma-bosqich, .env jadvali, loglar, zaxira/tiklash, provayder almashtirish, admin yaratish, muammolar
   - Lokal sinov (`DOMAIN=localhost`, Caddy ichki sertifikati): health 200, http→https 308, www→301, gzip (login sahifasi 19 KB → 6 KB), 3 MB so'rov 413, soxta X-Forwarded-For bilan 11-urinish 429, cookie `Secure; HttpOnly`, admin kirishi; zaxira → ma'lumot o'zgartirildi → restore-check → tiklash → ma'lumot va logo qaytdi; cron har daqiqa rejimida 3 marta ishladi; `deploy.sh` CHANGE_ME ni rad etdi; seed parolsiz qayta ishladi
-  - Sinalmagan: haqiqiy domen va Let's Encrypt, haqiqiy SMTP, Docker obrazidagi Chromium (PDF) — sinov muhitida obraz ichidan internet yo'q, obraz shu sababli Chromium siz qurildi
+  - Topildi va tuzatildi: Dockerfile dagi Chromium o'rnatish qadami serverda yiqilardi (Playwright CLI standalone build ga kirmaydi). Endi CLI deps bosqichidan olinadi; sinovda CLI ishga tushdi va yuklab olish bosqichigacha yetdi. `deploy.sh` oxirida Chromium konteyner ichida ishga tushishini tekshiradi; app ga `shm_size: 256mb`
+  - Sinalmagan: haqiqiy domen va Let's Encrypt, haqiqiy SMTP, Chromium ni yuklab olish va PDF ni konteyner ichida yaratish (sinov muhitida obraz ichidan Debian va Playwright serverlariga kirish yopiq)
 
 ## Keyingi qadam
 

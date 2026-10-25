@@ -24,12 +24,14 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0
 # Belgilangan uid: zaxiradan tiklashda logolar egasi (deploy/backup/restore.sh) shunga mos.
 RUN groupadd --system --gid 1001 app && useradd --system --uid 1001 --gid app app
-COPY --from=build --chown=app:app /app/.next/standalone ./
-# PDF uchun Chromium (headless shell) va uning tizim kutubxonalari.
-# Versiya package.json dagi playwright-core bilan bir xil bo'ladi.
+# PDF uchun Chromium (headless shell) va uning tizim kutubxonalari. Versiya package-lock dagi
+# playwright-core bilan bir xil. CLI (cli.js) standalone build ga kirmaydi, shuning uchun
+# to'liq paket deps bosqichidan vaqtincha olinadi. Kod o'zgarganda bu qatlam qayta qurilmaydi.
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
-RUN node node_modules/playwright-core/cli.js install --with-deps --only-shell chromium \
-  && rm -rf /var/lib/apt/lists/*
+COPY --from=deps /app/node_modules/playwright-core /tmp/playwright-core
+RUN node /tmp/playwright-core/cli.js install --with-deps --only-shell chromium \
+  && rm -rf /tmp/playwright-core /var/lib/apt/lists/*
+COPY --from=build --chown=app:app /app/.next/standalone ./
 COPY --from=build --chown=app:app /app/.next/static ./.next/static
 COPY --from=build --chown=app:app /app/public ./public
 COPY --from=build --chown=app:app /app/prisma ./prisma

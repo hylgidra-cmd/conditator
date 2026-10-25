@@ -36,5 +36,13 @@ until [ "$(docker inspect -f '{{.State.Health.Status}}' "$(./deploy/dc ps -q app
   sleep 10
 done
 ./deploy/dc ps
+
+# PDF uchun Chromium konteyner ichida ishga tushishini tekshirish (xato bo'lsa sayt ishlaydi, PDF ishlamaydi).
+if ./deploy/dc exec -T app node -e "require('playwright-core').chromium.launch().then((b) => b.close())" >/dev/null 2>&1; then
+  echo "PDF (Chromium): OK"
+else
+  echo "OGOHLANTIRISH: Chromium ishga tushmadi, PDF yuklab bo'lmaydi. Tekshiring:" >&2
+  echo "  ./deploy/dc exec app node -e \"require('playwright-core').chromium.launch().then((b) => b.close())\"" >&2
+fi
 DOMAIN=$(grep -E '^DOMAIN=' .env.production | tail -n1 | cut -d= -f2-)
 echo "Tayyor. Tekshiring: curl -fsS https://$DOMAIN/api/health"

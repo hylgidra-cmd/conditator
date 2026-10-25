@@ -43,6 +43,8 @@ services:
       UPLOAD_DIR: /app/data/uploads
     volumes:
       - uploads:/app/data/uploads
+    # Chromium (PDF) uchun: Docker standarti 64 MB kichik.
+    shm_size: 256mb
     healthcheck:
       test:
         [

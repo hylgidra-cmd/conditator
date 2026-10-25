@@ -4,6 +4,8 @@ Administrator huquqi kerak emas. Hamma narsa foydalanuvchi papkasiga o'rnatiladi
 Barcha buyruqlar **PowerShell** da bajariladi (Start → "PowerShell").
 
 Loyiha papkasi: `C:\Users\user\Desktop\jumis-ai` (`jumis-ai.zip` shu yerga ochilgan).
+Tekshiring: papka ichida `package.json` bo'lishi kerak. Windows zip ni `jumis-ai\jumis-ai\` qilib ochgan bo'lsa, ichki papkadan foydalaning.
+Agar oyna PowerShell emas, cmd bo'lsa, `Copy-Item` o'rniga `copy` ishlating.
 
 ---
 

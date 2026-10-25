@@ -87,6 +87,10 @@ tests/                 Vitest integratsiya testlari
 - Rate limit xotirada (`lib/auth/rate-limit.ts`): bitta ilova nusxasi uchun. Bir nechta nusxaga o'tilsa, Redis/bazaga ko'chirish kerak.
 - Xato kodlari ro'yxati: `src/lib/http/errors.ts` + `messages/*.json` → `Errors`. Yangi kod qo'shilsa, 4 tilga tarjima ham qo'shiladi.
 - Kirgan foydalanuvchi auth sahifalaridan `/account` ga yo'naltiriladi.
+- Kodga kunlik chegara: 24 soatda 15 noto'g'ri urinish (`CODE_DAILY_LIMIT`), IP ga bog'liq emas.
+- `parseJson()` 100 KB dan katta tanani o'qimaydi (413 `PAYLOAD_TOO_LARGE`).
+- Yangi API endpoint: `route()` bilan o'rang va boshida `requireRole(request, ...)` chaqiring. `tests/security.test.ts` buni tekshiradi; ochiq endpoint bo'lsa, u yerdagi `PUBLIC` ro'yxatiga qo'shing va sababini yozing.
+- Xavfsizlik sarlavhalari `next.config.ts` → `headers()`. Prod da ilova porti tashqariga ochilmaydi, faqat Caddy orqali (rate limit IP ni `X-Forwarded-For` dan oladi).
 
 ## AI qanday ishlaydi
 

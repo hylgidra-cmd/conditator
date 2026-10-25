@@ -152,7 +152,9 @@
     "FIELD_TOO_LONG": "Tekst júdá uzın.",
     "CV_NOT_SAVED": "Aldın CV dı saqlań.",
     "FIELD_REQUIRED": "Bul maydandı toltırıń.",
-    "TOO_MANY_ITEMS": "Elementler júdá kóp."
+    "TOO_MANY_ITEMS": "Elementler júdá kóp.",
+    "CODE_DAILY_LIMIT": "Qáte urınıslar júdá kóp. 24 saattan soń qaytadan urınıp kóriń.",
+    "PAYLOAD_TOO_LARGE": "Soraw kólemi júdá úlken."
   },
   "Email": {
     "verify": {

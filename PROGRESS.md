@@ -62,10 +62,18 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 50/50. Tekshirildi: 4 tilda namunaviy PDF (kk: Ǵ Ń Ó Á Ú Ĺ ı; ru kirill; uz; en uzun matn 2 sahifa) ko'z bilan ko'rildi, `pdffonts` da faqat Noto Sans (sahifa raqamidan tashqari); ko'rish sahifasi kompyuter va telefonda
   - **Docker obrazidagi Chromium o'rnatilishi sinalmagan** (bu muhitda apt va Playwright CDN yopiq)
 
+- [x] **1.7 1-kunni yopish** (25.10.2026, tag `v0.1-day1`)
+  - Xavfsizlik ko'rigi (OWASP) va tuzatishlar: kodga kunlik urinish chegarasi (15/24 soat, IP ga bog'liq emas), JSON so'rov hajmi ≤ 100 KB (413), xavfsizlik sarlavhalari (nosniff, X-Frame-Options, frame-ancestors, Referrer-Policy, Permissions-Policy, X-Powered-By o'chiq), Docker portlari faqat 127.0.0.1 da
+  - `tests/security.test.ts`: har bir yopiq endpoint `requireRole` chaqirishi, boshqa talaba CV si (GET, PDF, ko'rinish, saqlash), kod hech bir auth javobida yo'qligi, kunlik chegara, bloklangan foydalanuvchi, 413
+  - Testlar: 61/61, `npm run check` va `npm run build` o'tdi; gitda sir yo'q (`.env` ignore, tarixda kalit/parol topilmadi)
+  - Brauzerda qabul ssenariysi (uz): ro'yxat → kod Mailpit dan → tasdiqlash → CV sahifasi → matn → CV (AI javobi soxta) → saqlash → ko'rish → PDF yuklab olindi (ism va bo'limlar PDF da bor); kod sahifada va app logida yo'q
+  - Ma'lum xavflar (qabul qilingan): ro'yxatda "email band" javobi email mavjudligini bildiradi; rate limit xotirada va IP ni `X-Forwarded-For` dan oladi (ilova faqat Caddy orqasida bo'lishi shart); `npm audit`: next ichidagi postcss (faqat build vaqtida, o'z CSS imiz) va prisma CLI dagi deepmerge-ts (ish vaqtida yo'q), tuzatish major versiyaga o'tishni talab qiladi
+
 ## Keyingi qadam
 
-- [ ] 1.9 1-bosqich tekshiruvi
-- [ ] 2.1–2.8 Kompaniya, admin, saralash, deploy
+- [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)
+- [ ] Haqiqiy Claude API bilan CV yaratishni sinash (kalit kelganda)
+- [ ] Docker obrazida Chromium va PDF ni sinash (birinchi haqiqiy serverda)
 
 ## Ochiq savollar
 

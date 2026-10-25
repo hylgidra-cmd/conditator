@@ -16,10 +16,12 @@ export type ErrorCode =
   | "CODE_INVALID"
   | "CODE_EXPIRED"
   | "CODE_LOCKED"
+  | "CODE_DAILY_LIMIT"
   | "RESEND_TOO_SOON"
   | "CV_NOT_SAVED"
   | "AI_LIMIT_REACHED"
   | "AI_UNAVAILABLE"
+  | "PAYLOAD_TOO_LARGE"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {
@@ -57,14 +59,24 @@ export function validationError(error: z.ZodError): ApiError {
   return new ApiError(400, "VALIDATION", fields);
 }
 
+/** JSON so'rov tanasining eng katta hajmi. Eng kattasi CV (~50 KB gacha). */
+export const MAX_JSON_BYTES = 100_000;
+
 export async function parseJson<T extends z.ZodType>(
   request: Request,
   schema: T,
 ): Promise<z.infer<T>> {
+  // Juda katta so'rov tanasi o'qilmaydi (xotira va CPU ni himoyalash).
+  const declared = Number(request.headers.get("content-length") ?? 0);
+  if (declared > MAX_JSON_BYTES) throw new ApiError(413, "PAYLOAD_TOO_LARGE");
   let body: unknown;
   try {
-    body = await request.json();
-  } catch {
+    const text = await request.text();
+    if (Buffer.byteLength(text) > MAX_JSON_BYTES)
+      throw new ApiError(413, "PAYLOAD_TOO_LARGE");
+    body = JSON.parse(text);
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
     throw new ApiError(400, "VALIDATION");
   }
   const parsed = schema.safeParse(body);

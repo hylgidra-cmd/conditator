@@ -152,7 +152,9 @@
     "FIELD_TOO_LONG": "The text is too long.",
     "CV_NOT_SAVED": "Save your CV first.",
     "FIELD_REQUIRED": "Please fill in this field.",
-    "TOO_MANY_ITEMS": "Too many items."
+    "TOO_MANY_ITEMS": "Too many items.",
+    "CODE_DAILY_LIMIT": "Too many incorrect attempts. Please try again in 24 hours.",
+    "PAYLOAD_TOO_LARGE": "The request is too large."
   },
   "Email": {
     "verify": {

@@ -65,6 +65,8 @@ Bloklanganda va parol tiklanganda foydalanuvchining barcha sessiyalari o'chirila
 
 Indeks: `(userId, purpose)`.
 
+Qo'shimcha: bir foydalanuvchi va maqsad bo'yicha so'nggi 24 soatdagi `attempts` yig'indisi 15 dan oshsa, yangi kod bilan ham tekshiruv to'xtaydi (`CODE_DAILY_LIMIT`). Bu kodni qayta-qayta so'rab tanlab topishning oldini oladi.
+
 ### Cv — talaba CV si
 
 | Maydon               | Turi                                                   | Izoh                                                                                   |
@@ -80,12 +82,14 @@ Indeks: `(userId, purpose)`.
 | skills, languages    | text[]                                                 | filtr maydonlari (saqlashda `data` dan to'ldiriladi)                                   |
 | location             | text?                                                  | filtr                                                                                  |
 | workTypes            | `FULL_TIME` / `PART_TIME` / `REMOTE` / `INTERNSHIP` [] | filtr                                                                                  |
-| searchText           | text                                                   | kalit so'z qidiruvi uchun matn (aloqa ma'lumotisiz)                                    |
+| searchText           | text                                                   | kalit so'z qidiruvi uchun matn (ism va aloqa ma'lumotisiz)                             |
 | createdAt, updatedAt | timestamp                                              |                                                                                        |
 
 Indekslar: `(isVisible, language)`, `skills` (GIN), `searchText` (GIN trigram).
 
 **Kompaniyaga ko'rinadi** faqat: `isVisible = true` va `savedAt IS NOT NULL` va egasi `status = ACTIVE`.
+
+Yozish faqat `saveOwnCv()` orqali (`savedAt`, `missingFields`, filtr maydonlari va `searchText` shu yerda hisoblanadi); `isVisible` ni faqat `setOwnCvVisibility()` o'zgartiradi. PDF va ekrandagi ko'rinish `data` + `language` + `workTypes` dan chiqadi.
 
 ### Company — kompaniya profili
 

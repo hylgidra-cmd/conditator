@@ -1,6 +1,8 @@
 # Dev muhiti: docker compose up --build
 # Ilova: http://localhost:3000 · Mailpit (dev xatlar): http://localhost:8025
 
+# Portlar faqat shu kompyuterga (127.0.0.1) ochiladi: baza va Mailpit internetga chiqmaydi.
+
 services:
   app:
     build: .
@@ -12,7 +14,7 @@ services:
       SMTP_HOST: mailpit
       SMTP_PORT: "1025"
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -43,7 +45,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jumis}
       POSTGRES_DB: ${POSTGRES_DB:-jumis}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     healthcheck:
@@ -61,8 +63,8 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "8025:8025"
-      - "1025:1025"
+      - "127.0.0.1:8025:8025"
+      - "127.0.0.1:1025:1025"
     restart: unless-stopped
 
 volumes:

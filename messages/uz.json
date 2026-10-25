@@ -152,7 +152,9 @@
     "FIELD_TOO_LONG": "Matn juda uzun.",
     "CV_NOT_SAVED": "Avval CV ni saqlang.",
     "FIELD_REQUIRED": "Bu maydonni toʻldiring.",
-    "TOO_MANY_ITEMS": "Elementlar juda koʻp."
+    "TOO_MANY_ITEMS": "Elementlar juda koʻp.",
+    "CODE_DAILY_LIMIT": "Notoʻgʻri urinishlar juda koʻp. 24 soatdan keyin qayta urinib koʻring.",
+    "PAYLOAD_TOO_LARGE": "Soʻrov hajmi juda katta."
   },
   "Email": {
     "verify": {

@@ -7,6 +7,9 @@ import { ApiError } from "@/lib/http/errors";
 export const CODE_TTL_MS = 10 * 60_000;
 export const CODE_MAX_ATTEMPTS = 5;
 export const CODE_RESEND_COOLDOWN_MS = 60_000;
+/** Bir foydalanuvchi uchun 24 soatdagi noto'g'ri urinishlar chegarasi (barcha kodlar bo'yicha). */
+export const CODE_DAILY_MAX_FAILURES = 15;
+const DAY_MS = 24 * 60 * 60_000;
 
 /** 6 xonali kod xeshi. HMAC sirli kalit bilan: baza sizib chiqsa ham kodni tanlab topib bo'lmaydi. */
 export function hashCode(
@@ -59,6 +62,19 @@ export async function consumeCode(
   purpose: EmailCodePurpose,
   code: string,
 ): Promise<void> {
+  // Kod qayta-qayta so'ralib, tanlab topishga urinishning oldini oladi (IP ga bog'liq emas).
+  const { _sum } = await db.emailCode.aggregate({
+    where: {
+      userId,
+      purpose,
+      createdAt: { gte: new Date(Date.now() - DAY_MS) },
+    },
+    _sum: { attempts: true },
+  });
+  if ((_sum.attempts ?? 0) >= CODE_DAILY_MAX_FAILURES) {
+    throw new ApiError(429, "CODE_DAILY_LIMIT");
+  }
+
   const active = await db.emailCode.findFirst({
     where: { userId, purpose, usedAt: null },
     orderBy: { createdAt: "desc" },

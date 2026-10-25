@@ -82,7 +82,7 @@ export function SubmitButton({
   pending: boolean;
   children: ReactNode;
 }) {
-  const t = useTranslations("Auth");
+  const t = useTranslations("Form");
   return (
     <button
       type="submit"

@@ -3,8 +3,8 @@ import { getMessages } from "next-intl/server";
 import type { ReactNode } from "react";
 
 // Brauzerga faqat shu bo'lim komponentlariga kerakli tarjimalar yuboriladi (har sahifada hammasi emas).
-// Barcha sahifalarda: sarlavha, til tanlash va xato matnlari.
-const COMMON = ["Header", "LocaleSwitcher", "Errors"];
+// Barcha sahifalarda: sarlavha, til tanlash, xato matnlari va forma tugmasi (SubmitButton).
+const COMMON = ["Header", "LocaleSwitcher", "Errors", "Form"];
 
 export async function ClientMessages({
   namespaces,

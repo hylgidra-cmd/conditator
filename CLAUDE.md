@@ -178,6 +178,12 @@ tests/                 Vitest integratsiya testlari
 - Seed: admin mavjud bo'lsa `ADMIN_PASSWORD` shart emas (yaratilgach .env dan o'chiriladi).
 - Server ulanish ma'lumotlari hech qachon repoga yozilmaydi. To'liq yo'riqnoma: `README.md`.
 
+## Yakuniy qabul (2.8, v1.0)
+
+- `docs/ACCEPTANCE.md`: natija, qo'lda tekshirilmaganlar, buyurtmachiga topshiriladigan kalitlar. Qayta o'tkazish: `scripts/acceptance/run.mjs` + soxta AI `scripts/acceptance/mock-anthropic.mjs` (`ANTHROPIC_BASE_URL`), toza `jumis_accept` bazada.
+- PII: `redactPii` formadagi ismdan tashqari matndagi "Ismim / Atım / Меня зовут / My name is …" dan keyingi ismni ham yashiradi. Yangi til qo'shilsa, `NAME_INTROS` ga ibora qo'shing.
+- Forma tugmasi matni `Form.submitting` (barcha sahifalarga boradigan `COMMON` namespace da).
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

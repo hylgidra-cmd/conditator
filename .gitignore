@@ -48,3 +48,4 @@ load-sessions*.json
 
 # serverdagi zaxira nusxalar
 /backups
+acceptance-out/

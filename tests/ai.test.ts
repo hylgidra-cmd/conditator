@@ -246,6 +246,30 @@ describe("shaxsiy ma'lumot AI ga ketmaydi", () => {
     expect(result).toBe("Yozing: [EMAIL] yoki [PHONE]");
   });
 
+  it('formada ism bo\'lmasa ham matndagi "ismim ..." iborasidagi ism olib tashlanadi (4 til)', () => {
+    expect(
+      redactPii(
+        "Ismim Aziza Karimova, QDU talabasiman. Aziza deb chaqirishadi.",
+      ),
+    ).toBe("Ismim [NAME], QDU talabasiman. [NAME] deb chaqirishadi.");
+    expect(redactPii("Mening ismim Bekzod. React bilaman")).toBe(
+      "Mening ismim [NAME]. React bilaman",
+    );
+    expect(redactPii("Meniń atım Gúlnara Seytova, Nókiste turaman")).toBe(
+      "Meniń atım [NAME], Nókiste turaman",
+    );
+    expect(redactPii("Меня зовут Ольга Ким. Знаю Excel")).toBe(
+      "Меня зовут [NAME]. Знаю Excel",
+    );
+    expect(redactPii("My name is John Smith and I know SQL")).toBe(
+      "My name is [NAME] and I know SQL",
+    );
+    // Ibora bo'lmasa, oddiy bosh harfli so'zlar (texnologiya, shahar) tegilmaydi.
+    expect(redactPii("React va TypeScript, Nukus")).toBe(
+      "React va TypeScript, Nukus",
+    );
+  });
+
   it("redactPii qisqa raqamlar va yillarni o'zgartirmaydi", () => {
     expect(redactPii("2019 - 2023, 3 yil, 120 soat")).toBe(
       "2019 - 2023, 3 yil, 120 soat",

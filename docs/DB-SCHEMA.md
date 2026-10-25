@@ -142,16 +142,16 @@ Indeks: `(companyId, createdAt)` — talablar tarixi.
 
 ### Match — saralash natijasi
 
-| Maydon               | Turi                             | Izoh                                                                                                         |
-| -------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| id                   | text                             | PK                                                                                                           |
-| vacancyId            | → Vacancy.id                     |                                                                                                              |
-| cvId                 | → Cv.id                          |                                                                                                              |
-| score                | int                              | 0–100                                                                                                        |
-| reason               | text                             | 1–2 gaplik izoh                                                                                              |
-| hash                 | text                             | sha256(prompt versiyasi, model, izoh tili, Vacancy.updatedAt, Cv.savedAt); mos bo'lsa AI qayta chaqirilmaydi |
-| decision             | `NONE` / `SELECTED` / `REJECTED` | kompaniya qarori                                                                                             |
-| createdAt, updatedAt | timestamp                        |                                                                                                              |
+| Maydon               | Turi                             | Izoh                                                                                                                                                             |
+| -------------------- | -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| id                   | text                             | PK                                                                                                                                                               |
+| vacancyId            | → Vacancy.id                     |                                                                                                                                                                  |
+| cvId                 | → Cv.id                          |                                                                                                                                                                  |
+| score                | int                              | 0–100                                                                                                                                                            |
+| reason               | text                             | 1–2 gaplik izoh                                                                                                                                                  |
+| hash                 | text                             | sha256(prompt versiyasi, model, izoh tili, Vacancy.updatedAt, Cv.savedAt); mos bo'lsa AI qayta chaqirilmaydi. `""` = AI hali baholamagan (faqat qaror qo'yilgan) |
+| decision             | `NONE` / `SELECTED` / `REJECTED` | kompaniya qarori                                                                                                                                                 |
+| createdAt, updatedAt | timestamp                        |                                                                                                                                                                  |
 
 Indekslar: `(vacancyId, cvId)` unique, `(vacancyId, score)`, `(cvId, decision)` — talabaning "so'rovlari" (`SELECTED`).
 
@@ -198,4 +198,6 @@ Indekslar: `createdAt`, `(targetType, targetId)`. Migratsiya: `admin_log`.
 
 - Dev: `npm run db:migrate` (yangi migratsiya), `npm run db:seed`.
 - Docker / server: `migrate` xizmati `prisma migrate deploy` va `prisma db seed` ni avtomatik bajaradi.
-- Seed admin akkauntini `.env` dagi `ADMIN_EMAIL` va `ADMIN_PASSWORD` (≥ 12 belgi) dan yaratadi. Admin allaqachon bo'lsa, paroli o'zgartirilmaydi. `monthlyAiLimitUsd` sozlamasi `AI_MONTHLY_LIMIT_USD` dan (standart 50) faqat birinchi marta yoziladi.
+- Seed admin akkauntini `.env` dagi `ADMIN_EMAIL` va `ADMIN_PASSWORD` (≥ 12 belgi) dan yaratadi. Admin allaqachon bo'lsa, paroli o'zgartirilmaydi va `ADMIN_PASSWORD` shart emas (yaratilgach .env dan o'chiriladi). Shu email bilan oddiy foydalanuvchi bo'lsa, unga admin huquqi beriladi. `monthlyAiLimitUsd` sozlamasi `AI_MONTHLY_LIMIT_USD` dan (standart 50) faqat birinchi marta yoziladi.
+- Zaxira va tiklash (production): `README.md` 6-bo'lim, skriptlar `deploy/backup/`.
+- Vaqt maydonlari `timestamp(3)` (vaqt zonasisiz), qiymatlar UTC da. SQL da Toshkent vaqti: `(maydon AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Tashkent'`.

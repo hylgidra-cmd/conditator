@@ -58,7 +58,6 @@
     "back": "Bas betke qaytıw"
   },
   "Auth": {
-    "submitting": "Jiberilmekte…",
     "register": {
       "title": "Dizimnen ótiw",
       "subtitle": "Jumis AI ǵa qosılıń",
@@ -165,6 +164,9 @@
     "TITLE_OR_TEXT_REQUIRED": "Lawazımdı yamasa talaptı erkin tekst penen jazıń.",
     "INVALID_NUMBER": "0 den 50 ge shekem pútin san kiritiń.",
     "CANNOT_BLOCK_ADMIN": "Administratordı bloklawǵa bolmaydı."
+  },
+  "Form": {
+    "submitting": "Jiberilmekte…"
   },
   "Email": {
     "verify": {

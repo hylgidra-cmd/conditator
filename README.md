@@ -1,4 +1,4 @@
-# Jumis AI
+# Jumis AI (v1.0)
 
 Kompaniyalarga mos nomzodlarni topib beradigan B2B AI platforma (MVP). Talaba AI yordamida CV
 yaratadi, kompaniya talab (vakansiya) qo'yadi va AI saralagan nomzodlarni ko'radi, admin
@@ -43,7 +43,7 @@ npm run check      # typecheck, lint, tarjimalar, formatlash
 ```
 
 Batafsil: `CLAUDE.md` (qoidalar, tuzilma), `docs/PLAN.md` (reja), `PROGRESS.md` (holat),
-`docs/QUALITY-REPORT.md` (tezlik va xavfsizlik). Dockersiz (Windows):
+`docs/QUALITY-REPORT.md` (tezlik va xavfsizlik), `docs/ACCEPTANCE.md` (yakuniy qabul, topshiriladigan kalitlar). Dockersiz (Windows):
 [docs/LOCAL-WINDOWS.md](docs/LOCAL-WINDOWS.md).
 
 ## 2. Serverga chiqarish (IT Park serveri)

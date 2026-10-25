@@ -58,7 +58,6 @@
     "back": "Bosh sahifaga qaytish"
   },
   "Auth": {
-    "submitting": "Yuborilmoqda…",
     "register": {
       "title": "Roʻyxatdan oʻtish",
       "subtitle": "Jumis AI ga qoʻshiling",
@@ -165,6 +164,9 @@
     "TITLE_OR_TEXT_REQUIRED": "Lavozimni yoki talabni erkin matn bilan yozing.",
     "INVALID_NUMBER": "0 dan 50 gacha butun son kiriting.",
     "CANNOT_BLOCK_ADMIN": "Administratorni bloklab boʻlmaydi."
+  },
+  "Form": {
+    "submitting": "Yuborilmoqda…"
   },
   "Email": {
     "verify": {

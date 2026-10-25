@@ -58,7 +58,6 @@
     "back": "Back to home page"
   },
   "Auth": {
-    "submitting": "Sending…",
     "register": {
       "title": "Sign up",
       "subtitle": "Join Jumis AI",
@@ -165,6 +164,9 @@
     "TITLE_OR_TEXT_REQUIRED": "Enter a job title or describe the requirements in free text.",
     "INVALID_NUMBER": "Enter a whole number from 0 to 50.",
     "CANNOT_BLOCK_ADMIN": "An administrator cannot be blocked."
+  },
+  "Form": {
+    "submitting": "Sending…"
   },
   "Email": {
     "verify": {

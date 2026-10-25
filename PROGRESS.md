@@ -121,7 +121,7 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 157/157
   - Chegaralar: real AI sinalmagan; HTTPS/Caddy 2.7 da; rate limit va saralash qulfi xotirada (bitta jarayon)
 
-- [~] **2.7 Production tayyorlash** (25.10.2026) — fayllar tayyor, serverga joylash kutilmoqda
+- [x] **2.7 Production tayyorlash** (25.10.2026) — fayllar tayyor; serverga joylash server ma'lumotlari kelgach
   - `docker-compose.prod.yml`: Caddy (Let's Encrypt HTTPS, http→https, www→asosiy domen, gzip/zstd, so'rov ≤ 2 MB), app (healthcheck), migrate (avtomatik migratsiya + seed), postgres, kunlik zaxira; `.env.production.example`, `deploy/deploy.sh`, `deploy/dc`
   - Zaxira: har kuni 03:00 pg_dump + logolar, 14 kun, fayllar 600; `restore-check.sh` (vaqtinchalik bazaga tiklab solishtiradi), `restore.sh`
   - Xatolar logi bitta JSON qatorda, Docker loglari aylanadi (5 × 10 MB)
@@ -130,9 +130,16 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Topildi va tuzatildi: Dockerfile dagi Chromium o'rnatish qadami serverda yiqilardi (Playwright CLI standalone build ga kirmaydi). Endi CLI deps bosqichidan olinadi; sinovda CLI ishga tushdi va yuklab olish bosqichigacha yetdi. `deploy.sh` oxirida Chromium konteyner ichida ishga tushishini tekshiradi; app ga `shm_size: 256mb`
   - Sinalmagan: haqiqiy domen va Let's Encrypt, haqiqiy SMTP, Chromium ni yuklab olish va PDF ni konteyner ichida yaratish (sinov muhitida obraz ichidan Debian va Playwright serverlariga kirish yopiq)
 
+- [x] **2.8 Yakuniy qabul, v1.0** (25.10.2026) — `docs/ACCEPTANCE.md`
+  - Asosiy ssenariy production build da, brauzerda: talaba (telefonda) ro'yxat → AI bilan CV → saqlash → ochiq; kompaniya ro'yxat → profil; admin tasdiqlash + obuna; talab → saralash → 7 nomzod ball va izoh bilan (2 tasi filtrda qoldi) → CV → PDF (57 KB) → "Tanlandi" → tarixda. 23/23 tekshiruv o'tdi, brauzer konsolida xato yo'q
+  - AI soxta server orqali (ilova kodi o'zgarishsiz): AI ga PII ketmadi, kesh ishladi, AiLog to'g'ri
+  - Topildi va tuzatildi: matnda yozilgan ism AI ga ketardi (endi "Ismim …" kabi iboralar bo'yicha yashiriladi, 4 til, test); kompaniya/admin formalarida "Yuborilmoqda…" tarjimasi brauzerga yetmasdi
+  - Testlar: 158/158. Qabul skripti repoda: `scripts/acceptance/`
+  - Qo'lda tekshirilmagan: haqiqiy AI sifati va narxi, domen/HTTPS, SMTP, obrazdagi Chromium, qoraqalpoq matnlari, iOS/Android brauzerlari
+
 ## Keyingi qadam
 
-- [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)
+- [ ] Serverga joylash va domenda tekshiruv (server ma'lumotlari kerak: domen, IP, SSH foydalanuvchisi, kirish usuli)
 - [ ] Haqiqiy Claude API bilan CV yaratish va saralashni sinash (kalit kelganda): ball sifati, izoh tili, narx
 - [ ] Docker obrazida Chromium va PDF ni sinash (birinchi haqiqiy serverda)
 
@@ -150,5 +157,5 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
 - Saralash qulfi xotirada: bitta ilova konteyneri uchun to'g'ri. Gorizontal kengaytirilsa bazaga ko'chirish kerak.
 - Filtrdagi til va shahar sinonimlari ro'yxati qo'lda yozilgan (`lib/match/normalize.ts`): yangi til yoki shahar uchun to'ldirish kerak bo'lishi mumkin.
 
-- Docker `runner` bosqichida `playwright-core install --with-deps --only-shell chromium` ishlaydi (obraz ~300–400 MB kattalashadi). Bu muhitda tekshirib bo'lmadi: birinchi haqiqiy `docker compose up --build` da PDF ni sinash kerak.
+- Docker `runner` bosqichida `playwright-core install --with-deps --only-shell chromium` ishlaydi (CLI `deps` bosqichidan olinadi; obraz ~300–400 MB kattalashadi). Yuklab olish bu muhitda tekshirib bo'lmadi: birinchi haqiqiy `./deploy/deploy.sh` oxirida PDF tekshiruvi chiqadi.
 - Claude ishlaydigan bulut muhitida Debian paket serverlari yopiq, shuning uchun Docker obrazi u yerda vaqtincha `node:22-bookworm` (to'liq) asosida yig'ib tekshirildi. Repodagi `Dockerfile` (`bookworm-slim` + `apt-get install openssl`) oddiy internetli kompyuter va serverda ishlaydi, lekin aynan shu variant hali sinalmagan.

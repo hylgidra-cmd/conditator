@@ -230,6 +230,30 @@
       "PART_TIME": "Yarım stavka",
       "REMOTE": "Qashıqtan",
       "INTERNSHIP": "Ámeliyat"
+    },
+    "previewLink": "Kóriw hám PDF",
+    "preview": {
+      "title": "CV kórinisi",
+      "note": "Bul CV nıń aqırǵı saqlanǵan varianti. PDF te dál usınday shıǵadı.",
+      "back": "Ózgertiwge qaytıw",
+      "download": "PDF júklep alıw"
+    }
+  },
+  "CvDocument": {
+    "sections": {
+      "profile": "Maqset",
+      "experience": "Jumıs tájiriybesi",
+      "education": "Bilim",
+      "skills": "Kónlikpeler",
+      "languages": "Tiller",
+      "certificates": "Sertifikatlar hám jetiskenlikler",
+      "workTypes": "Jumıs túri"
+    },
+    "workTypes": {
+      "FULL_TIME": "Tolıq stavka",
+      "PART_TIME": "Yarım stavka",
+      "REMOTE": "Qashıqtan",
+      "INTERNSHIP": "Ámeliyat"
     }
   }
 }

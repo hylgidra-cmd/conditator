@@ -105,6 +105,14 @@ tests/                 Vitest integratsiya testlari
 - `searchText` ga ism, telefon, email kiritilmaydi.
 - Ekranda sana: `formatDateTime()` (`lib/format-date.ts`). `Intl` bilan formatlamang: Node va brauzer `uz`/`kk` uchun turli natija berib, hydration xatosi chiqaradi.
 
+## CV hujjati va PDF
+
+- Yagona shablon: `CvDocument` (`src/components/cv-document/cv-document.tsx`) + CSS `src/lib/cv-document/styles.ts`. Ekran va PDF bir xil; shablonni o'zgartirsangiz ikkalasi o'zgaradi. Komponent toza (hook yo'q), `renderToStaticMarkup` bilan ishlaydi.
+- Sarlavhalar CV tilida: `getCvDocumentLabels(lang)` → `messages/<til>.json` → `CvDocument`.
+- PDF: `renderCvPdf()` (`lib/cv-document/pdf.ts`), bitta umumiy Chromium, har PDF uchun JS va tarmoqsiz kontekst. Shriftlar `html.ts` da base64 bilan joylanadi (`next.config.ts` → `outputFileTracingIncludes`).
+- Ruxsat route/sahifada tekshiriladi; `loadSavedCvDocument()` faqat saqlangan CV ni qaytaradi. 2-kunda kompaniya uchun shu funksiyalar qayta ishlatiladi (ruxsat: tasdiqlangan kompaniya + ochiq CV).
+- Testlarda `afterAll(() => closePdfBrowser())`.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

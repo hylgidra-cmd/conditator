@@ -13,6 +13,7 @@ export const LIMITS = {
   sendCode: { max: 5, windowMs: 60 * 60_000 },
   register: { max: 10, windowMs: 60 * 60_000 },
   cvGenerate: { max: 10, windowMs: 60 * 60_000 },
+  cvPdf: { max: 30, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(

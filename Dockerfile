@@ -24,6 +24,11 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0
 RUN groupadd --system app && useradd --system --gid app app
 COPY --from=build --chown=app:app /app/.next/standalone ./
+# PDF uchun Chromium (headless shell) va uning tizim kutubxonalari.
+# Versiya package.json dagi playwright-core bilan bir xil bo'ladi.
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+RUN node node_modules/playwright-core/cli.js install --with-deps --only-shell chromium \
+  && rm -rf /var/lib/apt/lists/*
 COPY --from=build --chown=app:app /app/.next/static ./.next/static
 COPY --from=build --chown=app:app /app/public ./public
 COPY --from=build --chown=app:app /app/prisma ./prisma

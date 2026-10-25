@@ -230,6 +230,30 @@
       "PART_TIME": "Part-time",
       "REMOTE": "Remote",
       "INTERNSHIP": "Internship"
+    },
+    "previewLink": "Preview and PDF",
+    "preview": {
+      "title": "CV preview",
+      "note": "This is the last saved version of your CV. The PDF looks exactly the same.",
+      "back": "Back to editing",
+      "download": "Download PDF"
+    }
+  },
+  "CvDocument": {
+    "sections": {
+      "profile": "Profile",
+      "experience": "Experience",
+      "education": "Education",
+      "skills": "Skills",
+      "languages": "Languages",
+      "certificates": "Certificates and achievements",
+      "workTypes": "Preferred work type"
+    },
+    "workTypes": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "REMOTE": "Remote",
+      "INTERNSHIP": "Internship"
     }
   }
 }

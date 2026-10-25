@@ -230,6 +230,30 @@
       "PART_TIME": "Yarim stavka",
       "REMOTE": "Masofaviy",
       "INTERNSHIP": "Amaliyot"
+    },
+    "previewLink": "Koʻrish va PDF",
+    "preview": {
+      "title": "CV koʻrinishi",
+      "note": "Bu CV ning oxirgi saqlangan varianti. PDF ham aynan shunday chiqadi.",
+      "back": "Tahrirlashga qaytish",
+      "download": "PDF yuklab olish"
+    }
+  },
+  "CvDocument": {
+    "sections": {
+      "profile": "Maqsad",
+      "experience": "Ish tajribasi",
+      "education": "Taʼlim",
+      "skills": "Koʻnikmalar",
+      "languages": "Tillar",
+      "certificates": "Sertifikatlar va yutuqlar",
+      "workTypes": "Ish turi"
+    },
+    "workTypes": {
+      "FULL_TIME": "Toʻliq stavka",
+      "PART_TIME": "Yarim stavka",
+      "REMOTE": "Masofaviy",
+      "INTERNSHIP": "Amaliyot"
     }
   }
 }

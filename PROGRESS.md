@@ -53,9 +53,17 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - `docs/design/` maketlari yo'q: oddiy dizayn ishlatildi
   - **AI bilan yaratish tugmasi haqiqiy AI bilan sinalmagan**: API kaliti yo'q
 
+- [x] **1.6 CV shabloni va PDF** (25.10.2026)
+  - Umumiy renderer: `CvDocument` komponenti (`src/components/cv-document/`) + `src/lib/cv-document/` (sarlavhalar CV tilida, CSS, HTML, PDF). Ekran, PDF va 2-kunda kompaniya ko'rishi shundan foydalanadi
+  - `GET /api/cv/me/pdf`: faqat talaba, faqat saqlangan CV (aks holda 409), soatiga 30 ta; Chromium (playwright-core), JavaScript va tarmoq o'chiq, bir vaqtda 2 ta PDF
+  - Shrift: Noto Sans PDF ichiga joylanadi (lotin, lotin-ext, kirill). Sahifa bo'linishi: yozuv bo'linmaydi, sarlavha sahifa oxirida qolmaydi, uzun so'z qatorga sig'adi, pastda sahifa raqami
+  - `/[locale]/student/cv/preview`: A4 ko'rinish va "PDF yuklab olish"; CV sahifasida "Ko'rish va PDF" havolasi
+  - Fayl nomi faqat ASCII (kirill lotinga o'giriladi): Chromium UTF-8 nomni qabul qilmadi
+  - Testlar: 50/50. Tekshirildi: 4 tilda namunaviy PDF (kk: Ǵ Ń Ó Á Ú Ĺ ı; ru kirill; uz; en uzun matn 2 sahifa) ko'z bilan ko'rildi, `pdffonts` da faqat Noto Sans (sahifa raqamidan tashqari); ko'rish sahifasi kompyuter va telefonda
+  - **Docker obrazidagi Chromium o'rnatilishi sinalmagan** (bu muhitda apt va Playwright CDN yopiq)
+
 ## Keyingi qadam
 
-- [ ] 1.6 CV shabloni va PDF (rejada 1.8)
 - [ ] 1.9 1-bosqich tekshiruvi
 - [ ] 2.1–2.8 Kompaniya, admin, saralash, deploy
 
@@ -70,4 +78,5 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
 
 ## Ma'lum cheklovlar
 
+- Docker `runner` bosqichida `playwright-core install --with-deps --only-shell chromium` ishlaydi (obraz ~300–400 MB kattalashadi). Bu muhitda tekshirib bo'lmadi: birinchi haqiqiy `docker compose up --build` da PDF ni sinash kerak.
 - Claude ishlaydigan bulut muhitida Debian paket serverlari yopiq, shuning uchun Docker obrazi u yerda vaqtincha `node:22-bookworm` (to'liq) asosida yig'ib tekshirildi. Repodagi `Dockerfile` (`bookworm-slim` + `apt-get install openssl`) oddiy internetli kompyuter va serverda ishlaydi, lekin aynan shu variant hali sinalmagan.

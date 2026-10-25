@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormAlert, useErrorText } from "@/components/ui/form";
+import { Link } from "@/i18n/navigation";
 import { requestJson } from "@/lib/client/api";
 import type { CvData } from "@/lib/cv/schema";
 import { formatDateTime } from "@/lib/format-date";
@@ -157,6 +158,14 @@ export function CvWorkspace({
                     : t("visibility.hidden")}
               </span>
             </label>
+            {meta.savedAt && !dirty ? (
+              <Link
+                href="/student/cv/preview"
+                className="text-brand text-sm font-semibold underline-offset-2 hover:underline"
+              >
+                {t("previewLink")}
+              </Link>
+            ) : null}
             <button
               type="button"
               onClick={save}

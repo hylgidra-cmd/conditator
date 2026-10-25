@@ -230,6 +230,30 @@
       "PART_TIME": "Частичная занятость",
       "REMOTE": "Удалённо",
       "INTERNSHIP": "Стажировка"
+    },
+    "previewLink": "Просмотр и PDF",
+    "preview": {
+      "title": "Просмотр резюме",
+      "note": "Это последняя сохранённая версия резюме. PDF выглядит точно так же.",
+      "back": "Вернуться к редактированию",
+      "download": "Скачать PDF"
+    }
+  },
+  "CvDocument": {
+    "sections": {
+      "profile": "Цель",
+      "experience": "Опыт работы",
+      "education": "Образование",
+      "skills": "Навыки",
+      "languages": "Языки",
+      "certificates": "Сертификаты и достижения",
+      "workTypes": "Тип работы"
+    },
+    "workTypes": {
+      "FULL_TIME": "Полная занятость",
+      "PART_TIME": "Частичная занятость",
+      "REMOTE": "Удалённо",
+      "INTERNSHIP": "Стажировка"
     }
   }
 }

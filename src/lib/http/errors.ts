@@ -39,17 +39,24 @@ export class ApiError extends Error {
   }
 }
 
-export function errorResponse(error: unknown): NextResponse {
+export function errorResponse(error: unknown, request?: Request): NextResponse {
   if (error instanceof ApiError) {
     return NextResponse.json(
       { error: error.code, ...(error.fields ? { fields: error.fields } : {}) },
       { status: error.status },
     );
   }
-  // Ichki xato tafsiloti foydalanuvchiga ko'rsatilmaydi. Logga faqat xato turi va xabari yoziladi.
+  // Ichki xato tafsiloti foydalanuvchiga ko'rsatilmaydi. Logga bitta JSON qator (instrumentation.ts
+  // bilan bir xil): metod, yo'l (query siz) va xabar. So'rov tanasi yozilmaydi.
   console.error(
-    "API xatosi:",
-    error instanceof Error ? error.message : "noma'lum",
+    JSON.stringify({
+      level: "error",
+      time: new Date().toISOString(),
+      method: request?.method,
+      path: request ? new URL(request.url).pathname : undefined,
+      type: "api",
+      message: error instanceof Error ? error.message : "noma'lum",
+    }),
   );
   return NextResponse.json({ error: "SERVER_ERROR" }, { status: 500 });
 }

@@ -1,0 +1,141 @@
+# Production: app + postgres + Caddy (HTTPS, Let's Encrypt) + kunlik zaxira nusxa.
+# Ishga tushirish (README "Serverga chiqarish"):
+#   cp .env.production.example .env.production   # qiymatlarni to'ldiring
+#   ./deploy/deploy.sh
+# Faqat 80 va 443 portlar ochiq (Caddy). Baza va ilova tashqariga chiqmaydi.
+
+# Loyiha nomi alohida: dev (docker-compose.yml) konteynerlari va volume lari bilan aralashmaydi.
+name: jumis-prod
+
+x-logging:
+  &logging # Loglar Docker da, aylanadi: har xizmat uchun eng ko'pi 5 × 10 MB.
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+x-env: &env
+  env_file:
+    - path: .env.production
+      required: true
+
+services:
+  # Bir martalik: migratsiyalar va seed (admin, sozlamalar). Muvaffaqiyatli tugamasa app ishga tushmaydi.
+  migrate:
+    build:
+      context: .
+      target: build
+    <<: *env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed"
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+    restart: "no"
+
+  app:
+    build: .
+    <<: *env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public&connection_limit=20
+      UPLOAD_DIR: /app/data/uploads
+    volumes:
+      - uploads:/app/data/uploads
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    logging: *logging
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging: *logging
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2.10-alpine
+    environment:
+      DOMAIN: ${DOMAIN}
+      ACME_EMAIL: ${ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    logging: *logging
+    restart: unless-stopped
+
+  # Har kuni 03:00 (Toshkent) pg_dump + logolar arxivi, 14 kun saqlanadi. Qo'lda: README "Zaxira".
+  backup:
+    image: postgres:16-alpine
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+      BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS:-14}
+    volumes:
+      - ./deploy/backup:/scripts:ro
+      - ${BACKUP_DIR:-./backups}:/backups
+      - uploads:/uploads:ro
+    # busybox crond UTC da ishlaydi: 22:00 UTC = 03:00 Toshkent.
+    command: sh -c "echo '0 22 * * * /scripts/backup.sh >> /proc/1/fd/1 2>&1' | crontab - && exec crond -f -l 8"
+    depends_on:
+      db:
+        condition: service_healthy
+    logging: *logging
+    restart: unless-stopped
+
+  # Faqat qo'lda: ./deploy/dc run --rm restore /scripts/restore.sh ... (README "Tiklash").
+  restore:
+    image: postgres:16-alpine
+    profiles: [tools]
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB}
+    volumes:
+      - ./deploy/backup:/scripts:ro
+      - ${BACKUP_DIR:-./backups}:/backups
+      - uploads:/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:
+  uploads:
+  caddy-data:
+  caddy-config:

@@ -169,6 +169,15 @@ tests/                 Vitest integratsiya testlari
 - Tarjimalar brauzerga bo'lim bo'yicha (`ClientMessages` + har bo'lim `layout.tsx` dagi `namespaces`). Client komponentda yangi namespace ishlatsangiz, o'sha layoutga qo'shing.
 - `currentUser` React `cache()` da: bir so'rovda bitta DB so'rovi. Gzip Node da o'chiq (`compress: false`), Caddy qiladi. Docker da `connection_limit=20`.
 
+## Production (2.7)
+
+- `docker-compose.prod.yml` (loyiha nomi `jumis-prod`): `caddy` (HTTPS, gzip, `request_body` 2 MB, `X-Forwarded-For` ni o'zi qo'yadi) → `app` (healthcheck `/api/health`) ; `migrate` (migratsiya + seed, muvaffaqiyatsiz bo'lsa app ishga tushmaydi); `db`; `backup` (crond, 22:00 UTC = 03:00 Toshkent); `restore` (profil `tools`, faqat qo'lda).
+- Buyruqlar: `./deploy/deploy.sh` (tekshiradi, quradi, sog'liqni kutadi), `./deploy/dc ...` (`docker compose -f docker-compose.prod.yml --env-file .env.production`). Sozlama `.env.production` (namuna `.env.production.example`), gitga tushmaydi.
+- Zaxira skriptlari `deploy/backup/` (`backup.sh`, `restore.sh`, `restore-check.sh`), konteynerga faqat o'qish uchun ulanadi. Fayllar 600. Ilova foydalanuvchisi uid 1001 (Dockerfile), `restore.sh` logolarni shunga beradi.
+- Xatolar logi: bitta JSON qator (`"level":"error"`): API da `errorResponse`, qolganlari `src/instrumentation.ts` (`onRequestError`). So'rov tanasi/query yozilmaydi.
+- Seed: admin mavjud bo'lsa `ADMIN_PASSWORD` shart emas (yaratilgach .env dan o'chiriladi).
+- Server ulanish ma'lumotlari hech qachon repoga yozilmaydi. To'liq yo'riqnoma: `README.md`.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

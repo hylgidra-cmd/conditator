@@ -7,10 +7,8 @@ import { hashPassword } from "../src/lib/auth/password";
 
 const db = new PrismaClient();
 
-const adminEnv = z.object({
-  ADMIN_EMAIL: z.email().transform((value) => value.trim().toLowerCase()),
-  ADMIN_PASSWORD: z.string().min(12, "kamida 12 belgi bo'lishi kerak"),
-});
+const adminEmail = z.email().transform((value) => value.trim().toLowerCase());
+const adminPassword = z.string().min(12, "kamida 12 belgi bo'lishi kerak");
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   monthlyAiLimitUsd: process.env.AI_MONTHLY_LIMIT_USD ?? "50",
@@ -36,27 +34,33 @@ async function seedAdmin() {
     return;
   }
 
-  const parsed = adminEnv.safeParse(process.env);
-  if (!parsed.success) {
-    const fields = parsed.error.issues.map(
-      (issue) => `${issue.path.join(".")}: ${issue.message}`,
-    );
-    throw new Error(`Admin sozlamasi noto'g'ri: ${fields.join("; ")}`);
-  }
-  const { ADMIN_EMAIL: email, ADMIN_PASSWORD: password } = parsed.data;
+  const parsedEmail = adminEmail.safeParse(process.env.ADMIN_EMAIL);
+  if (!parsedEmail.success)
+    throw new Error("Admin sozlamasi noto'g'ri: ADMIN_EMAIL email emas");
+  const email = parsedEmail.data;
 
   const existing = await db.user.findUnique({ where: { email } });
   if (existing) {
     // Parol ataylab qayta yozilmaydi: seed qayta ishga tushganda admin o'zgartirgan parol saqlanib qoladi.
+    // Shuning uchun admin yaratilgach ADMIN_PASSWORD ni .env dan o'chirish mumkin.
     if (existing.role !== "ADMIN" || existing.status !== "ACTIVE") {
       await db.user.update({
         where: { email },
         data: { role: "ADMIN", status: "ACTIVE" },
       });
+      console.log(`Admin huquqi berildi: ${email}`);
+      return;
     }
     console.log(`Admin allaqachon mavjud: ${email}`);
     return;
   }
+
+  const parsedPassword = adminPassword.safeParse(process.env.ADMIN_PASSWORD);
+  if (!parsedPassword.success)
+    throw new Error(
+      `Admin sozlamasi noto'g'ri: ADMIN_PASSWORD ${parsedPassword.error.issues[0]?.message}`,
+    );
+  const password = parsedPassword.data;
 
   await db.user.create({
     data: {

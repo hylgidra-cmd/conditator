@@ -12,7 +12,7 @@ export function route<C = unknown>(handler: Handler<C>): Handler<C> {
         assertSameOrigin(request);
       return await handler(request, context);
     } catch (error) {
-      return errorResponse(error);
+      return errorResponse(error, request);
     }
   };
 }

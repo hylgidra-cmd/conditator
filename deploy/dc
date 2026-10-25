@@ -1,0 +1,4 @@
+#!/bin/sh
+# Production compose qisqartmasi: ./deploy/dc ps | logs app | exec db psql ... va h.k.
+cd "$(dirname "$0")/.." || exit 1
+exec docker compose -f docker-compose.prod.yml --env-file .env.production "$@"

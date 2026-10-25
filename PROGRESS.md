@@ -121,6 +121,14 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 157/157
   - Chegaralar: real AI sinalmagan; HTTPS/Caddy 2.7 da; rate limit va saralash qulfi xotirada (bitta jarayon)
 
+- [~] **2.7 Production tayyorlash** (25.10.2026) — fayllar tayyor, serverga joylash kutilmoqda
+  - `docker-compose.prod.yml`: Caddy (Let's Encrypt HTTPS, http→https, www→asosiy domen, gzip/zstd, so'rov ≤ 2 MB), app (healthcheck), migrate (avtomatik migratsiya + seed), postgres, kunlik zaxira; `.env.production.example`, `deploy/deploy.sh`, `deploy/dc`
+  - Zaxira: har kuni 03:00 pg_dump + logolar, 14 kun, fayllar 600; `restore-check.sh` (vaqtinchalik bazaga tiklab solishtiradi), `restore.sh`
+  - Xatolar logi bitta JSON qatorda, Docker loglari aylanadi (5 × 10 MB)
+  - README: o'rnatish, IT Park serveriga bosqichma-bosqich, .env jadvali, loglar, zaxira/tiklash, provayder almashtirish, admin yaratish, muammolar
+  - Lokal sinov (`DOMAIN=localhost`, Caddy ichki sertifikati): health 200, http→https 308, www→301, gzip (login sahifasi 19 KB → 6 KB), 3 MB so'rov 413, soxta X-Forwarded-For bilan 11-urinish 429, cookie `Secure; HttpOnly`, admin kirishi; zaxira → ma'lumot o'zgartirildi → restore-check → tiklash → ma'lumot va logo qaytdi; cron har daqiqa rejimida 3 marta ishladi; `deploy.sh` CHANGE_ME ni rad etdi; seed parolsiz qayta ishladi
+  - Sinalmagan: haqiqiy domen va Let's Encrypt, haqiqiy SMTP, Docker obrazidagi Chromium (PDF) — sinov muhitida obraz ichidan internet yo'q, obraz shu sababli Chromium siz qurildi
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)

@@ -22,7 +22,8 @@ ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
     HOSTNAME=0.0.0.0
-RUN groupadd --system app && useradd --system --gid app app
+# Belgilangan uid: zaxiradan tiklashda logolar egasi (deploy/backup/restore.sh) shunga mos.
+RUN groupadd --system --gid 1001 app && useradd --system --uid 1001 --gid app app
 COPY --from=build --chown=app:app /app/.next/standalone ./
 # PDF uchun Chromium (headless shell) va uning tizim kutubxonalari.
 # Versiya package.json dagi playwright-core bilan bir xil bo'ladi.

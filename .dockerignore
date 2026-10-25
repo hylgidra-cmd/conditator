@@ -7,3 +7,6 @@ node_modules
 docs
 *.md
 npm-debug.log*
+backups
+load-sessions*.json
+tsconfig.tsbuildinfo

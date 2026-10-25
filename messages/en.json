@@ -318,7 +318,8 @@
       "updated": "Updated: {date}",
       "freeTextOnly": "Free text",
       "experience": "{years, plural, =0 {no experience required} one {# year of experience} other {# years of experience}}",
-      "candidates": "Candidates"
+      "candidates": "Candidates",
+      "decisions": "Selected: {selected} · Not a fit: {rejected}"
     },
     "pagination": {
       "prev": "Previous",
@@ -376,7 +377,22 @@
     "matchedTerms": "Matching keywords: {terms}",
     "noTerms": "No keywords matched.",
     "location": "Location: {location}",
-    "openCv": "Open CV (PDF)",
-    "score": "{score} / 100"
+    "openCv": "View CV",
+    "score": "{score} / 100",
+    "downloadPdf": "PDF",
+    "decided": "Candidates with a decision"
+  },
+  "Candidate": {
+    "back": "← Candidates",
+    "noName": "Name not given",
+    "forVacancy": "Vacancy: {title}",
+    "download": "Download PDF",
+    "decision": {
+      "label": "Decision:",
+      "SELECTED": "Selected",
+      "REJECTED": "Not a fit",
+      "none": "Not marked yet",
+      "hint": "Click the button again to remove the mark"
+    }
   }
 }

@@ -318,7 +318,8 @@
       "updated": "Изменена: {date}",
       "freeTextOnly": "Свободный текст",
       "experience": "{years, plural, =0 {без опыта} one {опыт от # года} other {опыт от # лет}}",
-      "candidates": "Кандидаты"
+      "candidates": "Кандидаты",
+      "decisions": "Выбрано: {selected} · Не подходят: {rejected}"
     },
     "pagination": {
       "prev": "Назад",
@@ -376,7 +377,22 @@
     "matchedTerms": "Совпавшие ключевые слова: {terms}",
     "noTerms": "Ключевые слова не совпали.",
     "location": "Местоположение: {location}",
-    "openCv": "Открыть резюме (PDF)",
-    "score": "{score} / 100"
+    "openCv": "Открыть резюме",
+    "score": "{score} / 100",
+    "downloadPdf": "PDF",
+    "decided": "Кандидаты с решением"
+  },
+  "Candidate": {
+    "back": "← Кандидаты",
+    "noName": "Имя не указано",
+    "forVacancy": "Вакансия: {title}",
+    "download": "Скачать PDF",
+    "decision": {
+      "label": "Решение:",
+      "SELECTED": "Выбран",
+      "REJECTED": "Не подходит",
+      "none": "Пока не отмечен",
+      "hint": "Нажмите кнопку ещё раз, чтобы снять отметку"
+    }
   }
 }

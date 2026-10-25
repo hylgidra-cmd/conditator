@@ -5,6 +5,7 @@ import { requireCompanyPage } from "@/lib/company/page";
 import { formatDate } from "@/lib/format-date";
 import { pageSchema } from "@/lib/vacancy/schema";
 import { listVacancies } from "@/lib/vacancy/service";
+import { decisionCounts } from "@/lib/match/decision";
 
 export default async function VacanciesPage({
   searchParams,
@@ -16,6 +17,7 @@ export default async function VacanciesPage({
   const tWork = await getTranslations("StudentCv.workTypes");
   const page = pageSchema.parse((await searchParams).page);
   const { items, pageCount } = await listVacancies(company.id, page);
+  const counts = await decisionCounts(items.map((item) => item.id));
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
@@ -54,6 +56,14 @@ export default async function VacanciesPage({
                     {t("list.created", { date: formatDate(vacancy.createdAt) })}
                   </span>
                 </div>
+                {counts.has(vacancy.id) ? (
+                  <p className="text-sm">
+                    {t("list.decisions", {
+                      selected: counts.get(vacancy.id)!.selected,
+                      rejected: counts.get(vacancy.id)!.rejected,
+                    })}
+                  </p>
+                ) : null}
                 {details.length > 0 ? (
                   <p className="text-muted text-sm">{details.join(" · ")}</p>
                 ) : null}

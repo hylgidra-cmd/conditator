@@ -96,6 +96,13 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Brauzerda: PENDING → xabar va API 403; tasdiqlangan obunasiz → kalit so'z natijasi; obuna bor, kalit yo'q → `AI_UNAVAILABLE` zaxira (ikki marta bosilganda 1 ta AiLog); AI natijasi ko'rinishi (javob soxta), 4 til, ru telefon
   - Haqiqiy Claude bilan sinalmagan (kalit yo'q)
 
+- [x] **2.4 Nomzod CV si** (25.10.2026)
+  - Saralash ro'yxatidan "CV ni ko'rish": shablondagi to'liq CV (1.6 renderer) va PDF; aloqa ma'lumoti PLAN qaror 6 bo'yicha: ro'yxatda anonim, CV ochilganda va PDF da ism, telefon, email; har ochish `CvView` da
+  - Ruxsat: faqat tasdiqlangan kompaniya (PENDING/REJECTED → 403 yoki xabar), faqat o'z talabi va ochiq CV (aks holda 404)
+  - "Tanlandi" / "Mos emas" (`Match.decision`), qayta bosilsa olib tashlanadi; saralash kartalarida belgi, sahifa pastida qaror qo'yilganlar, talablar tarixida soni
+  - Testlar: 130/130 (yashirin CV ga CV/PDF/qaror 404, CV yashirilgandan keyin ham, talaba 6 ta kompaniya endpointiga 403, kirmagan 401, PENDING 403, boshqa kompaniya talabi 404, noto'g'ri qiymat 400, qaror AI qayta baholaganda saqlanadi)
+  - Brauzerda: ro'yxat → CV (ism, telefon, email ko'rindi) → Tanlandi → PDF yuklandi → qayta yuklashda saqlangan → ro'yxatda belgi → tarixda "Tanlandi: 1 · Mos emas: 1"; yashirin CV 404; talaba kabinetga yo'naltirildi; PENDING xabari; 4 til, ru telefon
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)

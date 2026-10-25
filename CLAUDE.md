@@ -144,6 +144,13 @@ tests/                 Vitest integratsiya testlari
 - Takroriy bosish: talab bo'yicha xotiradagi qulf (`runMatching`), bitta jarayon uchun; + soatiga 30 ta (`LIMITS.matchRun`). Bir nechta konteyner bo'lsa, qulfni bazaga ko'chirish kerak.
 - API: `POST /api/vacancies/:id/match` (`{locale}`), `GET /api/vacancies/:id/matches?locale=` (faqat bazadan, AI siz). Ikkalasi `requireApprovedCompany` + `getOwnVacancy`.
 
+## Nomzod CV si va qaror
+
+- Sahifa `/company/vacancies/:id/candidates/:cvId`: 1.6 renderer (`CvDocument`) bilan to'liq CV (ism, telefon, email bilan — PLAN qaror 6), PDF `GET /api/cv/:id/pdf`. Ruxsat: tasdiqlangan kompaniya, o'z talabi (aks holda 404), ochiq + saqlangan CV, faol talaba (aks holda 404). Har ochish `CvView` ga, `LIMITS.companyCvView` bilan.
+- Saralash ro'yxatida ism va aloqa ko'rinmaydi (faqat "N-nomzod", ko'nikmalar, joy, ball).
+- Qaror: `PUT /api/vacancies/:id/candidates/:cvId/decision` `{decision: NONE|SELECTED|REJECTED}` → `Match.decision` (`lib/match/decision.ts`). AI baholamagan nomzod uchun `hash: ""` bilan qator yaratiladi: keyingi saralashda AI baholaydi, qaror saqlanadi. AI natijasini saqlash `decision` ga tegmaydi.
+- Talablar tarixida qarorlar soni (`decisionCounts`), saralash sahifasi pastida qaror qo'yilganlar ro'yxati (`listDecided`). Yashirilgan CV lar hisoblanmaydi.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

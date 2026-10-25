@@ -3,8 +3,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { FormAlert, useErrorText } from "@/components/ui/form";
+import { Link } from "@/i18n/navigation";
 import { postJson } from "@/lib/client/api";
 import type { MatchOutcome } from "@/lib/match/service";
+import { DecisionBadge } from "./decision-badge";
 
 /** Shundan kam natija bo'lsa, sababi (filtr statistikasi) ko'rsatiladi. */
 const FEW = 5;
@@ -122,9 +124,12 @@ export function MatchPanel({
                 className="border-border bg-surface space-y-2 rounded-2xl border p-4 shadow-sm"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-semibold">
-                    {t("candidate", { n: index + 1 })}
-                  </h3>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-semibold">
+                      {t("candidate", { n: index + 1 })}
+                    </h3>
+                    <DecisionBadge decision={item.decision} />
+                  </div>
                   <span
                     className={`rounded-full px-3 py-1 text-sm font-bold ${scoreTone(item.score)}`}
                     title={mode === "ai" ? t("scoreAi") : t("scoreKeyword")}
@@ -157,14 +162,20 @@ export function MatchPanel({
                     ))}
                   </ul>
                 ) : null}
-                <a
-                  href={`/api/cv/${item.cvId}/pdf`}
-                  target="_blank"
-                  rel="noopener"
-                  className="text-brand inline-block text-sm font-semibold hover:underline"
-                >
-                  {t("openCv")}
-                </a>
+                <div className="flex flex-wrap gap-4 text-sm font-semibold">
+                  <Link
+                    href={`/company/vacancies/${vacancyId}/candidates/${item.cvId}`}
+                    className="text-brand hover:underline"
+                  >
+                    {t("openCv")}
+                  </Link>
+                  <a
+                    href={`/api/cv/${item.cvId}/pdf`}
+                    className="text-brand hover:underline"
+                  >
+                    {t("downloadPdf")}
+                  </a>
+                </div>
               </li>
             ))}
           </ol>

@@ -318,7 +318,8 @@
       "updated": "Oʻzgartirilgan: {date}",
       "freeTextOnly": "Erkin matn",
       "experience": "{years, plural, =0 {tajriba shart emas} other {# yil tajriba}}",
-      "candidates": "Nomzodlar"
+      "candidates": "Nomzodlar",
+      "decisions": "Tanlandi: {selected} · Mos emas: {rejected}"
     },
     "pagination": {
       "prev": "Oldingi",
@@ -376,7 +377,22 @@
     "matchedTerms": "Mos kalit soʻzlar: {terms}",
     "noTerms": "Kalit soʻzlar mos kelmadi.",
     "location": "Joylashuv: {location}",
-    "openCv": "CV ni ochish (PDF)",
-    "score": "{score} / 100"
+    "openCv": "CV ni koʻrish",
+    "score": "{score} / 100",
+    "downloadPdf": "PDF",
+    "decided": "Qaror qoʻyilgan nomzodlar"
+  },
+  "Candidate": {
+    "back": "← Nomzodlar",
+    "noName": "Ism koʻrsatilmagan",
+    "forVacancy": "Talab: {title}",
+    "download": "PDF yuklab olish",
+    "decision": {
+      "label": "Qaror:",
+      "SELECTED": "Tanlandi",
+      "REJECTED": "Mos emas",
+      "none": "Hali belgilanmagan",
+      "hint": "Belgini olib tashlash uchun tugmani qayta bosing"
+    }
   }
 }

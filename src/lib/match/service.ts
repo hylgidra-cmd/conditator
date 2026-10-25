@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import type { Company, Lang, Vacancy } from "@prisma/client";
+import type { Company, Lang, MatchDecision, Vacancy } from "@prisma/client";
 import {
   MATCH_BATCH_SIZE,
   MATCH_PROMPT_VERSION,
@@ -31,6 +31,8 @@ export type MatchItem = {
   matchedTerms: string[] | null;
   skills: string[];
   location: string | null;
+  /** Kompaniya qarori: "Tanlandi" / "Mos emas". */
+  decision: MatchDecision;
 };
 
 export type MatchOutcome = {
@@ -75,6 +77,7 @@ function displayInfo(row: CandidateRow) {
 function keywordResults(
   candidates: CandidateRow[],
   terms: string[],
+  decisions: Map<string, MatchDecision>,
 ): MatchItem[] {
   return candidates
     .map((row, order) => ({
@@ -86,6 +89,7 @@ function keywordResults(
           : 0,
         reason: null,
         matchedTerms: row.matchedTerms,
+        decision: decisions.get(row.id) ?? ("NONE" as const),
         ...displayInfo(row),
       },
     }))
@@ -113,6 +117,7 @@ async function loadState(vacancy: Vacancy, locale: Lang) {
     terms,
     hashes,
     valid,
+    decisions: new Map(stored.map((match) => [match.cvId, match.decision])),
     stale: candidates.filter((row) => !validIds.has(row.id)),
   };
 }
@@ -129,6 +134,7 @@ function aiOutcome(state: State): MatchOutcome {
       score: match.score,
       reason: match.reason,
       matchedTerms: null,
+      decision: match.decision,
       ...displayInfo(rows.get(match.cvId)!),
     }));
   return {
@@ -145,7 +151,7 @@ function fallbackOutcome(state: State, notice: MatchNotice): MatchOutcome {
   return {
     mode: "fallback",
     notice,
-    results: keywordResults(state.candidates, state.terms),
+    results: keywordResults(state.candidates, state.terms, state.decisions),
     stats: state.stats,
     considered: state.candidates.length,
     pending: state.stale.length,

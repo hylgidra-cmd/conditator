@@ -108,15 +108,15 @@ describe("har bir API endpoint ruxsatni serverda tekshiradi", () => {
     }
   });
 
-  it("saralash endpointlari faqat tasdiqlangan kompaniya uchun", () => {
+  it("saralash va qaror endpointlari faqat tasdiqlangan kompaniya uchun, faqat o'z talabi", () => {
     const matching = routes.filter((file) =>
-      /^vacancies\/\[id\]\/match/.test(file),
+      /^vacancies\/\[id\]\/(match|candidates)/.test(file),
     );
-    expect(matching).toHaveLength(2);
+    expect(matching).toHaveLength(3);
     for (const file of matching) {
       const source = readFileSync(path.join(apiDir, file), "utf8");
       expect(source).toMatch(/requireApprovedCompany\(request\)/);
-      expect(source).toMatch(/getOwnVacancy\(company\.id/);
+      expect(source).toMatch(/(getOwnVacancy|setDecision)\(company\.id/);
     }
   });
 });

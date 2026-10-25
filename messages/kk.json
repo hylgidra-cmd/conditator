@@ -318,7 +318,8 @@
       "updated": "Ózgertilgen: {date}",
       "freeTextOnly": "Erkin tekst",
       "experience": "{years, plural, =0 {tájiriybe shárt emes} other {# jıl tájiriybe}}",
-      "candidates": "Kandidatlar"
+      "candidates": "Kandidatlar",
+      "decisions": "Tańlandı: {selected} · Sáykes emes: {rejected}"
     },
     "pagination": {
       "prev": "Aldıńǵı",
@@ -376,7 +377,22 @@
     "matchedTerms": "Sáykes gilt sózler: {terms}",
     "noTerms": "Gilt sózler sáykes kelmedi.",
     "location": "Jaylasıw: {location}",
-    "openCv": "CV nı ashıw (PDF)",
-    "score": "{score} / 100"
+    "openCv": "CV nı kóriw",
+    "score": "{score} / 100",
+    "downloadPdf": "PDF",
+    "decided": "Sheshim qoyılǵan kandidatlar"
+  },
+  "Candidate": {
+    "back": "← Kandidatlar",
+    "noName": "Atı kórsetilmegen",
+    "forVacancy": "Talap: {title}",
+    "download": "PDF júklep alıw",
+    "decision": {
+      "label": "Sheshim:",
+      "SELECTED": "Tańlandı",
+      "REJECTED": "Sáykes emes",
+      "none": "Ele belgilenbegen",
+      "hint": "Belgini alıp taslaw ushın túymeni qayta basıń"
+    }
   }
 }

@@ -17,6 +17,7 @@ export type ErrorCode =
   | "CODE_EXPIRED"
   | "CODE_LOCKED"
   | "RESEND_TOO_SOON"
+  | "CV_NOT_SAVED"
   | "AI_LIMIT_REACHED"
   | "AI_UNAVAILABLE"
   | "SERVER_ERROR";

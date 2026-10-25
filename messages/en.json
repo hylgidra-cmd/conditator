@@ -13,7 +13,8 @@
     "login": "Log in",
     "register": "Sign up",
     "account": "Dashboard",
-    "logout": "Log out"
+    "logout": "Log out",
+    "myCv": "My CV"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -116,7 +117,8 @@
     },
     "companyPending": "Your company is waiting for admin approval.",
     "comingSoon": "The dashboard will be filled in the next steps.",
-    "logout": "Log out"
+    "logout": "Log out",
+    "cvLink": "My CV"
   },
   "Errors": {
     "VALIDATION": "Please check the entered data.",
@@ -147,7 +149,10 @@
     "TEXT_REQUIRED": "Write some text about yourself.",
     "TEXT_TOO_LONG": "The text must not exceed 3000 characters.",
     "LANGUAGE_REQUIRED": "Choose the CV language.",
-    "FIELD_TOO_LONG": "The text is too long."
+    "FIELD_TOO_LONG": "The text is too long.",
+    "CV_NOT_SAVED": "Save your CV first.",
+    "FIELD_REQUIRED": "Please fill in this field.",
+    "TOO_MANY_ITEMS": "Too many items."
   },
   "Email": {
     "verify": {
@@ -157,6 +162,74 @@
     "reset": {
       "subject": "Jumis AI: password reset code",
       "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Jumis AI team"
+    }
+  },
+  "StudentCv": {
+    "title": "My CV",
+    "empty": "No CV yet. Create one with AI below or fill in the fields manually.",
+    "notSaved": "CV not saved yet",
+    "saved": "Saved: {date}",
+    "unsaved": "You have unsaved changes",
+    "save": "Save",
+    "savedNotice": "CV saved",
+    "fillIn": "Fill in",
+    "add": "+ Add",
+    "remove": "Remove",
+    "visibility": {
+      "label": "Visibility to companies",
+      "visible": "Visible: approved companies can see it",
+      "hidden": "Hidden: nobody can see it",
+      "needSave": "Save your CV first to make it visible"
+    },
+    "generator": {
+      "title": "Create a CV with AI",
+      "hint": "Write about yourself in any language: education, experience, skills, languages, achievements. Do not include your phone or email here — use the fields below.",
+      "textLabel": "About you",
+      "counter": "{count} / {max}",
+      "language": "CV language",
+      "submit": "Create CV",
+      "generating": "AI is writing your CV…",
+      "done": "Your CV is ready. Review it, fill in the gaps and save.",
+      "replaceConfirm": "Unsaved changes will be replaced by the new CV. Continue?"
+    },
+    "sections": {
+      "personal": "Personal details",
+      "goal": "Goal",
+      "education": "Education",
+      "experience": "Work experience",
+      "skills": "Skills",
+      "languages": "Languages",
+      "certificates": "Certificates and achievements",
+      "workTypes": "Work type"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "phone": "Phone",
+      "email": "Email",
+      "location": "Location (city, country)",
+      "goal": "Career goal",
+      "institution": "Institution",
+      "degree": "Degree",
+      "field": "Field of study",
+      "startYear": "Start year",
+      "endYear": "End year",
+      "organization": "Organization",
+      "position": "Position",
+      "startDate": "Start",
+      "endDate": "End",
+      "description": "Responsibilities and results",
+      "skills": "Skills",
+      "skillsHint": "Separate with commas",
+      "languageName": "Language",
+      "languageLevel": "Level",
+      "certificates": "Certificates and achievements",
+      "certificatesHint": "One per line"
+    },
+    "workTypes": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "REMOTE": "Remote",
+      "INTERNSHIP": "Internship"
     }
   }
 }

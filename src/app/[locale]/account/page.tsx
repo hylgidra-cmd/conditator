@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { FormAlert } from "@/components/ui/form";
-import { redirect } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import { currentUser } from "@/lib/auth/current-user";
 import { db } from "@/lib/db";
 
@@ -32,7 +32,16 @@ export default async function AccountPage() {
           <dt className="text-muted">{t("role")}</dt>
           <dd>{t(`roles.${user.role}`)}</dd>
         </dl>
-        <p className="text-muted text-sm">{t("comingSoon")}</p>
+        {user.role === "STUDENT" ? (
+          <Link
+            href="/student/cv"
+            className="bg-brand inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          >
+            {t("cvLink")}
+          </Link>
+        ) : (
+          <p className="text-muted text-sm">{t("comingSoon")}</p>
+        )}
         <LogoutButton className="border-border rounded-lg border px-4 py-2 text-sm font-medium" />
       </div>
     </div>

@@ -13,7 +13,8 @@
     "login": "Kirish",
     "register": "Roʻyxatdan oʻtish",
     "account": "Kabinet",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "myCv": "Mening CV im"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -116,7 +117,8 @@
     },
     "companyPending": "Kompaniyangiz admin tasdigʻini kutmoqda.",
     "comingSoon": "Kabinet keyingi qadamlarda toʻldiriladi.",
-    "logout": "Chiqish"
+    "logout": "Chiqish",
+    "cvLink": "Mening CV im"
   },
   "Errors": {
     "VALIDATION": "Maʼlumotlarni tekshirib chiqing.",
@@ -147,7 +149,10 @@
     "TEXT_REQUIRED": "Oʻzingiz haqingizda matn yozing.",
     "TEXT_TOO_LONG": "Matn 3000 belgidan oshmasligi kerak.",
     "LANGUAGE_REQUIRED": "CV tilini tanlang.",
-    "FIELD_TOO_LONG": "Matn juda uzun."
+    "FIELD_TOO_LONG": "Matn juda uzun.",
+    "CV_NOT_SAVED": "Avval CV ni saqlang.",
+    "FIELD_REQUIRED": "Bu maydonni toʻldiring.",
+    "TOO_MANY_ITEMS": "Elementlar juda koʻp."
   },
   "Email": {
     "verify": {
@@ -157,6 +162,74 @@
     "reset": {
       "subject": "Jumis AI: parolni tiklash kodi",
       "body": "Assalomu alaykum!\n\nParolni tiklash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar buni siz soʻramagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nJumis AI jamoasi"
+    }
+  },
+  "StudentCv": {
+    "title": "Mening CV im",
+    "empty": "Hali CV yoʻq. Quyida AI bilan yarating yoki maydonlarni qoʻlda toʻldiring.",
+    "notSaved": "CV hali saqlanmagan",
+    "saved": "Saqlangan: {date}",
+    "unsaved": "Saqlanmagan oʻzgarishlar bor",
+    "save": "Saqlash",
+    "savedNotice": "CV saqlandi",
+    "fillIn": "Toʻldiring",
+    "add": "+ Qoʻshish",
+    "remove": "Oʻchirish",
+    "visibility": {
+      "label": "Kompaniyalarga koʻrinishi",
+      "visible": "Ochiq: tasdiqlangan kompaniyalar koʻradi",
+      "hidden": "Yashirin: hech kim koʻrmaydi",
+      "needSave": "Ochiq qilish uchun avval CV ni saqlang"
+    },
+    "generator": {
+      "title": "AI bilan CV yaratish",
+      "hint": "Oʻzingiz haqingizda istalgan tilda yozing: taʼlim, tajriba, koʻnikmalar, tillar, yutuqlar. Telefon va emailni bu yerga yozmang, ular pastdagi maydonlarga kiritiladi.",
+      "textLabel": "Oʻzingiz haqingizda",
+      "counter": "{count} / {max}",
+      "language": "CV tili",
+      "submit": "CV yaratish",
+      "generating": "AI CV tuzmoqda…",
+      "done": "CV tayyor. Tekshiring, toʻldiring va saqlang.",
+      "replaceConfirm": "Saqlanmagan oʻzgarishlar yangi CV bilan almashtiriladi. Davom etasizmi?"
+    },
+    "sections": {
+      "personal": "Shaxsiy maʼlumotlar",
+      "goal": "Maqsad",
+      "education": "Taʼlim",
+      "experience": "Ish tajribasi",
+      "skills": "Koʻnikmalar",
+      "languages": "Tillar",
+      "certificates": "Sertifikatlar va yutuqlar",
+      "workTypes": "Ish turi"
+    },
+    "fields": {
+      "fullName": "Ism va familiya",
+      "phone": "Telefon",
+      "email": "Email",
+      "location": "Joylashuv (shahar, davlat)",
+      "goal": "Kasbiy maqsad",
+      "institution": "Oʻquv yurti",
+      "degree": "Daraja",
+      "field": "Yoʻnalish",
+      "startYear": "Boshlangan yil",
+      "endYear": "Tugagan yil",
+      "organization": "Tashkilot",
+      "position": "Lavozim",
+      "startDate": "Boshlangan",
+      "endDate": "Tugagan",
+      "description": "Vazifalar va natijalar",
+      "skills": "Koʻnikmalar",
+      "skillsHint": "Vergul bilan ajrating",
+      "languageName": "Til",
+      "languageLevel": "Daraja",
+      "certificates": "Sertifikatlar va yutuqlar",
+      "certificatesHint": "Har birini yangi qatordan yozing"
+    },
+    "workTypes": {
+      "FULL_TIME": "Toʻliq stavka",
+      "PART_TIME": "Yarim stavka",
+      "REMOTE": "Masofaviy",
+      "INTERNSHIP": "Amaliyot"
     }
   }
 }

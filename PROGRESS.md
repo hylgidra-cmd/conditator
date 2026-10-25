@@ -41,12 +41,18 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Tekshirildi: `npm test`, `npm run check`, `npm run build`; haqiqiy API ga kalitsiz so'rov AUTH xatosi bilan to'g'ri ushlandi
   - **Haqiqiy Claude javobi hali sinalmagan**: API kaliti yo'q
 
+- [x] **1.5 Talaba CV sahifasi** (25.10.2026; rejadagi 1.6 va 1.7 shu qadamda)
+  - `/[locale]/student/cv`: AI bilan yaratish oynasi, barcha maydonlarni tahrirlash, "To'ldiring" belgilari, ish turi, saqlash, ochiq/yashirin
+  - API: `GET/PUT /api/cv/me` (faqat o'z CV si), `PATCH /api/cv/me/visibility` (saqlanmagan CV ni ochib bo'lmaydi: 409 `CV_NOT_SAVED`)
+  - Saqlashda: `savedAt`, `missingFields`, filtr maydonlari (ko'nikmalar, tillar kichik harfda, joy, ish turi) va `searchText` (ism va aloqasiz). Yangi CV yashirin, qayta saqlash ko'rinishni o'zgartirmaydi
+  - Sana Node va brauzerda bir xil chiqishi uchun `formatDateTime` (UTC+5), next-intl `timeZone: Asia/Tashkent`
+  - Testlar: 46/46 (401/403, boshqa talaba CV si, saqlash, searchText da PII yo'q, validatsiya, 409, ochish/yopish)
+  - Tekshirildi: `npm test`, `npm run check`, `npm run build`; Playwright: uz sahifada qo'lda to'ldirish → saqlash → ochiq qilish → qayta yuklash (ma'lumot va holat saqlangan, konsol xatosiz), ru mobil 375 px (gorizontal skroll yo'q)
+  - **AI bilan yaratish tugmasi haqiqiy AI bilan sinalmagan**: API kaliti yo'q
+
 ## Keyingi qadam
 
-- [ ] AI moduli (rejada 1.5)
-- [ ] AI bilan CV yaratish (rejada 1.6)
-- [ ] CV tahriri, saqlash, ochiq/yashirin (rejada 1.7)
-- [ ] CV shabloni va PDF (rejada 1.8)
+- [ ] 1.6 CV shabloni va PDF (rejada 1.8)
 - [ ] 1.9 1-bosqich tekshiruvi
 - [ ] 2.1–2.8 Kompaniya, admin, saralash, deploy
 
@@ -57,7 +63,7 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
 1. GitHub repo nomi (Gulgina hisobida). Hozircha kod faqat lokal git da.
 2. Dizayn maketlari (`docs/design/`) yo'q: hozir oddiy toza dizayn.
 3. Qoraqalpoq tarjimasini tekshiruvchi mutaxassis.
-4. Anthropic API kaliti (1.5-qadamgacha), server, domen, SMTP (2-kun ertalabgacha).
+4. Anthropic API kaliti (haqiqiy AI ni sinash uchun), server, domen, SMTP (2-kun ertalabgacha).
 
 ## Ma'lum cheklovlar
 

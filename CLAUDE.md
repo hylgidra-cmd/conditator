@@ -98,6 +98,13 @@ tests/                 Vitest integratsiya testlari
 - `POST /api/cv/generate` natijani bazaga yozmaydi: CV faqat `PUT /api/cv/me` (saqlash) dan keyin saqlanadi.
 - Testlarda haqiqiy API chaqirilmaydi: `setAiProviderForTests(new FakeAiProvider([...]))`.
 
+## CV qanday ishlaydi
+
+- Talaba faqat o'z CV si bilan ishlaydi: `/api/cv/me` foydalanuvchini sessiyadan oladi, URL da CV ID yo'q.
+- `saveOwnCv()` (`lib/cv/service.ts`) yagona yozish yo'li: `savedAt` (CV versiyasi, saralash keshi uchun), `missingFields`, filtr maydonlari va `searchText` ni hisoblaydi. `isVisible` ni faqat `setOwnCvVisibility()` o'zgartiradi; `savedAt` siz CV ochilmaydi.
+- `searchText` ga ism, telefon, email kiritilmaydi.
+- Ekranda sana: `formatDateTime()` (`lib/format-date.ts`). `Intl` bilan formatlamang: Node va brauzer `uz`/`kk` uchun turli natija berib, hydration xatosi chiqaradi.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

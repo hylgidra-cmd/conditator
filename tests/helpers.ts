@@ -4,10 +4,14 @@ import { sentMails } from "./mail-outbox";
 export function jsonRequest(
   path: string,
   body: unknown,
-  init: { cookie?: string; ip?: string } = {},
+  init: {
+    cookie?: string;
+    ip?: string;
+    method?: "POST" | "PUT" | "PATCH";
+  } = {},
 ) {
   return new NextRequest(`http://localhost:3000${path}`, {
-    method: "POST",
+    method: init.method ?? "POST",
     headers: {
       "content-type": "application/json",
       "x-forwarded-for": init.ip ?? "10.0.0.1",

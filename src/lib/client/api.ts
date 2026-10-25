@@ -1,15 +1,24 @@
-// Brauzerdan API ga so'rov. Xato bo'lsa, server qaytargan xato kodi (messages "Errors" kaliti) qaytadi.
+// Brauzer tomonidagi kichik fetch yordamchisi. Server xatolari { error, fields } shaklida keladi.
+
 export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: string; fields?: Record<string, string> };
 
-export async function postJson<T = unknown>(
+export function postJson<T = unknown>(
+  path: string,
+  body?: unknown,
+): Promise<ApiResult<T>> {
+  return requestJson<T>("POST", path, body);
+}
+
+export async function requestJson<T = unknown>(
+  method: "POST" | "PUT" | "PATCH",
   path: string,
   body?: unknown,
 ): Promise<ApiResult<T>> {
   try {
     const response = await fetch(path, {
-      method: "POST",
+      method,
       headers: { "Content-Type": "application/json" },
       body: body === undefined ? undefined : JSON.stringify(body),
     });

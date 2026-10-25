@@ -10,6 +10,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
+    // Server va brauzerda sana bir xil ko'rinsin (hydration) va mahalliy vaqtda bo'lsin.
+    timeZone: "Asia/Tashkent",
     messages: (await import(`../../messages/${locale}.json`)).default,
   };
 });

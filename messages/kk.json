@@ -13,7 +13,8 @@
     "login": "Kiriw",
     "register": "Dizimnen ótiw",
     "account": "Kabinet",
-    "logout": "Shıǵıw"
+    "logout": "Shıǵıw",
+    "myCv": "Meniń CV im"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -116,7 +117,8 @@
     },
     "companyPending": "Kompaniyańız admin tastıyıǵın kútpekte.",
     "comingSoon": "Kabinet keyingi basqıshlarda toltırıladı.",
-    "logout": "Shıǵıw"
+    "logout": "Shıǵıw",
+    "cvLink": "Meniń CV im"
   },
   "Errors": {
     "VALIDATION": "Maǵlıwmatlardı tekserip shıǵıń.",
@@ -147,7 +149,10 @@
     "TEXT_REQUIRED": "Ózińiz haqqıńızda tekst jazıń.",
     "TEXT_TOO_LONG": "Tekst 3000 belgiden aspawı kerek.",
     "LANGUAGE_REQUIRED": "CV tilin tańlań.",
-    "FIELD_TOO_LONG": "Tekst júdá uzın."
+    "FIELD_TOO_LONG": "Tekst júdá uzın.",
+    "CV_NOT_SAVED": "Aldın CV dı saqlań.",
+    "FIELD_REQUIRED": "Bul maydandı toltırıń.",
+    "TOO_MANY_ITEMS": "Elementler júdá kóp."
   },
   "Email": {
     "verify": {
@@ -157,6 +162,74 @@
     "reset": {
       "subject": "Jumis AI: paroldı tiklew kodı",
       "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"
+    }
+  },
+  "StudentCv": {
+    "title": "Meniń CV im",
+    "empty": "Ele CV joq. Tómende AI menen jaratıń yamasa maydanlardı qolda toltırıń.",
+    "notSaved": "CV ele saqlanbaǵan",
+    "saved": "Saqlanǵan: {date}",
+    "unsaved": "Saqlanbaǵan ózgerisler bar",
+    "save": "Saqlaw",
+    "savedNotice": "CV saqlandı",
+    "fillIn": "Toltırıń",
+    "add": "+ Qosıw",
+    "remove": "Óshiriw",
+    "visibility": {
+      "label": "Kompaniyalarǵa kóriniwi",
+      "visible": "Ashıq: tastıyıqlanǵan kompaniyalar kóredi",
+      "hidden": "Jasırın: hesh kim kórmeydi",
+      "needSave": "Ashıq etiw ushın aldın CV dı saqlań"
+    },
+    "generator": {
+      "title": "AI menen CV jaratıw",
+      "hint": "Ózińiz haqqıńızda qálegen tilde jazıń: bilim, tájiriybe, kónlikpeler, tiller, jetiskenlikler. Telefon hám emaildı bul jerge jazbań, olar tómendegi maydanlarǵa kirgiziledi.",
+      "textLabel": "Ózińiz haqqıńızda",
+      "counter": "{count} / {max}",
+      "language": "CV tili",
+      "submit": "CV jaratıw",
+      "generating": "AI CV dúzbekte…",
+      "done": "CV tayar. Tekseriń, toltırıń hám saqlań.",
+      "replaceConfirm": "Saqlanbaǵan ózgerisler jańa CV menen almastırıladı. Dawam etesiz be?"
+    },
+    "sections": {
+      "personal": "Jeke maǵlıwmatlar",
+      "goal": "Maqset",
+      "education": "Bilim",
+      "experience": "Jumıs tájiriybesi",
+      "skills": "Kónlikpeler",
+      "languages": "Tiller",
+      "certificates": "Sertifikatlar hám jetiskenlikler",
+      "workTypes": "Jumıs túri"
+    },
+    "fields": {
+      "fullName": "Atı hám familiyası",
+      "phone": "Telefon",
+      "email": "Email",
+      "location": "Jaylasqan jeri (qala, mámleket)",
+      "goal": "Kásiplik maqset",
+      "institution": "Oqıw ornı",
+      "degree": "Dáreje",
+      "field": "Baǵdar",
+      "startYear": "Baslanǵan jıl",
+      "endYear": "Pitken jıl",
+      "organization": "Shólkem",
+      "position": "Lawazım",
+      "startDate": "Baslanǵan",
+      "endDate": "Pitken",
+      "description": "Wazıypalar hám nátiyjeler",
+      "skills": "Kónlikpeler",
+      "skillsHint": "Útir menen ajıratıń",
+      "languageName": "Til",
+      "languageLevel": "Dáreje",
+      "certificates": "Sertifikatlar hám jetiskenlikler",
+      "certificatesHint": "Hár birin jańa qatardan jazıń"
+    },
+    "workTypes": {
+      "FULL_TIME": "Tolıq stavka",
+      "PART_TIME": "Yarım stavka",
+      "REMOTE": "Qashıqtan",
+      "INTERNSHIP": "Ámeliyat"
     }
   }
 }

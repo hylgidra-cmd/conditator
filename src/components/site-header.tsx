@@ -25,6 +25,11 @@ export async function SiteHeader() {
           <nav className="flex items-center gap-1">
             {user ? (
               <>
+                {user.role === "STUDENT" ? (
+                  <Link href="/student/cv" className={NAV_LINK}>
+                    {t("myCv")}
+                  </Link>
+                ) : null}
                 <Link href="/account" className={NAV_LINK}>
                   {t("account")}
                 </Link>

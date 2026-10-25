@@ -1,0 +1,45 @@
+import { getLocale, getTranslations } from "next-intl/server";
+import {
+  emptyCvData,
+  type CvDraft,
+  draftFromData,
+  type WorkTypeValue,
+} from "@/components/cv/types";
+import { CvWorkspace } from "@/components/cv/cv-workspace";
+import { redirect } from "@/i18n/navigation";
+import { currentUser } from "@/lib/auth/current-user";
+import { cvDataSchema } from "@/lib/cv/schema";
+import { getOwnCv } from "@/lib/cv/service";
+
+export default async function StudentCvPage() {
+  const user = await currentUser();
+  const locale = await getLocale();
+  if (!user) return redirect({ href: "/login", locale });
+  if (user.role !== "STUDENT") return redirect({ href: "/account", locale });
+
+  const t = await getTranslations("StudentCv");
+  const cv = await getOwnCv(user.id);
+  const parsed = cv ? cvDataSchema.safeParse(cv.data) : null;
+  const data = parsed?.success ? parsed.data : emptyCvData(user.email);
+  const draft: CvDraft = draftFromData(data, {
+    language: cv?.language ?? "en",
+    workTypes: (cv?.workTypes ?? []) as WorkTypeValue[],
+    sourceText: cv?.sourceText ?? "",
+  });
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <div>
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
+        {!cv ? <p className="text-muted mt-1 text-sm">{t("empty")}</p> : null}
+      </div>
+      <CvWorkspace
+        initialDraft={draft}
+        initialMeta={{
+          savedAt: cv?.savedAt?.toISOString() ?? null,
+          isVisible: cv?.isVisible ?? false,
+        }}
+      />
+    </div>
+  );
+}

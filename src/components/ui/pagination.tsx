@@ -8,16 +8,26 @@ export async function Pagination({
   page,
   pageCount,
   pathname,
+  query = {},
 }: {
   page: number;
   pageCount: number;
   pathname: string;
+  /** Sahifalar orasida saqlanadigan filtrlar (qidiruv va h.k.). */
+  query?: Record<string, string | undefined>;
 }) {
   if (pageCount <= 1) return null;
   const t = await getTranslations("Vacancies.pagination");
   const href = (target: number) => ({
     pathname,
-    query: { page: String(target) },
+    query: {
+      ...Object.fromEntries(
+        Object.entries(query).filter((entry): entry is [string, string] =>
+          Boolean(entry[1]),
+        ),
+      ),
+      page: String(target),
+    },
   });
   return (
     <nav className="flex items-center justify-center gap-3">

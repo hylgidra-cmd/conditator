@@ -16,7 +16,8 @@
     "logout": "Выйти",
     "myCv": "Моё резюме",
     "company": "Компания",
-    "vacancies": "Вакансии"
+    "vacancies": "Вакансии",
+    "admin": "Админ"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -117,10 +118,10 @@
       "COMPANY": "Компания",
       "ADMIN": "Администратор"
     },
-    "comingSoon": "Кабинет будет наполнен на следующих этапах.",
     "logout": "Выйти",
     "cvLink": "Моё резюме",
-    "companyLink": "Кабинет компании"
+    "companyLink": "Кабинет компании",
+    "adminLink": "Панель администратора"
   },
   "Errors": {
     "VALIDATION": "Проверьте введённые данные.",
@@ -162,7 +163,8 @@
     "FILE_TOO_LARGE": "Файл слишком большой (максимум 1 МБ).",
     "FILE_TYPE_NOT_ALLOWED": "Можно загрузить только изображение PNG, JPG или WEBP.",
     "TITLE_OR_TEXT_REQUIRED": "Укажите должность или опишите требования свободным текстом.",
-    "INVALID_NUMBER": "Введите целое число от 0 до 50."
+    "INVALID_NUMBER": "Введите целое число от 0 до 50.",
+    "CANNOT_BLOCK_ADMIN": "Администратора нельзя заблокировать."
   },
   "Email": {
     "verify": {
@@ -393,6 +395,105 @@
       "REJECTED": "Не подходит",
       "none": "Пока не отмечен",
       "hint": "Нажмите кнопку ещё раз, чтобы снять отметку"
+    }
+  },
+  "Admin": {
+    "nav": {
+      "dashboard": "Обзор",
+      "users": "Пользователи",
+      "companies": "Компании"
+    },
+    "dashboard": {
+      "title": "Панель администратора",
+      "statsTitle": "Статистика",
+      "stats": {
+        "students": "Студенты",
+        "cvsSaved": "Сохранённые резюме",
+        "cvsVisible": "Открытые резюме",
+        "companies": "Компании",
+        "companiesApproved": "Подтверждённые компании",
+        "companiesPending": "Ждут подтверждения",
+        "vacancies": "Вакансии"
+      },
+      "ai": {
+        "title": "Расходы на ИИ",
+        "since": "Этот месяц (с {date})",
+        "requests": "Запросы к ИИ",
+        "spent": "Потрачено / лимит",
+        "spentValue": "{spent} $ / {limit} $",
+        "state": "Состояние",
+        "limitOk": "ИИ работает",
+        "limitReached": "Лимит исчерпан: ИИ отключён, работает поиск по ключевым словам",
+        "tasks": {
+          "CV_GEN": "Создание резюме",
+          "MATCH": "Подбор"
+        },
+        "taskLine": "успешно: {ok}, ошибок: {failed}, {cost} $",
+        "limitLabel": "Месячный лимит ($)",
+        "save": "Сохранить",
+        "saved": "Лимит сохранён",
+        "invalidLimit": "Введите число от 0 до 100 000 (например, 50 или 12.5)."
+      },
+      "logs": {
+        "title": "Действия администраторов",
+        "empty": "Пока нет действий.",
+        "actions": {
+          "USER_BLOCK": "Заблокирован: {target}",
+          "USER_UNBLOCK": "Разблокирован: {target}",
+          "COMPANY_APPROVE": "Компания подтверждена: {target}",
+          "COMPANY_REJECT": "Компания отклонена: {target}",
+          "SUBSCRIPTION_SET": "Подписка до {to}: {target}",
+          "SUBSCRIPTION_OFF": "Подписка отключена: {target}",
+          "AI_LIMIT_SET": "Месячный лимит ИИ: {to} $"
+        }
+      }
+    },
+    "users": {
+      "title": "Пользователи",
+      "search": "Поиск",
+      "searchPlaceholder": "Email или название компании",
+      "role": "Роль",
+      "status": "Статус",
+      "any": "Все",
+      "filter": "Найти",
+      "reset": "Сбросить",
+      "total": "Всего: {count}",
+      "empty": "Ничего не найдено.",
+      "statuses": {
+        "ACTIVE": "Активен",
+        "BLOCKED": "Заблокирован"
+      },
+      "approvals": {
+        "PENDING": "Ждёт подтверждения",
+        "APPROVED": "Подтверждена",
+        "REJECTED": "Отклонена"
+      },
+      "verified": "Email подтверждён",
+      "unverified": "Email не подтверждён",
+      "cvVisible": "Резюме открыто",
+      "cvSaved": "Резюме скрыто",
+      "noCv": "Нет резюме",
+      "noCompanyName": "Название не указано",
+      "created": "Регистрация: {date}",
+      "block": "Заблокировать",
+      "unblock": "Разблокировать",
+      "confirmBlock": "Заблокировать {email}? Пользователь сразу выйдет из системы."
+    },
+    "companies": {
+      "title": "Компании",
+      "searchPlaceholder": "Название компании или email",
+      "approval": "Подтверждение",
+      "approve": "Подтвердить",
+      "reject": "Отклонить",
+      "until": "Дата окончания подписки",
+      "enableSub": "Включить подписку",
+      "saveSub": "Сохранить дату",
+      "disableSub": "Отключить подписку",
+      "subNone": "Подписки нет",
+      "subActive": "Подписка активна до {date}",
+      "subExpired": "Подписка закончилась {date}",
+      "vacancies": "Вакансий: {count}",
+      "registered": "Регистрация: {date}"
     }
   }
 }

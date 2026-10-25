@@ -40,6 +40,11 @@ export async function SiteHeader() {
                     </Link>
                   </>
                 ) : null}
+                {user.role === "ADMIN" ? (
+                  <Link href="/admin" className={NAV_LINK}>
+                    {t("admin")}
+                  </Link>
+                ) : null}
                 <Link href="/account" className={NAV_LINK}>
                   {t("account")}
                 </Link>

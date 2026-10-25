@@ -16,3 +16,10 @@ export function formatDateTime(value: Date | string): string {
 export function formatDate(value: Date | string): string {
   return formatDateTime(value).slice(0, 10);
 }
+
+/** `<input type="date">` qiymati: "yyyy-MM-dd" (O'zbekiston vaqtida). */
+export function toDateInput(value: Date | string): string {
+  return new Date(new Date(value).getTime() + UZ_OFFSET_MS)
+    .toISOString()
+    .slice(0, 10);
+}

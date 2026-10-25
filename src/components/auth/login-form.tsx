@@ -47,7 +47,8 @@ export function LoginForm({ resetDone }: { resetDone: boolean }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    // method="post": JS yuklanmasa ham parol/kod URL ga (va loglarga) tushmaydi.
+    <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
       {resetDone ? (
         <FormAlert tone="success">{t("resetDone")}</FormAlert>
       ) : null}

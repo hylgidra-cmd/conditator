@@ -16,7 +16,8 @@
     "logout": "Chiqish",
     "myCv": "Mening CV im",
     "company": "Kompaniya",
-    "vacancies": "Talablar"
+    "vacancies": "Talablar",
+    "admin": "Admin"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -117,10 +118,10 @@
       "COMPANY": "Kompaniya",
       "ADMIN": "Administrator"
     },
-    "comingSoon": "Kabinet keyingi qadamlarda toʻldiriladi.",
     "logout": "Chiqish",
     "cvLink": "Mening CV im",
-    "companyLink": "Kompaniya kabineti"
+    "companyLink": "Kompaniya kabineti",
+    "adminLink": "Admin paneli"
   },
   "Errors": {
     "VALIDATION": "Maʼlumotlarni tekshirib chiqing.",
@@ -162,7 +163,8 @@
     "FILE_TOO_LARGE": "Fayl juda katta (eng koʻpi 1 MB).",
     "FILE_TYPE_NOT_ALLOWED": "Faqat PNG, JPG yoki WEBP rasm yuklash mumkin.",
     "TITLE_OR_TEXT_REQUIRED": "Lavozimni yoki talabni erkin matn bilan yozing.",
-    "INVALID_NUMBER": "0 dan 50 gacha butun son kiriting."
+    "INVALID_NUMBER": "0 dan 50 gacha butun son kiriting.",
+    "CANNOT_BLOCK_ADMIN": "Administratorni bloklab boʻlmaydi."
   },
   "Email": {
     "verify": {
@@ -393,6 +395,105 @@
       "REJECTED": "Mos emas",
       "none": "Hali belgilanmagan",
       "hint": "Belgini olib tashlash uchun tugmani qayta bosing"
+    }
+  },
+  "Admin": {
+    "nav": {
+      "dashboard": "Umumiy",
+      "users": "Foydalanuvchilar",
+      "companies": "Kompaniyalar"
+    },
+    "dashboard": {
+      "title": "Admin paneli",
+      "statsTitle": "Statistika",
+      "stats": {
+        "students": "Talabalar",
+        "cvsSaved": "Saqlangan CV lar",
+        "cvsVisible": "Ochiq CV lar",
+        "companies": "Kompaniyalar",
+        "companiesApproved": "Tasdiqlangan kompaniyalar",
+        "companiesPending": "Tasdiq kutayotganlar",
+        "vacancies": "Talablar"
+      },
+      "ai": {
+        "title": "AI xarajati",
+        "since": "Shu oy ({date} dan beri)",
+        "requests": "AI soʻrovlari",
+        "spent": "Sarflangan / limit",
+        "spentValue": "{spent} $ / {limit} $",
+        "state": "Holat",
+        "limitOk": "AI ishlayapti",
+        "limitReached": "Limit tugadi: AI oʻchgan, kalit soʻz qidiruvi ishlaydi",
+        "tasks": {
+          "CV_GEN": "CV yaratish",
+          "MATCH": "Saralash"
+        },
+        "taskLine": "{ok} ta muvaffaqiyatli, {failed} ta xato, {cost} $",
+        "limitLabel": "Oylik limit ($)",
+        "save": "Saqlash",
+        "saved": "Limit saqlandi",
+        "invalidLimit": "0 dan 100 000 gacha son kiriting (masalan 50 yoki 12.5)."
+      },
+      "logs": {
+        "title": "Admin harakatlari",
+        "empty": "Hali harakat yoʻq.",
+        "actions": {
+          "USER_BLOCK": "Bloklandi: {target}",
+          "USER_UNBLOCK": "Blokdan chiqarildi: {target}",
+          "COMPANY_APPROVE": "Kompaniya tasdiqlandi: {target}",
+          "COMPANY_REJECT": "Kompaniya rad etildi: {target}",
+          "SUBSCRIPTION_SET": "Obuna {to} gacha: {target}",
+          "SUBSCRIPTION_OFF": "Obuna oʻchirildi: {target}",
+          "AI_LIMIT_SET": "AI oylik limiti: {to} $"
+        }
+      }
+    },
+    "users": {
+      "title": "Foydalanuvchilar",
+      "search": "Qidiruv",
+      "searchPlaceholder": "Email yoki kompaniya nomi",
+      "role": "Rol",
+      "status": "Holat",
+      "any": "Hammasi",
+      "filter": "Qidirish",
+      "reset": "Tozalash",
+      "total": "Jami: {count}",
+      "empty": "Hech narsa topilmadi.",
+      "statuses": {
+        "ACTIVE": "Faol",
+        "BLOCKED": "Bloklangan"
+      },
+      "approvals": {
+        "PENDING": "Tasdiq kutilmoqda",
+        "APPROVED": "Tasdiqlangan",
+        "REJECTED": "Rad etilgan"
+      },
+      "verified": "Email tasdiqlangan",
+      "unverified": "Email tasdiqlanmagan",
+      "cvVisible": "CV ochiq",
+      "cvSaved": "CV yopiq",
+      "noCv": "CV yoʻq",
+      "noCompanyName": "Nomi kiritilmagan",
+      "created": "Roʻyxatdan oʻtgan: {date}",
+      "block": "Bloklash",
+      "unblock": "Blokdan chiqarish",
+      "confirmBlock": "{email} bloklansinmi? U darhol tizimdan chiqariladi."
+    },
+    "companies": {
+      "title": "Kompaniyalar",
+      "searchPlaceholder": "Kompaniya nomi yoki email",
+      "approval": "Tasdiq",
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "until": "Obuna tugash sanasi",
+      "enableSub": "Obunani yoqish",
+      "saveSub": "Sanani saqlash",
+      "disableSub": "Obunani oʻchirish",
+      "subNone": "Obuna yoʻq",
+      "subActive": "Obuna faol: {date} gacha",
+      "subExpired": "Obuna tugagan: {date}",
+      "vacancies": "Talablar: {count}",
+      "registered": "Roʻyxatdan oʻtgan: {date}"
     }
   }
 }

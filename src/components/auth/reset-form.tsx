@@ -41,7 +41,8 @@ export function ResetForm({ email }: { email: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    // method="post": JS yuklanmasa ham parol/kod URL ga (va loglarga) tushmaydi.
+    <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
       <FormAlert>{errorText(error)}</FormAlert>
       <Field
         name="email"

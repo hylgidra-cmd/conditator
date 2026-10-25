@@ -35,7 +35,12 @@ export default async function AccountPage() {
             {t("companyLink")}
           </Link>
         ) : (
-          <p className="text-muted text-sm">{t("comingSoon")}</p>
+          <Link
+            href="/admin"
+            className="bg-brand inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          >
+            {t("adminLink")}
+          </Link>
         )}
         <LogoutButton className="border-border rounded-lg border px-4 py-2 text-sm font-medium" />
       </div>

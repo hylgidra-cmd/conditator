@@ -26,6 +26,7 @@ export type ErrorCode =
   | "AI_LIMIT_REACHED"
   | "AI_UNAVAILABLE"
   | "PAYLOAD_TOO_LARGE"
+  | "CANNOT_BLOCK_ADMIN"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

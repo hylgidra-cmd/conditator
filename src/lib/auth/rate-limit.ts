@@ -18,6 +18,7 @@ export const LIMITS = {
   logoUpload: { max: 20, windowMs: 60 * 60_000 },
   vacancyWrite: { max: 60, windowMs: 60 * 60_000 },
   matchRun: { max: 30, windowMs: 60 * 60_000 },
+  adminWrite: { max: 300, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(

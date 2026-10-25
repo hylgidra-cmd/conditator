@@ -124,7 +124,7 @@ tests/                 Vitest integratsiya testlari
 - Kompaniya endpointi: `requireCompany(request)`. CV ga tegadigan har bir kompaniya endpointi: `requireApprovedCompany(request)` (tasdiqlanmagan → 403 `COMPANY_NOT_APPROVED`). AI saralash endpointi (2.4) qo'shimcha `canRunMatching` ni tekshiradi.
 - Kompaniya CV ni faqat `loadVisibleCvDocument()` orqali oladi: ochiq + saqlangan + egasi faol, aks holda 404. Har ochish `CvView` ga yoziladi.
 - Logo: `lib/company/logo.ts`. Tur fayl baytlaridan aniqlanadi (PNG, JPG, WEBP; SVG yo'q), ≤ 1 MB, nom serverda yaratiladi, fayl `UPLOAD_DIR` da (Docker: `uploads` volume), beriladigan javobda `CSP: sandbox`.
-- Tasdiq holati va obunani faqat admin o'zgartiradi (`PATCH /api/admin/companies/:id/approve`; obuna va admin sahifasi 2.2 da).
+- Tasdiq holati va obunani faqat admin o'zgartiradi (admin panel, `/api/admin/companies/:id/approve` va `/subscription`).
 
 ## Talablar (vacancy)
 
@@ -150,6 +150,15 @@ tests/                 Vitest integratsiya testlari
 - Saralash ro'yxatida ism va aloqa ko'rinmaydi (faqat "N-nomzod", ko'nikmalar, joy, ball).
 - Qaror: `PUT /api/vacancies/:id/candidates/:cvId/decision` `{decision: NONE|SELECTED|REJECTED}` → `Match.decision` (`lib/match/decision.ts`). AI baholamagan nomzod uchun `hash: ""` bilan qator yaratiladi: keyingi saralashda AI baholaydi, qaror saqlanadi. AI natijasini saqlash `decision` ga tegmaydi.
 - Talablar tarixida qarorlar soni (`decisionCounts`), saralash sahifasi pastida qaror qo'yilganlar ro'yxati (`listDecided`). Yashirilgan CV lar hisoblanmaydi.
+
+## Admin panel
+
+- Sahifalar `/admin` (statistika, AI xarajati va oylik limit, oxirgi harakatlar), `/admin/users`, `/admin/companies`; `requireAdminPage()` (`lib/admin/page.ts`), boshqa rol kabinetga yo'naltiriladi.
+- API (`/api/admin/*`): har handler `requireRole(request, "ADMIN")` (security testi tekshiradi). Mantiq `lib/admin/service.ts`, filtrlar `lib/admin/schema.ts` (noto'g'ri qiymat xato emas, standartga aylanadi).
+- Ro'yxatlar 20 tadan, server tomonda: qidiruv (`contains`, insensitive), rol/holat/tasdiq filtri. Filtrlar URL da (GET forma), `Pagination` ularni saqlaydi.
+- Bloklash: foydalanuvchi sessiyalari o'chiriladi, login `ACCOUNT_BLOCKED`. Adminni bloklab bo'lmaydi (409 `CANNOT_BLOCK_ADMIN`).
+- Obuna: `{until: "yyyy-MM-dd"}` → shu kun oxiri Toshkent vaqti (`endOfDayTashkent`), `null` → o'chirish.
+- Har o'zgartiruvchi admin harakati `writeAdminLog` (`AdminLog`) ga yoziladi; o'qish harakatlari yozilmaydi.
 
 ## Eslatmalar
 

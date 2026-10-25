@@ -16,7 +16,8 @@
     "logout": "Shıǵıw",
     "myCv": "Meniń CV im",
     "company": "Kompaniya",
-    "vacancies": "Talaplar"
+    "vacancies": "Talaplar",
+    "admin": "Admin"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -117,10 +118,10 @@
       "COMPANY": "Kompaniya",
       "ADMIN": "Administrator"
     },
-    "comingSoon": "Kabinet keyingi basqıshlarda toltırıladı.",
     "logout": "Shıǵıw",
     "cvLink": "Meniń CV im",
-    "companyLink": "Kompaniya kabineti"
+    "companyLink": "Kompaniya kabineti",
+    "adminLink": "Admin paneli"
   },
   "Errors": {
     "VALIDATION": "Maǵlıwmatlardı tekserip shıǵıń.",
@@ -162,7 +163,8 @@
     "FILE_TOO_LARGE": "Fayl júdá úlken (eń kóbi 1 MB).",
     "FILE_TYPE_NOT_ALLOWED": "Tek PNG, JPG yamasa WEBP súwret júklewge boladı.",
     "TITLE_OR_TEXT_REQUIRED": "Lawazımdı yamasa talaptı erkin tekst penen jazıń.",
-    "INVALID_NUMBER": "0 den 50 ge shekem pútin san kiritiń."
+    "INVALID_NUMBER": "0 den 50 ge shekem pútin san kiritiń.",
+    "CANNOT_BLOCK_ADMIN": "Administratordı bloklawǵa bolmaydı."
   },
   "Email": {
     "verify": {
@@ -393,6 +395,105 @@
       "REJECTED": "Sáykes emes",
       "none": "Ele belgilenbegen",
       "hint": "Belgini alıp taslaw ushın túymeni qayta basıń"
+    }
+  },
+  "Admin": {
+    "nav": {
+      "dashboard": "Ulıwma",
+      "users": "Paydalanıwshılar",
+      "companies": "Kompaniyalar"
+    },
+    "dashboard": {
+      "title": "Admin paneli",
+      "statsTitle": "Statistika",
+      "stats": {
+        "students": "Studentler",
+        "cvsSaved": "Saqlanǵan CV lar",
+        "cvsVisible": "Ashıq CV lar",
+        "companies": "Kompaniyalar",
+        "companiesApproved": "Tastıyıqlanǵan kompaniyalar",
+        "companiesPending": "Tastıyıq kútip turǵanlar",
+        "vacancies": "Talaplar"
+      },
+      "ai": {
+        "title": "AI qárejeti",
+        "since": "Usı ay ({date} nan berli)",
+        "requests": "AI sorawları",
+        "spent": "Jumsalǵan / limit",
+        "spentValue": "{spent} $ / {limit} $",
+        "state": "Jaǵday",
+        "limitOk": "AI islep tur",
+        "limitReached": "Limit tawsıldı: AI óshirilgen, gilt sóz boyınsha izlew isleydi",
+        "tasks": {
+          "CV_GEN": "CV jaratıw",
+          "MATCH": "Saralaw"
+        },
+        "taskLine": "{ok} tabıslı, {failed} qáte, {cost} $",
+        "limitLabel": "Aylıq limit ($)",
+        "save": "Saqlaw",
+        "saved": "Limit saqlandı",
+        "invalidLimit": "0 den 100 000 ǵa shekem san kiritiń (mısalı 50 yamasa 12.5)."
+      },
+      "logs": {
+        "title": "Admin háreketleri",
+        "empty": "Ele háreket joq.",
+        "actions": {
+          "USER_BLOCK": "Bloklandı: {target}",
+          "USER_UNBLOCK": "Bloktan shıǵarıldı: {target}",
+          "COMPANY_APPROVE": "Kompaniya tastıyıqlandı: {target}",
+          "COMPANY_REJECT": "Kompaniya biykarlandı: {target}",
+          "SUBSCRIPTION_SET": "Jazılıw {to} ge shekem: {target}",
+          "SUBSCRIPTION_OFF": "Jazılıw óshirildi: {target}",
+          "AI_LIMIT_SET": "AI aylıq limiti: {to} $"
+        }
+      }
+    },
+    "users": {
+      "title": "Paydalanıwshılar",
+      "search": "Izlew",
+      "searchPlaceholder": "Email yamasa kompaniya atı",
+      "role": "Rol",
+      "status": "Jaǵday",
+      "any": "Hámmesi",
+      "filter": "Izlew",
+      "reset": "Tazalaw",
+      "total": "Barlıǵı: {count}",
+      "empty": "Hesh nárse tabılmadı.",
+      "statuses": {
+        "ACTIVE": "Aktiv",
+        "BLOCKED": "Bloklanǵan"
+      },
+      "approvals": {
+        "PENDING": "Tastıyıq kútilmekte",
+        "APPROVED": "Tastıyıqlanǵan",
+        "REJECTED": "Biykarlanǵan"
+      },
+      "verified": "Email tastıyıqlanǵan",
+      "unverified": "Email tastıyıqlanbaǵan",
+      "cvVisible": "CV ashıq",
+      "cvSaved": "CV jabıq",
+      "noCv": "CV joq",
+      "noCompanyName": "Atı kiritilmegen",
+      "created": "Dizimnen ótken: {date}",
+      "block": "Bloklaw",
+      "unblock": "Bloktan shıǵarıw",
+      "confirmBlock": "{email} bloklansın ba? Ol dárhal sistemadan shıǵarıladı."
+    },
+    "companies": {
+      "title": "Kompaniyalar",
+      "searchPlaceholder": "Kompaniya atı yamasa email",
+      "approval": "Tastıyıq",
+      "approve": "Tastıyıqlaw",
+      "reject": "Biykarlaw",
+      "until": "Jazılıwdıń tamamlanıw sánesi",
+      "enableSub": "Jazılıwdı qosıw",
+      "saveSub": "Sánesin saqlaw",
+      "disableSub": "Jazılıwdı óshiriw",
+      "subNone": "Jazılıw joq",
+      "subActive": "Jazılıw aktiv: {date} ge shekem",
+      "subExpired": "Jazılıw tamamlanǵan: {date}",
+      "vacancies": "Talaplar: {count}",
+      "registered": "Dizimnen ótken: {date}"
     }
   }
 }

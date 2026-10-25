@@ -12,6 +12,7 @@ erDiagram
   User ||--o| Cv : "talaba: 1 ta CV"
   User ||--o| Company : "kompaniya: 1 ta profil"
   User ||--o{ AiLog : "AI so'rovlari"
+  User ||--o{ AdminLog : "admin harakatlari"
   Company ||--o{ Vacancy : "talablari"
   Vacancy ||--o{ Match : "natijalari"
   Cv ||--o{ Match : "baholanishi"
@@ -170,6 +171,20 @@ Indekslar: `(vacancyId, cvId)` unique, `(vacancyId, score)`, `(cvId, decision)` 
 | createdAt                 | timestamp          |                                         |
 
 Indeks: `createdAt` — oylik xarajat hisobi.
+
+### AdminLog — admin harakatlari jurnali
+
+| Maydon     | Turi             | Izoh                                                                                                                      |
+| ---------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| id         | text             | PK                                                                                                                        |
+| adminId    | → User.id, null  | admin o'chirilsa `SetNull`, yozuv qoladi                                                                                  |
+| action     | enum AdminAction | `USER_BLOCK`, `USER_UNBLOCK`, `COMPANY_APPROVE`, `COMPANY_REJECT`, `SUBSCRIPTION_SET`, `SUBSCRIPTION_OFF`, `AI_LIMIT_SET` |
+| targetType | text             | `User`, `Company`, `Setting`                                                                                              |
+| targetId   | text             | nishon ID                                                                                                                 |
+| details    | jsonb            | oldingi/yangi qiymat, nishon email yoki nomi                                                                              |
+| createdAt  | timestamp        |                                                                                                                           |
+
+Indekslar: `createdAt`, `(targetType, targetId)`. Migratsiya: `admin_log`.
 
 ### Setting — sozlamalar
 

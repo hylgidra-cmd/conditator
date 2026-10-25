@@ -76,7 +76,7 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Logo: PNG/JPG/WEBP bayt bo'yicha, ≤ 1 MB, server nomi, `public/` da emas, Docker volume
   - Testlar: 78/78 (PENDING va REJECTED kompaniya CV va PDF ga 403; tasdiqlangan faqat ochiq CV ni ko'radi; admin tasdiqlashi; profil va logo; har bir CV-by-ID endpoint `requireApprovedCompany` ishlatishi)
   - Brauzerda: ro'yxat → kabinet (kutish holati) → profil saqlash → noto'g'ri fayl rad etildi → logo yuklandi → `/api/cv/:id` 403 → admin tasdiqladi → 200; ru telefon ko'rinishi
-  - Admin sahifasi va obunani berish 2.2 da (hozir faqat API)
+  - Admin sahifasi va obunani berish: 2.5 da qilindi
 
 - [x] **2.2 Talab yaratish** (25.10.2026; Gulgina raqamlashi bo'yicha, rejadagi 2.3)
   - API: `GET/POST /api/vacancies` (tarix, 10 tadan sahifalanadi, yangilari birinchi), `GET/PUT /api/vacancies/:id` (faqat o'z talabi, boshqasiniki 404)
@@ -103,11 +103,19 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 130/130 (yashirin CV ga CV/PDF/qaror 404, CV yashirilgandan keyin ham, talaba 6 ta kompaniya endpointiga 403, kirmagan 401, PENDING 403, boshqa kompaniya talabi 404, noto'g'ri qiymat 400, qaror AI qayta baholaganda saqlanadi)
   - Brauzerda: ro'yxat → CV (ism, telefon, email ko'rindi) → Tanlandi → PDF yuklandi → qayta yuklashda saqlangan → ro'yxatda belgi → tarixda "Tanlandi: 1 · Mos emas: 1"; yashirin CV 404; talaba kabinetga yo'naltirildi; PENDING xabari; 4 til, ru telefon
 
+- [x] **2.5 Admin panel** (25.10.2026)
+  - `/admin`: statistika (talabalar, saqlangan va ochiq CV lar, kompaniyalar, tasdiqlangan/kutayotgan, talablar), AI (shu oydagi so'rovlar, xarajat va limit, vazifa bo'yicha, limitni o'zgartirish), oxirgi 20 ta admin harakati
+  - `/admin/users`: 20 tadan server tomonda sahifalash, qidiruv (email yoki kompaniya nomi), rol va holat filtri, bloklash (sessiyalar o'chadi) va blokdan chiqarish
+  - `/admin/companies`: tasdiq kutayotganlar birinchi, tasdiqlash/rad etish, obunani sana bilan yoqish, sanani o'zgartirish, o'chirish
+  - Yangi jadval `AdminLog` (migratsiya `admin_log`): bloklash, tasdiqlash, obuna va limit o'zgarishlari kim tomonidan va qachon
+  - Qo'shimcha: kirish, ro'yxat, kod va parol tiklash formalari `method="post"` (JS yuklanmasa ham parol URL ga tushmaydi; brauzer sinovida shu holat ko'rindi)
+  - Testlar: 146/146 (talaba, kompaniya va kirmagan foydalanuvchi 9 ta admin endpointiga 403/401 va hech narsa o'zgarmaydi; sahifalash, qidiruv, noto'g'ri filtr; bloklash → sessiya o'chadi va login rad etiladi; adminni bloklab bo'lmaydi; tasdiqlash/rad etish; obuna sanasi va AI ruxsati; AI xarajati faqat shu oy; limit; statistika; har admin endpointida `requireRole(request, "ADMIN")`). Saralash testidagi parallel guruh tartibiga bog'liq beqarorlik tuzatildi
+  - Brauzerda: admin kirishi → statistika → qidiruv → bloklash (talaba API si 401) → blokdan chiqarish → kompaniyani tasdiqlash va obuna 31.12.2026 gacha → noto'g'ri va to'g'ri limit → jurnalda 4 ta harakat; kompaniya `/admin` dan kabinetga yo'naltirildi; 4 til, ru telefon
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)
 - [ ] Haqiqiy Claude API bilan CV yaratish va saralashni sinash (kalit kelganda): ball sifati, izoh tili, narx
-- [ ] Admin sahifasi: kompaniyani tasdiqlash va obuna berish (hozir faqat API/baza orqali)
 - [ ] Docker obrazida Chromium va PDF ni sinash (birinchi haqiqiy serverda)
 
 ## Ochiq savollar

@@ -20,7 +20,7 @@ beforeEach(async () => {
   sentMails.length = 0;
   resetRateLimits();
   await db.$executeRawUnsafe(
-    'TRUNCATE "AiLog", "Match", "Vacancy", "Company", "Cv", "EmailCode", "Session", "Setting", "User" CASCADE',
+    'TRUNCATE "AdminLog", "AiLog", "Match", "Vacancy", "Company", "Cv", "EmailCode", "Session", "Setting", "User" CASCADE',
   );
 });
 

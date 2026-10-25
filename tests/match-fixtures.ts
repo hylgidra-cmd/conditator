@@ -27,6 +27,8 @@ export class ScoringAi implements AiProvider {
   readonly requests: AiJsonRequest[] = [];
   modes: Array<"ok" | "bad" | "error"> = [];
   delayMs = 0;
+  /** Guruhdagi nomzodlar soniga qarab provayder xatosi (parallel guruhlar tartibiga bog'liq bo'lmasin). */
+  failIf?: (candidateCount: number) => boolean;
 
   async generateJson(request: AiJsonRequest): Promise<AiRawResponse> {
     this.requests.push(request);
@@ -39,6 +41,7 @@ export class ScoringAi implements AiProvider {
       id: string;
       skills: string[];
     }>;
+    if (this.failIf?.(candidates.length)) throw new AiProviderError("HTTP_500");
     const usage = { inputTokens: 1000, outputTokens: 300 };
     if (mode === "bad")
       return {

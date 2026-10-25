@@ -16,7 +16,8 @@
     "logout": "Log out",
     "myCv": "My CV",
     "company": "Company",
-    "vacancies": "Vacancies"
+    "vacancies": "Vacancies",
+    "admin": "Admin"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -117,10 +118,10 @@
       "COMPANY": "Company",
       "ADMIN": "Administrator"
     },
-    "comingSoon": "The dashboard will be filled in the next steps.",
     "logout": "Log out",
     "cvLink": "My CV",
-    "companyLink": "Company dashboard"
+    "companyLink": "Company dashboard",
+    "adminLink": "Admin panel"
   },
   "Errors": {
     "VALIDATION": "Please check the entered data.",
@@ -162,7 +163,8 @@
     "FILE_TOO_LARGE": "The file is too large (1 MB maximum).",
     "FILE_TYPE_NOT_ALLOWED": "Only PNG, JPG or WEBP images can be uploaded.",
     "TITLE_OR_TEXT_REQUIRED": "Enter a job title or describe the requirements in free text.",
-    "INVALID_NUMBER": "Enter a whole number from 0 to 50."
+    "INVALID_NUMBER": "Enter a whole number from 0 to 50.",
+    "CANNOT_BLOCK_ADMIN": "An administrator cannot be blocked."
   },
   "Email": {
     "verify": {
@@ -393,6 +395,105 @@
       "REJECTED": "Not a fit",
       "none": "Not marked yet",
       "hint": "Click the button again to remove the mark"
+    }
+  },
+  "Admin": {
+    "nav": {
+      "dashboard": "Overview",
+      "users": "Users",
+      "companies": "Companies"
+    },
+    "dashboard": {
+      "title": "Admin panel",
+      "statsTitle": "Statistics",
+      "stats": {
+        "students": "Students",
+        "cvsSaved": "Saved CVs",
+        "cvsVisible": "Open CVs",
+        "companies": "Companies",
+        "companiesApproved": "Approved companies",
+        "companiesPending": "Awaiting approval",
+        "vacancies": "Vacancies"
+      },
+      "ai": {
+        "title": "AI spending",
+        "since": "This month (since {date})",
+        "requests": "AI requests",
+        "spent": "Spent / limit",
+        "spentValue": "{spent} $ / {limit} $",
+        "state": "Status",
+        "limitOk": "AI is on",
+        "limitReached": "Limit reached: AI is off, keyword search is used",
+        "tasks": {
+          "CV_GEN": "CV generation",
+          "MATCH": "Candidate ranking"
+        },
+        "taskLine": "{ok} succeeded, {failed} failed, {cost} $",
+        "limitLabel": "Monthly limit ($)",
+        "save": "Save",
+        "saved": "Limit saved",
+        "invalidLimit": "Enter a number from 0 to 100,000 (for example 50 or 12.5)."
+      },
+      "logs": {
+        "title": "Admin actions",
+        "empty": "No actions yet.",
+        "actions": {
+          "USER_BLOCK": "Blocked: {target}",
+          "USER_UNBLOCK": "Unblocked: {target}",
+          "COMPANY_APPROVE": "Company approved: {target}",
+          "COMPANY_REJECT": "Company rejected: {target}",
+          "SUBSCRIPTION_SET": "Subscription until {to}: {target}",
+          "SUBSCRIPTION_OFF": "Subscription turned off: {target}",
+          "AI_LIMIT_SET": "Monthly AI limit: {to} $"
+        }
+      }
+    },
+    "users": {
+      "title": "Users",
+      "search": "Search",
+      "searchPlaceholder": "Email or company name",
+      "role": "Role",
+      "status": "Status",
+      "any": "All",
+      "filter": "Search",
+      "reset": "Clear",
+      "total": "Total: {count}",
+      "empty": "Nothing found.",
+      "statuses": {
+        "ACTIVE": "Active",
+        "BLOCKED": "Blocked"
+      },
+      "approvals": {
+        "PENDING": "Awaiting approval",
+        "APPROVED": "Approved",
+        "REJECTED": "Rejected"
+      },
+      "verified": "Email verified",
+      "unverified": "Email not verified",
+      "cvVisible": "CV open",
+      "cvSaved": "CV hidden",
+      "noCv": "No CV",
+      "noCompanyName": "No name given",
+      "created": "Registered: {date}",
+      "block": "Block",
+      "unblock": "Unblock",
+      "confirmBlock": "Block {email}? They will be signed out right away."
+    },
+    "companies": {
+      "title": "Companies",
+      "searchPlaceholder": "Company name or email",
+      "approval": "Approval",
+      "approve": "Approve",
+      "reject": "Reject",
+      "until": "Subscription end date",
+      "enableSub": "Turn on subscription",
+      "saveSub": "Save date",
+      "disableSub": "Turn off subscription",
+      "subNone": "No subscription",
+      "subActive": "Subscription active until {date}",
+      "subExpired": "Subscription ended {date}",
+      "vacancies": "Vacancies: {count}",
+      "registered": "Registered: {date}"
     }
   }
 }

@@ -119,6 +119,18 @@ describe("har bir API endpoint ruxsatni serverda tekshiradi", () => {
       expect(source).toMatch(/(getOwnVacancy|setDecision)\(company\.id/);
     }
   });
+
+  it("admin endpointlari faqat ADMIN roli uchun", () => {
+    const admin = routes.filter((file) => file.startsWith("admin/"));
+    expect(admin.length).toBeGreaterThanOrEqual(7);
+    for (const file of admin) {
+      const source = readFileSync(path.join(apiDir, file), "utf8");
+      const handlers =
+        source.match(/export const (GET|POST|PUT|PATCH|DELETE)/g) ?? [];
+      const checks = source.match(/requireRole\(request, "ADMIN"\)/g) ?? [];
+      expect(checks.length, file).toBe(handlers.length);
+    }
+  });
 });
 
 describe("talaba boshqa talabaning CV sini ko'ra olmaydi", () => {

@@ -327,7 +327,8 @@ describe("noto'g'ri AI javobi, limit va zaxira qidiruv", () => {
     const { cookie, companyId } = await companySession();
     for (let i = 0; i < 11; i++) await studentCv();
     const vac = await vacancy(companyId);
-    ai.modes = ["ok", "error"];
+    // 10 talik guruh muvaffaqiyatli, 1 talik guruh xato.
+    ai.failIf = (count) => count === 1;
     const first = await runMatch(cookie, vac.id);
     expect(first.body).toMatchObject({
       mode: "fallback",
@@ -336,6 +337,7 @@ describe("noto'g'ri AI javobi, limit va zaxira qidiruv", () => {
     });
     expect(await db.match.count()).toBe(10);
 
+    ai.failIf = undefined;
     const second = await runMatch(cookie, vac.id);
     expect(second.body).toMatchObject({ mode: "ai", pending: 0 });
     expect((ai.requests[2].input.match(/"id":"c\d+"/g) ?? []).length).toBe(1);

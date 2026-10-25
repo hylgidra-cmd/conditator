@@ -80,6 +80,7 @@ model User {
   cv         Cv?
   company    Company?
   aiLogs     AiLog[]
+  adminLogs  AdminLog[]
 
   @@index([role, status])
 }
@@ -243,6 +244,33 @@ model AiLog {
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([createdAt])
+}
+
+enum AdminAction {
+  USER_BLOCK
+  USER_UNBLOCK
+  COMPANY_APPROVE
+  COMPANY_REJECT
+  SUBSCRIPTION_SET
+  SUBSCRIPTION_OFF
+  AI_LIMIT_SET
+}
+
+/// Admin harakatlari jurnali. Admin o'chirilsa ham yozuv qoladi (adminId bo'shatiladi).
+model AdminLog {
+  id         String      @id @default(cuid())
+  adminId    String?
+  action     AdminAction
+  targetType String /// "User", "Company", "Setting"
+  targetId   String
+  /// Qisqa tafsilot: oldingi va yangi qiymat, nishon email/nomi (keyin o'chirilsa ham tushunarli bo'lsin).
+  details    Json        @default("{}")
+  createdAt  DateTime    @default(now())
+
+  admin User? @relation(fields: [adminId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([targetType, targetId])
 }
 
 /// Kalit-qiymat sozlamalar, masalan monthlyAiLimitUsd.

@@ -27,3 +27,5 @@ npm run check
 
 Batafsil: `CLAUDE.md` (buyruqlar, qoidalar, tuzilma), `docs/PLAN.md` (reja), `PROGRESS.md` (holat).
 Serverga chiqarish yo'riqnomasi 2.7-qadamda qo'shiladi.
+
+Dockersiz (Windows, administrator huquqisiz): [docs/LOCAL-WINDOWS.md](docs/LOCAL-WINDOWS.md).

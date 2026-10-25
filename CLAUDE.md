@@ -125,6 +125,14 @@ tests/                 Vitest integratsiya testlari
 - Logo: `lib/company/logo.ts`. Tur fayl baytlaridan aniqlanadi (PNG, JPG, WEBP; SVG yo'q), ≤ 1 MB, nom serverda yaratiladi, fayl `UPLOAD_DIR` da (Docker: `uploads` volume), beriladigan javobda `CSP: sandbox`.
 - Tasdiq holati va obunani faqat admin o'zgartiradi (`PATCH /api/admin/companies/:id/approve`; obuna va admin sahifasi 2.2 da).
 
+## Talablar (vacancy)
+
+- Sxema: `lib/vacancy/schema.ts` (`vacancyInputSchema`), amallar: `lib/vacancy/service.ts`. Har amal `companyId` bilan filtrlanadi: boshqa kompaniya talabi 404.
+- Lavozim yoki `rawText` dan kamida bittasi majburiy. `rawText` istalgan tilda, AI saralashda (2.4) shu matn ishlatiladi.
+- `updatedAt` talab versiyasi: o'zgarsa, saralash keshi eskiradi.
+- Ro'yxatlar server tomonda sahifalanadi: `pageSchema` + `components/ui/pagination.tsx`.
+- Kompaniya sahifalari `requireCompanyPage()` (`lib/company/page.ts`) bilan boshlanadi.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

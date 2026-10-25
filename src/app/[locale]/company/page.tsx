@@ -1,11 +1,10 @@
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { CompanyLogo } from "@/components/company/company-logo";
 import { CompanyProfileForm } from "@/components/company/company-profile-form";
-import { redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
+import { Link } from "@/i18n/navigation";
 import { companyAccess } from "@/lib/company/access";
+import { requireCompanyPage } from "@/lib/company/page";
 import { publicCompany } from "@/lib/company/profile";
-import { db } from "@/lib/db";
 import { formatDate } from "@/lib/format-date";
 
 const TONE = {
@@ -15,23 +14,22 @@ const TONE = {
 } as const;
 
 export default async function CompanyPage() {
-  const user = await currentUser();
-  const locale = await getLocale();
-  if (!user) return redirect({ href: "/login", locale });
-  if (user.role !== "COMPANY") return redirect({ href: "/account", locale });
-
+  const { company } = await requireCompanyPage();
   const t = await getTranslations("Company");
-  const company = await db.company.upsert({
-    where: { userId: user.id },
-    create: { userId: user.id },
-    update: {},
-  });
   const access = companyAccess(company);
   const view = publicCompany(company);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">{t("title")}</h1>
+        <Link
+          href="/company/vacancies"
+          className="bg-brand rounded-lg px-4 py-2 font-semibold text-white"
+        >
+          {t("vacanciesLink")}
+        </Link>
+      </div>
 
       <section className="border-border bg-surface space-y-3 rounded-2xl border p-5 shadow-sm">
         <h2 className="text-lg font-semibold">{t("status.title")}</h2>

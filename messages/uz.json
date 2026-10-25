@@ -15,7 +15,8 @@
     "account": "Kabinet",
     "logout": "Chiqish",
     "myCv": "Mening CV im",
-    "company": "Kompaniya"
+    "company": "Kompaniya",
+    "vacancies": "Talablar"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -159,7 +160,9 @@
     "NOT_FOUND": "Topilmadi.",
     "COMPANY_NOT_APPROVED": "Kompaniyangiz hali admin tomonidan tasdiqlanmagan.",
     "FILE_TOO_LARGE": "Fayl juda katta (eng koʻpi 1 MB).",
-    "FILE_TYPE_NOT_ALLOWED": "Faqat PNG, JPG yoki WEBP rasm yuklash mumkin."
+    "FILE_TYPE_NOT_ALLOWED": "Faqat PNG, JPG yoki WEBP rasm yuklash mumkin.",
+    "TITLE_OR_TEXT_REQUIRED": "Lavozimni yoki talabni erkin matn bilan yozing.",
+    "INVALID_NUMBER": "0 dan 50 gacha butun son kiriting."
   },
   "Email": {
     "verify": {
@@ -301,6 +304,46 @@
       "remove": "Oʻchirish",
       "uploaded": "Logo yuklandi",
       "noFile": "Fayl tanlanmagan"
+    },
+    "vacanciesLink": "Talablar"
+  },
+  "Vacancies": {
+    "title": "Talablar",
+    "list": {
+      "empty": "Hali talab yoʻq.",
+      "new": "Yangi talab",
+      "edit": "Tahrirlash",
+      "copy": "Nusxa olish",
+      "created": "Yaratilgan: {date}",
+      "updated": "Oʻzgartirilgan: {date}",
+      "freeTextOnly": "Erkin matn",
+      "experience": "{years, plural, =0 {tajriba shart emas} other {# yil tajriba}}"
+    },
+    "pagination": {
+      "prev": "Oldingi",
+      "next": "Keyingi",
+      "page": "{page} / {pageCount}"
+    },
+    "form": {
+      "newTitle": "Yangi talab",
+      "editTitle": "Talabni tahrirlash",
+      "copyTitle": "Talab nusxasi",
+      "rawText": "Talab erkin matn bilan",
+      "rawTextHint": "Istalgan tilda yozing (qoraqalpoq, oʻzbek, rus, ingliz). Yoki pastdagi maydonlarni toʻldiring, yoki ikkalasini.",
+      "counter": "{count} / {max}",
+      "fieldsTitle": "Maydonlar",
+      "title": "Lavozim",
+      "skills": "Koʻnikmalar",
+      "skillsHint": "Vergul bilan ajrating",
+      "languages": "Tillar",
+      "languagesHint": "Vergul bilan ajrating, masalan: ingliz, rus",
+      "minExperienceYears": "Kamida necha yil tajriba",
+      "location": "Joylashuv",
+      "workType": "Ish turi",
+      "workTypeAny": "Farqi yoʻq",
+      "save": "Saqlash",
+      "cancel": "Bekor qilish",
+      "saved": "Talab saqlandi"
     }
   }
 }

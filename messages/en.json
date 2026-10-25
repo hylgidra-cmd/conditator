@@ -15,7 +15,8 @@
     "account": "Dashboard",
     "logout": "Log out",
     "myCv": "My CV",
-    "company": "Company"
+    "company": "Company",
+    "vacancies": "Vacancies"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -159,7 +160,9 @@
     "NOT_FOUND": "Not found.",
     "COMPANY_NOT_APPROVED": "Your company has not been approved by an administrator yet.",
     "FILE_TOO_LARGE": "The file is too large (1 MB maximum).",
-    "FILE_TYPE_NOT_ALLOWED": "Only PNG, JPG or WEBP images can be uploaded."
+    "FILE_TYPE_NOT_ALLOWED": "Only PNG, JPG or WEBP images can be uploaded.",
+    "TITLE_OR_TEXT_REQUIRED": "Enter a job title or describe the requirements in free text.",
+    "INVALID_NUMBER": "Enter a whole number from 0 to 50."
   },
   "Email": {
     "verify": {
@@ -301,6 +304,46 @@
       "remove": "Remove",
       "uploaded": "Logo uploaded",
       "noFile": "No file selected"
+    },
+    "vacanciesLink": "Vacancies"
+  },
+  "Vacancies": {
+    "title": "Vacancies",
+    "list": {
+      "empty": "No vacancies yet.",
+      "new": "New vacancy",
+      "edit": "Edit",
+      "copy": "Copy",
+      "created": "Created: {date}",
+      "updated": "Updated: {date}",
+      "freeTextOnly": "Free text",
+      "experience": "{years, plural, =0 {no experience required} one {# year of experience} other {# years of experience}}"
+    },
+    "pagination": {
+      "prev": "Previous",
+      "next": "Next",
+      "page": "{page} / {pageCount}"
+    },
+    "form": {
+      "newTitle": "New vacancy",
+      "editTitle": "Edit vacancy",
+      "copyTitle": "Copy of vacancy",
+      "rawText": "Requirements in free text",
+      "rawTextHint": "Write in any language (Karakalpak, Uzbek, Russian, English). Or fill in the fields below, or both.",
+      "counter": "{count} / {max}",
+      "fieldsTitle": "Fields",
+      "title": "Job title",
+      "skills": "Skills",
+      "skillsHint": "Separate with commas",
+      "languages": "Languages",
+      "languagesHint": "Separate with commas, e.g. English, Russian",
+      "minExperienceYears": "Minimum years of experience",
+      "location": "Location",
+      "workType": "Work type",
+      "workTypeAny": "Any",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Vacancy saved"
     }
   }
 }

@@ -15,7 +15,8 @@
     "account": "Кабинет",
     "logout": "Выйти",
     "myCv": "Моё резюме",
-    "company": "Компания"
+    "company": "Компания",
+    "vacancies": "Вакансии"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -159,7 +160,9 @@
     "NOT_FOUND": "Не найдено.",
     "COMPANY_NOT_APPROVED": "Ваша компания ещё не подтверждена администратором.",
     "FILE_TOO_LARGE": "Файл слишком большой (максимум 1 МБ).",
-    "FILE_TYPE_NOT_ALLOWED": "Можно загрузить только изображение PNG, JPG или WEBP."
+    "FILE_TYPE_NOT_ALLOWED": "Можно загрузить только изображение PNG, JPG или WEBP.",
+    "TITLE_OR_TEXT_REQUIRED": "Укажите должность или опишите требования свободным текстом.",
+    "INVALID_NUMBER": "Введите целое число от 0 до 50."
   },
   "Email": {
     "verify": {
@@ -301,6 +304,46 @@
       "remove": "Удалить",
       "uploaded": "Логотип загружен",
       "noFile": "Файл не выбран"
+    },
+    "vacanciesLink": "Вакансии"
+  },
+  "Vacancies": {
+    "title": "Вакансии",
+    "list": {
+      "empty": "Вакансий пока нет.",
+      "new": "Новая вакансия",
+      "edit": "Редактировать",
+      "copy": "Копировать",
+      "created": "Создана: {date}",
+      "updated": "Изменена: {date}",
+      "freeTextOnly": "Свободный текст",
+      "experience": "{years, plural, =0 {без опыта} one {опыт от # года} other {опыт от # лет}}"
+    },
+    "pagination": {
+      "prev": "Назад",
+      "next": "Вперёд",
+      "page": "{page} / {pageCount}"
+    },
+    "form": {
+      "newTitle": "Новая вакансия",
+      "editTitle": "Редактирование вакансии",
+      "copyTitle": "Копия вакансии",
+      "rawText": "Требования свободным текстом",
+      "rawTextHint": "Пишите на любом языке (каракалпакский, узбекский, русский, английский). Или заполните поля ниже, или и то и другое.",
+      "counter": "{count} / {max}",
+      "fieldsTitle": "Поля",
+      "title": "Должность",
+      "skills": "Навыки",
+      "skillsHint": "Через запятую",
+      "languages": "Языки",
+      "languagesHint": "Через запятую, например: английский, русский",
+      "minExperienceYears": "Минимальный опыт (лет)",
+      "location": "Местоположение",
+      "workType": "Тип работы",
+      "workTypeAny": "Не важно",
+      "save": "Сохранить",
+      "cancel": "Отмена",
+      "saved": "Вакансия сохранена"
     }
   }
 }

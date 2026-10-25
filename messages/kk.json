@@ -15,7 +15,8 @@
     "account": "Kabinet",
     "logout": "Shıǵıw",
     "myCv": "Meniń CV im",
-    "company": "Kompaniya"
+    "company": "Kompaniya",
+    "vacancies": "Talaplar"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -159,7 +160,9 @@
     "NOT_FOUND": "Tabılmadı.",
     "COMPANY_NOT_APPROVED": "Kompaniyańız ele admin tárepinen tastıyıqlanbaǵan.",
     "FILE_TOO_LARGE": "Fayl júdá úlken (eń kóbi 1 MB).",
-    "FILE_TYPE_NOT_ALLOWED": "Tek PNG, JPG yamasa WEBP súwret júklewge boladı."
+    "FILE_TYPE_NOT_ALLOWED": "Tek PNG, JPG yamasa WEBP súwret júklewge boladı.",
+    "TITLE_OR_TEXT_REQUIRED": "Lawazımdı yamasa talaptı erkin tekst penen jazıń.",
+    "INVALID_NUMBER": "0 den 50 ge shekem pútin san kiritiń."
   },
   "Email": {
     "verify": {
@@ -301,6 +304,46 @@
       "remove": "Óshiriw",
       "uploaded": "Logo júklendi",
       "noFile": "Fayl tańlanbaǵan"
+    },
+    "vacanciesLink": "Talaplar"
+  },
+  "Vacancies": {
+    "title": "Talaplar",
+    "list": {
+      "empty": "Ele talap joq.",
+      "new": "Jańa talap",
+      "edit": "Ózgertiw",
+      "copy": "Nusqa alıw",
+      "created": "Jaratılǵan: {date}",
+      "updated": "Ózgertilgen: {date}",
+      "freeTextOnly": "Erkin tekst",
+      "experience": "{years, plural, =0 {tájiriybe shárt emes} other {# jıl tájiriybe}}"
+    },
+    "pagination": {
+      "prev": "Aldıńǵı",
+      "next": "Keyingi",
+      "page": "{page} / {pageCount}"
+    },
+    "form": {
+      "newTitle": "Jańa talap",
+      "editTitle": "Talaptı ózgertiw",
+      "copyTitle": "Talap nusqası",
+      "rawText": "Talap erkin tekst penen",
+      "rawTextHint": "Qálegen tilde jazıń (qaraqalpaq, ózbek, rus, inglis). Yamasa tómendegi maydanlardı toltırıń, yamasa ekewin de.",
+      "counter": "{count} / {max}",
+      "fieldsTitle": "Maydanlar",
+      "title": "Lawazım",
+      "skills": "Kónlikpeler",
+      "skillsHint": "Útir menen ajıratıń",
+      "languages": "Tiller",
+      "languagesHint": "Útir menen ajıratıń, mısalı: inglis, rus",
+      "minExperienceYears": "Keminde neshe jıl tájiriybe",
+      "location": "Ornalasqan jeri",
+      "workType": "Jumıs túri",
+      "workTypeAny": "Parqı joq",
+      "save": "Saqlaw",
+      "cancel": "Biykarlaw",
+      "saved": "Talap saqlandı"
     }
   }
 }

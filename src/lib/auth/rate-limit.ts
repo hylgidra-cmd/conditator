@@ -16,6 +16,7 @@ export const LIMITS = {
   cvPdf: { max: 30, windowMs: 60 * 60_000 },
   companyCvView: { max: 300, windowMs: 60 * 60_000 },
   logoUpload: { max: 20, windowMs: 60 * 60_000 },
+  vacancyWrite: { max: 60, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(

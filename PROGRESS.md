@@ -78,6 +78,13 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Brauzerda: ro'yxat → kabinet (kutish holati) → profil saqlash → noto'g'ri fayl rad etildi → logo yuklandi → `/api/cv/:id` 403 → admin tasdiqladi → 200; ru telefon ko'rinishi
   - Admin sahifasi va obunani berish 2.2 da (hozir faqat API)
 
+- [x] **2.2 Talab yaratish** (25.10.2026; Gulgina raqamlashi bo'yicha, rejadagi 2.3)
+  - API: `GET/POST /api/vacancies` (tarix, 10 tadan sahifalanadi, yangilari birinchi), `GET/PUT /api/vacancies/:id` (faqat o'z talabi, boshqasiniki 404)
+  - Talab maydonlar bilan, faqat erkin matn bilan (`rawText`, istalgan tilda, ≤ 3000 belgi) yoki ikkalasi; faqat matn bo'lsa sarlavha birinchi qatordan olinadi
+  - zod: lavozim ≤ 120, ko'nikmalar ≤ 30 ta (har biri ≤ 60), tillar ≤ 10 ta, tajriba 0–50 butun son, joy ≤ 100, ish turi ro'yxatdan; takrorlar olib tashlanadi; soatiga 60 ta yozish
+  - Sahifalar: `/company/vacancies` (tarix, sahifalash), `/new` (`?from=id` bilan nusxa), `/:id` (tahrirlash); tasdiqlanmagan kompaniya ham foydalana oladi
+  - Testlar: 100/100. Brauzerda: bo'sh forma xatosi, 99 yil xatosi, yaratish, nusxa, faqat ruscha erkin matn, tahrirlash, 2-sahifa, boshqa kompaniyaga 404, ru telefon ko'rinishi
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)

@@ -85,10 +85,22 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Sahifalar: `/company/vacancies` (tarix, sahifalash), `/new` (`?from=id` bilan nusxa), `/:id` (tahrirlash); tasdiqlanmagan kompaniya ham foydalana oladi
   - Testlar: 100/100. Brauzerda: bo'sh forma xatosi, 99 yil xatosi, yaratish, nusxa, faqat ruscha erkin matn, tahrirlash, 2-sahifa, boshqa kompaniyaga 404, ru telefon ko'rinishi
 
+- [x] **2.3 Nomzodlarni saralash** (25.10.2026)
+  - Filtr (AI siz): ochiq va saqlangan CV, faol talaba, ish turi, til (4 tildagi nomlar bir xil tushuniladi), joylashuv (Nukus = Нукус = Nókis); eng ko'pi 30 ta, ko'nikma mosligi bo'yicha oldindan tartiblangan
+  - AI: 10 tadan guruh, nomzod anonim (`c1..`), faqat kasbiy ma'lumot, ism/telefon/email yo'q; javob zod sxemasi `{id, score 0–100, reason}`, izoh interfeys tilida; CV ichidagi ko'rsatmalar bajarilmaydi (prompt qoidasi)
+  - Kesh: `Match.hash` (talab versiyasi + CV versiyasi + til + model + prompt versiyasi); yangilashda faqat o'zgarganlar
+  - Zaxira: AI xatosi, oylik limit yoki obuna yo'q → kalit so'z qidiruvi (PostgreSQL) va sahifada xabar; xato chiqmaydi
+  - Takroriy bosish: talab bo'yicha qulf + tugma o'chadi + soatiga 30 ta
+  - Sahifa `/company/vacancies/:id/matches`: eng yaxshi 10 ta, ball, izoh, ko'nikmalar, CV (PDF); kam bo'lsa filtr statistikasi bilan sababi
+  - Testlar: 120/120 (filtr, 30 ta chegara, guruhlash, hash keshi, faqat o'zgargan/yangi CV, talab o'zgarishi, parallel bosish, PII, noto'g'ri javob → qayta urinish, doim noto'g'ri → zaxira, provayder xatosi, limit, obunasiz, PENDING → 403, boshqa kompaniya → 404)
+  - Brauzerda: PENDING → xabar va API 403; tasdiqlangan obunasiz → kalit so'z natijasi; obuna bor, kalit yo'q → `AI_UNAVAILABLE` zaxira (ikki marta bosilganda 1 ta AiLog); AI natijasi ko'rinishi (javob soxta), 4 til, ru telefon
+  - Haqiqiy Claude bilan sinalmagan (kalit yo'q)
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)
-- [ ] Haqiqiy Claude API bilan CV yaratishni sinash (kalit kelganda)
+- [ ] Haqiqiy Claude API bilan CV yaratish va saralashni sinash (kalit kelganda): ball sifati, izoh tili, narx
+- [ ] Admin sahifasi: kompaniyani tasdiqlash va obuna berish (hozir faqat API/baza orqali)
 - [ ] Docker obrazida Chromium va PDF ni sinash (birinchi haqiqiy serverda)
 
 ## Ochiq savollar
@@ -101,6 +113,9 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
 4. Anthropic API kaliti (haqiqiy AI ni sinash uchun), server, domen, SMTP (2-kun ertalabgacha).
 
 ## Ma'lum cheklovlar
+
+- Saralash qulfi xotirada: bitta ilova konteyneri uchun to'g'ri. Gorizontal kengaytirilsa bazaga ko'chirish kerak.
+- Filtrdagi til va shahar sinonimlari ro'yxati qo'lda yozilgan (`lib/match/normalize.ts`): yangi til yoki shahar uchun to'ldirish kerak bo'lishi mumkin.
 
 - Docker `runner` bosqichida `playwright-core install --with-deps --only-shell chromium` ishlaydi (obraz ~300–400 MB kattalashadi). Bu muhitda tekshirib bo'lmadi: birinchi haqiqiy `docker compose up --build` da PDF ni sinash kerak.
 - Claude ishlaydigan bulut muhitida Debian paket serverlari yopiq, shuning uchun Docker obrazi u yerda vaqtincha `node:22-bookworm` (to'liq) asosida yig'ib tekshirildi. Repodagi `Dockerfile` (`bookworm-slim` + `apt-get install openssl`) oddiy internetli kompyuter va serverda ishlaydi, lekin aynan shu variant hali sinalmagan.

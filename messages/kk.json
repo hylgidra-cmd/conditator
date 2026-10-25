@@ -317,7 +317,8 @@
       "created": "Jaratılǵan: {date}",
       "updated": "Ózgertilgen: {date}",
       "freeTextOnly": "Erkin tekst",
-      "experience": "{years, plural, =0 {tájiriybe shárt emes} other {# jıl tájiriybe}}"
+      "experience": "{years, plural, =0 {tájiriybe shárt emes} other {# jıl tájiriybe}}",
+      "candidates": "Kandidatlar"
     },
     "pagination": {
       "prev": "Aldıńǵı",
@@ -345,5 +346,37 @@
       "cancel": "Biykarlaw",
       "saved": "Talap saqlandı"
     }
+  },
+  "Matches": {
+    "title": "Kandidatlar: {title}",
+    "back": "← Talaplar",
+    "run": "Saralaw",
+    "refresh": "Jańalaw",
+    "running": "Saralanbaqta…",
+    "runningHint": "AI kandidatlardı bahalamaqta. Bul 30 sekundqa shekem dawam etiwi múmkin.",
+    "considered": "{count, plural, =0 {Filtrden kandidat ótpedi} other {Filtrden ótken eń sáykes # kandidat kórip shıǵıladı}}",
+    "neverRun": "Ele saralanbaǵan. {count} kandidattı AI menen bahalaw ushın «Saralaw» dı basıń.",
+    "pending": "{count} jańa yamasa ózgergen kandidat bar. Olardı bahalaw ushın «Jańalaw» dı basıń.",
+    "notice": {
+      "AI_LIMIT_REACHED": "AI saralawdıń aylıq limiti tawsıldı. Tómende gilt sóz boyınsha ápiwayı izlew nátiyjeleri.",
+      "AI_UNAVAILABLE": "AI házir juwap bermedi. Tómende gilt sóz boyınsha ápiwayı izlew nátiyjeleri. Biraz waqıttan soń «Jańalaw» dı basıń.",
+      "NO_SUBSCRIPTION": "Jazılıw aktiv emes: AI saralaw jabıq. Tómende gilt sóz boyınsha ápiwayı izlew nátiyjeleri."
+    },
+    "few": {
+      "noCvs": "Házirshe ashıq CV joq.",
+      "title": "{count, plural, =0 {Sáykes kandidat tabılmadı.} other {Sáykes kandidatlar az: filtrden # kandidat ótti.}}",
+      "stats": "Ashıq CV lar: {visible}. Jumıs túri sáykes emes: {workType}. Til sáykes emes: {language}. Jaylasıw sáykes emes: {location}."
+    },
+    "resultsAi": "Eń sáykes kandidatlar (AI bahası)",
+    "resultsKeyword": "Gilt sóz boyınsha nátiyjeler",
+    "weak": "Ballı 50 den tómen kandidatlar talapqa tek ishinara sáykes.",
+    "candidate": "{n}-kandidat",
+    "scoreAi": "AI bahası",
+    "scoreKeyword": "Gilt sóz sáykesligi",
+    "matchedTerms": "Sáykes gilt sózler: {terms}",
+    "noTerms": "Gilt sózler sáykes kelmedi.",
+    "location": "Jaylasıw: {location}",
+    "openCv": "CV nı ashıw (PDF)",
+    "score": "{score} / 100"
   }
 }

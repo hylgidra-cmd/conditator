@@ -76,6 +76,12 @@ export default async function VacanciesPage({
                 ) : null}
                 <div className="flex flex-wrap gap-3 pt-1 text-sm font-medium">
                   <Link
+                    href={`/company/vacancies/${vacancy.id}/matches`}
+                    className="text-brand hover:underline"
+                  >
+                    {t("list.candidates")}
+                  </Link>
+                  <Link
                     href={`/company/vacancies/${vacancy.id}`}
                     className="text-brand hover:underline"
                   >

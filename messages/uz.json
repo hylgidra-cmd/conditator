@@ -317,7 +317,8 @@
       "created": "Yaratilgan: {date}",
       "updated": "Oʻzgartirilgan: {date}",
       "freeTextOnly": "Erkin matn",
-      "experience": "{years, plural, =0 {tajriba shart emas} other {# yil tajriba}}"
+      "experience": "{years, plural, =0 {tajriba shart emas} other {# yil tajriba}}",
+      "candidates": "Nomzodlar"
     },
     "pagination": {
       "prev": "Oldingi",
@@ -345,5 +346,37 @@
       "cancel": "Bekor qilish",
       "saved": "Talab saqlandi"
     }
+  },
+  "Matches": {
+    "title": "Nomzodlar: {title}",
+    "back": "← Talablar",
+    "run": "Saralash",
+    "refresh": "Yangilash",
+    "running": "Saralanmoqda…",
+    "runningHint": "AI nomzodlarni baholamoqda. Bu 30 soniyagacha davom etishi mumkin.",
+    "considered": "{count, plural, =0 {Filtrdan nomzod oʻtmadi} other {Filtrdan oʻtgan eng mos # ta nomzod koʻrib chiqiladi}}",
+    "neverRun": "Hali saralanmagan. {count} ta nomzodni AI bilan baholash uchun «Saralash» ni bosing.",
+    "pending": "{count} ta yangi yoki oʻzgargan nomzod bor. Ularni baholash uchun «Yangilash» ni bosing.",
+    "notice": {
+      "AI_LIMIT_REACHED": "AI saralashning oylik limiti tugadi. Quyida kalit soʻz boʻyicha oddiy qidiruv natijalari.",
+      "AI_UNAVAILABLE": "AI hozir javob bermadi. Quyida kalit soʻz boʻyicha oddiy qidiruv natijalari. Birozdan keyin «Yangilash» ni bosing.",
+      "NO_SUBSCRIPTION": "Obuna faol emas: AI saralash yopiq. Quyida kalit soʻz boʻyicha oddiy qidiruv natijalari."
+    },
+    "few": {
+      "noCvs": "Hozircha ochiq CV yoʻq.",
+      "title": "{count, plural, =0 {Mos nomzod topilmadi.} other {Mos nomzodlar kam: filtrdan # ta nomzod oʻtdi.}}",
+      "stats": "Ochiq CV lar: {visible}. Ish turi mos emas: {workType}. Til mos emas: {language}. Joylashuv mos emas: {location}."
+    },
+    "resultsAi": "Eng mos nomzodlar (AI bahosi)",
+    "resultsKeyword": "Kalit soʻz boʻyicha natijalar",
+    "weak": "Ball 50 dan past nomzodlar talabga faqat qisman mos.",
+    "candidate": "{n}-nomzod",
+    "scoreAi": "AI bahosi",
+    "scoreKeyword": "Kalit soʻz mosligi",
+    "matchedTerms": "Mos kalit soʻzlar: {terms}",
+    "noTerms": "Kalit soʻzlar mos kelmadi.",
+    "location": "Joylashuv: {location}",
+    "openCv": "CV ni ochish (PDF)",
+    "score": "{score} / 100"
   }
 }

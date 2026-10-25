@@ -141,16 +141,16 @@ Indeks: `(companyId, createdAt)` — talablar tarixi.
 
 ### Match — saralash natijasi
 
-| Maydon               | Turi                             | Izoh                                                                  |
-| -------------------- | -------------------------------- | --------------------------------------------------------------------- |
-| id                   | text                             | PK                                                                    |
-| vacancyId            | → Vacancy.id                     |                                                                       |
-| cvId                 | → Cv.id                          |                                                                       |
-| score                | int                              | 0–100                                                                 |
-| reason               | text                             | 1–2 gaplik izoh                                                       |
-| hash                 | text                             | xesh(talab + CV versiyasi); o'zgarmagan bo'lsa AI qayta chaqirilmaydi |
-| decision             | `NONE` / `SELECTED` / `REJECTED` | kompaniya qarori                                                      |
-| createdAt, updatedAt | timestamp                        |                                                                       |
+| Maydon               | Turi                             | Izoh                                                                                                         |
+| -------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| id                   | text                             | PK                                                                                                           |
+| vacancyId            | → Vacancy.id                     |                                                                                                              |
+| cvId                 | → Cv.id                          |                                                                                                              |
+| score                | int                              | 0–100                                                                                                        |
+| reason               | text                             | 1–2 gaplik izoh                                                                                              |
+| hash                 | text                             | sha256(prompt versiyasi, model, izoh tili, Vacancy.updatedAt, Cv.savedAt); mos bo'lsa AI qayta chaqirilmaydi |
+| decision             | `NONE` / `SELECTED` / `REJECTED` | kompaniya qarori                                                                                             |
+| createdAt, updatedAt | timestamp                        |                                                                                                              |
 
 Indekslar: `(vacancyId, cvId)` unique, `(vacancyId, score)`, `(cvId, decision)` — talabaning "so'rovlari" (`SELECTED`).
 

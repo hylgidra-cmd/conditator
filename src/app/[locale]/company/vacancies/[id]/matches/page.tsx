@@ -1,0 +1,55 @@
+import type { Lang } from "@prisma/client";
+import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { MatchPanel } from "@/components/match/match-panel";
+import { FormAlert } from "@/components/ui/form";
+import { Link } from "@/i18n/navigation";
+import { companyAccess } from "@/lib/company/access";
+import { requireCompanyPage } from "@/lib/company/page";
+import { db } from "@/lib/db";
+import { getMatchResults } from "@/lib/match/service";
+
+export default async function MatchesPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { company, locale } = await requireCompanyPage();
+  const t = await getTranslations("Matches");
+  const tStatus = await getTranslations("Company.status");
+  const { id } = await params;
+  // Faqat o'z talabi: boshqa kompaniyaniki "topilmadi".
+  const vacancy = await db.vacancy.findFirst({
+    where: { id, companyId: company.id },
+  });
+  if (!vacancy) notFound();
+
+  // Tasdiqlanmagan kompaniya natijalarni ko'rmaydi (API ham 403 qaytaradi).
+  const access = companyAccess(company);
+  const initial = access.canViewCvs
+    ? await getMatchResults(company, vacancy, locale as Lang)
+    : null;
+
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+      <div className="space-y-1">
+        <Link
+          href="/company/vacancies"
+          className="text-brand text-sm font-medium hover:underline"
+        >
+          {t("back")}
+        </Link>
+        <h1 className="text-2xl font-bold break-words">
+          {t("title", { title: vacancy.title })}
+        </h1>
+      </div>
+      {initial ? (
+        <MatchPanel vacancyId={vacancy.id} initial={initial} />
+      ) : (
+        <FormAlert>
+          {tStatus(company.approval === "REJECTED" ? "REJECTED" : "PENDING")}
+        </FormAlert>
+      )}
+    </div>
+  );
+}

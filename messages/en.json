@@ -317,7 +317,8 @@
       "created": "Created: {date}",
       "updated": "Updated: {date}",
       "freeTextOnly": "Free text",
-      "experience": "{years, plural, =0 {no experience required} one {# year of experience} other {# years of experience}}"
+      "experience": "{years, plural, =0 {no experience required} one {# year of experience} other {# years of experience}}",
+      "candidates": "Candidates"
     },
     "pagination": {
       "prev": "Previous",
@@ -345,5 +346,37 @@
       "cancel": "Cancel",
       "saved": "Vacancy saved"
     }
+  },
+  "Matches": {
+    "title": "Candidates: {title}",
+    "back": "← Vacancies",
+    "run": "Find candidates",
+    "refresh": "Refresh",
+    "running": "Ranking…",
+    "runningHint": "AI is scoring the candidates. This can take up to 30 seconds.",
+    "considered": "{count, plural, =0 {No candidates passed the filter} one {Reviewing the # best-fitting candidate that passed the filter} other {Reviewing the # best-fitting candidates that passed the filter}}",
+    "neverRun": "Not ranked yet. Click “Find candidates” to have AI score {count, plural, one {# candidate} other {# candidates}}.",
+    "pending": "{count, plural, one {# new or changed candidate} other {# new or changed candidates}}. Click “Refresh” to score them.",
+    "notice": {
+      "AI_LIMIT_REACHED": "The monthly AI ranking limit has been reached. Below are the results of a simple keyword search.",
+      "AI_UNAVAILABLE": "AI did not respond right now. Below are the results of a simple keyword search. Click “Refresh” a bit later.",
+      "NO_SUBSCRIPTION": "Subscription is not active, so AI ranking is off. Below are the results of a simple keyword search."
+    },
+    "few": {
+      "noCvs": "There are no open CVs yet.",
+      "title": "{count, plural, =0 {No matching candidates found.} one {Few matching candidates: # candidate passed the filter.} other {Few matching candidates: # candidates passed the filter.}}",
+      "stats": "Open CVs: {visible}. Work type did not match: {workType}. Language did not match: {language}. Location did not match: {location}."
+    },
+    "resultsAi": "Best-fitting candidates (AI score)",
+    "resultsKeyword": "Keyword search results",
+    "weak": "Candidates scoring below 50 fit the vacancy only partly.",
+    "candidate": "Candidate {n}",
+    "scoreAi": "AI score",
+    "scoreKeyword": "Keyword match",
+    "matchedTerms": "Matching keywords: {terms}",
+    "noTerms": "No keywords matched.",
+    "location": "Location: {location}",
+    "openCv": "Open CV (PDF)",
+    "score": "{score} / 100"
   }
 }

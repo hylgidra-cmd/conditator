@@ -50,7 +50,8 @@ src/
   lib/db.ts            Prisma client
   lib/ai/              provider.ts (interfeys + tanlash), anthropic.ts (adapter), fake.ts (testlar),
                        run.ts (limit → chaqiruv → zod → qayta urinish → AiLog), budget.ts (narx, oylik limit),
-                       log.ts, pii.ts (shaxsiy ma'lumotni olib tashlash), cv.ts (matndan CV), match.ts (2-kun)
+                       log.ts, pii.ts (shaxsiy ma'lumotni olib tashlash), cv.ts (matndan CV), match.ts (nomzodlarga ball)
+  lib/match/           normalize.ts (til/joy), candidates.ts (filtr, SQL tartib), service.ts (kesh, zaxira, qulf)
   lib/cv/schema.ts     CV zod sxemalari (AI qoralamasi va to'liq CV), missingFields
   lib/auth/            password, session (requireRole), current-user, email-code, rate-limit, schemas, service
   lib/http/            route() o'rami, ApiError va xato kodlari, Origin (CSRF) tekshiruvi
@@ -128,10 +129,20 @@ tests/                 Vitest integratsiya testlari
 ## Talablar (vacancy)
 
 - Sxema: `lib/vacancy/schema.ts` (`vacancyInputSchema`), amallar: `lib/vacancy/service.ts`. Har amal `companyId` bilan filtrlanadi: boshqa kompaniya talabi 404.
-- Lavozim yoki `rawText` dan kamida bittasi majburiy. `rawText` istalgan tilda, AI saralashda (2.4) shu matn ishlatiladi.
+- Lavozim yoki `rawText` dan kamida bittasi majburiy. `rawText` istalgan tilda, AI saralashda shu matn ishlatiladi.
 - `updatedAt` talab versiyasi: o'zgarsa, saralash keshi eskiradi.
 - Ro'yxatlar server tomonda sahifalanadi: `pageSchema` + `components/ui/pagination.tsx`.
 - Kompaniya sahifalari `requireCompanyPage()` (`lib/company/page.ts`) bilan boshlanadi.
+
+## Saralash (match)
+
+- Oqim: `filterCandidates` (AI siz) → eng ko'pi 30 ta → AI ga 10 tadan (`lib/ai/match.ts`) → `Match` ga saqlash → eng yaxshi 10 ta.
+- Filtr: ochiq + saqlangan CV, faol talaba; ish turi SQL da (CV da ish turi yo'q = mos); tillar `canonicalLanguage` bilan (4 tildagi nomlar → ISO kod, CV yozilgan til ham hisoblanadi); joy `locationMatches` (kirill/diakritika/shahar sinonimlari), `REMOTE` yoki CV da joy yo'q bo'lsa tekshirilmaydi. Tartib: aniq ko'nikma mosligi, keyin kalit so'zlar (`strpos` PostgreSQL da).
+- AI ga: nomzod `c1..c10` taxallusi, ko'nikmalar, tajriba, ta'lim, tillar, joy. Ism/telefon/email/maqsad YO'Q, matn `redactPii` dan o'tadi. Sxema guruh ID lari bilan quriladi (`matchBatchSchema`): boshqa/takroriy/tushib qolgan ID = noto'g'ri javob → qayta urinish.
+- Kesh: `matchHash` = prompt versiyasi + model + izoh tili + `Vacancy.updatedAt` + `Cv.savedAt`. Hash mos bo'lsa AI chaqirilmaydi; "Saralash" va "Yangilash" faqat yangi/o'zgargan nomzodlarni yuboradi. Promptni o'zgartirsangiz `MATCH_PROMPT_VERSION` ni oshiring.
+- Zaxira: obuna yo'q (`NO_SUBSCRIPTION`), limit (`AI_LIMIT_REACHED`) yoki AI xatosi (`AI_UNAVAILABLE`) → 200 bilan kalit so'z natijasi va `notice`. Zaxira natijasi saqlanmaydi; muvaffaqiyatli AI guruhlari saqlanadi.
+- Takroriy bosish: talab bo'yicha xotiradagi qulf (`runMatching`), bitta jarayon uchun; + soatiga 30 ta (`LIMITS.matchRun`). Bir nechta konteyner bo'lsa, qulfni bazaga ko'chirish kerak.
+- API: `POST /api/vacancies/:id/match` (`{locale}`), `GET /api/vacancies/:id/matches?locale=` (faqat bazadan, AI siz). Ikkalasi `requireApprovedCompany` + `getOwnVacancy`.
 
 ## Eslatmalar
 

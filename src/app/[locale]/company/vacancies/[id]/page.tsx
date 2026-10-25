@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { VacancyForm } from "@/components/vacancy/vacancy-form";
+import { Link } from "@/i18n/navigation";
 import { requireCompanyPage } from "@/lib/company/page";
 import { db } from "@/lib/db";
 import { formValuesFrom } from "@/lib/vacancy/form";
@@ -12,7 +13,7 @@ export default async function EditVacancyPage({
   params: Promise<{ id: string }>;
 }) {
   const { company } = await requireCompanyPage();
-  const t = await getTranslations("Vacancies.form");
+  const t = await getTranslations("Vacancies");
   const { id } = await params;
   // Faqat o'z talabi: boshqa kompaniyaniki "topilmadi".
   const vacancy = await db.vacancy.findFirst({
@@ -22,7 +23,15 @@ export default async function EditVacancyPage({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("editTitle")}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold">{t("form.editTitle")}</h1>
+        <Link
+          href={`/company/vacancies/${vacancy.id}/matches`}
+          className="text-brand text-sm font-semibold hover:underline"
+        >
+          {t("list.candidates")}
+        </Link>
+      </div>
       <div className="border-border bg-surface rounded-2xl border p-5 shadow-sm">
         <VacancyForm
           initial={formValuesFrom(vacancyView(vacancy))}

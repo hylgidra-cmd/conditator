@@ -107,6 +107,18 @@ describe("har bir API endpoint ruxsatni serverda tekshiradi", () => {
       expect(source).toMatch(/loadVisibleCvDocument\(/);
     }
   });
+
+  it("saralash endpointlari faqat tasdiqlangan kompaniya uchun", () => {
+    const matching = routes.filter((file) =>
+      /^vacancies\/\[id\]\/match/.test(file),
+    );
+    expect(matching).toHaveLength(2);
+    for (const file of matching) {
+      const source = readFileSync(path.join(apiDir, file), "utf8");
+      expect(source).toMatch(/requireApprovedCompany\(request\)/);
+      expect(source).toMatch(/getOwnVacancy\(company\.id/);
+    }
+  });
 });
 
 describe("talaba boshqa talabaning CV sini ko'ra olmaydi", () => {

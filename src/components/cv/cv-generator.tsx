@@ -14,7 +14,8 @@ type Props = {
   initialLanguage: CvLanguage;
   fullName: string | null;
   phone: string | null;
-  dirty: boolean;
+  /** true bo'lsa, qo'lda kiritilgan maydonlar almashtirilishidan oldin so'raladi. */
+  confirmReplace: boolean;
   onGenerated: (result: {
     cv: CvData;
     text: string;
@@ -35,7 +36,7 @@ export function CvGenerator(props: Props) {
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (props.dirty && !window.confirm(t("replaceConfirm"))) return;
+    if (props.confirmReplace && !window.confirm(t("replaceConfirm"))) return;
     setPending(true);
     setError(undefined);
     setDone(false);
@@ -70,10 +71,14 @@ export function CvGenerator(props: Props) {
           id="cv-text"
           value={text}
           onChange={(event) => setText(event.target.value)}
+          readOnly={pending}
+          aria-describedby="cv-text-counter"
           rows={8}
           className="border-border focus:border-brand focus:ring-brand-soft mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2"
         />
         <p
+          id="cv-text-counter"
+          aria-live="polite"
           className={`text-right text-xs ${count > CV_TEXT_MAX ? "text-red-600" : "text-muted"}`}
         >
           {t("counter", { count, max: CV_TEXT_MAX })}

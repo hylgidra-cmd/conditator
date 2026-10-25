@@ -190,7 +190,7 @@
       "submit": "CV yaratish",
       "generating": "AI CV tuzmoqda…",
       "done": "CV tayyor. Tekshiring, toʻldiring va saqlang.",
-      "replaceConfirm": "Saqlanmagan oʻzgarishlar yangi CV bilan almashtiriladi. Davom etasizmi?"
+      "replaceConfirm": "Qoʻlda kiritgan maʼlumotlaringiz yangi AI natijasi bilan almashtiriladi. Davom etasizmi?"
     },
     "sections": {
       "personal": "Shaxsiy maʼlumotlar",

@@ -190,7 +190,7 @@
       "submit": "Create CV",
       "generating": "AI is writing your CV…",
       "done": "Your CV is ready. Review it, fill in the gaps and save.",
-      "replaceConfirm": "Unsaved changes will be replaced by the new CV. Continue?"
+      "replaceConfirm": "The details you entered by hand will be replaced by the new AI result. Continue?"
     },
     "sections": {
       "personal": "Personal details",

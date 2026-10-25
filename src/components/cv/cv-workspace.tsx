@@ -31,6 +31,9 @@ export function CvWorkspace({
   const [draft, setDraft] = useState(initialDraft);
   const [meta, setMeta] = useState(initialMeta);
   const [dirty, setDirty] = useState(false);
+  // Qo'lda kiritilgan ma'lumot bormi: saqlangan CV yoki AI natijasidan keyingi tahrir.
+  // Bor bo'lsa, AI bilan qayta yaratishdan oldin ogohlantiriladi.
+  const [handEdited, setHandEdited] = useState(Boolean(initialMeta.savedAt));
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -91,14 +94,26 @@ export function CvWorkspace({
         initialLanguage={draft.language}
         fullName={draft.data.fullName}
         phone={draft.data.contact.phone}
-        dirty={dirty}
+        confirmReplace={handEdited}
         onGenerated={({ cv, text, language }) => {
+          setHandEdited(false);
+          // Ism va aloqa AI dan kelmaydi: formada borini yo'qotmaymiz.
+          const personal = {
+            fullName: cv.fullName ?? draft.data.fullName,
+            contact: {
+              email: cv.contact.email ?? draft.data.contact.email,
+              phone: cv.contact.phone ?? draft.data.contact.phone,
+            },
+          };
           change(
-            draftFromData(cv, {
-              language,
-              workTypes: draft.workTypes,
-              sourceText: text,
-            }),
+            draftFromData(
+              { ...cv, ...personal },
+              {
+                language,
+                workTypes: draft.workTypes,
+                sourceText: text,
+              },
+            ),
           );
         }}
       />
@@ -107,7 +122,10 @@ export function CvWorkspace({
         draft={draft}
         errors={fieldErrors}
         errorText={errorText}
-        onChange={change}
+        onChange={(next) => {
+          setHandEdited(true);
+          change(next);
+        }}
       />
 
       <div className="border-border bg-surface sticky bottom-0 space-y-3 rounded-2xl border p-4 shadow-lg">

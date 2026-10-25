@@ -48,6 +48,9 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Sana Node va brauzerda bir xil chiqishi uchun `formatDateTime` (UTC+5), next-intl `timeZone: Asia/Tashkent`
   - Testlar: 46/46 (401/403, boshqa talaba CV si, saqlash, searchText da PII yo'q, validatsiya, 409, ochish/yopish)
   - Tekshirildi: `npm test`, `npm run check`, `npm run build`; Playwright: uz sahifada qo'lda to'ldirish → saqlash → ochiq qilish → qayta yuklash (ma'lumot va holat saqlangan, konsol xatosiz), ru mobil 375 px (gorizontal skroll yo'q)
+  - Gulgina spetsifikatsiyasi bo'yicha to'ldirildi: qo'lda tahrir qilingan (yoki saqlangan) CV ni AI bilan qayta yaratishdan oldin ogohlantirish; qayta yaratishda ism va aloqa saqlanadi; yuklanish paytida matn qulflanadi
+  - Brauzerda (AI javobi soxtalashtirilgan holda) tekshirildi: 3001 belgida tugma o'chadi, yuklanish holati, haqiqiy server xatosi ko'rsatiladi, ogohlantirish (bekor qilsa tahrir qoladi), saqlash, ochiq → yashirin; 375, 768, 1024 px da gorizontal skroll yo'q
+  - `docs/design/` maketlari yo'q: oddiy dizayn ishlatildi
   - **AI bilan yaratish tugmasi haqiqiy AI bilan sinalmagan**: API kaliti yo'q
 
 ## Keyingi qadam

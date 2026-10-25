@@ -18,7 +18,9 @@
     "db:seed": "prisma db seed",
     "db:deploy": "prisma migrate deploy",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "load:seed": "tsx scripts/load/seed.ts",
+    "load:run": "node scripts/load/run.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "1.3.0",

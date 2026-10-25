@@ -3,10 +3,11 @@ import "../globals.css";
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { ClientMessages } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
 
 type Props = {
@@ -35,11 +36,11 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale}>
       <body className="flex min-h-screen flex-col font-sans antialiased">
-        <NextIntlClientProvider>
+        <ClientMessages namespaces={[]}>
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
-        </NextIntlClientProvider>
+        </ClientMessages>
       </body>
     </html>
   );

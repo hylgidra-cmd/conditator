@@ -160,6 +160,15 @@ tests/                 Vitest integratsiya testlari
 - Obuna: `{until: "yyyy-MM-dd"}` → shu kun oxiri Toshkent vaqti (`endOfDayTashkent`), `null` → o'chirish.
 - Har o'zgartiruvchi admin harakati `writeAdminLog` (`AdminLog`) ga yoziladi; o'qish harakatlari yozilmaydi.
 
+## Sifat va xavfsizlik (2.6)
+
+- Hisobot: `docs/QUALITY-REPORT.md` (yuklama natijalari, rol × endpoint jadvali, xavfsizlik). Yuklama sinovi: `docs/LOAD-TEST.md` (`npm run load:seed`, `npm run load:run`; faqat lokal `*load*` bazada).
+- Yangi endpoint qo'shsangiz `tests/permissions.test.ts` dagi `ROWS` ga qator qo'shing, aks holda test yiqiladi.
+- So'rov tanasi faqat `parseJson` yoki `readBodyLimited` orqali o'qiladi (chunked tana ham chegarada to'xtaydi). `request.json()` / `formData()` ni to'g'ridan-to'g'ri chaqirmang.
+- Mijoz IP si `clientIp`: `X-Forwarded-For` ning OXIRGI qiymati (proksi qo'shgani). Caddy bu sarlavhani o'zi qo'yishi kerak.
+- Tarjimalar brauzerga bo'lim bo'yicha (`ClientMessages` + har bo'lim `layout.tsx` dagi `namespaces`). Client komponentda yangi namespace ishlatsangiz, o'sha layoutga qo'shing.
+- `currentUser` React `cache()` da: bir so'rovda bitta DB so'rovi. Gzip Node da o'chiq (`compress: false`), Caddy qiladi. Docker da `connection_limit=20`.
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

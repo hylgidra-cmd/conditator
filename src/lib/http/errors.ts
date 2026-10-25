@@ -67,21 +67,44 @@ export function validationError(error: z.ZodError): ApiError {
 /** JSON so'rov tanasining eng katta hajmi. Eng kattasi CV (~50 KB gacha). */
 export const MAX_JSON_BYTES = 100_000;
 
+/**
+ * So'rov tanasini chegaragacha o'qiydi. Content-Length ko'rsatilmagan (chunked) katta tana ham
+ * xotiraga to'liq yuklanmaydi: chegaradan oshgan zahoti o'qish to'xtaydi.
+ */
+export async function readBodyLimited(
+  request: Request,
+  maxBytes: number,
+  code: ErrorCode = "PAYLOAD_TOO_LARGE",
+): Promise<Buffer> {
+  const declared = Number(request.headers.get("content-length") ?? 0);
+  if (declared > maxBytes) throw new ApiError(413, code);
+  if (!request.body) return Buffer.alloc(0);
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > maxBytes) {
+      await reader.cancel().catch(() => undefined);
+      throw new ApiError(413, code);
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks);
+}
+
 export async function parseJson<T extends z.ZodType>(
   request: Request,
   schema: T,
 ): Promise<z.infer<T>> {
   // Juda katta so'rov tanasi o'qilmaydi (xotira va CPU ni himoyalash).
-  const declared = Number(request.headers.get("content-length") ?? 0);
-  if (declared > MAX_JSON_BYTES) throw new ApiError(413, "PAYLOAD_TOO_LARGE");
+  const raw = await readBodyLimited(request, MAX_JSON_BYTES);
   let body: unknown;
   try {
-    const text = await request.text();
-    if (Buffer.byteLength(text) > MAX_JSON_BYTES)
-      throw new ApiError(413, "PAYLOAD_TOO_LARGE");
-    body = JSON.parse(text);
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
+    body = JSON.parse(raw.toString("utf8"));
+  } catch {
     throw new ApiError(400, "VALIDATION");
   }
   const parsed = schema.safeParse(body);

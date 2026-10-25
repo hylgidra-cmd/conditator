@@ -112,6 +112,15 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Testlar: 146/146 (talaba, kompaniya va kirmagan foydalanuvchi 9 ta admin endpointiga 403/401 va hech narsa o'zgarmaydi; sahifalash, qidiruv, noto'g'ri filtr; bloklash → sessiya o'chadi va login rad etiladi; adminni bloklab bo'lmaydi; tasdiqlash/rad etish; obuna sanasi va AI ruxsati; AI xarajati faqat shu oy; limit; statistika; har admin endpointida `requireRole(request, "ADMIN")`). Saralash testidagi parallel guruh tartibiga bog'liq beqarorlik tuzatildi
   - Brauzerda: admin kirishi → statistika → qidiruv → bloklash (talaba API si 401) → blokdan chiqarish → kompaniyani tasdiqlash va obuna 31.12.2026 gacha → noto'g'ri va to'g'ri limit → jurnalda 4 ta harakat; kompaniya `/admin` dan kabinetga yo'naltirildi; 4 til, ru telefon
 
+- [x] **2.6 Sifat tekshiruvi** (25.10.2026) — hisobot: `docs/QUALITY-REPORT.md`
+  - Yuklama (1000 CV, 100 bir vaqtdagi foydalanuvchi, AI siz, `scripts/load/`): boshida p95 5.3 s; tuzatishdan keyin barcha sahifalar p95 ≤ 1.1 s, POST saralash 1.9 s, xato 0. O'ylashsiz stress (~57 so'rov/s) ham p95 ≤ 2.6 s
+  - Tuzatildi: gzip Node dan chiqarildi (Caddy ga), tarjimalar bo'lim bo'yicha (HTML 18–35% kichik), `currentUser` N+1, DB ulanishlari 20
+  - Ruxsat jadvali: 37 endpoint × 5 rol testda, yangi endpoint jadvalsiz qolsa test yiqiladi
+  - Xavfsizlik tuzatishlari: chunked so'rov hajm chegarasini aylanib o'tardi (endi 413), `X-Forwarded-For` bilan IP rate limitni aldash mumkin edi (endi oxirgi qiymat), HSTS
+  - Ikki xato takrorlanmaydi: kod hech bir javob/sarlavha/logda yo'q; 1000 foydalanuvchida ro'yxat 20 ta, `take` ni oshirib bo'lmaydi
+  - Testlar: 157/157
+  - Chegaralar: real AI sinalmagan; HTTPS/Caddy 2.7 da; rate limit va saralash qulfi xotirada (bitta jarayon)
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)

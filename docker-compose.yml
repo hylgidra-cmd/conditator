@@ -10,7 +10,8 @@ services:
       - path: .env
         required: false
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public
+      # connection_limit=20: 100 foydalanuvchili yuklama sinovida 9 (standart) dan ancha tez (docs/QUALITY-REPORT.md)
+      DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public&connection_limit=20
       SMTP_HOST: mailpit
       SMTP_PORT: "1025"
       UPLOAD_DIR: /app/data/uploads

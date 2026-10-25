@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 /** Qaror belgisi. Server va klient komponentlarida ishlaydi. */
 export function DecisionBadge({ decision }: { decision: MatchDecision }) {
   const t = useTranslations("Candidate.decision");
-  if (decision === "NONE") return null;
+  if (decision !== "SELECTED" && decision !== "REJECTED") return null;
   return (
     <span
       className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${

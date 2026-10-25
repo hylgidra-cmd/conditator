@@ -2,11 +2,14 @@ import type { NextRequest } from "next/server";
 import { serverEnv } from "@/lib/env";
 import { ApiError } from "./errors";
 
-/** Mijoz IP manzili (Caddy/proxy orqasida X-Forwarded-For ning birinchi qiymati). */
+/**
+ * Mijoz IP manzili. X-Forwarded-For ning OXIRGI qiymati olinadi: uni bizning proxy (Caddy) qo'yadi.
+ * Birinchi qiymatni mijozning o'zi yozib yuborishi mumkin (rate limit ni aylanib o'tish uchun).
+ */
 export function clientIp(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   return (
-    forwarded?.split(",")[0]?.trim() ||
+    forwarded?.split(",").at(-1)?.trim() ||
     request.headers.get("x-real-ip") ||
     "local"
   );

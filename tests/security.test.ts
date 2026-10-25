@@ -11,6 +11,9 @@ import { GET as getCv, PUT as putCv } from "@/app/api/cv/me/route";
 import { GET as getPdf } from "@/app/api/cv/me/pdf/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
 import { CODE_DAILY_MAX_FAILURES } from "@/lib/auth/email-code";
+import { NextRequest, NextResponse } from "next/server";
+import { POST as uploadLogo } from "@/app/api/company/me/logo/route";
+import { createSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
 import { MAX_JSON_BYTES } from "@/lib/http/errors";
 import {
@@ -325,4 +328,91 @@ it("juda katta so'rov tanasi o'qilmaydi (413)", async () => {
   );
   expect(res.status).toBe(413);
   expect((await res.json()).error).toBe("PAYLOAD_TOO_LARGE");
+});
+
+/** Content-Length siz (chunked) tana: hajm oldindan noma'lum. */
+function chunkedRequest(
+  url: string,
+  bytes: number,
+  cookie: string,
+  contentType: string,
+) {
+  let sent = 0;
+  const stream = new ReadableStream<Uint8Array>({
+    pull(controller) {
+      if (sent >= bytes) return controller.close();
+      const chunk = new Uint8Array(Math.min(64_000, bytes - sent)).fill(120);
+      sent += chunk.byteLength;
+      controller.enqueue(chunk);
+    },
+  });
+  return {
+    request: new NextRequest(`http://localhost:3000${url}`, {
+      method: url.includes("logo") ? "POST" : "PUT",
+      headers: { cookie, "content-type": contentType },
+      body: stream,
+      duplex: "half",
+    } as unknown as ConstructorParameters<typeof NextRequest>[1]),
+    sent: () => sent,
+  };
+}
+
+it("Content-Length siz katta tana ham chegarada to'xtaydi (JSON va logo)", async () => {
+  const cookie = await student("chunk@test.local");
+  const json = chunkedRequest(
+    "/api/cv/me",
+    5_000_000,
+    cookie,
+    "application/json",
+  );
+  const res = await putCv(json.request, ctx);
+  expect(res.status).toBe(413);
+  // 5 MB ning hammasi o'qilmadi.
+  expect(json.sent()).toBeLessThan(MAX_JSON_BYTES + 200_000);
+
+  const company = await db.user.create({
+    data: {
+      email: "logo@test.local",
+      passwordHash: "x",
+      role: "COMPANY",
+      emailVerifiedAt: new Date(),
+    },
+  });
+  const response = NextResponse.json({});
+  await createSession(response, company.id);
+  const logo = chunkedRequest(
+    "/api/company/me/logo",
+    5_000_000,
+    sessionCookie(response)!,
+    "multipart/form-data; boundary=x",
+  );
+  const logoRes = await uploadLogo(logo.request, ctx);
+  expect(logoRes.status).toBe(413);
+  expect((await logoRes.json()).error).toBe("FILE_TOO_LARGE");
+  expect(logo.sent()).toBeLessThan(1_300_000);
+});
+
+it("X-Forwarded-For ning birinchi qiymatini almashtirib rate limit ni aylanib bo'lmaydi", async () => {
+  const statuses: number[] = [];
+  for (let i = 0; i < 12; i++) {
+    const res = await login(
+      new NextRequest("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          // Mijoz o'zi yozgan qiymat + proxy qo'shgan haqiqiy IP.
+          "x-forwarded-for": `1.2.3.${i}, 10.9.9.9`,
+        },
+        body: JSON.stringify({
+          email: "yoq@test.local",
+          password: "notogri-parol",
+        }),
+      }),
+      ctx,
+    );
+    statuses.push(res.status);
+  }
+  // Bitta email uchun 10 ta urinishdan keyin 429 (IP almashsa ham).
+  expect(statuses.slice(0, 10).every((s) => s === 401)).toBe(true);
+  expect(statuses.slice(10)).toEqual([429, 429]);
 });

@@ -9,7 +9,7 @@ import {
 } from "@/lib/company/logo";
 import { publicCompany } from "@/lib/company/profile";
 import { db } from "@/lib/db";
-import { ApiError } from "@/lib/http/errors";
+import { ApiError, readBodyLimited } from "@/lib/http/errors";
 import { route } from "@/lib/http/route";
 
 /** Logo faqat shu endpoint orqali beriladi (fayllar public/ da emas). */
@@ -30,14 +30,19 @@ export const GET = route(async (request) => {
 export const POST = route(async (request) => {
   const { company } = await requireCompany(request);
   rateLimit(`logo:${company.id}`, LIMITS.logoUpload);
-  // Multipart sarlavhalari uchun ozgina zaxira bilan.
-  if (
-    Number(request.headers.get("content-length") ?? 0) >
-    LOGO_MAX_BYTES + 10_000
-  )
-    throw new ApiError(413, "FILE_TOO_LARGE");
-
-  const form = await request.formData().catch(() => null);
+  // Tana chegaragacha o'qiladi (multipart sarlavhalari uchun ozgina zaxira bilan).
+  const raw = await readBodyLimited(
+    request,
+    LOGO_MAX_BYTES + 10_000,
+    "FILE_TOO_LARGE",
+  );
+  const form = await new Request(request.url, {
+    method: "POST",
+    headers: { "content-type": request.headers.get("content-type") ?? "" },
+    body: new Uint8Array(raw),
+  })
+    .formData()
+    .catch(() => null);
   const file = form?.get("logo");
   if (!(file instanceof File) || file.size === 0)
     throw new ApiError(400, "VALIDATION", { logo: "FIELD_REQUIRED" });

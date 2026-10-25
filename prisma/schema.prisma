@@ -136,8 +136,9 @@ model Cv {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   matches Match[]
+  views   CvView[]
 
   @@index([isVisible, language])
   @@index([skills], type: Gin)
@@ -163,8 +164,24 @@ model Company {
 
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   vacancies Vacancy[]
+  cvViews   CvView[]
 
   @@index([approval])
+}
+
+/// Kompaniya CV ni (ism va aloqa bilan) ochgan har bir holat. Ommaviy yig'ishni kuzatish uchun.
+model CvView {
+  id        String   @id @default(cuid())
+  cvId      String
+  companyId String
+  pdf       Boolean  @default(false) /// true = PDF yuklab olingan
+  createdAt DateTime @default(now())
+
+  cv      Cv      @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
+  @@index([cvId])
 }
 
 model Vacancy {

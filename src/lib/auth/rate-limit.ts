@@ -14,6 +14,8 @@ export const LIMITS = {
   register: { max: 10, windowMs: 60 * 60_000 },
   cvGenerate: { max: 10, windowMs: 60 * 60_000 },
   cvPdf: { max: 30, windowMs: 60 * 60_000 },
+  companyCvView: { max: 300, windowMs: 60 * 60_000 },
+  logoUpload: { max: 20, windowMs: 60 * 60_000 },
 } as const;
 
 export function rateLimit(

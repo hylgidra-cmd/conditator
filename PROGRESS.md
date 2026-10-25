@@ -69,6 +69,15 @@ Reja: `docs/PLAN.md`. Yangi sessiyada avval `CLAUDE.md` va shu faylni o'qing.
   - Brauzerda qabul ssenariysi (uz): ro'yxat → kod Mailpit dan → tasdiqlash → CV sahifasi → matn → CV (AI javobi soxta) → saqlash → ko'rish → PDF yuklab olindi (ism va bo'limlar PDF da bor); kod sahifada va app logida yo'q
   - Ma'lum xavflar (qabul qilingan): ro'yxatda "email band" javobi email mavjudligini bildiradi; rate limit xotirada va IP ni `X-Forwarded-For` dan oladi (ilova faqat Caddy orqasida bo'lishi shart); `npm audit`: next ichidagi postcss (faqat build vaqtida, o'z CSS imiz) va prisma CLI dagi deepmerge-ts (ish vaqtida yo'q), tuzatish major versiyaga o'tishni talab qiladi
 
+- [x] **2.1 Kompaniya kabineti va admin tasdiqlashi** (25.10.2026)
+  - `/[locale]/company`: holat (tasdiq kutilmoqda / tasdiqlangan / rad etilgan), obuna (faol: sana / faol emas), profil (nom, davlat, soha, xodimlar soni, mas'ul shaxs), logo
+  - API: `GET/PUT /api/company/me`, `GET/POST/DELETE /api/company/me/logo`, `PATCH /api/admin/companies/:id/approve`, kompaniya uchun `GET /api/cv/:id` va `GET /api/cv/:id/pdf` (faqat tasdiqlangan kompaniya, faqat ochiq CV, har ochish `CvView` da)
+  - Ruxsat qoidasi bitta joyda: `companyAccess()`; yangi jadval `CvView` (migratsiya `company_cv_views`)
+  - Logo: PNG/JPG/WEBP bayt bo'yicha, ≤ 1 MB, server nomi, `public/` da emas, Docker volume
+  - Testlar: 78/78 (PENDING va REJECTED kompaniya CV va PDF ga 403; tasdiqlangan faqat ochiq CV ni ko'radi; admin tasdiqlashi; profil va logo; har bir CV-by-ID endpoint `requireApprovedCompany` ishlatishi)
+  - Brauzerda: ro'yxat → kabinet (kutish holati) → profil saqlash → noto'g'ri fayl rad etildi → logo yuklandi → `/api/cv/:id` 403 → admin tasdiqladi → 200; ru telefon ko'rinishi
+  - Admin sahifasi va obunani berish 2.2 da (hozir faqat API)
+
 ## Keyingi qadam
 
 - [ ] 2-kun: kompaniya profili, admin, talablar, saralash (kesh, kalit so'z zaxirasi), AI xarajat statistikasi, deploy (Caddy, zaxira nusxa)

@@ -32,6 +32,7 @@ RUN node node_modules/playwright-core/cli.js install --with-deps --only-shell ch
 COPY --from=build --chown=app:app /app/.next/static ./.next/static
 COPY --from=build --chown=app:app /app/public ./public
 COPY --from=build --chown=app:app /app/prisma ./prisma
+RUN mkdir -p /app/data/uploads && chown -R app:app /app/data
 USER app
 EXPOSE 3000
 CMD ["node", "server.js"]

@@ -117,6 +117,14 @@ tests/                 Vitest integratsiya testlari
 - Ruxsat route/sahifada tekshiriladi; `loadSavedCvDocument()` faqat saqlangan CV ni qaytaradi. 2-kunda kompaniya uchun shu funksiyalar qayta ishlatiladi (ruxsat: tasdiqlangan kompaniya + ochiq CV).
 - Testlarda `afterAll(() => closePdfBrowser())`.
 
+## Kompaniya qanday ishlaydi
+
+- Ruxsatning yagona manbai: `companyAccess()` (`lib/company/access.ts`). Sahifa ham, endpointlar ham shundan foydalanadi.
+- Kompaniya endpointi: `requireCompany(request)`. CV ga tegadigan har bir kompaniya endpointi: `requireApprovedCompany(request)` (tasdiqlanmagan → 403 `COMPANY_NOT_APPROVED`). AI saralash endpointi (2.4) qo'shimcha `canRunMatching` ni tekshiradi.
+- Kompaniya CV ni faqat `loadVisibleCvDocument()` orqali oladi: ochiq + saqlangan + egasi faol, aks holda 404. Har ochish `CvView` ga yoziladi.
+- Logo: `lib/company/logo.ts`. Tur fayl baytlaridan aniqlanadi (PNG, JPG, WEBP; SVG yo'q), ≤ 1 MB, nom serverda yaratiladi, fayl `UPLOAD_DIR` da (Docker: `uploads` volume), beriladigan javobda `CSP: sandbox`.
+- Tasdiq holati va obunani faqat admin o'zgartiradi (`PATCH /api/admin/companies/:id/approve`; obuna va admin sahifasi 2.2 da).
+
 ## Eslatmalar
 
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.

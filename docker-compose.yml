@@ -13,6 +13,10 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public
       SMTP_HOST: mailpit
       SMTP_PORT: "1025"
+      UPLOAD_DIR: /app/data/uploads
+    volumes:
+      # Kompaniya logolari (public/ da emas, faqat API orqali beriladi).
+      - uploads:/app/data/uploads
     ports:
       - "127.0.0.1:3000:3000"
     depends_on:
@@ -69,3 +73,4 @@ services:
 
 volumes:
   db-data:
+  uploads:

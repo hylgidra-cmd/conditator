@@ -91,3 +91,29 @@ export function pdfContentDisposition(fullName: string | null): string {
     .replace(/^-|-$/g, "");
   return `attachment; filename="${name ? `CV-${name}` : "CV"}.pdf"`;
 }
+
+/**
+ * Kompaniya uchun CV: faqat ochiq (`isVisible`), saqlangan va egasi faol bo'lsa.
+ * Aks holda null (chaqiruvchi 404 qaytaradi: CV borligi ham oshkor qilinmaydi).
+ * Kompaniya tasdiqlanganini chaqiruvchi tekshiradi (`requireApprovedCompany`).
+ */
+export async function loadVisibleCvDocument(
+  cvId: string,
+): Promise<(CvDocumentInput & { id: string }) | null> {
+  const cv = await db.cv.findFirst({
+    where: {
+      id: cvId,
+      isVisible: true,
+      savedAt: { not: null },
+      user: { status: "ACTIVE" },
+    },
+    select: { id: true, data: true, language: true, workTypes: true },
+  });
+  if (!cv) return null;
+  return {
+    id: cv.id,
+    data: cvDataSchema.parse(cv.data),
+    language: cv.language,
+    workTypes: cv.workTypes,
+  };
+}

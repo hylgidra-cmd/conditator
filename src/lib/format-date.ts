@@ -11,3 +11,8 @@ export function formatDateTime(value: Date | string): string {
     `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}`
   );
 }
+
+/** Faqat sana: "dd.MM.yyyy" (O'zbekiston vaqtida). */
+export function formatDate(value: Date | string): string {
+  return formatDateTime(value).slice(0, 10);
+}

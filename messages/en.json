@@ -14,7 +14,8 @@
     "register": "Sign up",
     "account": "Dashboard",
     "logout": "Log out",
-    "myCv": "My CV"
+    "myCv": "My CV",
+    "company": "Company"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -115,10 +116,10 @@
       "COMPANY": "Company",
       "ADMIN": "Administrator"
     },
-    "companyPending": "Your company is waiting for admin approval.",
     "comingSoon": "The dashboard will be filled in the next steps.",
     "logout": "Log out",
-    "cvLink": "My CV"
+    "cvLink": "My CV",
+    "companyLink": "Company dashboard"
   },
   "Errors": {
     "VALIDATION": "Please check the entered data.",
@@ -154,7 +155,11 @@
     "FIELD_REQUIRED": "Please fill in this field.",
     "TOO_MANY_ITEMS": "Too many items.",
     "CODE_DAILY_LIMIT": "Too many incorrect attempts. Please try again in 24 hours.",
-    "PAYLOAD_TOO_LARGE": "The request is too large."
+    "PAYLOAD_TOO_LARGE": "The request is too large.",
+    "NOT_FOUND": "Not found.",
+    "COMPANY_NOT_APPROVED": "Your company has not been approved by an administrator yet.",
+    "FILE_TOO_LARGE": "The file is too large (1 MB maximum).",
+    "FILE_TYPE_NOT_ALLOWED": "Only PNG, JPG or WEBP images can be uploaded."
   },
   "Email": {
     "verify": {
@@ -256,6 +261,46 @@
       "PART_TIME": "Part-time",
       "REMOTE": "Remote",
       "INTERNSHIP": "Internship"
+    }
+  },
+  "Company": {
+    "title": "Company dashboard",
+    "status": {
+      "title": "Status",
+      "PENDING": "Waiting for administrator approval. You can fill in your profile and prepare vacancies, but you cannot view CVs yet.",
+      "APPROVED": "Your company is approved. You can view open CVs.",
+      "REJECTED": "An administrator rejected the company. Please check your details and contact the administrator.",
+      "subscriptionActive": "Subscription active until {date}. AI matching is enabled.",
+      "subscriptionInactive": "No active subscription: AI matching is off, keyword search is available."
+    },
+    "profile": {
+      "title": "Profile",
+      "name": "Company name",
+      "country": "Country",
+      "industry": "Industry",
+      "size": "Number of employees",
+      "sizeNone": "Select",
+      "contactPerson": "Contact person",
+      "save": "Save",
+      "saved": "Profile saved"
+    },
+    "sizes": {
+      "1-10": "1–10",
+      "11-50": "11–50",
+      "51-200": "51–200",
+      "201-1000": "201–1000",
+      "1000+": "More than 1000"
+    },
+    "logo": {
+      "title": "Logo",
+      "hint": "PNG, JPG or WEBP, up to 1 MB.",
+      "alt": "Company logo",
+      "none": "No logo uploaded",
+      "choose": "Choose image",
+      "upload": "Upload",
+      "remove": "Remove",
+      "uploaded": "Logo uploaded",
+      "noFile": "No file selected"
     }
   }
 }

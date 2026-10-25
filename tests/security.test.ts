@@ -94,14 +94,18 @@ describe("har bir API endpoint ruxsatni serverda tekshiradi", () => {
     "%s requireRole chaqiradi",
     (file) => {
       const source = readFileSync(path.join(apiDir, file), "utf8");
-      expect(source).toMatch(/requireRole\(request/);
+      expect(source).toMatch(/require(Role|Company|ApprovedCompany)\(request/);
     },
   );
 
-  it("CV endpointlarida URL orqali boshqa CV ni tanlab bo'lmaydi", () => {
-    expect(routes.filter((file) => file.startsWith("cv/"))).not.toEqual(
-      expect.arrayContaining([expect.stringMatching(/\[/)]),
-    );
+  it("CV ni ID bo'yicha faqat tasdiqlangan kompaniya ochadi", () => {
+    const byId = routes.filter((file) => file.startsWith("cv/["));
+    expect(byId.length).toBeGreaterThan(0);
+    for (const file of byId) {
+      const source = readFileSync(path.join(apiDir, file), "utf8");
+      expect(source).toMatch(/requireApprovedCompany\(request\)/);
+      expect(source).toMatch(/loadVisibleCvDocument\(/);
+    }
   });
 });
 

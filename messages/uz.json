@@ -14,7 +14,8 @@
     "register": "Roʻyxatdan oʻtish",
     "account": "Kabinet",
     "logout": "Chiqish",
-    "myCv": "Mening CV im"
+    "myCv": "Mening CV im",
+    "company": "Kompaniya"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -115,10 +116,10 @@
       "COMPANY": "Kompaniya",
       "ADMIN": "Administrator"
     },
-    "companyPending": "Kompaniyangiz admin tasdigʻini kutmoqda.",
     "comingSoon": "Kabinet keyingi qadamlarda toʻldiriladi.",
     "logout": "Chiqish",
-    "cvLink": "Mening CV im"
+    "cvLink": "Mening CV im",
+    "companyLink": "Kompaniya kabineti"
   },
   "Errors": {
     "VALIDATION": "Maʼlumotlarni tekshirib chiqing.",
@@ -154,7 +155,11 @@
     "FIELD_REQUIRED": "Bu maydonni toʻldiring.",
     "TOO_MANY_ITEMS": "Elementlar juda koʻp.",
     "CODE_DAILY_LIMIT": "Notoʻgʻri urinishlar juda koʻp. 24 soatdan keyin qayta urinib koʻring.",
-    "PAYLOAD_TOO_LARGE": "Soʻrov hajmi juda katta."
+    "PAYLOAD_TOO_LARGE": "Soʻrov hajmi juda katta.",
+    "NOT_FOUND": "Topilmadi.",
+    "COMPANY_NOT_APPROVED": "Kompaniyangiz hali admin tomonidan tasdiqlanmagan.",
+    "FILE_TOO_LARGE": "Fayl juda katta (eng koʻpi 1 MB).",
+    "FILE_TYPE_NOT_ALLOWED": "Faqat PNG, JPG yoki WEBP rasm yuklash mumkin."
   },
   "Email": {
     "verify": {
@@ -256,6 +261,46 @@
       "PART_TIME": "Yarim stavka",
       "REMOTE": "Masofaviy",
       "INTERNSHIP": "Amaliyot"
+    }
+  },
+  "Company": {
+    "title": "Kompaniya kabineti",
+    "status": {
+      "title": "Holat",
+      "PENDING": "Admin tasdiqlashini kuting. Shu vaqtgacha profil va talablarni tayyorlashingiz mumkin, lekin CV larni koʻra olmaysiz.",
+      "APPROVED": "Kompaniya tasdiqlangan. Ochiq CV larni koʻrishingiz mumkin.",
+      "REJECTED": "Admin kompaniyani rad etdi. Maʼlumotlarni tekshirib, administrator bilan bogʻlaning.",
+      "subscriptionActive": "Obuna faol: {date} gacha. AI saralash yoqilgan.",
+      "subscriptionInactive": "Obuna faol emas: AI saralash yopiq, kalit soʻz boʻyicha qidiruv ishlaydi."
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Kompaniya nomi",
+      "country": "Davlat",
+      "industry": "Soha",
+      "size": "Xodimlar soni",
+      "sizeNone": "Tanlang",
+      "contactPerson": "Masʼul shaxs",
+      "save": "Saqlash",
+      "saved": "Profil saqlandi"
+    },
+    "sizes": {
+      "1-10": "1–10",
+      "11-50": "11–50",
+      "51-200": "51–200",
+      "201-1000": "201–1000",
+      "1000+": "1000 dan koʻp"
+    },
+    "logo": {
+      "title": "Logo",
+      "hint": "PNG, JPG yoki WEBP, eng koʻpi 1 MB.",
+      "alt": "Kompaniya logosi",
+      "none": "Logo yuklanmagan",
+      "choose": "Rasm tanlash",
+      "upload": "Yuklash",
+      "remove": "Oʻchirish",
+      "uploaded": "Logo yuklandi",
+      "noFile": "Fayl tanlanmagan"
     }
   }
 }

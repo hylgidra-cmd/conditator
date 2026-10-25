@@ -14,7 +14,8 @@
     "register": "Dizimnen ótiw",
     "account": "Kabinet",
     "logout": "Shıǵıw",
-    "myCv": "Meniń CV im"
+    "myCv": "Meniń CV im",
+    "company": "Kompaniya"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -115,10 +116,10 @@
       "COMPANY": "Kompaniya",
       "ADMIN": "Administrator"
     },
-    "companyPending": "Kompaniyańız admin tastıyıǵın kútpekte.",
     "comingSoon": "Kabinet keyingi basqıshlarda toltırıladı.",
     "logout": "Shıǵıw",
-    "cvLink": "Meniń CV im"
+    "cvLink": "Meniń CV im",
+    "companyLink": "Kompaniya kabineti"
   },
   "Errors": {
     "VALIDATION": "Maǵlıwmatlardı tekserip shıǵıń.",
@@ -154,7 +155,11 @@
     "FIELD_REQUIRED": "Bul maydandı toltırıń.",
     "TOO_MANY_ITEMS": "Elementler júdá kóp.",
     "CODE_DAILY_LIMIT": "Qáte urınıslar júdá kóp. 24 saattan soń qaytadan urınıp kóriń.",
-    "PAYLOAD_TOO_LARGE": "Soraw kólemi júdá úlken."
+    "PAYLOAD_TOO_LARGE": "Soraw kólemi júdá úlken.",
+    "NOT_FOUND": "Tabılmadı.",
+    "COMPANY_NOT_APPROVED": "Kompaniyańız ele admin tárepinen tastıyıqlanbaǵan.",
+    "FILE_TOO_LARGE": "Fayl júdá úlken (eń kóbi 1 MB).",
+    "FILE_TYPE_NOT_ALLOWED": "Tek PNG, JPG yamasa WEBP súwret júklewge boladı."
   },
   "Email": {
     "verify": {
@@ -256,6 +261,46 @@
       "PART_TIME": "Yarım stavka",
       "REMOTE": "Qashıqtan",
       "INTERNSHIP": "Ámeliyat"
+    }
+  },
+  "Company": {
+    "title": "Kompaniya kabineti",
+    "status": {
+      "title": "Jaǵday",
+      "PENDING": "Admin tastıyıqlawın kútiń. Oǵan shekem profil hám talaplardı tayarlay alasız, biraq CV lardı kóre almaysız.",
+      "APPROVED": "Kompaniya tastıyıqlanǵan. Ashıq CV lardı kóre alasız.",
+      "REJECTED": "Admin kompaniyanı biykarladı. Maǵlıwmatlardı tekserip, administrator menen baylanısıń.",
+      "subscriptionActive": "Jazılıw aktiv: {date} ge shekem. AI saralaw qosılǵan.",
+      "subscriptionInactive": "Jazılıw aktiv emes: AI saralaw jabıq, gilt sóz boyınsha izlew isleydi."
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Kompaniya atı",
+      "country": "Mámleket",
+      "industry": "Tarawı",
+      "size": "Xızmetkerler sanı",
+      "sizeNone": "Tańlań",
+      "contactPerson": "Juwapker shaxs",
+      "save": "Saqlaw",
+      "saved": "Profil saqlandı"
+    },
+    "sizes": {
+      "1-10": "1–10",
+      "11-50": "11–50",
+      "51-200": "51–200",
+      "201-1000": "201–1000",
+      "1000+": "1000 nan kóp"
+    },
+    "logo": {
+      "title": "Logo",
+      "hint": "PNG, JPG yamasa WEBP, eń kóbi 1 MB.",
+      "alt": "Kompaniya logosı",
+      "none": "Logo júklenbegen",
+      "choose": "Súwret tańlaw",
+      "upload": "Júklew",
+      "remove": "Óshiriw",
+      "uploaded": "Logo júklendi",
+      "noFile": "Fayl tańlanbaǵan"
     }
   }
 }

@@ -30,6 +30,11 @@ export async function SiteHeader() {
                     {t("myCv")}
                   </Link>
                 ) : null}
+                {user.role === "COMPANY" ? (
+                  <Link href="/company" className={NAV_LINK}>
+                    {t("company")}
+                  </Link>
+                ) : null}
                 <Link href="/account" className={NAV_LINK}>
                   {t("account")}
                 </Link>

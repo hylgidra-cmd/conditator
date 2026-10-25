@@ -15,6 +15,8 @@ erDiagram
   Company ||--o{ Vacancy : "talablari"
   Vacancy ||--o{ Match : "natijalari"
   Cv ||--o{ Match : "baholanishi"
+  Cv ||--o{ CvView : "ochilishlari"
+  Company ||--o{ CvView : "ochgan CV lari"
 ```
 
 - Talaba (`role = STUDENT`) da bitta `Cv`, kompaniya (`role = COMPANY`) da bitta `Company` bo'ladi. Admin da ikkalasi ham yo'q.
@@ -105,6 +107,21 @@ Yozish faqat `saveOwnCv()` orqali (`savedAt`, `missingFields`, filtr maydonlari 
 | createdAt, updatedAt                         | timestamp                           |                                                                |
 
 Indeks: `approval`.
+
+`logoPath` faqat server yaratgan fayl nomi (`<companyId>-<uuid>.png|jpg|webp`); fayl `UPLOAD_DIR/logos` da, `public/` da emas, faqat `GET /api/company/me/logo` orqali beriladi.
+Ruxsatlar (`lib/company/access.ts` → `companyAccess()`): profil va talab har qanday kompaniyaga; CV ko'rish faqat `APPROVED`; AI saralash `APPROVED` + faol obuna.
+
+### CvView — kompaniya CV ni ochgani
+
+| Maydon    | Turi         | Izoh                        |
+| --------- | ------------ | --------------------------- |
+| id        | text (cuid)  | PK                          |
+| cvId      | → Cv.id      | Cascade                     |
+| companyId | → Company.id | Cascade                     |
+| pdf       | bool         | `true` = PDF yuklab olingan |
+| createdAt | timestamp    |                             |
+
+Indekslar: `(companyId, createdAt)`, `cvId`. Har bir `GET /api/cv/:id` va `/api/cv/:id/pdf` bitta qator yozadi (ism va aloqa ko'rilgan holatlar, ommaviy yig'ishni kuzatish uchun).
 
 ### Vacancy — kompaniya talabi
 

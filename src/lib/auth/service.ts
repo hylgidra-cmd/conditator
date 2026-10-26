@@ -2,6 +2,7 @@ import type { User } from "@prisma/client";
 import type { z } from "zod";
 import { db } from "@/lib/db";
 import { sendResetEmail } from "@/lib/email/auth-emails";
+import { emailConfigured } from "@/lib/env";
 import { ApiError } from "@/lib/http/errors";
 import { consumeCode, issueCode } from "./email-code";
 import { hashPassword, verifyPassword } from "./password";
@@ -54,6 +55,8 @@ export async function login(input: z.infer<typeof loginSchema>): Promise<User> {
 }
 
 export async function requestPasswordReset(email: string): Promise<void> {
+  // Email mavjudligini oshkor qilmaslik uchun foydalanuvchini qidirishdan oldin tekshiriladi.
+  if (!emailConfigured()) throw new ApiError(503, "EMAIL_UNAVAILABLE");
   const user = await db.user.findUnique({ where: { email } });
   if (!user || user.status !== "ACTIVE") return;
   await sendResetCodeQuietly(user);

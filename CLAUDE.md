@@ -13,7 +13,7 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 - next-intl 4 (yo'llar `/{locale}/...`, tarjimalar `messages/*.json`)
 - zod 4 (formalar, API kirishi, AI javobi)
 - ESLint 9 + Prettier 3
-- Docker Compose (dev: app + postgres + Mailpit; `migrate` xizmati migratsiya va seed ni bajaradi)
+- Docker Compose (dev: app + postgres; `migrate` xizmati migratsiya va seed ni bajaradi)
 - argon2 (`@node-rs/argon2`), tsx (seed), nodemailer (SMTP), Vitest (testlar)
 - `@anthropic-ai/sdk` (Claude, strukturali JSON javob)
 - Keyingi qadamlarda: Playwright (PDF), Vitest
@@ -23,7 +23,7 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 | Vazifa                       | Buyruq                                                                |
 | ---------------------------- | --------------------------------------------------------------------- |
 | Hammasini ko'tarish (Docker) | `cp .env.example .env` (bir marta), keyin `docker compose up --build` |
-| Faqat baza va Mailpit        | `docker compose up -d db mailpit`                                     |
+| Faqat baza                   | `docker compose up -d db`                                             |
 | Dev server (kompyuterda)     | `npm install`, keyin `npm run dev`                                    |
 | Barcha tekshiruvlar          | `npm run check` (typecheck + lint + i18n + format)                    |
 | Tarjima kalitlari tekshiruvi | `npm run check:i18n`                                                  |
@@ -32,7 +32,7 @@ B2B AI platforma: talaba erkin matndan CV oladi, kompaniya talab yozadi va AI ba
 | Migratsiya (dev)             | `npm run db:migrate` (1.3-qadamdan)                                   |
 | Testlar                      | (1.4-qadamdan, Vitest)                                                |
 
-Manzillar: ilova http://localhost:3000, Mailpit http://localhost:8025, sog'liq tekshiruvi http://localhost:3000/api/health.
+Manzillar: ilova http://localhost:3000, sog'liq tekshiruvi http://localhost:3000/api/health.
 
 ## Papka tuzilmasi
 
@@ -183,6 +183,12 @@ tests/                 Vitest integratsiya testlari
 - `docs/ACCEPTANCE.md`: natija, qo'lda tekshirilmaganlar, buyurtmachiga topshiriladigan kalitlar. Qayta o'tkazish: `scripts/acceptance/run.mjs` + soxta AI `scripts/acceptance/mock-anthropic.mjs` (`ANTHROPIC_BASE_URL`), toza `jumis_accept` bazada.
 - PII: `redactPii` formadagi ismdan tashqari matndagi "Ismim / Atım / Меня зовут / My name is …" dan keyingi ismni ham yashiradi. Yangi til qo'shilsa, `NAME_INTROS` ga ibora qo'shing.
 - Forma tugmasi matni `Form.submitting` (barcha sahifalarga boradigan `COMMON` namespace da).
+
+## Vercel va email
+
+- Vercel build: `vercel-build` skripti (`prisma migrate deploy && prisma db seed && next build`). Vercel da faqat `DATABASE_URL` shart: login/register boshqa sozlamasiz ishlaydi.
+- Email (faqat parol tiklash): `RESEND_API_KEY` + `EMAIL_FROM` (Resend HTTP API) yoki SMTP. Bundan tashqari `AUTH_SECRET` kerak. Biror biri yo'q bo'lsa `/api/auth/forgot` 503 `EMAIL_UNAVAILABLE` qaytaradi (foydalanuvchi qidirilishidan oldin). Mailpit olib tashlangan (2026-10-26).
+- MVP demo akkauntlari `prisma/seed.ts` → `DEMO_USERS` (admin, talaba, biznes; biznes tasdiqlangan, obuna 1 yil). Mavjud bo'lsa parol qayta yozilmaydi. Haqiqiy foydalanuvchilardan oldin o'chirish kerak.
 
 ## Eslatmalar
 

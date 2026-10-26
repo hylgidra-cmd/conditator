@@ -141,6 +141,7 @@
     "NETWORK": "Tarmaq qáteligi. Internetti tekseriń.",
     "AI_LIMIT_REACHED": "AI dıń usı aylıq limiti tawsıldı. CV maydanların qolda toltırıń yamasa keyingi ayda urınıp kóriń.",
     "AI_UNAVAILABLE": "AI házir juwap bermedi. Biraz waqıttan soń qaytadan urınıp kóriń yamasa maydanlardı qolda toltırıń.",
+    "EMAIL_UNAVAILABLE": "Paroldi tiklew xatın házir jiberip bolmaydı: email sazlanbaǵan. Administratorǵa murájáát etiń.",
     "TEXT_REQUIRED": "Ózińiz haqqıńızda tekst jazıń.",
     "TEXT_TOO_LONG": "Tekst 3000 belgiden aspawı kerek.",
     "LANGUAGE_REQUIRED": "CV tilin tańlań.",

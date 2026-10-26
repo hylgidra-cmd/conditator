@@ -141,6 +141,7 @@
     "NETWORK": "Network error. Check your connection.",
     "AI_LIMIT_REACHED": "The monthly AI limit has been reached. Fill in the CV fields manually or try again next month.",
     "AI_UNAVAILABLE": "The AI did not respond. Please try again shortly or fill in the fields manually.",
+    "EMAIL_UNAVAILABLE": "The password reset email cannot be sent right now: email is not configured. Please contact the administrator.",
     "TEXT_REQUIRED": "Write some text about yourself.",
     "TEXT_TOO_LONG": "The text must not exceed 3000 characters.",
     "LANGUAGE_REQUIRED": "Choose the CV language.",

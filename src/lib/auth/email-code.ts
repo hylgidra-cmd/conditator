@@ -17,7 +17,9 @@ export function hashCode(
   purpose: EmailCodePurpose,
   code: string,
 ): string {
-  return createHmac("sha256", serverEnv().AUTH_SECRET)
+  const secret = serverEnv().AUTH_SECRET;
+  if (!secret) throw new ApiError(503, "EMAIL_UNAVAILABLE");
+  return createHmac("sha256", secret)
     .update(`${userId}:${purpose}:${code}`)
     .digest("hex");
 }

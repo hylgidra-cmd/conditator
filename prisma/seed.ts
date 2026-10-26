@@ -74,9 +74,55 @@ async function seedAdmin() {
   console.log(`Admin yaratildi: ${email}`);
 }
 
+// MVP demo akkauntlari (buyurtmachi so'rovi, 2026-10-26). Parollar ataylab oddiy va kodda:
+// faqat namoyish uchun. Haqiqiy foydalanuvchilar kelishidan oldin o'chiring yoki parollarni almashtiring.
+const DEMO_USERS = [
+  { email: "admin@gmail.com", password: "admin1234", role: "ADMIN" },
+  { email: "talaba@gmail.com", password: "talaba1234", role: "STUDENT" },
+  { email: "biznes@gmail.com", password: "biznes1234", role: "COMPANY" },
+] as const;
+
+async function seedDemoUsers() {
+  for (const demo of DEMO_USERS) {
+    const existing = await db.user.findUnique({ where: { email: demo.email } });
+    if (existing) {
+      // Parol qayta yozilmaydi (foydalanuvchi o'zgartirgan bo'lishi mumkin).
+      console.log(`Demo akkaunt mavjud: ${demo.email}`);
+      continue;
+    }
+    const now = new Date();
+    await db.user.create({
+      data: {
+        email: demo.email,
+        passwordHash: await hashPassword(demo.password),
+        role: demo.role,
+        emailVerifiedAt: now,
+        consentAt: now,
+        ...(demo.role === "COMPANY"
+          ? {
+              company: {
+                create: {
+                  name: "Demo biznes",
+                  approval: "APPROVED",
+                  approvedAt: now,
+                  // Obuna 1 yil: AI saralash ham ishlaydi.
+                  subscriptionUntil: new Date(
+                    now.getTime() + 365 * 24 * 60 * 60_000,
+                  ),
+                },
+              },
+            }
+          : {}),
+      },
+    });
+    console.log(`Demo akkaunt yaratildi: ${demo.email} (${demo.role})`);
+  }
+}
+
 async function main() {
   await seedSettings();
   await seedAdmin();
+  await seedDemoUsers();
 }
 
 main()

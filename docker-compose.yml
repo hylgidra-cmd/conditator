@@ -1,7 +1,7 @@
 # Dev muhiti: docker compose up --build
-# Ilova: http://localhost:3000 · Mailpit (dev xatlar): http://localhost:8025
+# Ilova: http://localhost:3000 (parol tiklash xati uchun .env da RESEND_API_KEY)
 
-# Portlar faqat shu kompyuterga (127.0.0.1) ochiladi: baza va Mailpit internetga chiqmaydi.
+# Portlar faqat shu kompyuterga (127.0.0.1) ochiladi: baza internetga chiqmaydi.
 
 services:
   app:
@@ -12,8 +12,6 @@ services:
     environment:
       # connection_limit=20: 100 foydalanuvchili yuklama sinovida 9 (standart) dan ancha tez (docs/QUALITY-REPORT.md)
       DATABASE_URL: postgresql://${POSTGRES_USER:-jumis}:${POSTGRES_PASSWORD:-jumis}@db:5432/${POSTGRES_DB:-jumis}?schema=public&connection_limit=20
-      SMTP_HOST: mailpit
-      SMTP_PORT: "1025"
       UPLOAD_DIR: /app/data/uploads
     volumes:
       # Kompaniya logolari (public/ da emas, faqat API orqali beriladi).
@@ -23,8 +21,6 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      mailpit:
-        condition: service_started
     restart: unless-stopped
 
   # Bir martalik: migratsiyalarni qo'llaydi va seed (admin, sozlamalar) ni bajaradi, keyin to'xtaydi.
@@ -62,14 +58,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    restart: unless-stopped
-
-  # Faqat dev uchun: barcha chiquvchi xatlarni ushlab qoladi, hech kimga yubormaydi.
-  mailpit:
-    image: axllent/mailpit:latest
-    ports:
-      - "127.0.0.1:8025:8025"
-      - "127.0.0.1:1025:1025"
     restart: unless-stopped
 
 volumes:

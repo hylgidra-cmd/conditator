@@ -13,17 +13,14 @@ import {
 import { StatSquareCard } from "@/components/ds/floating-card";
 import { FigurePlaceholder } from "./figure-placeholder";
 
-/**
- * Hero rasmi: `public/images/` dagi kesilgan (shaffof fonli) rasm, 4:5 nisbat.
- * TODO: Gemini rasmi tayyor boʻlgach shu yerga yoʻlini yozing, masalan "/images/hero.png".
- */
-const HERO_IMAGE: string | null = null;
+/** Hero rasmi: `public/images/` dagi kesilgan (shaffof fonli) rasm. `null` boʻlsa siluet chiziladi. */
+const HERO_IMAGE: string | null = "/images/hero-woman-laptop.webp";
 
-// TODO: real maʼlumot — faol foydalanuvchilar soni va avatarlar (hozircha bosh harflar).
+// TODO: real maʼlumot — faol foydalanuvchilar soni.
 const PEOPLE: Omit<AvatarProps, "size" | "className">[] = [
-  { initials: "AK", tone: "teal" },
-  { initials: "DM", tone: "sun" },
-  { initials: "SR", tone: "primary" },
+  { initials: "AK", tone: "teal", src: "/images/avatar-young-man.webp" },
+  { initials: "DM", tone: "sun", src: "/images/avatar-woman-blazer.webp" },
+  { initials: "SR", tone: "primary", src: "/images/avatar-older-woman.webp" },
 ];
 
 export async function Hero() {

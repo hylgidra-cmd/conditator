@@ -10,8 +10,8 @@ import {
 import { NotificationCard, ProfileCard } from "@/components/ds/floating-card";
 import { FigurePlaceholder } from "./figure-placeholder";
 
-/** TODO: Gemini rasmi tayyor boʻlgach yoʻlini yozing (4:5, shaffof fon), masalan "/images/profile.png". */
-const PROFILE_IMAGE: string | null = null;
+/** Profil boʻlimi rasmi (kesilgan, shaffof fonli). `null` boʻlsa siluet chiziladi. */
+const PROFILE_IMAGE: string | null = "/images/profile-woman-sitting.webp";
 
 export async function Profile() {
   const t = await getTranslations("Landing.profile");
@@ -81,7 +81,11 @@ export async function Profile() {
 
           <ProfileCard
             float
-            avatar={{ initials: "IF", tone: "violet" }}
+            avatar={{
+              initials: "IF",
+              tone: "violet",
+              src: "/images/avatar-woman-blazer.webp",
+            }}
             name={t("profileName")}
             role={t("profileRole")}
             actionLabel={t("profileAction")}

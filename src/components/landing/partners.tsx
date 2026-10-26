@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 
 // TODO: real maʼlumot — hamkorlik shartnomasi boʻlgan kompaniyalar logotiplari (ruxsat bilan).
@@ -33,10 +34,20 @@ export async function Partners() {
       className="bg-canvas font-ui pb-4"
     >
       <div className="page-x">
-        <div className="bg-peach rounded-card px-6 py-12 text-center sm:px-10 sm:py-14">
+        <div className="bg-peach rounded-card relative isolate overflow-hidden px-6 py-12 text-center sm:px-10 sm:py-14 md:text-left">
+          {/* Oʻng tomonda apelsin doira va shakllar (faqat yorugʻ rejim, md dan katta ekranda). */}
+          <div className="theme-light-only absolute inset-0 -z-10 max-md:!hidden">
+            <Image
+              src="/images/orange-shapes.webp"
+              alt=""
+              fill
+              sizes="1152px"
+              className="object-cover object-right"
+            />
+          </div>
           <h2
             id="partners-title"
-            className="font-ui text-text mx-auto max-w-2xl text-xl font-extrabold tracking-tight text-balance sm:text-2xl"
+            className="font-ui text-text mx-auto max-w-2xl text-xl font-extrabold tracking-tight text-balance sm:text-2xl md:mx-0 md:max-w-[34rem]"
           >
             {t.rich("title", {
               accent: (chunks) => (
@@ -46,7 +57,7 @@ export async function Partners() {
           </h2>
           <ul
             aria-label={t("listLabel")}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5 sm:gap-x-14"
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5 sm:gap-x-14 md:max-w-[62%] md:justify-start md:gap-x-10"
           >
             {SLOTS.map((n) => (
               <LogoSlot key={n} label={t("placeholder", { n })} />

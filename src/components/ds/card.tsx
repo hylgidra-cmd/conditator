@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Avatar } from "./avatar";
-import { ArrowRightIcon } from "./icons";
+import { ArrowRightIcon } from "@/components/icons";
 import { FOCUS_RING, cn } from "./cn";
 
 export type CardTone = "surface" | "peach" | "cool" | "primary" | "night";

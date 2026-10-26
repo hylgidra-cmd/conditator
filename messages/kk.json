@@ -679,6 +679,18 @@
       "dots": "Noqatlı naǵıs",
       "hero": "Hero fon kompoziciyası"
     },
+    "icons": {
+      "title": "Ikonkalar",
+      "text": "Bir stil: outline, 24px tor, 1.8 sızıq. Reń currentColor arqalı tekst reńinen alınadı, sonlıqtan túngi rejimde de kórinedi.",
+      "groups": {
+        "categories": "Kategoriyalar",
+        "header": "Header",
+        "footer": "Footer hám baylanıs",
+        "dashboard": "Dashboard sidebar",
+        "general": "Ulıwma"
+      },
+      "license": "Derek: Lucide (ISC licenziyası). Avtorlıqtı kórsetiw talap etilmeydi; licenziya teksti components/icons/LICENSE.txt ishinde."
+    },
     "themes": {
       "title": "Jaqtı hám túngi rejim qatar",
       "text": "Birdey komponentler eki rejimde de.",

@@ -12,7 +12,7 @@ import {
 import { IconButton } from "@/components/ds/button";
 import { TestimonialCard } from "@/components/ds/card";
 import { cn, FOCUS_RING } from "@/components/ds/cn";
-import { ArrowLeftIcon, ArrowRightIcon } from "@/components/ds/icons";
+import { ArrowLeftIcon, ArrowRightIcon } from "@/components/icons";
 
 export type Testimonial = {
   name: string;

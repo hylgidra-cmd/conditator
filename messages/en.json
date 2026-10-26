@@ -679,6 +679,18 @@
       "dots": "Dot pattern",
       "hero": "Hero backdrop composition"
     },
+    "icons": {
+      "title": "Icons",
+      "text": "One style: outline, 24px grid, 1.8 stroke. Colour comes from the text colour via currentColor, so icons stay visible in dark mode.",
+      "groups": {
+        "categories": "Categories",
+        "header": "Header",
+        "footer": "Footer and contacts",
+        "dashboard": "Dashboard sidebar",
+        "general": "General"
+      },
+      "license": "Source: Lucide (ISC licence). No attribution required; licence text in components/icons/LICENSE.txt."
+    },
     "themes": {
       "title": "Light and dark side by side",
       "text": "The same components in both modes.",

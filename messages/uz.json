@@ -679,6 +679,18 @@
       "dots": "Nuqtali naqsh",
       "hero": "Hero fon kompozitsiyasi"
     },
+    "icons": {
+      "title": "Ikonlar",
+      "text": "Bitta uslub: outline, 24px toʻr, 1.8 chiziq. Rang currentColor orqali matn rangidan olinadi, shuning uchun tungi rejimda ham koʻrinadi.",
+      "groups": {
+        "categories": "Kategoriyalar",
+        "header": "Header",
+        "footer": "Footer va aloqa",
+        "dashboard": "Dashboard sidebar",
+        "general": "Umumiy"
+      },
+      "license": "Manba: Lucide (ISC litsenziyasi). Attribution talab qilinmaydi; litsenziya matni components/icons/LICENSE.txt da."
+    },
     "themes": {
       "title": "Yorugʻ va tungi rejim yonma-yon",
       "text": "Bir xil komponentlar ikkala rejimda.",

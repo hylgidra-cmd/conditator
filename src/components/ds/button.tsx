@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ComponentProps, ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
-import { ArrowRightIcon } from "./icons";
+import { ArrowRightIcon } from "@/components/icons";
 import { FOCUS_RING, cn } from "./cn";
 
 export type ButtonVariant = "primary" | "dark" | "outline" | "ghost" | "soft";

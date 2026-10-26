@@ -2,21 +2,21 @@ import { getTranslations } from "next-intl/server";
 import { CARD_LINK, CategoryCard } from "@/components/ds/card";
 import { cn } from "@/components/ds/cn";
 import {
-  BriefcaseIcon,
+  HandshakeIcon,
   CodeWindowIcon,
   FolderIcon,
   MegaphoneIcon,
   PaletteIcon,
-  PenToolIcon,
-} from "@/components/ds/icons";
+  UiUxIcon,
+} from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 
 // TODO: real maʼlumot — vakansiyalar soni bazadan; havola yoʻnalish boʻyicha vakansiyalar roʻyxatiga.
 const CATEGORIES = [
   { key: "marketing", Icon: MegaphoneIcon, count: 58 },
-  { key: "design", Icon: PenToolIcon, count: 120, active: true },
+  { key: "design", Icon: UiUxIcon, count: 120, active: true },
   { key: "pm", Icon: FolderIcon, count: 87 },
-  { key: "business", Icon: BriefcaseIcon, count: 23 },
+  { key: "business", Icon: HandshakeIcon, count: 23 },
   { key: "graphic", Icon: PaletteIcon, count: 65 },
   { key: "web", Icon: CodeWindowIcon, count: 100 },
 ] as const;

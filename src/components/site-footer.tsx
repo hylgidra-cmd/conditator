@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { cn, FOCUS_RING } from "@/components/ds/cn";
-import { MailIcon, PhoneIcon, SendIcon } from "@/components/ds/icons";
+import { MailIcon, PhoneIcon, SendIcon } from "@/components/icons";
 import { Logo } from "@/components/ds/logo";
 import { Link } from "@/i18n/navigation";
 import {

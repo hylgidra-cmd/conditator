@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Avatar, AvatarGroup, type AvatarProps } from "./avatar";
 import { buttonClass } from "./button";
 import { CornerBracket, Ring } from "./decor";
-import { BellIcon } from "./icons";
+import { BellIcon } from "@/components/icons";
 import { cn } from "./cn";
 import { Link } from "@/i18n/navigation";
 

@@ -39,17 +39,19 @@ import {
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
-  BriefcaseIcon,
+  HandshakeIcon,
   CalendarIcon,
   CodeWindowIcon,
   FolderIcon,
   MegaphoneIcon,
   PaletteIcon,
   PenToolIcon,
+  UiUxIcon,
   SearchIcon,
   SendIcon,
   SparkIcon,
-} from "@/components/ds/icons";
+  ICON_GROUPS,
+} from "@/components/icons";
 import {
   Checkbox,
   Field,
@@ -117,9 +119,9 @@ const SPACING = [1, 2, 3, 4, 6, 8, 12, 16, 20, 30] as const;
 // TODO: real maʼlumot — vakansiyalar soni bazadan olinadi.
 const CATEGORIES = [
   { key: "marketing", icon: <MegaphoneIcon size={22} />, count: 58 },
-  { key: "design", icon: <PenToolIcon size={22} />, count: 120, active: true },
+  { key: "design", icon: <UiUxIcon size={22} />, count: 120, active: true },
   { key: "pm", icon: <FolderIcon size={22} />, count: 87 },
-  { key: "business", icon: <BriefcaseIcon size={22} />, count: 23 },
+  { key: "business", icon: <HandshakeIcon size={22} />, count: 23 },
   { key: "graphic", icon: <PaletteIcon size={22} />, count: 65 },
   { key: "web", icon: <CodeWindowIcon size={22} />, count: 100 },
 ] as const;
@@ -219,6 +221,7 @@ export default async function DesignSystemPage({ params }: Props) {
     ["cards", t("cards.title")],
     ["floating", t("floating.title")],
     ["decor", t("decor.title")],
+    ["icons", t("icons.title")],
     ["themes", t("themes.title")],
   ] as const;
 
@@ -762,6 +765,34 @@ export default async function DesignSystemPage({ params }: Props) {
           <Chevrons className="absolute top-1/2 right-[3%] -translate-y-1/2" />
           <Dot className="text-violet absolute bottom-[15%] left-[55%]" />
           <SquiggleArrow className="absolute bottom-[10%] left-[8%]" />
+        </div>
+      </Section>
+
+      <Section id="icons" title={t("icons.title")} text={t("icons.text")}>
+        <div className="flex flex-col gap-8">
+          {(Object.keys(ICON_GROUPS) as (keyof typeof ICON_GROUPS)[]).map(
+            (group) => (
+              <div key={group}>
+                <h3 className="text-h3 mb-4 font-bold">
+                  {t(`icons.groups.${group}`)}
+                </h3>
+                <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5 lg:grid-cols-7">
+                  {Object.entries(ICON_GROUPS[group]).map(([name, Glyph]) => (
+                    <li
+                      key={name}
+                      className="border-line bg-card text-text flex flex-col items-center gap-2 rounded-2xl border px-2 py-4"
+                    >
+                      <Glyph size={24} />
+                      <code className="text-subtle text-center text-[0.7rem] break-all">
+                        {name.replace(/Icon$/, "")}
+                      </code>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ),
+          )}
+          <p className="text-subtle text-sm">{t("icons.license")}</p>
         </div>
       </Section>
 

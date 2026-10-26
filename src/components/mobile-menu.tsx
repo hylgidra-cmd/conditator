@@ -1,5 +1,6 @@
 "use client";
 
+import { CloseIcon, MenuIcon } from "@/components/icons";
 import { useEffect, useId, useState } from "react";
 import { cn, FOCUS_RING } from "@/components/ds/cn";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -43,22 +44,7 @@ export function MobileMenu({
           FOCUS_RING,
         )}
       >
-        <svg
-          aria-hidden
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        >
-          {open ? (
-            <path d="M6 6l12 12M18 6 6 18" />
-          ) : (
-            <path d="M4 7h16M4 12h16M4 17h10" />
-          )}
-        </svg>
+        {open ? <CloseIcon size={22} /> : <MenuIcon size={22} />}
       </button>
       <div
         id={id}

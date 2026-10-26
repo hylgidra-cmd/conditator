@@ -95,7 +95,7 @@ const SWATCHES = [
 // Yorugʻ / tungi qiymatlar (globals.css bilan bir xil). Namuna jadvali uchun.
 const HEX: Record<(typeof SWATCHES)[number]["key"], [string, string]> = {
   primary: ["#FF7A3D", "#FF7A3D"],
-  primaryText: ["#C24A12", "#FF7A3D"],
+  primaryText: ["#B4420E", "#FF7A3D"],
   primarySoft: ["#FFE8DA", "#3A2216"],
   ink: ["#14232A", "#F2F4F5"],
   night: ["#14232A", "#080B0D"],
@@ -107,8 +107,8 @@ const HEX: Record<(typeof SWATCHES)[number]["key"], [string, string]> = {
   muted: ["#5F6B74", "#9AA5AD"],
   line: ["#EBE5DF", "#273038"],
   violet: ["#7C5CFF", "#8F74FF"],
-  success: ["#15803D", "#6EE7A0"],
-  warning: ["#A16207", "#FCD34D"],
+  success: ["#13733A", "#6EE7A0"],
+  warning: ["#935A06", "#FCD34D"],
   danger: ["#C2262B", "#FCA5A5"],
 };
 

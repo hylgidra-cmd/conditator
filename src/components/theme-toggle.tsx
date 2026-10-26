@@ -1,6 +1,12 @@
 "use client";
 
-import { THEME_COOKIE, type Theme } from "@/lib/theme";
+import { useEffect } from "react";
+import {
+  THEME_STORAGE_KEY,
+  applyTheme,
+  parseTheme,
+  type Theme,
+} from "@/lib/theme";
 
 /** `className` berilsa standart koʻrinish oʻrniga ishlatiladi. */
 type Props = { toDark: string; toLight: string; className?: string };
@@ -13,12 +19,25 @@ function currentTheme(): Theme {
     : "light";
 }
 
-/** Yorug'/tungi rejimni almashtiradi va tanlovni bir yilga cookie da saqlaydi. */
+/** Yorugʻ/tungi rejimni almashtiradi; tanlov localStorage va cookie da saqlanadi (`applyTheme`). */
 export function ThemeToggle({ toDark, toLight, className }: Props) {
+  // Boshqa oynada rejim almashsa, shu oyna ham ergashadi.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      const theme =
+        e.key === THEME_STORAGE_KEY ? parseTheme(e.newValue) : undefined;
+      if (theme) {
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   function onClick() {
     const next: Theme = currentTheme() === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    document.cookie = `${THEME_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+    applyTheme(next);
   }
 
   return (

@@ -3,7 +3,7 @@ import "@fontsource-variable/source-serif-4";
 import "@fontsource-variable/inter";
 import "../globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
@@ -12,7 +12,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { ClientMessages } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
-import { THEME_COOKIE, parseTheme } from "@/lib/theme";
+import { THEME_COOKIE, THEME_INIT_SCRIPT, parseTheme } from "@/lib/theme";
 
 type Props = {
   children: React.ReactNode;
@@ -22,6 +22,14 @@ type Props = {
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
+
+export const viewport: Viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e1215" },
+  ],
+};
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
@@ -40,7 +48,12 @@ export default async function LocaleLayout({ children, params }: Props) {
   const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
 
   return (
-    <html lang={locale} data-theme={theme}>
+    // suppressHydrationWarning: <head> dagi skript data-theme ni React dan oldin oʻzgartirishi mumkin.
+    <html lang={locale} data-theme={theme} suppressHydrationWarning>
+      <head>
+        {/* Saqlangan rejim birinchi chizishdan oldin qoʻyiladi: miltillash yoʻq. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <ClientMessages namespaces={[]}>
           <SiteHeader />

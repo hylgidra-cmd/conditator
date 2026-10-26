@@ -194,7 +194,7 @@ tests/                 Vitest integratsiya testlari
 
 - Namuna sahifa: `/{locale}/design-system` (noindex). Komponentlar: `src/components/ds/` (button, card, input, badge, avatar, floating-card, decor, icons, logo).
 - Tokenlar `globals.css` oxirida (`--ds-*`), Tailwind nomlari: `bg-primary`, `text-on-primary`, `text-primary-text`, `bg-ink`, `bg-night`, `bg-peach`, `bg-canvas`, `bg-card`, `text-subtle`, `border-line`, `rounded-btn|field|card|panel`, `shadow-soft|float|primary`, `text-display|h1|h2|h3|lead|caption`, `page-x`.
-- Apelsin (#FF7A3D) fonda matn faqat toʻq (`text-on-primary`): oq matn 2.6:1, AA dan oʻtmaydi. Oq fondagi apelsin matn: `text-primary-text`.
+- Apelsin (#FF7A3D) fonda matn faqat toʻq (`text-on-primary`): oq matn 2.6:1, AA dan oʻtmaydi. Oq fondagi apelsin matn: `text-primary-text` (#B4420E). Tanlangan rejim: `lib/theme.ts` (localStorage + cookie, `<head>` dagi skript).
 - Binafsha faqat dekor shakllarda. Shrift: Inter (ʻ U+02BB, qoraqalpoq va kirill harflari bor; Plus Jakarta Sans va Outfit da yoʻq).
 - Eski sahifalar hozircha eski tokenlarda; har bir sahifa qayta yigʻilganda `ds` komponentlariga oʻtadi.
 - Bosh sahifa `src/components/landing/` dan yigʻiladi (hero, partners, features, categories, profile, testimonials). Header va footer (`site-header.tsx`, `site-footer.tsx`) shu uslubda, hamma sahifada. Aloqa maʼlumotlari faqat `src/lib/site.ts` da. Rasmlar `public/images/*.webp`. Statistika va fikrlar placeholder: `TODO: real maʼlumot`.

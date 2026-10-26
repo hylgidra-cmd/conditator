@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Dizayn tizimi: neytral asos + bitta urg'u rangi (brend teal), bitta burchak radiusi (8px).
+ * Eski dizayn tizimi: neytral asos + bitta urg'u rangi (endi apelsin, --ds-* bilan bir xil), bitta burchak radiusi (8px).
  * Yorug' rejim standart. Tungi rejim: tizim sozlamasi yoki data-theme="dark" (cookie orqali).
  * Barcha matn juftliklari WCAG AA (4.5:1) dan yuqori.
  */
@@ -13,9 +13,10 @@
   --foreground: #161716;
   --muted: #5f6b74;
   --border: #e3e3dd;
-  --brand: #0f766e;
-  --brand-strong: #0b5f58;
-  --brand-soft: #e3f1ef;
+  /* Eski sahifalar (kabinet, auth, admin) ham yangi apelsin brendga oʻtadi; oq matn bilan AA (5.6:1). */
+  --brand: #b4420e;
+  --brand-strong: #963709;
+  --brand-soft: #ffe8da;
   --brand-foreground: #ffffff;
 }
 
@@ -23,16 +24,16 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #111312;
+    --background: #0e1215;
     --surface: #171c20;
     --surface-muted: #1e2120;
     --foreground: #ecece8;
     --muted: #9aa5ad;
     --border: #2c2f2d;
-    --brand: #2dd4bf;
-    --brand-strong: #5eead4;
-    --brand-soft: #12332f;
-    --brand-foreground: #0b1513;
+    --brand: #ff7a3d;
+    --brand-strong: #ff9361;
+    --brand-soft: #3a2216;
+    --brand-foreground: #14232a;
 
     /* Ilova ichidagi holat ranglari tungi fonda o'qiladigan bo'lishi uchun. */
     --color-red-50: #2a1515;
@@ -64,16 +65,16 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #111312;
+  --background: #0e1215;
   --surface: #171c20;
   --surface-muted: #1e2120;
   --foreground: #ecece8;
   --muted: #9aa5ad;
   --border: #2c2f2d;
-  --brand: #2dd4bf;
-  --brand-strong: #5eead4;
-  --brand-soft: #12332f;
-  --brand-foreground: #0b1513;
+  --brand: #ff7a3d;
+  --brand-strong: #ff9361;
+  --brand-soft: #3a2216;
+  --brand-foreground: #14232a;
 
   --color-red-50: #2a1515;
   --color-red-100: #3a1a1a;
@@ -204,7 +205,7 @@ body {
  *
  * Kontrast (WCAG AA) qarorlari:
  * - Oq matn #FF7A3D ustida 2.6:1, shuning uchun apelsin fondagi matn --on-primary (#14232A, 6.2:1).
- * - Oq fondagi apelsin matn uchun --primary-text (#C24A12, 4.9:1); tungi rejimda #FF7A3D (7.3:1).
+ * - Oq fondagi apelsin matn uchun --primary-text (#B4420E: oqda 5.6:1, yumshoq apelsin fonda 4.8:1); tungida #FF7A3D (7.3:1).
  * - Ikkilamchi matn #5F6B74: oq fonda 5.4:1, shaftoli fonda 5.0:1 (#6B7780 shaftolida 4.2:1 edi).
  *
  * Mavzu blok darajasida ham ishlaydi: data-theme="dark" yoki "light" istalgan elementga qoʻyilsa,
@@ -215,7 +216,7 @@ body {
   --ds-primary: #ff7a3d;
   --ds-primary-hover: #ff8f5c;
   --ds-on-primary: #14232a;
-  --ds-primary-text: #c24a12;
+  --ds-primary-text: #b4420e;
   --ds-primary-soft: #ffe8da;
   --ds-ink: #14232a;
   --ds-on-ink: #ffffff;
@@ -230,13 +231,14 @@ body {
   --ds-muted: #5f6b74;
   --ds-line: #ebe5df;
   --ds-violet: #7c5cff;
-  --ds-success: #15803d;
+  --ds-success: #13733a;
   --ds-success-soft: #e3f5e9;
-  --ds-warning: #a16207;
+  --ds-warning: #935a06;
   --ds-warning-soft: #fdf3d7;
   --ds-danger: #c2262b;
   --ds-danger-soft: #fde7e7;
   --ds-shadow-color: 20 35 42;
+  --ds-edge: transparent;
   --ds-glow: #ffd9c4;
 }
 
@@ -267,6 +269,7 @@ body {
     --ds-danger: #fca5a5;
     --ds-danger-soft: #3a1a1a;
     --ds-shadow-color: 0 0 0;
+    --ds-edge: rgb(255 255 255 / 0.06);
     --ds-glow: #4a2614;
   }
 }
@@ -298,6 +301,7 @@ body {
   --ds-danger: #fca5a5;
   --ds-danger-soft: #3a1a1a;
   --ds-shadow-color: 0 0 0;
+  --ds-edge: rgb(255 255 255 / 0.06);
   --ds-glow: #4a2614;
 }
 
@@ -340,11 +344,12 @@ body {
   --color-glow: var(--ds-glow);
 
   /* Yumshoq, past kontrastli soyalar. */
+  /* Tungi rejimda qora soya koʻrinmaydi: oʻrniga 1px yorugʻ chegara (--ds-edge) kartani ajratadi. */
   --shadow-soft:
-    0 1px 2px rgb(var(--ds-shadow-color) / 0.04),
+    0 0 0 1px var(--ds-edge), 0 1px 2px rgb(var(--ds-shadow-color) / 0.04),
     0 8px 24px -8px rgb(var(--ds-shadow-color) / 0.1);
   --shadow-float:
-    0 2px 6px rgb(var(--ds-shadow-color) / 0.05),
+    0 0 0 1px var(--ds-edge), 0 2px 6px rgb(var(--ds-shadow-color) / 0.05),
     0 24px 48px -16px rgb(var(--ds-shadow-color) / 0.18);
   --shadow-primary: 0 12px 28px -10px rgb(255 122 61 / 0.55);
 

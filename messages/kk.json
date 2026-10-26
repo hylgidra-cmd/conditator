@@ -21,7 +21,15 @@
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
-    "mainNav": "Asosiy menyu"
+    "mainNav": "Asosiy menyu",
+    "home": "Bas bet",
+    "companies": "Kompaniyalar",
+    "community": "Jámiyet",
+    "jobs": "Vakansiyalar",
+    "menuOpen": "Menyudı ashıw",
+    "menuClose": "Menyudı jabıw",
+    "logoName": "JUMIS",
+    "logoTag": "AI"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -164,10 +172,6 @@
     "tagline": "Toshkentdagi kompaniyalar uchun xodim saralash platformasi.",
     "contacts": "Aloqa",
     "telegram": "Telegram",
-    "telegramHandle": "@[TELEGRAM_USERNAME]",
-    "phone": "[PHONE]",
-    "email": "[EMAIL]",
-    "address": "[ADDRESS]",
     "product": "Platforma",
     "register": "Roʻyxatdan oʻtish",
     "login": "Kirish",
@@ -803,6 +807,23 @@
       "text": "Birdey komponentler eki rejimde de.",
       "light": "Jaqtı",
       "dark": "Túngi"
+    }
+  },
+  "Landing": {
+    "hero": {
+      "title": "Ármanıńızdaǵı jumıstıń úyi",
+      "text": "AI járdemshi rezyumeńizdi tayarlaydı hám Ózbekstan boylap sizge say vakansiyalardı tabadı.",
+      "cta": "Kóbirek biliw",
+      "imageAlt": "Noutbuk uslap turǵan jas qánige (waqıtsha súwret)",
+      "statValue": "300k",
+      "statTitle": "Aktiv paydalanıwshılar",
+      "statText": "Tashkentten Ferǵanaǵa shekem kandidatlar hám jumıs beriwshiler.",
+      "peopleLabel": "Aktiv paydalanıwshılar avatarları"
+    },
+    "partners": {
+      "title": "Tashkent, Samarqand hám pútkil Ózbekstan boylap <accent>jumıs beriwshiler</accent> ushın",
+      "listLabel": "Sherik kompaniyalar",
+      "placeholder": "Sherik {n}"
     }
   }
 }

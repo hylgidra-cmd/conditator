@@ -3,8 +3,9 @@ import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 import { HowItWorks } from "@/components/home/how-it-works";
+import { Hero } from "@/components/landing/hero";
+import { Partners } from "@/components/landing/partners";
 import { PricingSelector } from "@/components/home/pricing-selector";
-import { ScreenShot } from "@/components/home/screen-shot";
 import { TelegramIcon } from "@/components/home/telegram-icon";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
@@ -40,37 +41,8 @@ export default function HomePage({ params }: Props) {
 
   return (
     <>
-      {/* Hero */}
-      <section className="overflow-hidden">
-        <div
-          className={`${CONTAINER} grid items-center gap-10 pt-10 pb-16 sm:pt-16 lg:grid-cols-[6fr_6fr] lg:gap-12 lg:pt-20 lg:pb-24`}
-        >
-          <div>
-            <h1 className="font-display text-[2.25rem] leading-[1.08] font-semibold tracking-tight sm:text-5xl xl:text-[3.5rem]">
-              {t("hero.title")}
-            </h1>
-            <p className="text-muted mt-5 max-w-md text-lg leading-relaxed">
-              {t("hero.subtitle")}
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className={PRIMARY}>
-                {t("hero.cta")}
-              </Link>
-              <a href={TELEGRAM_URL} rel="noopener" className={SECONDARY}>
-                <TelegramIcon />
-                {t("hero.telegram")}
-              </a>
-            </div>
-            <p className="text-muted mt-6 text-sm">{t("hero.note")}</p>
-          </div>
-          <ScreenShot
-            name="matches"
-            alt={t("hero.imageAlt")}
-            priority
-            className="lg:-mr-24 xl:-mr-40"
-          />
-        </div>
-      </section>
+      <Hero />
+      <Partners />
 
       {/* Muammo */}
       <section className="border-border border-t">

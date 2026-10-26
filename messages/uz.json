@@ -21,7 +21,15 @@
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
-    "mainNav": "Asosiy menyu"
+    "mainNav": "Asosiy menyu",
+    "home": "Bosh sahifa",
+    "companies": "Kompaniyalar",
+    "community": "Hamjamiyat",
+    "jobs": "Vakansiyalar",
+    "menuOpen": "Menyuni ochish",
+    "menuClose": "Menyuni yopish",
+    "logoName": "JUMIS",
+    "logoTag": "AI"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -164,10 +172,6 @@
     "tagline": "Toshkentdagi kompaniyalar uchun xodim saralash platformasi.",
     "contacts": "Aloqa",
     "telegram": "Telegram",
-    "telegramHandle": "@[TELEGRAM_USERNAME]",
-    "phone": "[PHONE]",
-    "email": "[EMAIL]",
-    "address": "[ADDRESS]",
     "product": "Platforma",
     "register": "Roʻyxatdan oʻtish",
     "login": "Kirish",
@@ -803,6 +807,23 @@
       "text": "Bir xil komponentlar ikkala rejimda.",
       "light": "Yorugʻ",
       "dark": "Tungi"
+    }
+  },
+  "Landing": {
+    "hero": {
+      "title": "Orzuingizdagi ishning uyi",
+      "text": "AI yordamchi rezyumengizni tayyorlaydi va Oʻzbekiston boʻylab sizga mos vakansiyalarni topadi.",
+      "cta": "Koʻproq bilish",
+      "imageAlt": "Noutbuk ushlab turgan yosh mutaxassis (vaqtinchalik rasm)",
+      "statValue": "300k",
+      "statTitle": "Faol foydalanuvchilar",
+      "statText": "Toshkentdan Fargʻonagacha nomzodlar va ish beruvchilar.",
+      "peopleLabel": "Faol foydalanuvchilar avatarlari"
+    },
+    "partners": {
+      "title": "Toshkent, Samarqand va butun Oʻzbekiston boʻylab <accent>ish beruvchilar</accent> uchun",
+      "listLabel": "Hamkor kompaniyalar",
+      "placeholder": "Hamkor {n}"
     }
   }
 }

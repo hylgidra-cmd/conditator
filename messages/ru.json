@@ -21,7 +21,15 @@
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
-    "mainNav": "Asosiy menyu"
+    "mainNav": "Asosiy menyu",
+    "home": "Главная",
+    "companies": "Компании",
+    "community": "Сообщество",
+    "jobs": "Вакансии",
+    "menuOpen": "Открыть меню",
+    "menuClose": "Закрыть меню",
+    "logoName": "JUMIS",
+    "logoTag": "AI"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -164,10 +172,6 @@
     "tagline": "Toshkentdagi kompaniyalar uchun xodim saralash platformasi.",
     "contacts": "Aloqa",
     "telegram": "Telegram",
-    "telegramHandle": "@[TELEGRAM_USERNAME]",
-    "phone": "[PHONE]",
-    "email": "[EMAIL]",
-    "address": "[ADDRESS]",
     "product": "Platforma",
     "register": "Roʻyxatdan oʻtish",
     "login": "Kirish",
@@ -803,6 +807,23 @@
       "text": "Одни и те же компоненты в обеих темах.",
       "light": "Светлая",
       "dark": "Тёмная"
+    }
+  },
+  "Landing": {
+    "hero": {
+      "title": "Дом работы вашей мечты",
+      "text": "AI-помощник подготовит резюме и найдёт подходящие вакансии по всему Узбекистану.",
+      "cta": "Узнать больше",
+      "imageAlt": "Молодой специалист с ноутбуком (временное изображение)",
+      "statValue": "300k",
+      "statTitle": "Активные пользователи",
+      "statText": "Кандидаты и работодатели от Ташкента до Ферганы.",
+      "peopleLabel": "Аватары активных пользователей"
+    },
+    "partners": {
+      "title": "Для <accent>работодателей</accent> Ташкента, Самарканда и всего Узбекистана",
+      "listLabel": "Компании-партнёры",
+      "placeholder": "Партнёр {n}"
     }
   }
 }

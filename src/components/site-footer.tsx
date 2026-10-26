@@ -1,6 +1,13 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { TELEGRAM_URL } from "@/lib/site";
+import {
+  EMAIL,
+  EMAIL_URL,
+  PHONE_DISPLAY,
+  PHONE_URL,
+  TELEGRAM_HANDLE,
+  TELEGRAM_URL,
+} from "@/lib/site";
 import { ThemeToggle } from "./theme-toggle";
 import { Wordmark } from "./wordmark";
 
@@ -55,12 +62,19 @@ export function SiteFooter() {
             <li>
               <a href={TELEGRAM_URL} className={LINK} rel="noopener">
                 <span className="text-foreground">{t("telegram")}</span>{" "}
-                {t("telegramHandle")}
+                {TELEGRAM_HANDLE}
               </a>
             </li>
-            <li className="text-muted">{t("phone")}</li>
-            <li className="text-muted">{t("email")}</li>
-            <li className="text-muted">{t("address")}</li>
+            <li>
+              <a href={PHONE_URL} className={LINK}>
+                {PHONE_DISPLAY}
+              </a>
+            </li>
+            <li>
+              <a href={EMAIL_URL} className={`${LINK} break-all`}>
+                {EMAIL}
+              </a>
+            </li>
           </ul>
         </div>
       </div>

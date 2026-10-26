@@ -2,6 +2,7 @@
 
 import { THEME_COOKIE, type Theme } from "@/lib/theme";
 
+/** `className` berilsa standart koʻrinish oʻrniga ishlatiladi. */
 type Props = { toDark: string; toLight: string; className?: string };
 
 function currentTheme(): Theme {
@@ -24,7 +25,10 @@ export function ThemeToggle({ toDark, toLight, className }: Props) {
     <button
       type="button"
       onClick={onClick}
-      className={`text-muted hover:text-foreground inline-flex h-9 w-9 items-center justify-center rounded-lg ${className ?? ""}`}
+      className={
+        className ??
+        "text-muted hover:text-foreground inline-flex h-9 w-9 items-center justify-center rounded-lg"
+      }
     >
       {/* Belgi va yozuv rejimga qarab CSS orqali almashadi (server va brauzer bir xil chiziladi). */}
       <span className="theme-light-only">

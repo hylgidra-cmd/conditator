@@ -1,98 +1,126 @@
 import { getTranslations } from "next-intl/server";
+import { buttonClass } from "@/components/ds/button";
+import { cn, FOCUS_RING } from "@/components/ds/cn";
+import { Logo } from "@/components/ds/logo";
 import { Link } from "@/i18n/navigation";
 import { currentUser } from "@/lib/auth/current-user";
 import { LogoutButton } from "./auth/logout-button";
 import { LocaleSwitcher } from "./locale-switcher";
+import { MobileMenu } from "./mobile-menu";
 import { ThemeToggle } from "./theme-toggle";
-import { Wordmark } from "./wordmark";
 
-const NAV_LINK =
-  "text-muted hover:text-foreground shrink-0 rounded-lg px-1.5 py-1.5 text-sm whitespace-nowrap sm:px-2";
+const NAV_LINK = cn(
+  "font-ui text-text hover:text-primary-text rounded-btn text-[0.9375rem] font-medium whitespace-nowrap transition-colors",
+  FOCUS_RING,
+);
+
+const THEME_BUTTON = cn(
+  "bg-peach text-text hover:bg-primary-soft inline-flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
+  FOCUS_RING,
+);
 
 export async function SiteHeader() {
   const t = await getTranslations("Header");
   const tTheme = await getTranslations("Theme");
   const user = await currentUser();
 
+  // Bosh sahifa boʻlimlariga havolalar. TODO: Vakansiyalar va Hamjamiyat boʻlimlari keyingi bosqichda quriladi.
+  const sections = [
+    { href: "/", label: t("home") },
+    { href: "/#companies", label: t("companies") },
+    { href: "/#community", label: t("community") },
+    { href: "/#categories", label: t("jobs") },
+  ];
+
+  // Kirgan foydalanuvchi uchun rol boʻyicha havolalar (mavjud kabinet sahifalari).
+  const roleLinks = user
+    ? [
+        ...(user.role === "STUDENT"
+          ? [{ href: "/student/cv", label: t("myCv") }]
+          : []),
+        ...(user.role === "COMPANY"
+          ? [
+              { href: "/company/vacancies", label: t("vacancies") },
+              { href: "/company", label: t("company") },
+            ]
+          : []),
+        ...(user.role === "ADMIN"
+          ? [{ href: "/admin", label: t("admin") }]
+          : []),
+        { href: "/account", label: t("account") },
+      ]
+    : [];
+
+  const themeToggle = (
+    <ThemeToggle
+      toDark={tTheme("toDark")}
+      toLight={tTheme("toLight")}
+      className={THEME_BUTTON}
+    />
+  );
+
+  // PDF dagidek shaffof va qotirilmagan: bosh sahifada hero foni header ostidan boshlanadi.
   return (
-    <header className="border-border bg-background/90 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6">
+    <header className="font-ui relative z-40">
+      <div className="page-x relative flex h-16 items-center gap-3 lg:h-20">
         <Link
           href="/"
           aria-label={t("homeAria")}
-          className="font-display shrink-0 text-xl font-semibold tracking-tight whitespace-nowrap"
+          className={cn("rounded-btn shrink-0", FOCUS_RING)}
         >
-          <Wordmark brand={t("brand")} />
+          <Logo name={t("logoName")} tag={t("logoTag")} />
         </Link>
 
-        {user ? null : (
-          <nav
-            aria-label={t("mainNav")}
-            className="ml-6 hidden items-center gap-1 lg:flex"
-          >
-            <Link href="/#how" className={NAV_LINK}>
-              {t("howItWorks")}
+        <nav
+          aria-label={t("mainNav")}
+          className="ml-14 hidden items-center gap-10 lg:flex"
+        >
+          {(user ? roleLinks : sections).map((item) => (
+            <Link key={item.href} href={item.href} className={NAV_LINK}>
+              {item.label}
             </Link>
-            <Link href="/#pricing" className={NAV_LINK}>
-              {t("pricing")}
-            </Link>
-            <Link href="/#faq" className={NAV_LINK}>
-              {t("faq")}
-            </Link>
-          </nav>
-        )}
+          ))}
+        </nav>
 
-        <div className="ml-auto flex min-w-0 items-center sm:gap-1">
-          {/* Kichik ekranda ham bir qator: sig'magan havolalar gorizontal suriladi. */}
-          <nav className="flex min-w-0 items-center gap-1 overflow-x-auto">
-            {user ? (
-              <>
-                {user.role === "STUDENT" ? (
-                  <Link href="/student/cv" className={NAV_LINK}>
-                    {t("myCv")}
-                  </Link>
-                ) : null}
-                {user.role === "COMPANY" ? (
-                  <>
-                    <Link href="/company/vacancies" className={NAV_LINK}>
-                      {t("vacancies")}
-                    </Link>
-                    <Link href="/company" className={NAV_LINK}>
-                      {t("company")}
-                    </Link>
-                  </>
-                ) : null}
-                {user.role === "ADMIN" ? (
-                  <Link href="/admin" className={NAV_LINK}>
-                    {t("admin")}
-                  </Link>
-                ) : null}
-                <Link href="/account" className={NAV_LINK}>
-                  {t("account")}
-                </Link>
-                <LogoutButton className={NAV_LINK} />
-              </>
-            ) : (
-              <>
-                <Link href="/login" className={NAV_LINK}>
-                  {t("login")}
-                </Link>
-                <Link
-                  href="/register"
-                  className="bg-brand text-brand-foreground hover:bg-brand-strong ml-1 shrink-0 rounded-lg px-2.5 py-2 text-sm font-semibold whitespace-nowrap transition-colors sm:px-4"
-                >
-                  {t("register")}
-                </Link>
-              </>
-            )}
-          </nav>
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
           <LocaleSwitcher />
-          <span className="hidden sm:block">
-            <ThemeToggle
-              toDark={tTheme("toDark")}
-              toLight={tTheme("toLight")}
-            />
-          </span>
+          <span className="hidden sm:block">{themeToggle}</span>
+          {user ? (
+            <span className="hidden lg:block">
+              <LogoutButton
+                className={buttonClass({ variant: "outline", size: "sm" })}
+              />
+            </span>
+          ) : (
+            <Link
+              href="/login"
+              className={buttonClass({ variant: "dark", size: "sm" })}
+            >
+              {t("login")}
+            </Link>
+          )}
+          <MobileMenu
+            items={user ? roleLinks : sections}
+            openLabel={t("menuOpen")}
+            closeLabel={t("menuClose")}
+            footer={
+              <>
+                <span className="sm:hidden">{themeToggle}</span>
+                {user ? (
+                  <LogoutButton
+                    className={buttonClass({ variant: "outline", size: "sm" })}
+                  />
+                ) : (
+                  <Link
+                    href="/register"
+                    className={buttonClass({ variant: "primary", size: "sm" })}
+                  >
+                    {t("register")}
+                  </Link>
+                )}
+              </>
+            }
+          />
         </div>
       </div>
     </header>

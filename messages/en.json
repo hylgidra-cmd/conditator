@@ -21,7 +21,15 @@
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
-    "mainNav": "Asosiy menyu"
+    "mainNav": "Asosiy menyu",
+    "home": "Home",
+    "companies": "Companies",
+    "community": "Community",
+    "jobs": "Jobs",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "logoName": "JUMIS",
+    "logoTag": "AI"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -164,10 +172,6 @@
     "tagline": "Toshkentdagi kompaniyalar uchun xodim saralash platformasi.",
     "contacts": "Aloqa",
     "telegram": "Telegram",
-    "telegramHandle": "@[TELEGRAM_USERNAME]",
-    "phone": "[PHONE]",
-    "email": "[EMAIL]",
-    "address": "[ADDRESS]",
     "product": "Platforma",
     "register": "Roʻyxatdan oʻtish",
     "login": "Kirish",
@@ -803,6 +807,23 @@
       "text": "The same components in both modes.",
       "light": "Light",
       "dark": "Dark"
+    }
+  },
+  "Landing": {
+    "hero": {
+      "title": "The home of your dream job",
+      "text": "The AI assistant prepares your CV and finds vacancies that fit you across Uzbekistan.",
+      "cta": "Explore more",
+      "imageAlt": "A young professional holding a laptop (temporary image)",
+      "statValue": "300k",
+      "statTitle": "Active users",
+      "statText": "Candidates and employers from Tashkent to Fergana.",
+      "peopleLabel": "Active user avatars"
+    },
+    "partners": {
+      "title": "For <accent>employers</accent> in Tashkent, Samarkand and across Uzbekistan",
+      "listLabel": "Partner companies",
+      "placeholder": "Partner {n}"
     }
   }
 }

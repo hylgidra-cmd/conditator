@@ -1,9 +1,11 @@
-/**
- * Saytdagi aloqa ma'lumotlari va tariflar (bitta joyda).
- * [..] ichidagi qiymatlar to'ldirilishi kerak bo'lgan joy egalari: ishga tushirishdan oldin almashtiring.
- */
-export const TELEGRAM_USERNAME = "[TELEGRAM_USERNAME]";
+/** Saytdagi aloqa ma'lumotlari va tariflar (bitta joyda). Header, footer va "Aloqa" bo'limi shu yerdan oladi. */
+export const TELEGRAM_USERNAME = "gulginamann";
 export const TELEGRAM_URL = `https://t.me/${TELEGRAM_USERNAME}`;
+export const TELEGRAM_HANDLE = `@${TELEGRAM_USERNAME}`;
+export const PHONE_DISPLAY = "+998 97 594 11 19";
+export const PHONE_URL = "tel:+998975941119";
+export const EMAIL = "gulgina.erejepova@gmail.com";
+export const EMAIL_URL = `mailto:${EMAIL}`;
 
 /** Kompaniya hajmi bo'yicha narxlar (USD). To'lov davri hali tasdiqlanmagan. */
 export const PRICING_TIERS = [

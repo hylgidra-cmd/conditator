@@ -1,5 +1,6 @@
 import "@fontsource-variable/noto-sans";
 import "@fontsource-variable/source-serif-4";
+import "@fontsource-variable/inter";
 import "../globals.css";
 
 import type { Metadata } from "next";

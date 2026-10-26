@@ -186,7 +186,7 @@ tests/                 Vitest integratsiya testlari
 
 ## Vercel va email
 
-- Vercel build: `vercel-build` skripti (`prisma migrate deploy && prisma db seed && next build`). Vercel da faqat `DATABASE_URL` shart: login/register boshqa sozlamasiz ishlaydi.
+- Vercel build: `vercel-build` → `scripts/vercel-build.mjs` (`DATABASE_URL` bo'lsa migratsiya va seed, xato bo'lsa ogohlantirish bilan davom etadi, keyin `next build`). Vercel da faqat `DATABASE_URL` shart: login/register boshqa sozlamasiz ishlaydi.
 - Email (faqat parol tiklash): `RESEND_API_KEY` + `EMAIL_FROM` (Resend HTTP API) yoki SMTP. Bundan tashqari `AUTH_SECRET` kerak. Biror biri yo'q bo'lsa `/api/auth/forgot` 503 `EMAIL_UNAVAILABLE` qaytaradi (foydalanuvchi qidirilishidan oldin). Mailpit olib tashlangan (2026-10-26).
 - MVP demo akkauntlari `prisma/seed.ts` → `DEMO_USERS` (admin, talaba, biznes; biznes tasdiqlangan, obuna 1 yil). Mavjud bo'lsa parol qayta yozilmaydi. Haqiqiy foydalanuvchilardan oldin o'chirish kerak.
 

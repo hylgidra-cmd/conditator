@@ -824,6 +824,42 @@
       "title": "Tashkent, Samarqand hám pútkil Ózbekstan boylap <accent>jumıs beriwshiler</accent> ushın",
       "listLabel": "Sherik kompaniyalar",
       "placeholder": "Sherik {n}"
+    },
+    "features": {
+      "title": "Biz kóplegen múmkinshilikler usınamız",
+      "text": "AI járdemshi rezyumeńizdi dúzedi, kónlikpelerińizdi vakansiyalar menen salıstıradı hám jumıs beriwshige eń say kandidatlardı kórsetedi. Barlıǵı ana tilińizde, jergilikli miynet bazarı ushın.",
+      "cta": "Kóbirek biliw",
+      "counterValue": "+100 000",
+      "counterLabel": "bar vakansiyalar"
+    },
+    "categories": {
+      "title": "Ózińizge say baǵdardı tańlań",
+      "text": "Hár baǵdarda Tashkent hám wálayatlardaǵı jumıs beriwshilerdiń vakansiyaları.",
+      "listLabel": "Baǵdarlar",
+      "marketing": "Digital marketing",
+      "design": "UI/UX dizayn",
+      "pm": "Joybar basqarıwı",
+      "business": "Biznes hám konsalting",
+      "graphic": "Grafik dizayn",
+      "web": "Web baǵdarlamalaw",
+      "count": "{count} vakansiya"
+    },
+    "profile": {
+      "title": "Jeke profilińizdi jaratıń",
+      "text": "Bir neshe minutta profil toltırıń: AI járdemshi rezyumeni tártipke saladı, jumıs beriwshiler bolsa sizdi ózleri tabadı.",
+      "stepsLabel": "Profil jaratıw qádemleri",
+      "step1": "01.",
+      "step1Title": "CV júkleń",
+      "step1Text": "Tájiriybeńizdi erkin tekstte jazıń yamasa bar rezyumeni júkleń.",
+      "step2": "02.",
+      "step2Title": "Intervyunı rejelestiriń",
+      "step2Text": "Jumıs beriwshi usınıs jiberse, qolaylı waqıttı tańlań.",
+      "imageAlt": "Noutbuk penen otırǵan jas qánige (waqıtsha súwret)",
+      "notifyTitle": "Jańa intervyu",
+      "notifyText": "Keyingi háptege intervyu belgilendi",
+      "profileName": "Atı Familiyası",
+      "profileRole": "UI/UX dizayner",
+      "profileAction": "Jumısqa usınıs etiw"
     }
   }
 }

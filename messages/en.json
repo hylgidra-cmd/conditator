@@ -824,6 +824,42 @@
       "title": "For <accent>employers</accent> in Tashkent, Samarkand and across Uzbekistan",
       "listLabel": "Partner companies",
       "placeholder": "Partner {n}"
+    },
+    "features": {
+      "title": "We offer plenty of opportunities",
+      "text": "The AI assistant writes your CV, matches your skills to vacancies and shows employers the best-fitting candidates. All in your language, for the local job market.",
+      "cta": "Explore more",
+      "counterValue": "+100 000",
+      "counterLabel": "available vacancies"
+    },
+    "categories": {
+      "title": "Choose the field that fits you",
+      "text": "Every field has vacancies from employers in Tashkent and the regions.",
+      "listLabel": "Fields",
+      "marketing": "Digital marketing",
+      "design": "UI/UX design",
+      "pm": "Project management",
+      "business": "Business & consulting",
+      "graphic": "Graphic design",
+      "web": "Web development",
+      "count": "{count} vacancies"
+    },
+    "profile": {
+      "title": "Build your personal profile",
+      "text": "Fill in your profile in a few minutes: the AI assistant tidies up your CV and employers find you.",
+      "stepsLabel": "Profile steps",
+      "step1": "01.",
+      "step1Title": "Upload your CV",
+      "step1Text": "Describe your experience in free text or upload an existing CV.",
+      "step2": "02.",
+      "step2Title": "Schedule an interview",
+      "step2Text": "When an employer sends an invitation, pick a convenient time.",
+      "imageAlt": "A young professional sitting with a laptop (temporary image)",
+      "notifyTitle": "New interview",
+      "notifyText": "An interview is scheduled for next week",
+      "profileName": "First Last",
+      "profileRole": "UI/UX designer",
+      "profileAction": "Offer a job"
     }
   }
 }

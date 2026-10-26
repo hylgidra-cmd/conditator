@@ -3,8 +3,11 @@ import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 import { HowItWorks } from "@/components/home/how-it-works";
+import { Categories } from "@/components/landing/categories";
+import { Features } from "@/components/landing/features";
 import { Hero } from "@/components/landing/hero";
 import { Partners } from "@/components/landing/partners";
+import { Profile } from "@/components/landing/profile";
 import { PricingSelector } from "@/components/home/pricing-selector";
 import { TelegramIcon } from "@/components/home/telegram-icon";
 import { Link } from "@/i18n/navigation";
@@ -43,6 +46,9 @@ export default function HomePage({ params }: Props) {
     <>
       <Hero />
       <Partners />
+      <Features />
+      <Categories />
+      <Profile />
 
       {/* Muammo */}
       <section className="border-border border-t">

@@ -11,6 +11,7 @@ import {
   Triangle,
 } from "@/components/ds/decor";
 import { StatSquareCard } from "@/components/ds/floating-card";
+import { FigurePlaceholder } from "./figure-placeholder";
 
 /**
  * Hero rasmi: `public/images/` dagi kesilgan (shaffof fonli) rasm, 4:5 nisbat.
@@ -24,33 +25,6 @@ const PEOPLE: Omit<AvatarProps, "size" | "className">[] = [
   { initials: "DM", tone: "sun" },
   { initials: "SR", tone: "primary" },
 ];
-
-/** Rasm kelguncha neytral siluet (odam rasmi koʻchirilmaydi). Nisbat 4:5. */
-function HeroPlaceholder({ label }: { label: string }) {
-  return (
-    <svg
-      role="img"
-      aria-label={label}
-      viewBox="0 0 400 500"
-      className="size-full"
-      preserveAspectRatio="xMidYMax meet"
-    >
-      <g className="fill-white/55">
-        <circle cx="200" cy="140" r="78" />
-        <path d="M60 500c0-110 62-196 140-196s140 86 140 196Z" />
-      </g>
-      <rect
-        x="92"
-        y="352"
-        width="216"
-        height="128"
-        rx="14"
-        className="fill-white/70"
-        transform="rotate(-8 200 416)"
-      />
-    </svg>
-  );
-}
 
 export async function Hero() {
   const t = await getTranslations("Landing.hero");
@@ -83,7 +57,7 @@ export async function Hero() {
             {t("title")}
           </h1>
           <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
-            <ButtonLink href="/#companies" size="lg" arrow>
+            <ButtonLink href="/#features" size="lg" arrow>
               {t("cta")}
             </ButtonLink>
             <p className="text-subtle max-w-64 text-[0.9375rem] leading-relaxed">
@@ -120,7 +94,7 @@ export async function Hero() {
                   className="object-contain object-bottom"
                 />
               ) : (
-                <HeroPlaceholder label={t("imageAlt")} />
+                <FigurePlaceholder label={t("imageAlt")} />
               )}
             </div>
           </div>

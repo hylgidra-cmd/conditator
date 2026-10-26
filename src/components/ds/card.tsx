@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode } from "react";
 import { Avatar } from "./avatar";
+import { ArrowRightIcon } from "./icons";
 import { FOCUS_RING, cn } from "./cn";
 
 export type CardTone = "surface" | "peach" | "cool" | "primary" | "night";
@@ -50,24 +51,42 @@ export function CategoryCard({
   title,
   meta,
   active = false,
+  interactive = false,
   className,
 }: {
   icon: ReactNode;
   title: string;
   meta: string;
   active?: boolean;
+  /** Karta <Link className={`group ${CARD_LINK}`}> ichida: hover va klaviatura fokusida koʻtariladi, strelka chiqadi. */
+  interactive?: boolean;
   className?: string;
 }) {
   return (
     <div
       className={cn(
-        "group rounded-card flex h-full flex-col gap-6 p-6 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-1",
+        "rounded-card relative flex h-full flex-col gap-6 p-6 transition-[transform,box-shadow,background-color] duration-200 hover:-translate-y-1 motion-reduce:transition-none motion-reduce:hover:translate-y-0",
+        interactive && "group-focus-visible:-translate-y-1",
         active
           ? "bg-primary text-on-primary shadow-primary"
-          : "bg-card text-text shadow-soft hover:shadow-float",
+          : cn(
+              "bg-card text-text shadow-soft hover:shadow-float",
+              interactive && "group-focus-visible:shadow-float",
+            ),
         className,
       )}
     >
+      {interactive ? (
+        <span
+          aria-hidden
+          className={cn(
+            "absolute top-6 right-6 inline-flex size-9 -translate-x-1 items-center justify-center rounded-full opacity-0 transition-[opacity,transform] duration-200 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100",
+            active ? "bg-on-primary text-primary" : "bg-ink text-on-ink",
+          )}
+        >
+          <ArrowRightIcon size={18} />
+        </span>
+      ) : null}
       <span
         className={cn(
           "inline-flex size-11 items-center justify-center rounded-xl",

@@ -824,6 +824,42 @@
       "title": "Toshkent, Samarqand va butun Oʻzbekiston boʻylab <accent>ish beruvchilar</accent> uchun",
       "listLabel": "Hamkor kompaniyalar",
       "placeholder": "Hamkor {n}"
+    },
+    "features": {
+      "title": "Biz koʻplab imkoniyatlar taqdim etamiz",
+      "text": "AI yordamchi rezyumengizni tuzadi, koʻnikmalaringizni vakansiyalar bilan solishtiradi va ish beruvchiga eng mos nomzodlarni koʻrsatadi. Hammasi oʻzbek tilida, mahalliy ish bozori uchun.",
+      "cta": "Koʻproq bilish",
+      "counterValue": "+100 000",
+      "counterLabel": "mavjud vakansiyalar"
+    },
+    "categories": {
+      "title": "Oʻzingizga mos yoʻnalishni tanlang",
+      "text": "Har bir yoʻnalishda Toshkent va viloyatlardagi ish beruvchilarning vakansiyalari.",
+      "listLabel": "Yoʻnalishlar",
+      "marketing": "Digital marketing",
+      "design": "UI/UX dizayn",
+      "pm": "Loyiha boshqaruvi",
+      "business": "Biznes va konsalting",
+      "graphic": "Grafik dizayn",
+      "web": "Web dasturlash",
+      "count": "{count} ta vakansiya"
+    },
+    "profile": {
+      "title": "Shaxsiy profilingizni yarating",
+      "text": "Bir necha daqiqada profil toʻldiring: AI yordamchi rezyumeni tartibga soladi, ish beruvchilar esa sizni oʻzlari topadi.",
+      "stepsLabel": "Profil yaratish qadamlari",
+      "step1": "01.",
+      "step1Title": "CV yuklang",
+      "step1Text": "Tajribangizni erkin matnda yozing yoki mavjud rezyumeni yuklang.",
+      "step2": "02.",
+      "step2Title": "Intervyuni rejalashtiring",
+      "step2Text": "Ish beruvchi taklif yuborsa, qulay vaqtni tanlang.",
+      "imageAlt": "Noutbuk bilan oʻtirgan yosh mutaxassis (vaqtinchalik rasm)",
+      "notifyTitle": "Yangi intervyu",
+      "notifyText": "Keyingi haftaga intervyu belgilandi",
+      "profileName": "Ism Familiya",
+      "profileRole": "UI/UX dizayner",
+      "profileAction": "Ishga taklif qilish"
     }
   }
 }

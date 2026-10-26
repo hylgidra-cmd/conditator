@@ -145,7 +145,8 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--brand);
+  /* Fokus halqasi siyoh rangda: ikkala rejimda ham fon bilan 3:1 dan yuqori. */
+  outline: 2px solid var(--ds-ink);
   outline-offset: 2px;
 }
 

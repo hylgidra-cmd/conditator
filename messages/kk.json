@@ -769,5 +769,301 @@
       "role5": "Dizayner, Ándijan",
       "quote5": "Bul jerde dizaynerdiń haqıyqıy pikiri boladı: intervyuǵa qalay usınıs alǵanı haqqında."
     }
+  },
+  "Dashboard": {
+    "metaTitle": "Dashboard — JUMIS - AI",
+    "demo": "Úlgi maǵlıwmatlar: akkaunt ele baylanıspaǵan, sanlar hám dizimler haqıyqıy emes.",
+    "skip": "Tiykarǵı bólimge ótiw",
+    "roles": {
+      "label": "Roldi tańlań",
+      "candidate": "Kandidat",
+      "employer": "Jumıs beriwshi"
+    },
+    "nav": {
+      "label": "Dashboard menyusı",
+      "overview": "Ulıwma",
+      "vacancies": "Vakansiyalar",
+      "applications": "Arzalar",
+      "assistant": "AI járdemshi",
+      "home": "Saytqa qaytıw",
+      "open": "Menyudı ashıw",
+      "close": "Menyudı jabıw"
+    },
+    "topbar": {
+      "search": "Vakansiya, kónlikpe yamasa qala",
+      "searchLabel": "Vakansiyalardan izlew",
+      "searchSubmit": "Izlew",
+      "notifications": "Bildiriwler",
+      "unread": "{count} oqılmaǵan",
+      "markAll": "Barlıǵın oqıldı dep belgilew",
+      "noNotifications": "Jańa bildiriw joq",
+      "profile": "Profil menyusı",
+      "profileLink": "Profil",
+      "settings": "Sazlawlar",
+      "logout": "Shıǵıw"
+    },
+    "notifications": {
+      "candidate": {
+        "interview": {
+          "title": "UI/UX dizayner lawazımına intervyu belgilendi",
+          "time": "2 saat aldın"
+        },
+        "viewed": {
+          "title": "Arzańız kórip shıǵıldı: Frontend baǵdarlamashı",
+          "time": "Keshe"
+        },
+        "match": {
+          "title": "Sizge 90% tan joqarı say 3 jańa vakansiya",
+          "time": "3 kún aldın"
+        }
+      },
+      "employer": {
+        "newApplication": {
+          "title": "UI/UX dizayner vakansiyasına 5 jańa arza",
+          "time": "1 saat aldın"
+        },
+        "interview": {
+          "title": "Erteń saat 10:00 de intervyu",
+          "time": "Búgin"
+        },
+        "expiring": {
+          "title": "Joybar menejeri járiyası 3 kúnnen keyin pitedi",
+          "time": "2 kún aldın"
+        }
+      }
+    },
+    "overview": {
+      "greeting": "Xosh keldińiz, {name}",
+      "lead": {
+        "candidate": "Arzalarıńız, intervyular hám sizge say vakansiyalar bir jerde.",
+        "employer": "Vakansiyalarıńız, kelgen arzalar hám intervyular bir jerde."
+      },
+      "statsLabel": "Tiykarǵı kórsetkishler",
+      "stats": {
+        "applications": "Jiberilgen arzalar",
+        "interviews": "Intervyular",
+        "views": "Profil kóriwleri",
+        "saved": "Saqlanǵan vakansiyalar",
+        "activeVacancies": "Aktiv vakansiyalar",
+        "newApplications": "Jańa arzalar",
+        "avgMatch": "Ortasha sáykeslik"
+      },
+      "delta": "Usı hápte +{value}",
+      "deltaZero": "Usı hápte ózgerissiz",
+      "recommended": {
+        "candidate": "Usınılǵan vakansiyalar",
+        "employer": "Eń say kandidatlar"
+      },
+      "seeAll": "Barlıǵın kóriw",
+      "interviews": "Jaqın intervyular",
+      "online": "Onlayn",
+      "office": "Ofiste",
+      "progress": "Profildiń tolıqlıǵı",
+      "progressValue": "{value}% toltırılǵan",
+      "progressSteps": {
+        "personal": "Jeke maǵlıwmatlar",
+        "education": "Bilim",
+        "experience": "Jumıs tájiriybesi",
+        "skills": "Kónlikpeler",
+        "languages": "Tiller",
+        "resume": "Rezyume faylı",
+        "company": "Kompaniya maǵlıwmatları",
+        "logo": "Logotip",
+        "about": "Kompaniya haqqında",
+        "contacts": "Baylanıs maǵlıwmatları",
+        "firstVacancy": "Birinshi vakansiya"
+      },
+      "done": "Orınlandı",
+      "todo": "Toltırılmaǵan",
+      "progressCta": "Profildi toltırıw"
+    },
+    "match": "{value}% say",
+    "salary": "{from} – {to} soʻm",
+    "experience": "{years} jıl tájiriybe",
+    "cities": {
+      "tashkent": "Tashkent",
+      "samarkand": "Samarqand",
+      "bukhara": "Buxara",
+      "andijan": "Ándijan",
+      "namangan": "Namangan",
+      "fergana": "Ferǵana",
+      "nukus": "Nókis"
+    },
+    "types": {
+      "full": "Tolıq stavka",
+      "part": "Yarım stavka",
+      "remote": "Aralıqtan",
+      "intern": "Ámeliyat"
+    },
+    "categories": {
+      "marketing": "Marketing",
+      "design": "UI/UX dizayn",
+      "pm": "Joybar basqarıwı",
+      "business": "Biznes",
+      "graphic": "Grafik dizayn",
+      "web": "Web baǵdarlamalaw"
+    },
+    "vacancies": {
+      "title": {
+        "candidate": "Vakansiyalar",
+        "employer": "Meniń vakansiyalarım"
+      },
+      "lead": {
+        "candidate": "Qala, jumıs túri hám baǵdar boyınsha saralań.",
+        "employer": "Járiyalarıńızdıń jaǵdayı hám kelgen arzalar sanı."
+      },
+      "searchLabel": "Lawazım yamasa tarawı boyınsha izlew",
+      "searchPlaceholder": "Mısalı, dizayner",
+      "filtersLabel": "Filtrler",
+      "city": "Qala",
+      "type": "Jumıs túri",
+      "category": "Baǵdar",
+      "status": "Jaǵday",
+      "all": "Barlıǵı",
+      "reset": "Filtrlerdi tazalaw",
+      "count": "{count} vakansiya",
+      "caption": "Vakansiyalar kestesi",
+      "columns": {
+        "title": "Lawazım",
+        "city": "Qala",
+        "type": "Jumıs túri",
+        "salary": "Aylıq",
+        "posted": "Járiya sánesi",
+        "match": "Sáykeslik",
+        "applicants": "Arzalar",
+        "status": "Jaǵday",
+        "action": "Ámel"
+      },
+      "apply": "Arza beriw",
+      "applied": "Jiberildi",
+      "manage": "Basqarıw",
+      "create": "Jańa vakansiya",
+      "statuses": {
+        "active": "Aktiv",
+        "paused": "Toqtatılǵan",
+        "closed": "Jabılǵan"
+      }
+    },
+    "applications": {
+      "title": {
+        "candidate": "Meniń arzalarım",
+        "employer": "Kelgen arzalar"
+      },
+      "lead": {
+        "candidate": "Hár bir arzanıń qaysı basqıshta ekenin baqlań.",
+        "employer": "Kandidatlardı sáykeslik hám basqısh boyınsha kórip shıǵıń."
+      },
+      "tabsLabel": "Jaǵday boyınsha saralaw",
+      "all": "Barlıǵı",
+      "caption": "Arzalar dizimi",
+      "columns": {
+        "vacancy": "Vakansiya",
+        "candidate": "Kandidat",
+        "date": "Sáne",
+        "match": "Sáykeslik",
+        "status": "Jaǵday"
+      },
+      "candidateStatuses": {
+        "sent": "Jiberilgen",
+        "viewed": "Kórildi",
+        "interview": "Intervyu",
+        "offer": "Usınıs",
+        "rejected": "Biykarlandı"
+      },
+      "employerStatuses": {
+        "new": "Jańa",
+        "review": "Kórip shıǵılmaqta",
+        "interview": "Intervyu",
+        "offer": "Usınıs",
+        "rejected": "Biykarlandı"
+      }
+    },
+    "assistant": {
+      "title": "AI rezyume járdemshisi",
+      "lead": {
+        "candidate": "Rezyumeńizdi kúsheytiw, xat jazıw hám intervyuǵa tayarlanıw ushın soraw beriń.",
+        "employer": "Vakansiya teksti, saralaw hám intervyu sorawları boyınsha járdem alıń."
+      },
+      "notice": "Demo rejim: juwaplar úlgi, jasalma intellekt ele baylanıspaǵan.",
+      "you": "Siz",
+      "ai": "AI járdemshi",
+      "greeting": {
+        "candidate": "Sálem! Men JUMIS AI járdemshisimen. Rezyumeńizdi talqılap, onı jumıs beriwshiler ushın anıǵıraq etiwge járdem beremen. Tómendegi sorawlardan birin tańlań yamasa ózińiz jazıń.",
+        "employer": "Sálem! Vakansiya tárifin jazıw, arzalardı saralaw hám intervyu sorawların tayarlawda járdem beremen. Soraw tańlań yamasa ózińiz jazıń."
+      },
+      "suggestionsLabel": "Tayar sorawlar",
+      "suggestions": {
+        "candidate": {
+          "improve": "Rezyumemdi qalay jaqsılasam boladı?",
+          "summary": "Qısqa “Men haqqımda” tekstin jazıp ber",
+          "skills": "UI/UX dizayner ushın qaysı kónlikpeler kerek?",
+          "interview": "Intervyuǵa qalay tayarlanayın?"
+        },
+        "employer": {
+          "describe": "UI/UX dizayner ushın vakansiya tekstin jaz",
+          "screen": "Arzalardı qalay tez saralayman?",
+          "questions": "Frontend baǵdarlamashı ushın 5 intervyu sorawı",
+          "salary": "Tashkentte dizayner aylıǵı qansha bolıwı múmkin?"
+        }
+      },
+      "replies": {
+        "improve": "Rezyumeńizde 3 nárseni kúsheytiw múmkin: 1) hár bir jumıs ornında nátiyjeni san menen jazıń (mısalı, “konversiyanı 18% ke asırdım”); 2) kónlikpelerdi vakansiyadaǵı sózler menen sáykeslendiriń; 3) “Men haqqımda” bólimin 3 qatarǵa qısqartıń. Qáleseńiz, birinshi bólimnen baslaymız.",
+        "summary": "Úlgi: “3 jıllıq tájiriybesi bar UI/UX dizaynermen. Mobil qosımsha hám veb-servisler ushın paydalanıwshı izertlewinen prototipke shekem islaymen. Figma, dizayn sistemaları hám paydalanıwshı testleri menen islew tájiriybem bar.” Tekstti óz tájiriybeńizge say ózgertiń.",
+        "skills": "UI/UX dizayner ushın tiykarǵı kónlikpeler: Figma, paydalanıwshı izertlewi, wireframe hám prototip, dizayn sisteması, accessibility tiykarları, HTML/CSS tı túsiniw. Rezyumede hár birine kishi joybar mısalın qosıń.",
+        "interview": "Tayarlıq rejesi: kompaniya ónimin úyreniń, eń jaqsı 2 joybarıńızdı 3 minutta túsindiriwdi shınıqtırıń, “nege dál usı sheshim?” sorawına juwap tayarlań hám aqırında beriw ushın 2 soraw jazıp qoyıń.",
+        "describe": "Dúzilis: 1) qısqa kirisiw (komanda hám ónim); 2) wazıypalar (4–5 bánt); 3) talaplar (májbúriy hám qosımsha bólek); 4) shárayatlar hám aylıq aralıǵı swmda; 5) arza beriw tártibi. Aylıq aralıǵın kórsetiw arzalar sanın asıradı.",
+        "screen": "Aldın májbúriy talaplar boyınsha filtrlań, keyin sáykeslik procenti 75% tan joqarı kandidatlardı kórip shıǵıń. Hár bir kandidatqa birdey 3 kriteriy boyınsha 1–5 baha beriń: tájiriybe, portfolio, sóylesiw.",
+        "questions": "1) Sońǵı joybarıńızda qanday quramalı mashqalanı sheshtińiz? 2) Jaǵday (state) basqarıwın qalay tańlaysız? 3) Bet tezligin qalay ólsheysiz hám jaqsılaysız? 4) Accessibility ti qalay tekseresiz? 5) Kod review de nege itibar beresiz?",
+        "salary": "Bul demo juwap: anıq bazar maǵlıwmatı ele baylanıspaǵan. Aylıq aralıǵın belgilewde tájiriybe dárejesi, jumıs túri hám usıǵan uqsas vakansiyalardaǵı aralıqlardı salıstırıń. TODO: real maǵlıwmat.",
+        "fallback": "Jaqsı soraw! Demo rejimde men tek tayar sorawlarǵa tolıq juwap bere alaman. Haqıyqıy AI baylanısqanda bul sorawǵa da juwap beremen."
+      },
+      "inputLabel": "Xabarıńız",
+      "placeholder": "Sorawıńızdı jazıń",
+      "send": "Jiberiw",
+      "typing": "AI járdemshi juwap jazbaqta",
+      "clear": "Sáwbetti tazalaw"
+    },
+    "empty": {
+      "filters": {
+        "title": "Hesh nárse tabılmadı",
+        "text": "Basqa sóz benen izlep kóriń yamasa filtrlerdi tazalań."
+      },
+      "vacancies": {
+        "candidate": {
+          "title": "Házirshe vakansiya joq",
+          "text": "Profilińizdi toltırıń: sizge say vakansiyalar payda bolǵanda usı jerde kórinedi."
+        },
+        "employer": {
+          "title": "Ele vakansiya jaylastırmadıńız",
+          "text": "Birinshi vakansiyanı jaratıń hám say kandidatlardı alıń."
+        }
+      },
+      "applications": {
+        "candidate": {
+          "title": "Ele arza jibermedińiz",
+          "text": "Vakansiyalardı kórip shıǵıń hám birinshi arzańızdı jiberiń."
+        },
+        "employer": {
+          "title": "Házirshe arza kelmedi",
+          "text": "Arzalar keliwi menen usı jerde kórinedi."
+        }
+      },
+      "tab": {
+        "title": "Bul jaǵdayda arza joq",
+        "text": "Basqa jaǵdaydı tańlań."
+      },
+      "interviews": "Jaqın kúnlerde intervyu joq.",
+      "recommended": "Usınıslar profilińiz toltırılǵannan keyin payda boladı.",
+      "browse": "Vakansiyalardı kóriw"
+    },
+    "loading": "Júklenbekte",
+    "states": {
+      "label": "Jaǵdaydı kóriw",
+      "filled": "Maǵlıwmat penen",
+      "empty": "Bos",
+      "loading": "Júkleniw"
+    },
+    "labelValue": "{label}: {value}",
+    "percent": "{value}%"
   }
 }

@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/site-footer";
+import { SiteChrome } from "@/components/site-chrome";
 import { SiteHeader } from "@/components/site-header";
 import { ClientMessages } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
@@ -56,9 +57,13 @@ export default async function LocaleLayout({ children, params }: Props) {
       </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
         <ClientMessages namespaces={[]}>
-          <SiteHeader />
+          <SiteChrome>
+            <SiteHeader />
+          </SiteChrome>
           <main className="flex-1">{children}</main>
-          <SiteFooter />
+          <SiteChrome>
+            <SiteFooter />
+          </SiteChrome>
         </ClientMessages>
       </body>
     </html>

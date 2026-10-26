@@ -769,5 +769,301 @@
       "role5": "Designer, Andijan",
       "quote5": "A real designer testimonial will go here: how they got an interview invitation."
     }
+  },
+  "Dashboard": {
+    "metaTitle": "Dashboard — JUMIS - AI",
+    "demo": "Sample data: no account is connected yet, so numbers and lists are not real.",
+    "skip": "Skip to main content",
+    "roles": {
+      "label": "Choose a role",
+      "candidate": "Candidate",
+      "employer": "Employer"
+    },
+    "nav": {
+      "label": "Dashboard menu",
+      "overview": "Overview",
+      "vacancies": "Vacancies",
+      "applications": "Applications",
+      "assistant": "AI assistant",
+      "home": "Back to site",
+      "open": "Open menu",
+      "close": "Close menu"
+    },
+    "topbar": {
+      "search": "Vacancy, skill or city",
+      "searchLabel": "Search vacancies",
+      "searchSubmit": "Search",
+      "notifications": "Notifications",
+      "unread": "{count} unread",
+      "markAll": "Mark all as read",
+      "noNotifications": "No new notifications",
+      "profile": "Profile menu",
+      "profileLink": "Profile",
+      "settings": "Settings",
+      "logout": "Log out"
+    },
+    "notifications": {
+      "candidate": {
+        "interview": {
+          "title": "Interview scheduled for UI/UX designer",
+          "time": "2 hours ago"
+        },
+        "viewed": {
+          "title": "Your application was reviewed: Frontend developer",
+          "time": "Yesterday"
+        },
+        "match": {
+          "title": "3 new vacancies match you above 90%",
+          "time": "3 days ago"
+        }
+      },
+      "employer": {
+        "newApplication": {
+          "title": "5 new applications for UI/UX designer",
+          "time": "1 hour ago"
+        },
+        "interview": {
+          "title": "Interview tomorrow at 10:00",
+          "time": "Today"
+        },
+        "expiring": {
+          "title": "Project manager listing ends in 3 days",
+          "time": "2 days ago"
+        }
+      }
+    },
+    "overview": {
+      "greeting": "Welcome, {name}",
+      "lead": {
+        "candidate": "Your applications, interviews and matching vacancies in one place.",
+        "employer": "Your vacancies, incoming applications and interviews in one place."
+      },
+      "statsLabel": "Key metrics",
+      "stats": {
+        "applications": "Applications sent",
+        "interviews": "Interviews",
+        "views": "Profile views",
+        "saved": "Saved vacancies",
+        "activeVacancies": "Active vacancies",
+        "newApplications": "New applications",
+        "avgMatch": "Average match"
+      },
+      "delta": "+{value} this week",
+      "deltaZero": "No change this week",
+      "recommended": {
+        "candidate": "Recommended vacancies",
+        "employer": "Best-matching candidates"
+      },
+      "seeAll": "See all",
+      "interviews": "Upcoming interviews",
+      "online": "Online",
+      "office": "In office",
+      "progress": "Profile completeness",
+      "progressValue": "{value}% complete",
+      "progressSteps": {
+        "personal": "Personal details",
+        "education": "Education",
+        "experience": "Work experience",
+        "skills": "Skills",
+        "languages": "Languages",
+        "resume": "Resume file",
+        "company": "Company details",
+        "logo": "Logo",
+        "about": "About the company",
+        "contacts": "Contact details",
+        "firstVacancy": "First vacancy"
+      },
+      "done": "Done",
+      "todo": "Not filled in",
+      "progressCta": "Complete profile"
+    },
+    "match": "{value}% match",
+    "salary": "{from} – {to} soʻm",
+    "experience": "{years} yrs experience",
+    "cities": {
+      "tashkent": "Tashkent",
+      "samarkand": "Samarkand",
+      "bukhara": "Bukhara",
+      "andijan": "Andijan",
+      "namangan": "Namangan",
+      "fergana": "Fergana",
+      "nukus": "Nukus"
+    },
+    "types": {
+      "full": "Full-time",
+      "part": "Part-time",
+      "remote": "Remote",
+      "intern": "Internship"
+    },
+    "categories": {
+      "marketing": "Marketing",
+      "design": "UI/UX design",
+      "pm": "Project management",
+      "business": "Business",
+      "graphic": "Graphic design",
+      "web": "Web development"
+    },
+    "vacancies": {
+      "title": {
+        "candidate": "Vacancies",
+        "employer": "My vacancies"
+      },
+      "lead": {
+        "candidate": "Filter by city, job type and field.",
+        "employer": "Status of your listings and number of applications."
+      },
+      "searchLabel": "Search by title or field",
+      "searchPlaceholder": "For example, designer",
+      "filtersLabel": "Filters",
+      "city": "City",
+      "type": "Job type",
+      "category": "Field",
+      "status": "Status",
+      "all": "All",
+      "reset": "Clear filters",
+      "count": "{count} vacancies",
+      "caption": "Vacancies table",
+      "columns": {
+        "title": "Position",
+        "city": "City",
+        "type": "Job type",
+        "salary": "Salary",
+        "posted": "Posted",
+        "match": "Match",
+        "applicants": "Applications",
+        "status": "Status",
+        "action": "Action"
+      },
+      "apply": "Apply",
+      "applied": "Sent",
+      "manage": "Manage",
+      "create": "New vacancy",
+      "statuses": {
+        "active": "Active",
+        "paused": "Paused",
+        "closed": "Closed"
+      }
+    },
+    "applications": {
+      "title": {
+        "candidate": "My applications",
+        "employer": "Incoming applications"
+      },
+      "lead": {
+        "candidate": "Track which stage each application is at.",
+        "employer": "Review candidates by match and stage."
+      },
+      "tabsLabel": "Filter by status",
+      "all": "All",
+      "caption": "Applications list",
+      "columns": {
+        "vacancy": "Vacancy",
+        "candidate": "Candidate",
+        "date": "Date",
+        "match": "Match",
+        "status": "Status"
+      },
+      "candidateStatuses": {
+        "sent": "Sent",
+        "viewed": "Viewed",
+        "interview": "Interview",
+        "offer": "Offer",
+        "rejected": "Rejected"
+      },
+      "employerStatuses": {
+        "new": "New",
+        "review": "In review",
+        "interview": "Interview",
+        "offer": "Offer",
+        "rejected": "Rejected"
+      }
+    },
+    "assistant": {
+      "title": "AI resume assistant",
+      "lead": {
+        "candidate": "Ask how to strengthen your resume, write a letter or prepare for an interview.",
+        "employer": "Get help with vacancy texts, screening and interview questions."
+      },
+      "notice": "Demo mode: answers are samples, AI is not connected yet.",
+      "you": "You",
+      "ai": "AI assistant",
+      "greeting": {
+        "candidate": "Hi! I'm the JUMIS AI assistant. I'll review your resume and help make it clearer for employers. Pick one of the questions below or write your own.",
+        "employer": "Hi! I can help write vacancy descriptions, screen applications and prepare interview questions. Pick a question or write your own."
+      },
+      "suggestionsLabel": "Suggested questions",
+      "suggestions": {
+        "candidate": {
+          "improve": "How can I improve my resume?",
+          "summary": "Write a short “About me” text",
+          "skills": "Which skills does a UI/UX designer need?",
+          "interview": "How should I prepare for an interview?"
+        },
+        "employer": {
+          "describe": "Write a vacancy text for a UI/UX designer",
+          "screen": "How can I screen applications quickly?",
+          "questions": "5 interview questions for a frontend developer",
+          "salary": "What could a designer earn in Tashkent?"
+        }
+      },
+      "replies": {
+        "improve": "You can strengthen three things: 1) state the result of each job with a number (e.g. “raised conversion by 18%”); 2) match your skills to the words in the vacancy; 3) shorten “About me” to three lines. If you like, we can start with the first section.",
+        "summary": "Sample: “UI/UX designer with 3 years of experience. I work from user research to prototype on mobile apps and web services, with hands-on Figma, design systems and user testing.” Adapt the text to your own experience.",
+        "skills": "Core UI/UX designer skills: Figma, user research, wireframes and prototypes, design systems, accessibility basics, understanding HTML/CSS. Add a small project example for each in your resume.",
+        "interview": "Plan: study the company's product, practise explaining your two best projects in 3 minutes, prepare an answer to “why this solution?”, and write down two questions to ask at the end.",
+        "describe": "Structure: 1) short intro (team and product); 2) responsibilities (4–5 points); 3) requirements, with must-haves and nice-to-haves separate; 4) conditions and salary range in soʻm; 5) how to apply. Showing a salary range increases applications.",
+        "screen": "First filter by must-have requirements, then review candidates with a match above 75%. Score each candidate 1–5 on the same three criteria: experience, portfolio, communication.",
+        "questions": "1) What hard problem did you solve on your last project? 2) How do you choose a state management approach? 3) How do you measure and improve page speed? 4) How do you check accessibility? 5) What do you look for in code review?",
+        "salary": "This is a demo answer: real market data is not connected yet. To set a range, compare experience level, job type and ranges in similar vacancies. TODO: real data.",
+        "fallback": "Good question! In demo mode I can only answer the suggested questions in detail. Once real AI is connected, I'll answer this too."
+      },
+      "inputLabel": "Your message",
+      "placeholder": "Type your question",
+      "send": "Send",
+      "typing": "AI assistant is typing",
+      "clear": "Clear chat"
+    },
+    "empty": {
+      "filters": {
+        "title": "Nothing found",
+        "text": "Try another word or clear the filters."
+      },
+      "vacancies": {
+        "candidate": {
+          "title": "No vacancies yet",
+          "text": "Complete your profile: matching vacancies will appear here."
+        },
+        "employer": {
+          "title": "You haven't posted a vacancy yet",
+          "text": "Create your first vacancy and get matching candidates."
+        }
+      },
+      "applications": {
+        "candidate": {
+          "title": "You haven't applied yet",
+          "text": "Browse vacancies and send your first application."
+        },
+        "employer": {
+          "title": "No applications yet",
+          "text": "Applications will appear here as soon as they arrive."
+        }
+      },
+      "tab": {
+        "title": "No applications with this status",
+        "text": "Choose another status."
+      },
+      "interviews": "No interviews in the coming days.",
+      "recommended": "Recommendations appear once your profile is complete.",
+      "browse": "Browse vacancies"
+    },
+    "loading": "Loading",
+    "states": {
+      "label": "Preview state",
+      "filled": "With data",
+      "empty": "Empty",
+      "loading": "Loading"
+    },
+    "labelValue": "{label}: {value}",
+    "percent": "{value}%"
   }
 }

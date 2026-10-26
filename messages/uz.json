@@ -769,5 +769,301 @@
       "role5": "Dizayner, Andijon",
       "quote5": "Bu yerda dizaynerning haqiqiy fikri boʻladi: intervyuga qanday taklif olgani haqida."
     }
+  },
+  "Dashboard": {
+    "metaTitle": "Dashboard — JUMIS - AI",
+    "demo": "Namunaviy maʼlumotlar: hisob hali ulanmagan, raqamlar va roʻyxatlar haqiqiy emas.",
+    "skip": "Asosiy qismga oʻtish",
+    "roles": {
+      "label": "Rolni tanlang",
+      "candidate": "Nomzod",
+      "employer": "Ish beruvchi"
+    },
+    "nav": {
+      "label": "Dashboard menyusi",
+      "overview": "Umumiy",
+      "vacancies": "Vakansiyalar",
+      "applications": "Arizalar",
+      "assistant": "AI yordamchi",
+      "home": "Saytga qaytish",
+      "open": "Menyuni ochish",
+      "close": "Menyuni yopish"
+    },
+    "topbar": {
+      "search": "Vakansiya, koʻnikma yoki shahar",
+      "searchLabel": "Vakansiyalardan qidirish",
+      "searchSubmit": "Qidirish",
+      "notifications": "Bildirishnomalar",
+      "unread": "{count} ta oʻqilmagan",
+      "markAll": "Hammasini oʻqildi deb belgilash",
+      "noNotifications": "Yangi bildirishnoma yoʻq",
+      "profile": "Profil menyusi",
+      "profileLink": "Profil",
+      "settings": "Sozlamalar",
+      "logout": "Chiqish"
+    },
+    "notifications": {
+      "candidate": {
+        "interview": {
+          "title": "UI/UX dizayner lavozimiga intervyu belgilandi",
+          "time": "2 soat oldin"
+        },
+        "viewed": {
+          "title": "Arizangiz koʻrib chiqildi: Frontend dasturchi",
+          "time": "Kecha"
+        },
+        "match": {
+          "title": "Sizga 90% dan yuqori mos 3 ta yangi vakansiya",
+          "time": "3 kun oldin"
+        }
+      },
+      "employer": {
+        "newApplication": {
+          "title": "UI/UX dizayner vakansiyasiga 5 ta yangi ariza",
+          "time": "1 soat oldin"
+        },
+        "interview": {
+          "title": "Ertaga soat 10:00 da intervyu",
+          "time": "Bugun"
+        },
+        "expiring": {
+          "title": "Loyiha menejeri eʼloni 3 kundan keyin tugaydi",
+          "time": "2 kun oldin"
+        }
+      }
+    },
+    "overview": {
+      "greeting": "Xush kelibsiz, {name}",
+      "lead": {
+        "candidate": "Arizalaringiz, intervyular va sizga mos vakansiyalar bir joyda.",
+        "employer": "Vakansiyalaringiz, kelgan arizalar va intervyular bir joyda."
+      },
+      "statsLabel": "Asosiy koʻrsatkichlar",
+      "stats": {
+        "applications": "Yuborilgan arizalar",
+        "interviews": "Intervyular",
+        "views": "Profil koʻrishlari",
+        "saved": "Saqlangan vakansiyalar",
+        "activeVacancies": "Faol vakansiyalar",
+        "newApplications": "Yangi arizalar",
+        "avgMatch": "Oʻrtacha moslik"
+      },
+      "delta": "Shu hafta +{value}",
+      "deltaZero": "Shu hafta oʻzgarishsiz",
+      "recommended": {
+        "candidate": "Tavsiya etilgan vakansiyalar",
+        "employer": "Eng mos nomzodlar"
+      },
+      "seeAll": "Hammasini koʻrish",
+      "interviews": "Yaqin intervyular",
+      "online": "Onlayn",
+      "office": "Ofisda",
+      "progress": "Profil toʻliqligi",
+      "progressValue": "{value}% toʻldirilgan",
+      "progressSteps": {
+        "personal": "Shaxsiy maʼlumotlar",
+        "education": "Taʼlim",
+        "experience": "Ish tajribasi",
+        "skills": "Koʻnikmalar",
+        "languages": "Tillar",
+        "resume": "Rezyume fayli",
+        "company": "Kompaniya maʼlumotlari",
+        "logo": "Logotip",
+        "about": "Kompaniya haqida",
+        "contacts": "Aloqa maʼlumotlari",
+        "firstVacancy": "Birinchi vakansiya"
+      },
+      "done": "Bajarildi",
+      "todo": "Toʻldirilmagan",
+      "progressCta": "Profilni toʻldirish"
+    },
+    "match": "{value}% mos",
+    "salary": "{from} – {to} soʻm",
+    "experience": "{years} yil tajriba",
+    "cities": {
+      "tashkent": "Toshkent",
+      "samarkand": "Samarqand",
+      "bukhara": "Buxoro",
+      "andijan": "Andijon",
+      "namangan": "Namangan",
+      "fergana": "Fargʻona",
+      "nukus": "Nukus"
+    },
+    "types": {
+      "full": "Toʻliq stavka",
+      "part": "Yarim stavka",
+      "remote": "Masofaviy",
+      "intern": "Amaliyot"
+    },
+    "categories": {
+      "marketing": "Marketing",
+      "design": "UI/UX dizayn",
+      "pm": "Loyiha boshqaruvi",
+      "business": "Biznes",
+      "graphic": "Grafik dizayn",
+      "web": "Web dasturlash"
+    },
+    "vacancies": {
+      "title": {
+        "candidate": "Vakansiyalar",
+        "employer": "Mening vakansiyalarim"
+      },
+      "lead": {
+        "candidate": "Shahar, ish turi va yoʻnalish boʻyicha saralang.",
+        "employer": "Eʼlonlaringiz holati va kelgan arizalar soni."
+      },
+      "searchLabel": "Lavozim yoki soha boʻyicha qidirish",
+      "searchPlaceholder": "Masalan, dizayner",
+      "filtersLabel": "Filtrlar",
+      "city": "Shahar",
+      "type": "Ish turi",
+      "category": "Yoʻnalish",
+      "status": "Holat",
+      "all": "Hammasi",
+      "reset": "Filtrlarni tozalash",
+      "count": "{count} ta vakansiya",
+      "caption": "Vakansiyalar jadvali",
+      "columns": {
+        "title": "Lavozim",
+        "city": "Shahar",
+        "type": "Ish turi",
+        "salary": "Maosh",
+        "posted": "Eʼlon sanasi",
+        "match": "Moslik",
+        "applicants": "Arizalar",
+        "status": "Holat",
+        "action": "Amal"
+      },
+      "apply": "Ariza berish",
+      "applied": "Yuborildi",
+      "manage": "Boshqarish",
+      "create": "Yangi vakansiya",
+      "statuses": {
+        "active": "Faol",
+        "paused": "Toʻxtatilgan",
+        "closed": "Yopilgan"
+      }
+    },
+    "applications": {
+      "title": {
+        "candidate": "Mening arizalarim",
+        "employer": "Kelgan arizalar"
+      },
+      "lead": {
+        "candidate": "Har bir arizaning qaysi bosqichda ekanini kuzating.",
+        "employer": "Nomzodlarni moslik va bosqich boʻyicha koʻrib chiqing."
+      },
+      "tabsLabel": "Holat boʻyicha saralash",
+      "all": "Hammasi",
+      "caption": "Arizalar roʻyxati",
+      "columns": {
+        "vacancy": "Vakansiya",
+        "candidate": "Nomzod",
+        "date": "Sana",
+        "match": "Moslik",
+        "status": "Holat"
+      },
+      "candidateStatuses": {
+        "sent": "Yuborilgan",
+        "viewed": "Koʻrildi",
+        "interview": "Intervyu",
+        "offer": "Taklif",
+        "rejected": "Rad etildi"
+      },
+      "employerStatuses": {
+        "new": "Yangi",
+        "review": "Koʻrib chiqilmoqda",
+        "interview": "Intervyu",
+        "offer": "Taklif",
+        "rejected": "Rad etildi"
+      }
+    },
+    "assistant": {
+      "title": "AI rezyume yordamchisi",
+      "lead": {
+        "candidate": "Rezyumengizni kuchaytirish, xat yozish va intervyuga tayyorlanish uchun savol bering.",
+        "employer": "Vakansiya matni, saralash va intervyu savollari boʻyicha yordam oling."
+      },
+      "notice": "Demo rejim: javoblar namunaviy, sunʼiy intellekt hali ulanmagan.",
+      "you": "Siz",
+      "ai": "AI yordamchi",
+      "greeting": {
+        "candidate": "Salom! Men JUMIS AI yordamchisiman. Rezyumengizni tahlil qilib, uni ish beruvchilar uchun aniqroq qilishga yordam beraman. Quyidagi savollardan birini tanlang yoki oʻzingiz yozing.",
+        "employer": "Salom! Vakansiya tavsifini yozish, arizalarni saralash va intervyu savollarini tayyorlashda yordam beraman. Savol tanlang yoki oʻzingiz yozing."
+      },
+      "suggestionsLabel": "Tayyor savollar",
+      "suggestions": {
+        "candidate": {
+          "improve": "Rezyumemni qanday yaxshilasam boʻladi?",
+          "summary": "Qisqa “Men haqimda” matnini yozib ber",
+          "skills": "UI/UX dizayner uchun qaysi koʻnikmalar kerak?",
+          "interview": "Intervyuga qanday tayyorlanay?"
+        },
+        "employer": {
+          "describe": "UI/UX dizayner uchun vakansiya matnini yoz",
+          "screen": "Arizalarni qanday tez saralayman?",
+          "questions": "Frontend dasturchi uchun 5 ta intervyu savoli",
+          "salary": "Toshkentda dizayner maoshi qancha boʻlishi mumkin?"
+        }
+      },
+      "replies": {
+        "improve": "Rezyumengizda 3 ta narsani kuchaytirish mumkin: 1) har bir ish joyida natijani raqam bilan yozing (masalan, “konversiyani 18% ga oshirdim”); 2) koʻnikmalarni vakansiyadagi soʻzlar bilan moslang; 3) “Men haqimda” qismini 3 qatorga qisqartiring. Xohlasangiz, birinchi boʻlimdan boshlaymiz.",
+        "summary": "Namuna: “3 yillik tajribaga ega UI/UX dizaynerman. Mobil ilova va veb-servislar uchun foydalanuvchi tadqiqotidan tortib prototipgacha ishlayman. Figma, dizayn tizimlari va foydalanuvchi testlari bilan ishlash tajribam bor.” Matnni oʻz tajribangizga moslab oʻzgartiring.",
+        "skills": "UI/UX dizayner uchun asosiy koʻnikmalar: Figma, foydalanuvchi tadqiqoti, wireframe va prototip, dizayn tizimi, accessibility asoslari, HTML/CSS ni tushunish. Rezyumeda har biriga kichik loyiha misolini qoʻshing.",
+        "interview": "Tayyorgarlik rejasi: kompaniya mahsulotini oʻrganing, 2 ta eng yaxshi loyihangizni 3 daqiqada tushuntirishni mashq qiling, “nega aynan bu yechim?” savoliga javob tayyorlang va oxirida berish uchun 2 ta savol yozib qoʻying.",
+        "describe": "Tuzilma: 1) qisqa kirish (jamoa va mahsulot); 2) vazifalar (4–5 band); 3) talablar (majburiy va qoʻshimcha alohida); 4) sharoitlar va maosh oraligʻi soʻmda; 5) ariza berish tartibi. Maosh oraligʻini koʻrsatish arizalar sonini oshiradi.",
+        "screen": "Avval majburiy talablar boʻyicha filtrlang, keyin moslik foizi 75% dan yuqori nomzodlarni koʻrib chiqing. Har bir nomzodga bir xil 3 mezon boʻyicha 1–5 baho bering: tajriba, portfolio, muloqot.",
+        "questions": "1) Oxirgi loyihangizda qanday murakkab muammoni hal qildingiz? 2) Holat (state) boshqaruvini qanday tanlaysiz? 3) Sahifa tezligini qanday oʻlchaysiz va yaxshilaysiz? 4) Accessibility ni qanday tekshirasiz? 5) Kod review da nimaga eʼtibor berasiz?",
+        "salary": "Bu demo javob: aniq bozor maʼlumoti hali ulanmagan. Maosh oraligʻini belgilashda tajriba darajasi, ish turi va shu kabi vakansiyalardagi oraliqlarni solishtiring. TODO: real maʼlumot.",
+        "fallback": "Yaxshi savol! Demo rejimda men faqat tayyor savollarga batafsil javob bera olaman. Haqiqiy AI ulanganda bu savolga ham javob beraman."
+      },
+      "inputLabel": "Xabaringiz",
+      "placeholder": "Savolingizni yozing",
+      "send": "Yuborish",
+      "typing": "AI yordamchi javob yozmoqda",
+      "clear": "Suhbatni tozalash"
+    },
+    "empty": {
+      "filters": {
+        "title": "Hech narsa topilmadi",
+        "text": "Boshqa soʻz bilan qidirib koʻring yoki filtrlarni tozalang."
+      },
+      "vacancies": {
+        "candidate": {
+          "title": "Hozircha vakansiya yoʻq",
+          "text": "Profilingizni toʻldiring: sizga mos vakansiyalar paydo boʻlganda shu yerda koʻrinadi."
+        },
+        "employer": {
+          "title": "Hali vakansiya joylamadingiz",
+          "text": "Birinchi vakansiyani yarating va mos nomzodlarni oling."
+        }
+      },
+      "applications": {
+        "candidate": {
+          "title": "Hali ariza yubormadingiz",
+          "text": "Vakansiyalarni koʻrib chiqing va birinchi arizangizni yuboring."
+        },
+        "employer": {
+          "title": "Hozircha ariza kelmadi",
+          "text": "Arizalar kelishi bilan shu yerda koʻrinadi."
+        }
+      },
+      "tab": {
+        "title": "Bu holatda ariza yoʻq",
+        "text": "Boshqa holatni tanlang."
+      },
+      "interviews": "Yaqin kunlarda intervyu yoʻq.",
+      "recommended": "Tavsiyalar profilingiz toʻldirilgach paydo boʻladi.",
+      "browse": "Vakansiyalarni koʻrish"
+    },
+    "loading": "Yuklanmoqda",
+    "states": {
+      "label": "Holatni koʻrish",
+      "filled": "Maʼlumot bilan",
+      "empty": "Boʻsh",
+      "loading": "Yuklanish"
+    },
+    "labelValue": "{label}: {value}",
+    "percent": "{value}%"
   }
 }

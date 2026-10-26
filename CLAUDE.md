@@ -199,3 +199,12 @@ tests/                 Vitest integratsiya testlari
 - Binafsha faqat dekor shakllarda. Shrift: Inter (ʻ U+02BB, qoraqalpoq va kirill harflari bor; Plus Jakarta Sans va Outfit da yoʻq).
 - Eski sahifalar hozircha eski tokenlarda; har bir sahifa qayta yigʻilganda `ds` komponentlariga oʻtadi.
 - Bosh sahifa `src/components/landing/` dan yigʻiladi (hero, partners, features, categories, profile, testimonials). Header va footer (`site-header.tsx`, `site-footer.tsx`) shu uslubda, hamma sahifada. Aloqa maʼlumotlari faqat `src/lib/site.ts` da. Rasmlar `public/images/*.webp`. Statistika va fikrlar placeholder: `TODO: real maʼlumot`.
+
+## Dashboard (demo, mock maʼlumot)
+
+- Yoʻllar: `/{locale}/dashboard/{candidate|employer}` + `/vacancies`, `/applications`, `/assistant`. `/dashboard` → `/dashboard/candidate`. noindex, auth talab qilinmaydi (hozircha demo).
+- Komponentlar: `src/components/dashboard/` (shell, sidebar-nav, role-switch, topbar-menus, mobile-drawer, vacancy-table, assistant-chat, skeletons, ui, page-state). Mock: `src/lib/dashboard/mock.ts` (TODO: real maʼlumot; kompaniya nomlari oʻylab topilmaydi, faqat soha).
+- Sidebar boʻlimlari: `src/components/icons/dashboard-nav.ts`. Matnlar: `Dashboard` namespace.
+- Holatlar: `?state=empty` va `?state=loading` (demo uchun sahifa pastidagi almashtirgich); `[role]/loading.tsx` — haqiqiy yuklanish.
+- Sayt header/footer dashboard da `SiteChrome` orqali yashiriladi.
+- `cn()` tailwind-merge emas: ds komponentiga zid klass bermang (masalan `Textarea` ga boshqa `min-h`), `ROUND_BUTTON` va `Avatar` da `relative` bor — `absolute` uchun tashqi span.

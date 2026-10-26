@@ -1,42 +1,22 @@
+import type { ComponentType } from "react";
 import {
-  BellIcon,
-  BookmarkIcon,
   BriefcaseIcon,
-  BuildingIcon,
-  ChartIcon,
   DashboardIcon,
   FileTextIcon,
-  LogOutIcon,
-  MessageIcon,
-  ResumeIcon,
-  SettingsIcon,
-  UsersIcon,
+  SparkIcon,
+  type IconProps,
 } from "./index";
 
-/*
- * Dashboard sidebar uchun tayyor ikon xaritasi (kalit = keyingi i18n kaliti).
- * Sidebar hali qurilmagan; dashboard bosqichida shu roʻyxatdan foydalaniladi.
- */
-export const CANDIDATE_NAV_ICONS = {
-  overview: DashboardIcon,
-  jobs: BriefcaseIcon,
-  resume: ResumeIcon,
-  applications: FileTextIcon,
-  saved: BookmarkIcon,
-  messages: MessageIcon,
-  notifications: BellIcon,
-  settings: SettingsIcon,
-  logout: LogOutIcon,
-} as const;
+/** Dashboard sidebar boʻlimlari (kalit = `Dashboard.nav.*` i18n kaliti va URL qismi). */
+export const DASHBOARD_NAV = [
+  { key: "overview", path: "", Icon: DashboardIcon },
+  { key: "vacancies", path: "/vacancies", Icon: BriefcaseIcon },
+  { key: "applications", path: "/applications", Icon: FileTextIcon },
+  { key: "assistant", path: "/assistant", Icon: SparkIcon },
+] as const satisfies readonly {
+  key: string;
+  path: string;
+  Icon: ComponentType<IconProps>;
+}[];
 
-export const EMPLOYER_NAV_ICONS = {
-  overview: DashboardIcon,
-  company: BuildingIcon,
-  vacancies: BriefcaseIcon,
-  candidates: UsersIcon,
-  analytics: ChartIcon,
-  messages: MessageIcon,
-  notifications: BellIcon,
-  settings: SettingsIcon,
-  logout: LogOutIcon,
-} as const;
+export type DashboardSection = (typeof DASHBOARD_NAV)[number]["key"];

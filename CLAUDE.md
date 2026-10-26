@@ -197,3 +197,4 @@ tests/                 Vitest integratsiya testlari
 - Apelsin (#FF7A3D) fonda matn faqat toʻq (`text-on-primary`): oq matn 2.6:1, AA dan oʻtmaydi. Oq fondagi apelsin matn: `text-primary-text`.
 - Binafsha faqat dekor shakllarda. Shrift: Inter (ʻ U+02BB, qoraqalpoq va kirill harflari bor; Plus Jakarta Sans va Outfit da yoʻq).
 - Eski sahifalar hozircha eski tokenlarda; har bir sahifa qayta yigʻilganda `ds` komponentlariga oʻtadi.
+- Bosh sahifa `src/components/landing/` dan yigʻiladi (hero, partners, features, categories, profile, testimonials). Header va footer (`site-header.tsx`, `site-footer.tsx`) shu uslubda, hamma sahifada. Aloqa maʼlumotlari faqat `src/lib/site.ts` da. Rasmlar `public/images/*.webp`. Statistika va fikrlar placeholder: `TODO: real maʼlumot`.

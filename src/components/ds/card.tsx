@@ -116,6 +116,7 @@ export function TestimonialCard({
   role,
   quote,
   initials,
+  avatarSrc,
   active = false,
   className,
 }: {
@@ -123,13 +124,15 @@ export function TestimonialCard({
   role: string;
   quote: string;
   initials: string;
+  /** `public/images/` dagi portret. */
+  avatarSrc?: string;
   active?: boolean;
   className?: string;
 }) {
   return (
     <figure
       className={cn(
-        "rounded-card flex h-full flex-col gap-5 p-7 transition-colors duration-200",
+        "rounded-card flex h-full flex-col gap-5 p-7 transition-colors duration-300 motion-reduce:transition-none",
         active ? "bg-primary text-on-primary" : "bg-card-cool text-text",
         className,
       )}
@@ -137,8 +140,10 @@ export function TestimonialCard({
       <figcaption className="flex items-center gap-4">
         <Avatar
           initials={initials}
+          src={avatarSrc}
           size="lg"
           tone={active ? "night" : "violet"}
+          className={active ? "ring-on-primary/30 ring-2" : undefined}
         />
         <span className="flex flex-col">
           <span className="font-ui text-lg font-bold">{name}</span>

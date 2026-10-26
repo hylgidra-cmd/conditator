@@ -39,145 +39,22 @@
     "en": "English",
     "current": "Til: {locale}"
   },
-  "Home": {
-    "hero": {
-      "title": "Rezyume emas, tayyor nomzodlar",
-      "subtitle": "Vakansiyani joylang. Jumis AI nomzodlarni saralaydi va sizga 5 dan 10 gacha mos nomzod beradi. HR boʻlimi shart emas.",
-      "cta": "Vakansiya joylash",
-      "telegram": "Telegramda yozing",
-      "note": "Toshkentdagi kompaniyalar va boshlangʻich lavozimlar uchun.",
-      "imageAlt": "Jumis AI ilovasi: vakansiya uchun saralangan nomzodlar roʻyxati, har birida ball va izoh"
-    },
-    "problem": {
-      "title": "Xodim topish nega bunchalik koʻp vaqt oladi",
-      "resumes": {
-        "title": "Rezyumelar juda koʻp",
-        "body": "Bitta eʻlonga yuzlab rezyume keladi. Koʻpi talabga mos emas, lekin hammasini oʻqib chiqish kerak."
-      },
-      "slow": {
-        "title": "Yollash choʻzilib ketadi",
-        "body": "Rezyume koʻrish, qoʻngʻiroq va suhbatlar haftalab davom etadi. Bu orada yaxshi nomzod boshqa ishga kirib ketadi."
-      },
-      "noHr": {
-        "title": "HR mutaxassisi yoʻq",
-        "body": "Kichik kompaniyada alohida HR boʻlimi boʻlmaydi. Saralash ishi rahbarning oʻziga qoladi."
-      }
-    },
-    "how": {
-      "title": "Qanday ishlaydi",
-      "lead": "Uch qadam. Sizdan faqat birinchisi talab qilinadi.",
-      "step1": {
-        "title": "Vakansiyani joylang",
-        "body": "Talablarni formaga kiriting yoki oddiy matn bilan yozing. Lavozim, koʻnikmalar, tajriba va shahar yetarli.",
-        "imageAlt": "Vakansiya yaratish formasi"
-      },
-      "step2": {
-        "title": "AI nomzodlarni saralaydi",
-        "body": "Jumis AI bazadagi nomzodlarni talablaringiz bilan solishtiradi. Har biriga 0 dan 100 gacha ball va qisqa izoh beradi.",
-        "imageAlt": "Saralash natijasi: nomzodlar ball boʻyicha tartiblangan"
-      },
-      "step3": {
-        "title": "Qisqa roʻyxatni oling",
-        "body": "Sizga 5 dan 10 gacha eng mos nomzod koʻrsatiladi. CV ni oching, PDF yuklab oling va qaror qiling: Tanlandi yoki Mos emas.",
-        "imageAlt": "Nomzod CV si va qaror tugmalari"
-      }
-    },
-    "benefits": {
-      "title": "Ish beruvchi nima oladi",
-      "time": {
-        "title": "Vaqt tejaladi",
-        "body": "Yuzlab rezyume oʻrniga faqat talabga mos nomzodlarni koʻrasiz."
-      },
-      "noHr": {
-        "title": "HR boʻlimisiz ishlaydi",
-        "body": "Saralashni platforma bajaradi. Siz faqat yakuniy qarorni qabul qilasiz."
-      },
-      "clear": {
-        "title": "Har bir tanlov tushunarli",
-        "body": "Ball yonida izoh bor: nomzod nimasi bilan mos va nimasi yetishmaydi."
-      },
-      "language": {
-        "title": "Istalgan tilda yozing",
-        "body": "Talabni oʻzbek, rus yoki ingliz tilida yozish mumkin."
-      },
-      "privacy": {
-        "title": "Shaxsiy maʻlumot himoyalangan",
-        "body": "AI ga nomzodning ismi, telefoni va emaili yuborilmaydi."
-      },
-      "verified": {
-        "title": "Faqat tasdiqlangan kompaniyalar",
-        "body": "Kompaniya nomzodlarni administrator tasdiqlagandan keyingina koʻradi."
-      }
-    },
-    "audiences": {
-      "title": "Ish izlovchilar va hamkorlar uchun",
-      "seekers": {
-        "title": "Ish izlovchilar",
-        "body": "Oʻzingiz haqingizda oddiy matn yozing. AI undan tayyor CV tuzadi, uni PDF qilib yuklab olasiz.",
-        "cta": "CV tuzish",
-        "telegram": "Telegram kanal"
-      },
-      "centers": {
-        "title": "Bandlik markazlari",
-        "body": "Ish izlayotganlarni Jumis AI ga yoʻnaltiring. Ularning CV si Toshkentdagi kompaniyalarga koʻrinadi."
-      },
-      "universities": {
-        "title": "Universitetlar",
-        "body": "Talaba va bitiruvchilar birinchi ishini tezroq topadi. Hamkorlik uchun biz bilan bogʻlaning."
-      },
-      "partners": "Hamkorlarimiz: [PARTNER NAME], [PARTNER NAME]"
-    },
-    "pricing": {
-      "title": "Narx kompaniya hajmiga qarab",
-      "lead": "Xodimlar sonini tanlang.",
-      "sizeLabel": "Xodimlar soni",
-      "staff": "{range} xodim",
-      "period": "[billing period: confirm]",
-      "includesTitle": "Har bir tarifga kiradi",
-      "include1": "Vakansiya joylash va tahrirlash",
-      "include2": "AI saralash, ball va izoh",
-      "include3": "Nomzod CV sini koʻrish va PDF yuklash",
-      "cta": "Boshlash",
-      "small": "[CONFIRM: 30 tagacha xodimli kompaniyalar uchun shart]",
-      "note": "Obunani administrator faollashtiradi.",
-      "tableCaption": "Barcha narxlar",
-      "tableSize": "Xodimlar soni",
-      "tablePrice": "Narx"
-    },
-    "faq": {
-      "title": "Koʻp beriladigan savollar",
-      "q1": "Nomzodlar qayerdan keladi?",
-      "a1": "Ish izlovchilar platformada oʻzlari roʻyxatdan oʻtib, CV tuzadi. Bandlik markazlari va universitetlar ham nomzodlarni yoʻnaltiradi.",
-      "q2": "AI qanday saralaydi?",
-      "a2": "Vakansiya talablari nomzodning lavozimi, koʻnikmalari, tajribasi, tillari, taʻlimi va shahri bilan solishtiriladi. Har bir nomzodga ball va izoh beriladi.",
-      "q3": "Nomzodlarning maʻlumotlari xavfsizmi?",
-      "a3": "Ha. AI ga ism, telefon va email yuborilmaydi. Nomzodlarni faqat administrator tasdiqlagan kompaniyalar koʻradi.",
-      "q4": "Qaysi lavozimlar uchun mos?",
-      "a4": "Hozir asosan Toshkentdagi boshlangʻich lavozimlar uchun, yaʻni katta tajriba talab qilinmaydigan ishlar uchun.",
-      "q5": "Bizda HR yoʻq. Platformadan foydalana olamizmi?",
-      "a5": "Ha, Jumis AI aynan shunday kompaniyalar uchun. Vakansiyani rahbar yoki istalgan xodim joylashi mumkin.",
-      "q6": "Toʻlov qanday amalga oshiriladi?",
-      "a6": "Narx kompaniyadagi xodimlar soniga bogʻliq. Obunani administrator faollashtiradi. Batafsil maʻlumot uchun Telegramda yozing.",
-      "q7": "Kurslar ham bormi?",
-      "a7": "Hozircha yoʻq. Hozir faqat vakansiya dasturi ishlaydi."
-    },
-    "final": {
-      "title": "Keyingi xodimingizni rezyumelar orasidan qidirmang",
-      "body": "Vakansiyani joylang va mos nomzodlar roʻyxatini oling.",
-      "cta": "Vakansiya joylash",
-      "telegram": "Telegramda yozing"
-    }
-  },
   "Footer": {
-    "tagline": "Toshkentdagi kompaniyalar uchun xodim saralash platformasi.",
-    "contacts": "Aloqa",
-    "telegram": "Telegram",
-    "product": "Platforma",
+    "tagline": "Oʻzbekiston uchun AI yordamchili ish topish platformasi: nomzodlar va ish beruvchilar bir joyda.",
+    "company": "Kompaniya",
+    "about": "Biz haqimizda",
+    "companies": "Kompaniyalar",
+    "community": "Fikrlar",
+    "features": "Imkoniyatlar",
+    "jobs": "Vakansiyalar",
+    "profile": "Profil yaratish",
     "register": "Roʻyxatdan oʻtish",
     "login": "Kirish",
-    "pricing": "Narxlar",
-    "faq": "Savollar",
-    "rights": "© {year} Jumis AI. Barcha huquqlar himoyalangan."
+    "contacts": "Aloqa",
+    "phoneLabel": "Telefon",
+    "emailLabel": "Email",
+    "telegramLabel": "Telegram",
+    "rights": "© {year} JUMIS - AI. Barcha huquqlar himoyalangan."
   },
   "NotFound": {
     "title": "Sahifa topilmadi",
@@ -860,6 +737,25 @@
       "profileName": "Ism Familiya",
       "profileRole": "UI/UX dizayner",
       "profileAction": "Ishga taklif qilish"
+    },
+    "testimonials": {
+      "title": "Mijozlarimiz biz haqimizda nima deydi",
+      "text": "Nomzodlar va ish beruvchilarning fikrlari.",
+      "region": "Foydalanuvchilar fikrlari",
+      "prev": "Oldingi fikr",
+      "next": "Keyingi fikr",
+      "slide": "{index} / {total}",
+      "name": "Ism Familiya",
+      "role1": "Frontend dasturchi, Toshkent",
+      "quote1": "Bu yerda nomzodning haqiqiy fikri boʻladi: AI yordamchi rezyumesini qanday tayyorlagani haqida.",
+      "role2": "HR menejer, Samarqand",
+      "quote2": "Bu yerda ish beruvchining haqiqiy fikri boʻladi: saralangan nomzodlar vaqtni qanchalik tejagani haqida.",
+      "role3": "Kompaniya rahbari, Buxoro",
+      "quote3": "Bu yerda kompaniya rahbarining haqiqiy fikri boʻladi: xodim topish jarayoni haqida.",
+      "role4": "Talaba, Fargʻona",
+      "quote4": "Bu yerda talabaning haqiqiy fikri boʻladi: birinchi ishini qanday topgani haqida.",
+      "role5": "Dizayner, Andijon",
+      "quote5": "Bu yerda dizaynerning haqiqiy fikri boʻladi: intervyuga qanday taklif olgani haqida."
     }
   }
 }

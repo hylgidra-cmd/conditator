@@ -189,3 +189,11 @@ tests/                 Vitest integratsiya testlari
 - Production obrazi `node:22-bookworm-slim` + `openssl` (Prisma uchun). Next.js `output: "standalone"`.
 - Shrift: Noto Sans (`@fontsource-variable/noto-sans`, internetsiz ishlaydi), qoraqalpoq harflarini qo'llaydi.
 - Dizayn tokenlari `src/app/globals.css` da. Maketlar (`docs/design/`) kelganda shu yerdan almashtiriladi.
+
+## Dizayn tizimi (Jobly uslubi, 2026-10-26)
+
+- Namuna sahifa: `/{locale}/design-system` (noindex). Komponentlar: `src/components/ds/` (button, card, input, badge, avatar, floating-card, decor, icons, logo).
+- Tokenlar `globals.css` oxirida (`--ds-*`), Tailwind nomlari: `bg-primary`, `text-on-primary`, `text-primary-text`, `bg-ink`, `bg-night`, `bg-peach`, `bg-canvas`, `bg-card`, `text-subtle`, `border-line`, `rounded-btn|field|card|panel`, `shadow-soft|float|primary`, `text-display|h1|h2|h3|lead|caption`, `page-x`.
+- Apelsin (#FF7A3D) fonda matn faqat toʻq (`text-on-primary`): oq matn 2.6:1, AA dan oʻtmaydi. Oq fondagi apelsin matn: `text-primary-text`.
+- Binafsha faqat dekor shakllarda. Shrift: Inter (ʻ U+02BB, qoraqalpoq va kirill harflari bor; Plus Jakarta Sans va Outfit da yoʻq).
+- Eski sahifalar hozircha eski tokenlarda; har bir sahifa qayta yigʻilganda `ds` komponentlariga oʻtadi.

@@ -87,7 +87,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="bg-brand w-full rounded-lg px-4 py-2 font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+      className="bg-brand text-brand-foreground w-full rounded-lg px-4 py-2 font-semibold transition hover:opacity-90 disabled:opacity-60"
     >
       {pending ? t("submitting") : children}
     </button>

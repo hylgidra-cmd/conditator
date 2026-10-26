@@ -100,7 +100,7 @@ export function CompanyLogo({ initialHasLogo }: { initialHasLogo: boolean }) {
         <button
           type="submit"
           disabled={pending}
-          className="bg-brand rounded-lg px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
         >
           {t("upload")}
         </button>

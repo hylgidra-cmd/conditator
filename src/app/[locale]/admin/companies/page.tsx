@@ -69,7 +69,7 @@ export default async function AdminCompaniesPage({
         </div>
         <button
           type="submit"
-          className="bg-brand rounded-lg px-4 py-2 text-sm font-semibold text-white"
+          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold"
         >
           {tUsers("filter")}
         </button>

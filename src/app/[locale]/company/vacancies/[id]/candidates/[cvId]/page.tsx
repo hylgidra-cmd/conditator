@@ -88,7 +88,7 @@ export default async function CandidatePage({
         {}
         <a
           href={`/api/cv/${cv.id}/pdf`}
-          className="bg-brand rounded-lg px-4 py-2 font-semibold text-white"
+          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold"
         >
           {t("download")}
         </a>

@@ -2,13 +2,35 @@ import { notFound } from "next/navigation";
 import { hasLocale, useTranslations } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
+import { HowItWorks } from "@/components/home/how-it-works";
+import { PricingSelector } from "@/components/home/pricing-selector";
+import { ScreenShot } from "@/components/home/screen-shot";
+import { TelegramIcon } from "@/components/home/telegram-icon";
+import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { formatUsd, PRICING_TIERS, TELEGRAM_URL } from "@/lib/site";
 
 type Props = { params: Promise<{ locale: string }> };
 
-const FEATURE_GROUPS = ["students", "companies"] as const;
-const FEATURE_ITEMS = ["item1", "item2", "item3"] as const;
-const STEPS = ["step1", "step2", "step3"] as const;
+const PROBLEMS = ["resumes", "slow", "noHr"] as const;
+const BENEFITS = [
+  "time",
+  "noHr",
+  "clear",
+  "language",
+  "privacy",
+  "verified",
+] as const;
+const AUDIENCES = ["seekers", "centers", "universities"] as const;
+const FAQ = ["1", "2", "3", "4", "5", "6", "7"] as const;
+
+const CONTAINER = "mx-auto max-w-6xl px-4 sm:px-6";
+const H2 =
+  "font-display text-3xl font-semibold tracking-tight text-balance sm:text-4xl";
+const PRIMARY =
+  "bg-brand text-brand-foreground hover:bg-brand-strong inline-flex items-center justify-center rounded-lg px-5 py-3 font-semibold transition-colors";
+const SECONDARY =
+  "border-border hover:border-foreground inline-flex items-center justify-center gap-2 rounded-lg border px-5 py-3 font-semibold transition-colors";
 
 export default function HomePage({ params }: Props) {
   const { locale } = use(params);
@@ -17,57 +39,269 @@ export default function HomePage({ params }: Props) {
   const t = useTranslations("Home");
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:py-20">
-      <section className="text-center">
-        <span className="bg-brand-soft text-brand inline-block rounded-full px-3 py-1 text-xs font-semibold">
-          {t("badge")}
-        </span>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
-          {t("title")}
-        </h1>
-        <p className="text-muted mx-auto mt-4 max-w-2xl text-base sm:text-lg">
-          {t("subtitle")}
-        </p>
-      </section>
-
-      <section className="mt-12 grid gap-6 sm:grid-cols-2">
-        {FEATURE_GROUPS.map((group) => (
-          <div
-            key={group}
-            className="border-border bg-surface rounded-2xl border p-6 shadow-sm"
-          >
-            <h2 className="text-lg font-semibold">{t(`${group}.title`)}</h2>
-            <ul className="text-muted mt-4 space-y-2">
-              {FEATURE_ITEMS.map((item) => (
-                <li key={item} className="flex gap-2">
-                  <span aria-hidden className="text-brand">
-                    ✓
-                  </span>
-                  {t(`${group}.${item}`)}
-                </li>
-              ))}
-            </ul>
+    <>
+      {/* Hero */}
+      <section className="overflow-hidden">
+        <div
+          className={`${CONTAINER} grid items-center gap-10 pt-10 pb-16 sm:pt-16 lg:grid-cols-[6fr_6fr] lg:gap-12 lg:pt-20 lg:pb-24`}
+        >
+          <div>
+            <h1 className="font-display text-[2.25rem] leading-[1.08] font-semibold tracking-tight sm:text-5xl xl:text-[3.5rem]">
+              {t("hero.title")}
+            </h1>
+            <p className="text-muted mt-5 max-w-md text-lg leading-relaxed">
+              {t("hero.subtitle")}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link href="/register" className={PRIMARY}>
+                {t("hero.cta")}
+              </Link>
+              <a href={TELEGRAM_URL} rel="noopener" className={SECONDARY}>
+                <TelegramIcon />
+                {t("hero.telegram")}
+              </a>
+            </div>
+            <p className="text-muted mt-6 text-sm">{t("hero.note")}</p>
           </div>
-        ))}
+          <ScreenShot
+            name="matches"
+            alt={t("hero.imageAlt")}
+            priority
+            className="lg:-mr-24 xl:-mr-40"
+          />
+        </div>
       </section>
 
-      <section className="mt-12">
-        <h2 className="text-center text-xl font-semibold">{t("how.title")}</h2>
-        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
-          {STEPS.map((step, index) => (
-            <li
-              key={step}
-              className="border-border bg-surface flex items-center gap-3 rounded-xl border p-4"
-            >
-              <span className="bg-brand flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white">
-                {index + 1}
-              </span>
-              {t(`how.${step}`)}
-            </li>
-          ))}
-        </ol>
-        <p className="text-muted mt-8 text-center text-sm">{t("trust")}</p>
+      {/* Muammo */}
+      <section className="border-border border-t">
+        <div
+          className={`${CONTAINER} grid gap-10 py-16 sm:py-24 lg:grid-cols-[5fr_7fr] lg:gap-16`}
+        >
+          <h2 className={`${H2} reveal max-w-md`}>{t("problem.title")}</h2>
+          <dl className="divide-border divide-y">
+            {PROBLEMS.map((key) => (
+              <div
+                key={key}
+                className="reveal grid gap-2 py-6 first:pt-0 last:pb-0 sm:grid-cols-[14rem_1fr] sm:gap-8"
+              >
+                <dt className="text-lg font-semibold">
+                  {t(`problem.${key}.title`)}
+                </dt>
+                <dd className="text-muted leading-relaxed">
+                  {t(`problem.${key}.body`)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </section>
-    </div>
+
+      {/* Qanday ishlaydi */}
+      <section id="how" className="border-border border-t">
+        <div className={`${CONTAINER} py-16 sm:py-24`}>
+          <div className="max-w-xl">
+            <h2 className={H2}>{t("how.title")}</h2>
+            <p className="text-muted mt-4 text-lg">{t("how.lead")}</p>
+          </div>
+          <HowItWorks
+            steps={[
+              {
+                title: t("how.step1.title"),
+                body: t("how.step1.body"),
+                imageAlt: t("how.step1.imageAlt"),
+                screen: "vacancy",
+              },
+              {
+                title: t("how.step2.title"),
+                body: t("how.step2.body"),
+                imageAlt: t("how.step2.imageAlt"),
+                screen: "matches",
+              },
+              {
+                title: t("how.step3.title"),
+                body: t("how.step3.body"),
+                imageAlt: t("how.step3.imageAlt"),
+                screen: "candidate",
+              },
+            ]}
+          />
+        </div>
+      </section>
+
+      {/* Ish beruvchiga foydasi */}
+      <section className="border-border border-t">
+        <div className={`${CONTAINER} py-16 sm:py-24`}>
+          <h2 className={`${H2} reveal max-w-xl`}>{t("benefits.title")}</h2>
+          <div className="mt-12 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
+            {BENEFITS.map((key) => (
+              <div key={key} className="border-border reveal border-t py-6">
+                <h3 className="font-semibold">{t(`benefits.${key}.title`)}</h3>
+                <p className="text-muted mt-2 leading-relaxed">
+                  {t(`benefits.${key}.body`)}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Ish izlovchilar va hamkorlar */}
+      <section className="bg-surface-muted">
+        <div className={`${CONTAINER} py-16 sm:py-20`}>
+          <h2 className="font-display max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
+            {t("audiences.title")}
+          </h2>
+          <div className="mt-10 grid gap-10 md:grid-cols-3 md:gap-12">
+            {AUDIENCES.map((key) => (
+              <div key={key}>
+                <h3 className="font-semibold">{t(`audiences.${key}.title`)}</h3>
+                <p className="text-muted mt-2 leading-relaxed">
+                  {t(`audiences.${key}.body`)}
+                </p>
+                {key === "seekers" ? (
+                  <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+                    <Link
+                      href="/register"
+                      className="text-brand hover:text-brand-strong underline underline-offset-4"
+                    >
+                      {t("audiences.seekers.cta")}
+                    </Link>
+                    <a
+                      href={TELEGRAM_URL}
+                      rel="noopener"
+                      className="text-brand hover:text-brand-strong underline underline-offset-4"
+                    >
+                      {t("audiences.seekers.telegram")}
+                    </a>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+          <p className="text-muted border-border mt-12 border-t pt-6 text-sm">
+            {t("audiences.partners")}
+          </p>
+        </div>
+      </section>
+
+      {/* Narxlar */}
+      <section id="pricing" className="border-border border-t">
+        <div
+          className={`${CONTAINER} grid gap-10 py-16 sm:py-24 lg:grid-cols-[5fr_7fr] lg:gap-16`}
+        >
+          <div>
+            <h2 className={H2}>{t("pricing.title")}</h2>
+            <p className="text-muted mt-4 text-lg">{t("pricing.lead")}</p>
+            <p className="text-muted mt-2 text-sm">{t("pricing.note")}</p>
+          </div>
+          <div>
+            <PricingSelector
+              tiers={PRICING_TIERS}
+              labels={{
+                sizeLabel: t("pricing.sizeLabel"),
+                period: t("pricing.period"),
+                includesTitle: t("pricing.includesTitle"),
+                includes: [
+                  t("pricing.include1"),
+                  t("pricing.include2"),
+                  t("pricing.include3"),
+                ],
+                cta: t("pricing.cta"),
+                small: t("pricing.small"),
+                staff: PRICING_TIERS.map((tier) =>
+                  t("pricing.staff", { range: tier.range }),
+                ),
+              }}
+            />
+            <details className="group mt-4">
+              <summary className="text-muted hover:text-foreground cursor-pointer text-sm font-medium">
+                {t("pricing.tableCaption")}
+              </summary>
+              <table className="mt-3 w-full text-left text-sm">
+                <caption className="sr-only">
+                  {t("pricing.tableCaption")}
+                </caption>
+                <thead className="text-muted">
+                  <tr className="border-border border-b">
+                    <th scope="col" className="py-2 font-medium">
+                      {t("pricing.tableSize")}
+                    </th>
+                    <th scope="col" className="py-2 text-right font-medium">
+                      {t("pricing.tablePrice")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-border divide-y tabular-nums">
+                  {PRICING_TIERS.map((tier) => (
+                    <tr key={tier.range}>
+                      <td className="py-2">{tier.range}</td>
+                      <td className="py-2 text-right">
+                        {formatUsd(tier.price)}{" "}
+                        <span className="text-muted">
+                          {t("pricing.period")}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      {/* Savollar */}
+      <section id="faq" className="border-border border-t">
+        <div
+          className={`${CONTAINER} grid gap-10 py-16 sm:py-24 lg:grid-cols-[5fr_7fr] lg:gap-16`}
+        >
+          <h2 className={`${H2} max-w-md`}>{t("faq.title")}</h2>
+          <div className="divide-border border-border divide-y border-y">
+            {FAQ.map((n) => (
+              <details key={n} className="group">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-5 font-semibold [&::-webkit-details-marker]:hidden">
+                  {t(`faq.q${n}`)}
+                  <svg
+                    aria-hidden
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    className="text-muted mt-1 shrink-0 transition-transform group-open:rotate-45"
+                  >
+                    <path
+                      d="M8 2v12M2 8h12"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                    />
+                  </svg>
+                </summary>
+                <p className="text-muted max-w-prose pb-5 leading-relaxed">
+                  {t(`faq.a${n}`)}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Yakuniy chaqiriq */}
+      <section className="border-border border-t">
+        <div className={`${CONTAINER} py-20 sm:py-28`}>
+          <h2 className="font-display reveal max-w-3xl text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">
+            {t("final.title")}
+          </h2>
+          <p className="text-muted mt-5 max-w-md text-lg">{t("final.body")}</p>
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Link href="/register" className={PRIMARY}>
+              {t("final.cta")}
+            </Link>
+            <a href={TELEGRAM_URL} rel="noopener" className={SECONDARY}>
+              <TelegramIcon />
+              {t("final.telegram")}
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

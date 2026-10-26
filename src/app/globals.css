@@ -1,28 +1,197 @@
 @import "tailwindcss";
 
-/* Dizayn maketlari kelganda shu tokenlar almashtiriladi. */
+/*
+ * Dizayn tizimi: neytral asos + bitta urg'u rangi (brend teal), bitta burchak radiusi (8px).
+ * Yorug' rejim standart. Tungi rejim: tizim sozlamasi yoki data-theme="dark" (cookie orqali).
+ * Barcha matn juftliklari WCAG AA (4.5:1) dan yuqori.
+ */
 :root {
-  --background: #f8fafc;
+  color-scheme: light;
+  --background: #fafaf7;
   --surface: #ffffff;
-  --foreground: #0f172a;
-  --muted: #475569;
-  --border: #e2e8f0;
-  --brand: #0d9488;
-  --brand-soft: #ccfbf1;
+  --surface-muted: #f1f1ec;
+  --foreground: #161716;
+  --muted: #55585a;
+  --border: #e3e3dd;
+  --brand: #0f766e;
+  --brand-strong: #0b5f58;
+  --brand-soft: #e3f1ef;
+  --brand-foreground: #ffffff;
+}
+
+/* Tungi rejim tokenlari ikki joyda bir xil: tizim sozlamasi va qo'lda tanlangan rejim. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #111312;
+    --surface: #171a19;
+    --surface-muted: #1e2120;
+    --foreground: #ecece8;
+    --muted: #a5a8a4;
+    --border: #2c2f2d;
+    --brand: #2dd4bf;
+    --brand-strong: #5eead4;
+    --brand-soft: #12332f;
+    --brand-foreground: #0b1513;
+
+    /* Ilova ichidagi holat ranglari tungi fonda o'qiladigan bo'lishi uchun. */
+    --color-red-50: #2a1515;
+    --color-red-100: #3a1a1a;
+    --color-red-200: #5c2626;
+    --color-red-300: #7d3333;
+    --color-red-600: #f87171;
+    --color-red-700: #fca5a5;
+    --color-red-800: #fecaca;
+    --color-amber-50: #2a2210;
+    --color-amber-100: #3a2d10;
+    --color-amber-200: #5a4518;
+    --color-amber-300: #7a5d1e;
+    --color-amber-800: #fcd34d;
+    --color-amber-900: #fde68a;
+    --color-green-100: #12301f;
+    --color-green-300: #2f6b45;
+    --color-green-700: #86efac;
+    --color-green-800: #bbf7d0;
+    --color-emerald-50: #0f2a22;
+    --color-emerald-200: #1f5442;
+    --color-emerald-700: #6ee7b7;
+    --color-emerald-800: #a7f3d0;
+    --color-gray-100: #242726;
+    --color-gray-200: #2c2f2d;
+    --color-gray-700: #d4d4d0;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #111312;
+  --surface: #171a19;
+  --surface-muted: #1e2120;
+  --foreground: #ecece8;
+  --muted: #a5a8a4;
+  --border: #2c2f2d;
+  --brand: #2dd4bf;
+  --brand-strong: #5eead4;
+  --brand-soft: #12332f;
+  --brand-foreground: #0b1513;
+
+  --color-red-50: #2a1515;
+  --color-red-100: #3a1a1a;
+  --color-red-200: #5c2626;
+  --color-red-300: #7d3333;
+  --color-red-600: #f87171;
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-amber-50: #2a2210;
+  --color-amber-100: #3a2d10;
+  --color-amber-200: #5a4518;
+  --color-amber-300: #7a5d1e;
+  --color-amber-800: #fcd34d;
+  --color-amber-900: #fde68a;
+  --color-green-100: #12301f;
+  --color-green-300: #2f6b45;
+  --color-green-700: #86efac;
+  --color-green-800: #bbf7d0;
+  --color-emerald-50: #0f2a22;
+  --color-emerald-200: #1f5442;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-gray-100: #242726;
+  --color-gray-200: #2c2f2d;
+  --color-gray-700: #d4d4d0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
   --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
   --color-brand-soft: var(--brand-soft);
+  --color-brand-foreground: var(--brand-foreground);
   --font-sans: "Noto Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Source Serif 4 Variable", Georgia, "Times New Roman", serif;
+}
+
+/*
+ * Bitta radius tizimi: barcha rounded-* sinflari 8px ga teng.
+ * rounded-full (doira) faqat ilova ichidagi kichik holat belgilarida qoladi.
+ */
+@theme {
+  --radius-xs: 0.5rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.5rem;
+  --radius-3xl: 0.5rem;
+  /* Oq matnli yashil tugmalar AA kontrastga ega bo'lishi uchun bir pog'ona to'qroq. */
+  --color-green-600: #15803d;
+  /* Muharrir uslubi: soyalar o'rniga chegaralar. */
+  --shadow-sm: 0 0 #0000;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Mavzuga qarab rasm almashinuvi (yorug'/tungi skrinshotlar). */
+.theme-dark-only {
+  display: none;
+}
+:root[data-theme="dark"] .theme-dark-only {
+  display: block;
+}
+:root[data-theme="dark"] .theme-light-only {
+  display: none;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-dark-only {
+    display: block;
+  }
+  :root:not([data-theme="light"]) .theme-light-only {
+    display: none;
+  }
+}
+
+/* Paydo bo'lish animatsiyasi: faqat CSS scroll-driven, scroll tinglovchisiz. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }

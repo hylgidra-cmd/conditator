@@ -35,7 +35,7 @@ export default async function StudentCvPreviewPage() {
           {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
           <a
             href="/api/cv/me/pdf"
-            className="bg-brand rounded-lg px-4 py-2 font-semibold text-white"
+            className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold"
           >
             {t("download")}
           </a>

@@ -170,7 +170,7 @@ export function CvWorkspace({
               type="button"
               onClick={save}
               disabled={saving}
-              className="bg-brand rounded-lg px-5 py-2 font-semibold text-white disabled:opacity-60"
+              className="bg-brand text-brand-foreground rounded-lg px-5 py-2 font-semibold disabled:opacity-60"
             >
               {t("save")}
             </button>

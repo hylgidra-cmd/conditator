@@ -22,7 +22,7 @@ export async function AdminNav({
           aria-current={item.key === active ? "page" : undefined}
           className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
             item.key === active
-              ? "bg-brand text-white"
+              ? "bg-brand text-brand-foreground"
               : "border-border bg-surface border"
           }`}
         >

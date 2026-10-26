@@ -105,7 +105,7 @@ export function CvGenerator(props: Props) {
         <button
           type="submit"
           disabled={pending || count === 0 || count > CV_TEXT_MAX}
-          className="bg-brand rounded-lg px-4 py-2 font-semibold text-white disabled:opacity-60"
+          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold disabled:opacity-60"
         >
           {pending ? t("generating") : t("submit")}
         </button>

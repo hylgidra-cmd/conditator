@@ -25,7 +25,7 @@ export default async function VacanciesPage({
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         <Link
           href="/company/vacancies/new"
-          className="bg-brand rounded-lg px-4 py-2 font-semibold text-white"
+          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold"
         >
           {t("list.new")}
         </Link>

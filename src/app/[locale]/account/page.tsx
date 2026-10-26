@@ -23,21 +23,21 @@ export default async function AccountPage() {
         {user.role === "STUDENT" ? (
           <Link
             href="/student/cv"
-            className="bg-brand inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            className="bg-brand text-brand-foreground inline-block rounded-lg px-4 py-2 text-sm font-semibold"
           >
             {t("cvLink")}
           </Link>
         ) : user.role === "COMPANY" ? (
           <Link
             href="/company"
-            className="bg-brand inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            className="bg-brand text-brand-foreground inline-block rounded-lg px-4 py-2 text-sm font-semibold"
           >
             {t("companyLink")}
           </Link>
         ) : (
           <Link
             href="/admin"
-            className="bg-brand inline-block rounded-lg px-4 py-2 text-sm font-semibold text-white"
+            className="bg-brand text-brand-foreground inline-block rounded-lg px-4 py-2 text-sm font-semibold"
           >
             {t("adminLink")}
           </Link>

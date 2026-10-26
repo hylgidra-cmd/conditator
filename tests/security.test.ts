@@ -4,9 +4,7 @@ import { describe, expect, it } from "vitest";
 import { POST as forgot } from "@/app/api/auth/forgot/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as resend } from "@/app/api/auth/resend/route";
 import { POST as reset } from "@/app/api/auth/reset/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
 import { GET as getCv, PUT as putCv } from "@/app/api/cv/me/route";
 import { GET as getPdf } from "@/app/api/cv/me/pdf/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
@@ -38,8 +36,8 @@ async function student(email: string) {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: PASSWORD }),
     ctx,
   );
   return sessionCookie(res)!;
@@ -87,9 +85,7 @@ describe("har bir API endpoint ruxsatni serverda tekshiradi", () => {
     "auth/login/route.ts",
     "auth/logout/route.ts",
     "auth/register/route.ts",
-    "auth/resend/route.ts",
     "auth/reset/route.ts",
-    "auth/verify/route.ts",
     "health/route.ts",
   ]);
 
@@ -186,8 +182,8 @@ describe("talaba boshqa talabaning CV sini ko'ra olmaydi", () => {
   });
 });
 
-describe("tasdiqlash kodi API javobida chiqmaydi", () => {
-  it("register, resend, forgot, verify, reset javoblarida kod yo'q", async () => {
+describe("parol tiklash kodi API javobida chiqmaydi", () => {
+  it("register, forgot, reset javoblarida kod yo'q", async () => {
     const email = "kod@test.local";
     const responses: Response[] = [];
     responses.push(
@@ -202,19 +198,16 @@ describe("tasdiqlash kodi API javobida chiqmaydi", () => {
         ctx,
       ),
     );
-    await skipResendCooldown(email);
     responses.push(
-      await resend(jsonRequest("/api/auth/resend", { email }), ctx),
+      await forgot(jsonRequest("/api/auth/forgot", { email }), ctx),
     );
     responses.push(
-      await verify(
-        jsonRequest("/api/auth/verify", { email, code: "000000" }),
-        ctx,
-      ),
-    );
-    responses.push(
-      await verify(
-        jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+      await reset(
+        jsonRequest("/api/auth/reset", {
+          email,
+          code: "000000",
+          password: "yangi-parol-123",
+        }),
         ctx,
       ),
     );
@@ -234,7 +227,7 @@ describe("tasdiqlash kodi API javobida chiqmaydi", () => {
     );
 
     const codes = sentMails.map((mail) => mail.text.match(/\b\d{6}\b/)![0]);
-    expect(codes).toHaveLength(3);
+    expect(codes).toHaveLength(2);
     for (const response of responses) {
       const text =
         (await response.text()) +
@@ -255,30 +248,27 @@ describe("tasdiqlash kodi API javobida chiqmaydi", () => {
       }),
       ctx,
     );
+    const attempt = (code: string, ip: string) =>
+      reset(
+        jsonRequest(
+          "/api/auth/reset",
+          { email, code, password: "yangi-parol-123" },
+          { ip },
+        ),
+        ctx,
+      );
     let failures = 0;
     while (failures < CODE_DAILY_MAX_FAILURES) {
+      await skipResendCooldown(email);
+      await forgot(jsonRequest("/api/auth/forgot", { email }), ctx);
       for (let i = 0; i < 5 && failures < CODE_DAILY_MAX_FAILURES; i++) {
-        await verify(
-          jsonRequest(
-            "/api/auth/verify",
-            { email, code: "999999" },
-            { ip: `10.1.${failures}.1` },
-          ),
-          ctx,
-        );
+        await attempt("999999", `10.1.${failures}.1`);
         failures++;
       }
-      await skipResendCooldown(email);
-      await resend(jsonRequest("/api/auth/resend", { email }), ctx);
     }
-    const res = await verify(
-      jsonRequest(
-        "/api/auth/verify",
-        { email, code: lastMailedCode() },
-        { ip: "10.9.9.9" },
-      ),
-      ctx,
-    );
+    await skipResendCooldown(email);
+    await forgot(jsonRequest("/api/auth/forgot", { email }), ctx);
+    const res = await attempt(lastMailedCode(), "10.9.9.9");
     expect(res.status).toBe(429);
     expect((await res.json()).error).toBe("CODE_DAILY_LIMIT");
   });

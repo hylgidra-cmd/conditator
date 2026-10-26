@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { POST as generate } from "@/app/api/cv/generate/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { POST as register } from "@/app/api/auth/register/route";
 import { costUsd, monthStart } from "@/lib/ai/budget";
 import { generateCv } from "@/lib/ai/cv";
@@ -10,7 +10,7 @@ import { AiProviderError, setAiProviderForTests } from "@/lib/ai/provider";
 import { AI_EXTRA_ATTEMPTS } from "@/lib/ai/run";
 import type { AiCvDraft } from "@/lib/cv/schema";
 import { db } from "@/lib/db";
-import { jsonRequest, lastMailedCode, sessionCookie } from "./helpers";
+import { jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;
 
@@ -54,10 +54,10 @@ async function loggedIn(role: "STUDENT" | "COMPANY") {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", {
+  const res = await login(
+    jsonRequest("/api/auth/login", {
       email: `${role.toLowerCase()}@test.local`,
-      code: lastMailedCode(),
+      password: "parol-12345",
     }),
     ctx,
   );

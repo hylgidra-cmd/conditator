@@ -1,15 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { GET as getCv, PUT as putCv } from "@/app/api/cv/me/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
 import { db } from "@/lib/db";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;
 
@@ -25,8 +20,8 @@ async function loggedIn(role: "STUDENT" | "COMPANY", email?: string) {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email: address, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email: address, password: "parol-12345" }),
     ctx,
   );
   return sessionCookie(res)!;

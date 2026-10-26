@@ -1,16 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { GET as list, POST as create } from "@/app/api/vacancies/route";
 import { GET as getOne, PUT as update } from "@/app/api/vacancies/[id]/route";
 import { db } from "@/lib/db";
 import { VACANCY_TEXT_MAX } from "@/lib/vacancy/schema";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;
 const params = (id: string) => ({ params: Promise.resolve({ id }) });
@@ -26,8 +21,8 @@ async function signUp(email: string, role: "STUDENT" | "COMPANY" = "COMPANY") {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: "parol-12345" }),
     ctx,
   );
   return sessionCookie(res)!;

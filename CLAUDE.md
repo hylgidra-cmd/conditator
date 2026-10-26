@@ -43,9 +43,9 @@ messages/              kk.json uz.json ru.json en.json
 scripts/               check-messages.mjs
 src/
   app/[locale]/        sahifalar: auth, student, company, admin
-  app/[locale]/(auth)/ register, verify, login, forgot, reset
+  app/[locale]/(auth)/ register, login, forgot, reset (verify: eski havola, /login ga yo'naltiradi)
   app/[locale]/account vaqtinchalik kabinet
-  app/api/             REST: auth/{register,verify,resend,login,logout,forgot,reset}, me, cv/generate, health
+  app/api/             REST: auth/{register,login,logout,forgot,reset}, me, cv/generate, health
   i18n/                routing.ts, navigation.ts, request.ts
   lib/db.ts            Prisma client
   lib/ai/              provider.ts (interfeys + tanlash), anthropic.ts (adapter), fake.ts (testlar),
@@ -68,7 +68,7 @@ tests/                 Vitest integratsiya testlari
 1. **UI matnlari faqat `messages/*.json` da.** JSX ichida qo'lda matn yozilsa ESLint (`react/jsx-no-literals`) xato beradi. Yangi kalit 4 ta faylga ham qo'shiladi, `npm run check:i18n` o'tishi shart. Kalitlar `messages/uz.json` asosida tiplanadi (`src/global.d.ts`).
 2. **Tarjimalar qoralama:** har faylda `_meta.status = "TODO-review"`. Mutaxassis tekshirgach `reviewed` qilinadi. Qoraqalpoq: lotin yozuvi (Á á, Ǵ ǵ, Í ı, Ń ń, Ó ó, Ú ú).
 3. **`kk` = qoraqalpoq** (kelishuv bo'yicha; ISO da `kk` qozoq). Shuning uchun brauzer tilini avtomatik aniqlash o'chirilgan.
-4. **Tasdiqlash kodi** faqat emailga ketadi: ekranda, API javobida, logda hech qachon ko'rinmaydi. Bazada xeshlangan, muddati va urinishlar soni cheklangan.
+4. **Ro'yxatdan o'tish** email + parol bilan, emailga kod yuborilmaydi (foydalanuvchi so'rovi, 2026-10-26); muvaffaqiyatdan keyin `/login?registered=1`, band email → 409 `EMAIL_TAKEN`. **Parol tiklash kodi** faqat emailga ketadi: ekranda, API javobida, logda hech qachon ko'rinmaydi. Bazada xeshlangan, muddati va urinishlar soni cheklangan.
 5. **Parollar** argon2id bilan xeshlanadi. Hamma narsa HTTPS orqali (prod).
 6. **Sirlar** faqat `.env` da (gitda yo'q). Yangi o'zgaruvchi `.env.example` ga ham qo'shiladi.
 7. **Ruxsat har endpointda serverda tekshiriladi** (`src/lib/**` servis qatlamida). Frontendga ishonilmaydi.

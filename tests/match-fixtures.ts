@@ -1,6 +1,6 @@
 import type { Lang, WorkType } from "@prisma/client";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { POST as match } from "@/app/api/vacancies/[id]/match/route";
 import {
   type AiJsonRequest,
@@ -12,7 +12,7 @@ import type { CvData } from "@/lib/cv/schema";
 import { saveOwnCv } from "@/lib/cv/service";
 import { db } from "@/lib/db";
 import type { MatchOutcome } from "@/lib/match/service";
-import { jsonRequest, lastMailedCode, sessionCookie } from "./helpers";
+import { jsonRequest, sessionCookie } from "./helpers";
 
 // Saralash va nomzod testlari uchun umumiy yordamchilar.
 export const ctx = undefined as never;
@@ -75,8 +75,8 @@ export async function companySession(
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: "parol-12345" }),
     ctx,
   );
   const user = await db.user.findUniqueOrThrow({ where: { email } });

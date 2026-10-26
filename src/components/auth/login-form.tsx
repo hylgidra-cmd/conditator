@@ -11,7 +11,15 @@ import {
 import { Link, useRouter } from "@/i18n/navigation";
 import { postJson } from "@/lib/client/api";
 
-export function LoginForm({ resetDone }: { resetDone: boolean }) {
+export function LoginForm({
+  resetDone,
+  registered,
+  email: initialEmail,
+}: {
+  resetDone: boolean;
+  registered: boolean;
+  email?: string;
+}) {
   const t = useTranslations("Auth.login");
   const errorText = useErrorText();
   const router = useRouter();
@@ -38,10 +46,6 @@ export function LoginForm({ resetDone }: { resetDone: boolean }) {
       router.refresh();
       return;
     }
-    if (result.error === "EMAIL_NOT_VERIFIED") {
-      router.push({ pathname: "/verify", query: { email } });
-      return;
-    }
     if (result.fields) setFields(result.fields);
     else setError(result.error);
   }
@@ -52,12 +56,16 @@ export function LoginForm({ resetDone }: { resetDone: boolean }) {
       {resetDone ? (
         <FormAlert tone="success">{t("resetDone")}</FormAlert>
       ) : null}
+      {registered ? (
+        <FormAlert tone="success">{t("registered")}</FormAlert>
+      ) : null}
       <FormAlert>{errorText(error)}</FormAlert>
       <Field
         name="email"
         type="email"
         autoComplete="email"
         required
+        defaultValue={initialEmail}
         label={t("email")}
         error={errorText(fields.email)}
       />

@@ -194,16 +194,6 @@
       "haveAccount": "Already have an account?",
       "loginLink": "Log in"
     },
-    "verify": {
-      "title": "Confirm your email",
-      "subtitle": "We sent a 6-digit code to {email}. The code is valid for {minutes} minutes.",
-      "code": "Code",
-      "submit": "Confirm",
-      "resend": "Resend code",
-      "resendIn": "Resend in {seconds} s",
-      "resent": "A new code has been sent",
-      "toLogin": "Back to log in"
-    },
     "login": {
       "title": "Log in",
       "email": "Email",
@@ -212,7 +202,8 @@
       "forgot": "Forgot your password?",
       "noAccount": "No account yet?",
       "registerLink": "Sign up",
-      "resetDone": "Password updated. Log in with your new password."
+      "resetDone": "Password updated. Log in with your new password.",
+      "registered": "You are registered. Now sign in with your email and password."
     },
     "forgot": {
       "title": "Reset password",
@@ -250,10 +241,8 @@
     "UNAUTHORIZED": "Please log in first.",
     "FORBIDDEN": "You do not have access to this section.",
     "RATE_LIMITED": "Too many attempts. Please try again later.",
-    "EMAIL_TAKEN": "An account with this email already exists.",
+    "EMAIL_TAKEN": "This email is already registered.",
     "INVALID_CREDENTIALS": "Incorrect email or password.",
-    "EMAIL_NOT_VERIFIED": "Email not confirmed. Enter the code.",
-    "ALREADY_VERIFIED": "Email already confirmed. Please log in.",
     "ACCOUNT_BLOCKED": "Your account is blocked.",
     "CODE_INVALID": "Incorrect code.",
     "CODE_EXPIRED": "The code has expired. Request a new one.",
@@ -291,10 +280,6 @@
     "submitting": "Sending…"
   },
   "Email": {
-    "verify": {
-      "subject": "Jumis AI: confirmation code",
-      "body": "Hello!\n\nYour Jumis AI email confirmation code: {code}\n\nThe code is valid for {minutes} minutes. If you did not sign up, please ignore this email.\n\nThe Jumis AI team"
-    },
     "reset": {
       "subject": "Jumis AI: password reset code",
       "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Jumis AI team"

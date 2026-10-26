@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { GET as getCv } from "@/app/api/cv/[id]/route";
 import { GET as getCvPdf } from "@/app/api/cv/[id]/pdf/route";
 import { PUT as putDecision } from "@/app/api/vacancies/[id]/candidates/[cvId]/decision/route";
@@ -10,12 +10,7 @@ import { GET as listVacancies } from "@/app/api/vacancies/route";
 import { setAiProviderForTests } from "@/lib/ai/provider";
 import { db } from "@/lib/db";
 import { decisionCounts, listDecided } from "@/lib/match/decision";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 import {
   companySession,
   ctx,
@@ -59,8 +54,8 @@ async function studentSession(email = "s@test.local") {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: "parol-12345" }),
     ctx,
   );
   return sessionCookie(res)!;

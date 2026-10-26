@@ -30,7 +30,6 @@ export const registerSchema = z.object({
   locale: localeSchema,
 });
 
-export const verifySchema = z.object({ email: emailSchema, code: codeSchema });
 export const emailOnlySchema = z.object({ email: emailSchema });
 export const loginSchema = z.object({
   email: emailSchema,

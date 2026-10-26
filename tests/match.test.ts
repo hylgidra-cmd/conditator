@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { GET as matches } from "@/app/api/vacancies/[id]/matches/route";
 import { setAiProviderForTests } from "@/lib/ai/provider";
 import { AI_EXTRA_ATTEMPTS } from "@/lib/ai/run";
@@ -15,12 +15,7 @@ import {
 } from "@/lib/match/candidates";
 import { canonicalLanguage } from "@/lib/match/normalize";
 import type { MatchOutcome } from "@/lib/match/service";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 import {
   companySession,
   ctx,
@@ -415,10 +410,10 @@ describe("ruxsat", () => {
       ctx,
     );
     const student = sessionCookie(
-      await verify(
-        jsonRequest("/api/auth/verify", {
+      await login(
+        jsonRequest("/api/auth/login", {
           email: "s@test.local",
-          code: lastMailedCode(),
+          password: "parol-12345",
         }),
         ctx,
       ),

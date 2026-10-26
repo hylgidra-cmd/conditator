@@ -194,16 +194,6 @@
       "haveAccount": "Akkauntıńız bar ma?",
       "loginLink": "Kiriw"
     },
-    "verify": {
-      "title": "Emaildı tastıyıqlaw",
-      "subtitle": "{email} mánzilge 6 sanlı kod jiberdik. Kod {minutes} minut ámel etedi.",
-      "code": "Kod",
-      "submit": "Tastıyıqlaw",
-      "resend": "Kodtı qayta jiberiw",
-      "resendIn": "Qayta jiberiw: {seconds} s",
-      "resent": "Jańa kod jiberildi",
-      "toLogin": "Kiriwge qaytıw"
-    },
     "login": {
       "title": "Kiriw",
       "email": "Email",
@@ -212,7 +202,8 @@
       "forgot": "Paroldı umıttıńız ba?",
       "noAccount": "Akkauntıńız joq pa?",
       "registerLink": "Dizimnen ótiw",
-      "resetDone": "Parol jańalandı. Jańa parol menen kiriń."
+      "resetDone": "Parol jańalandı. Jańa parol menen kiriń.",
+      "registered": "Dizimnen óttińiz. Endi email hám parolińiz benen kiriń."
     },
     "forgot": {
       "title": "Paroldı tiklew",
@@ -252,8 +243,6 @@
     "RATE_LIMITED": "Urınıslar júdá kóp. Biraz waqıttan soń qaytadan urınıp kóriń.",
     "EMAIL_TAKEN": "Bul email menen akkaunt bar.",
     "INVALID_CREDENTIALS": "Email yamasa parol qáte.",
-    "EMAIL_NOT_VERIFIED": "Email tastıyıqlanbaǵan. Kodtı kirgiziń.",
-    "ALREADY_VERIFIED": "Email aldın tastıyıqlanǵan. Kiriń.",
     "ACCOUNT_BLOCKED": "Akkauntıńız bloklanǵan.",
     "CODE_INVALID": "Kod qáte.",
     "CODE_EXPIRED": "Kodtıń múddeti ótken. Jańa kod sorań.",
@@ -291,10 +280,6 @@
     "submitting": "Jiberilmekte…"
   },
   "Email": {
-    "verify": {
-      "subject": "Jumis AI: tastıyıqlaw kodı",
-      "body": "Assalawma áleykum!\n\nJumis AI daǵı emailıńızdı tastıyıqlaw kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz dizimnen ótpegen bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"
-    },
     "reset": {
       "subject": "Jumis AI: paroldı tiklew kodı",
       "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"

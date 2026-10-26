@@ -18,9 +18,7 @@ import * as forgot from "@/app/api/auth/forgot/route";
 import * as login from "@/app/api/auth/login/route";
 import * as logout from "@/app/api/auth/logout/route";
 import * as register from "@/app/api/auth/register/route";
-import * as resend from "@/app/api/auth/resend/route";
 import * as reset from "@/app/api/auth/reset/route";
-import * as verify from "@/app/api/auth/verify/route";
 import * as companyLogo from "@/app/api/company/me/logo/route";
 import * as companyMe from "@/app/api/company/me/route";
 import * as cvByIdPdf from "@/app/api/cv/[id]/pdf/route";
@@ -137,22 +135,6 @@ export const ROWS: Row[] = [
     register.POST as Handler,
     PUBLIC,
     json("POST", "/api/auth/register", { email: "x" }),
-  ),
-  row(
-    "POST",
-    "/api/auth/verify",
-    "auth/verify",
-    verify.POST as Handler,
-    PUBLIC,
-    json("POST", "/api/auth/verify", { email: "x" }),
-  ),
-  row(
-    "POST",
-    "/api/auth/resend",
-    "auth/resend",
-    resend.POST as Handler,
-    PUBLIC,
-    json("POST", "/api/auth/resend", { email: "x" }),
   ),
   row(
     "POST",

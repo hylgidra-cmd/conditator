@@ -1,5 +1,5 @@
 // Topshiriqda tilga olingan ikki xato takrorlanmasligi (2.6):
-// 1) tasdiqlash kodi ekranda / API javobida / logda ko'rinmaydi;
+// 1) parol tiklash kodi ekranda / API javobida / logda ko'rinmaydi;
 // 2) foydalanuvchilar ro'yxati brauzerga to'liq yuklanmaydi.
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -9,9 +9,7 @@ import { GET as adminCompanies } from "@/app/api/admin/companies/route";
 import { GET as adminUsers } from "@/app/api/admin/users/route";
 import { POST as forgot } from "@/app/api/auth/forgot/route";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as resend } from "@/app/api/auth/resend/route";
 import { POST as reset } from "@/app/api/auth/reset/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
 import { ADMIN_PAGE_SIZE } from "@/lib/admin/schema";
 import { createSession } from "@/lib/auth/session";
 import { db } from "@/lib/db";
@@ -40,7 +38,7 @@ function captureLogs() {
 afterEach(() => vi.restoreAllMocks());
 
 describe("1-xato: kod faqat emailda", () => {
-  it("ro'yxat, qayta yuborish, parol tiklash, noto'g'ri kod: kod javobda ham, logda ham yo'q", async () => {
+  it("ro'yxat, parol tiklash, noto'g'ri kod: kod javobda ham, logda ham yo'q", async () => {
     const logs = captureLogs();
     const email = "talaba@test.local";
     const bodies: string[] = [];
@@ -62,24 +60,6 @@ describe("1-xato: kod faqat emailda", () => {
         ctx,
       ),
     );
-    codes.push(lastMailedCode());
-    await call(
-      await verify(
-        jsonRequest("/api/auth/verify", { email, code: "000000" }),
-        ctx,
-      ),
-    );
-    await db.emailCode.updateMany({
-      data: { createdAt: new Date(Date.now() - 2 * 60_000) },
-    });
-    await call(await resend(jsonRequest("/api/auth/resend", { email }), ctx));
-    codes.push(lastMailedCode());
-    await call(
-      await verify(
-        jsonRequest("/api/auth/verify", { email, code: codes[1] }),
-        ctx,
-      ),
-    );
     await call(await forgot(jsonRequest("/api/auth/forgot", { email }), ctx));
     codes.push(lastMailedCode());
     await call(
@@ -92,9 +72,14 @@ describe("1-xato: kod faqat emailda", () => {
         ctx,
       ),
     );
+    await db.emailCode.updateMany({
+      data: { createdAt: new Date(Date.now() - 2 * 60_000) },
+    });
+    await call(await forgot(jsonRequest("/api/auth/forgot", { email }), ctx));
+    codes.push(lastMailedCode());
 
-    expect(sentMails).toHaveLength(3);
-    expect(new Set(codes).size).toBe(3);
+    expect(sentMails).toHaveLength(2);
+    expect(new Set(codes).size).toBe(2);
     const everything = [...bodies, ...logs].join("\n");
     for (const code of codes) expect(everything).not.toContain(code);
     // Bazada ham kodning o'zi yo'q, faqat xeshi.

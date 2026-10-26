@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PATCH as approve } from "@/app/api/admin/companies/[id]/approve/route";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import {
   GET as getCompany,
   PUT as putCompany,
@@ -25,12 +25,7 @@ import { LOGO_MAX_BYTES } from "@/lib/company/logo";
 import { closePdfBrowser } from "@/lib/cv-document/pdf";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;
 let uploadDir: string;
@@ -61,8 +56,8 @@ async function signUp(email: string, role: "STUDENT" | "COMPANY") {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: "parol-12345" }),
     ctx,
   );
   return sessionCookie(res)!;

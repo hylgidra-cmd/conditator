@@ -4,7 +4,6 @@ import { POST as logout } from "@/app/api/auth/logout/route";
 import { POST as register } from "@/app/api/auth/register/route";
 import { POST as reset } from "@/app/api/auth/reset/route";
 import { POST as forgot } from "@/app/api/auth/forgot/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
 import { GET as me } from "@/app/api/me/route";
 import { hashPassword } from "@/lib/auth/password";
 import { db } from "@/lib/db";
@@ -30,15 +29,15 @@ function registerBody(overrides: Record<string, unknown> = {}) {
   };
 }
 
-async function registeredAndVerified(role: "STUDENT" | "COMPANY" = "STUDENT") {
+async function registeredAndLoggedIn(role: "STUDENT" | "COMPANY" = "STUDENT") {
   await register(
     jsonRequest("/api/auth/register", registerBody({ role })),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", {
+  const res = await login(
+    jsonRequest("/api/auth/login", {
       email: "talaba@test.local",
-      code: lastMailedCode(),
+      password: PASSWORD,
     }),
     ctx,
   );
@@ -48,33 +47,22 @@ async function registeredAndVerified(role: "STUDENT" | "COMPANY" = "STUDENT") {
 afterEach(() => vi.restoreAllMocks());
 
 describe("ro'yxatdan o'tish", () => {
-  it("kod faqat emailga ketadi: API javobida ham, logda ham yo'q", async () => {
-    const logs: string[] = [];
-    for (const method of ["log", "info", "warn", "error", "debug"] as const) {
-      vi.spyOn(console, method).mockImplementation((...args) => {
-        logs.push(args.map(String).join(" "));
-      });
-    }
-
+  it("email va parol bilan ro'yxatdan o'tiladi, emailga kod yuborilmaydi", async () => {
     const res = await register(
       jsonRequest("/api/auth/register", registerBody()),
       ctx,
     );
-    const body = await res.text();
 
     expect(res.status).toBe(201);
-    expect(sentMails).toHaveLength(1);
-    expect(sentMails[0].to).toBe("talaba@test.local");
-    const code = lastMailedCode();
-    expect(body).not.toContain(code);
-    expect(logs.join("\n")).not.toContain(code);
+    expect(sentMails).toHaveLength(0);
+    // Ro'yxatdan o'tish o'zi sessiya ochmaydi: foydalanuvchi kirish sahifasiga yuboriladi.
+    expect(res.headers.get("set-cookie")).toBeNull();
 
     const user = await db.user.findUniqueOrThrow({
       where: { email: "talaba@test.local" },
     });
     expect(user.consentAt).not.toBeNull();
     expect(user.passwordHash).toMatch(/^\$argon2id\$/);
-    expect(user.emailVerifiedAt).toBeNull();
   });
 
   it("rozilik, 8 belgili parol va rol majburiy; admin bo'lib ro'yxatdan o'tib bo'lmaydi", async () => {
@@ -118,13 +106,13 @@ describe("ro'yxatdan o'tish", () => {
   });
 });
 
-describe("email tasdiqlash va kirish", () => {
-  it("to'g'ri kod emailni tasdiqlaydi va httpOnly sessiya ochadi", async () => {
+describe("kirish", () => {
+  it("ro'yxatdan o'tgandan keyin darhol kirish mumkin, httpOnly sessiya ochiladi", async () => {
     await register(jsonRequest("/api/auth/register", registerBody()), ctx);
-    const res = await verify(
-      jsonRequest("/api/auth/verify", {
+    const res = await login(
+      jsonRequest("/api/auth/login", {
         email: "talaba@test.local",
-        code: lastMailedCode(),
+        password: PASSWORD,
       }),
       ctx,
     );
@@ -134,41 +122,29 @@ describe("email tasdiqlash va kirish", () => {
     expect(setCookie).toMatch(/jumis_session=/);
     expect(setCookie).toMatch(/HttpOnly/i);
     expect(setCookie).toMatch(/SameSite=lax/i);
-    const user = await db.user.findUniqueOrThrow({
-      where: { email: "talaba@test.local" },
+  });
+
+  it("emaili tasdiqlanmagan eski akkaunt ham kira oladi", async () => {
+    await db.user.create({
+      data: {
+        email: "eski@test.local",
+        passwordHash: await hashPassword(PASSWORD),
+        role: "STUDENT",
+        emailVerifiedAt: null,
+      },
     });
-    expect(user.emailVerifiedAt).not.toBeNull();
-  });
-
-  it("noto'g'ri kod rad etiladi", async () => {
-    await register(jsonRequest("/api/auth/register", registerBody()), ctx);
-    const wrong = lastMailedCode() === "000000" ? "111111" : "000000";
-    const res = await verify(
-      jsonRequest("/api/auth/verify", {
-        email: "talaba@test.local",
-        code: wrong,
-      }),
-      ctx,
-    );
-    expect(res.status).toBe(400);
-    expect((await res.json()).error).toBe("CODE_INVALID");
-  });
-
-  it("tasdiqlanmagan email bilan kirib bo'lmaydi", async () => {
-    await register(jsonRequest("/api/auth/register", registerBody()), ctx);
     const res = await login(
       jsonRequest("/api/auth/login", {
-        email: "talaba@test.local",
+        email: "eski@test.local",
         password: PASSWORD,
       }),
       ctx,
     );
-    expect(res.status).toBe(403);
-    expect((await res.json()).error).toBe("EMAIL_NOT_VERIFIED");
+    expect(res.status).toBe(200);
   });
 
   it("noto'g'ri parol: 401, sessiya ochilmaydi", async () => {
-    await registeredAndVerified();
+    await registeredAndLoggedIn();
     const res = await login(
       jsonRequest("/api/auth/login", {
         email: "talaba@test.local",
@@ -181,7 +157,7 @@ describe("email tasdiqlash va kirish", () => {
   });
 
   it("bloklangan foydalanuvchi kira olmaydi va eski sessiyasi ishlamaydi", async () => {
-    const cookie = await registeredAndVerified();
+    const cookie = await registeredAndLoggedIn();
     await db.user.update({
       where: { email: "talaba@test.local" },
       data: { status: "BLOCKED" },
@@ -200,7 +176,8 @@ describe("email tasdiqlash va kirish", () => {
   });
 
   it("login urinishlari cheklangan", async () => {
-    await registeredAndVerified();
+    // Faqat ro'yxatdan o'tish: muvaffaqiyatli kirish ham limitga sanaladi.
+    await register(jsonRequest("/api/auth/register", registerBody()), ctx);
     const statuses: number[] = [];
     for (let i = 0; i < 11; i++) {
       const res = await login(
@@ -217,7 +194,7 @@ describe("email tasdiqlash va kirish", () => {
   });
 
   it("chiqishdan keyin sessiya bekor bo'ladi", async () => {
-    const cookie = await registeredAndVerified();
+    const cookie = await registeredAndLoggedIn();
     expect((await me(getRequest("/api/me", cookie), ctx)).status).toBe(200);
     await logout(jsonRequest("/api/auth/logout", {}, { cookie }), ctx);
     expect((await me(getRequest("/api/me", cookie), ctx)).status).toBe(401);
@@ -237,7 +214,7 @@ describe("email tasdiqlash va kirish", () => {
 
 describe("parolni tiklash", () => {
   it("kod bilan parol almashadi, eski sessiyalar o'chadi", async () => {
-    const oldCookie = await registeredAndVerified();
+    const oldCookie = await registeredAndLoggedIn();
     sentMails.length = 0;
 
     const forgotRes = await forgot(
@@ -287,7 +264,7 @@ describe("rol tekshiruvi (requireRole)", () => {
 
   it("rol mos kelmasa 403, mos kelsa o'tadi", async () => {
     const { requireRole } = await import("@/lib/auth/session");
-    const cookie = await registeredAndVerified("STUDENT");
+    const cookie = await registeredAndLoggedIn("STUDENT");
 
     await expect(
       requireRole(getRequest("/api/x", cookie), "ADMIN"),

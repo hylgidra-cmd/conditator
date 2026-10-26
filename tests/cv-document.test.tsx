@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
-import { POST as verify } from "@/app/api/auth/verify/route";
+import { POST as login } from "@/app/api/auth/login/route";
 import { PUT as putCv } from "@/app/api/cv/me/route";
 import { GET as getPdf } from "@/app/api/cv/me/pdf/route";
 import { CvDocument } from "@/components/cv-document/cv-document";
@@ -9,12 +9,7 @@ import { getCvDocumentLabels } from "@/lib/cv-document/labels";
 import { pdfContentDisposition } from "@/lib/cv-document/load";
 import { closePdfBrowser } from "@/lib/cv-document/pdf";
 import type { CvData } from "@/lib/cv/schema";
-import {
-  getRequest,
-  jsonRequest,
-  lastMailedCode,
-  sessionCookie,
-} from "./helpers";
+import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;
 
@@ -52,8 +47,8 @@ async function loggedIn(role: "STUDENT" | "COMPANY") {
     }),
     ctx,
   );
-  const res = await verify(
-    jsonRequest("/api/auth/verify", { email, code: lastMailedCode() }),
+  const res = await login(
+    jsonRequest("/api/auth/login", { email, password: "parol-12345" }),
     ctx,
   );
   return sessionCookie(res)!;

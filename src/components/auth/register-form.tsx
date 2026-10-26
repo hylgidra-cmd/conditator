@@ -38,9 +38,10 @@ export function RegisterForm() {
     });
     setPending(false);
     if (result.ok) {
+      // Muvaffaqiyatli: kirish sahifasiga, "ro'yxatdan o'tdingiz" xabari va email bilan.
       router.push({
-        pathname: "/verify",
-        query: { email: email.trim().toLowerCase() },
+        pathname: "/login",
+        query: { registered: "1", email: email.trim().toLowerCase() },
       });
       return;
     }
@@ -51,7 +52,19 @@ export function RegisterForm() {
   return (
     // method="post": JS yuklanmasa ham parol/kod URL ga (va loglarga) tushmaydi.
     <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
-      <FormAlert>{errorText(error)}</FormAlert>
+      {error ? (
+        <FormAlert>
+          {errorText(error)}
+          {error === "EMAIL_TAKEN" ? (
+            <>
+              {" "}
+              <Link href="/login" className="font-medium underline">
+                {t("loginLink")}
+              </Link>
+            </>
+          ) : null}
+        </FormAlert>
+      ) : null}
       <Field
         name="email"
         type="email"

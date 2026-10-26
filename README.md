@@ -29,7 +29,7 @@ docker compose up --build
 ```
 
 - Sayt: http://localhost:3000 (`/kk`, `/uz`, `/ru`, `/en`)
-- Dev xatlar (Mailpit, tasdiqlash kodlari shu yerga keladi): http://localhost:8025
+- Dev xatlar (Mailpit, parol tiklash kodlari shu yerga keladi): http://localhost:8025
 - Sog'liq tekshiruvi: http://localhost:3000/api/health
 
 Dasturchilar uchun (Node 22):
@@ -65,8 +65,8 @@ Production to'plami (`docker-compose.prod.yml`):
   Tekshirish: `nslookup jumis.uz` server IP sini ko'rsatishi kerak.
 - Serverda 80 va 443 portlar internetdan ochiq bo'lsin (IT Park tarmoq/firewall sozlamasida ham).
   Usiz Let's Encrypt sertifikat bera olmaydi.
-- SMTP (xat yuborish uchun): host, port, login, parol. Tasdiqlash kodlari faqat email orqali
-  yuboriladi, SMTP siz ro'yxatdan o'tib bo'lmaydi.
+- SMTP (xat yuborish uchun): host, port, login, parol. Parol tiklash kodlari faqat email orqali
+  yuboriladi, SMTP siz parolni tiklab bo'lmaydi.
 - Ixtiyoriy: `ANTHROPIC_API_KEY`. Bo'lmasa AI o'rniga kalit so'z qidiruvi ishlaydi.
 
 ### 2.2. Serverni tayyorlash (bir marta)

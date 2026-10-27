@@ -711,8 +711,7 @@
     },
     "partners": {
       "title": "Tashkent, Samarqand hám pútkil Ózbekstan boylap <accent>jumıs beriwshiler</accent> ushın",
-      "listLabel": "Sherik kompaniyalar",
-      "placeholder": "Sherik {n}"
+      "listLabel": "Sherik kompaniyalar"
     },
     "features": {
       "title": "AI jumıs izlewshi menen jumıs beriwshini baylanıstıradı",

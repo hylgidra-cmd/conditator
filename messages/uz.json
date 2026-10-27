@@ -711,8 +711,7 @@
     },
     "partners": {
       "title": "Toshkent, Samarqand va butun Oʻzbekiston boʻylab <accent>ish beruvchilar</accent> uchun",
-      "listLabel": "Hamkor kompaniyalar",
-      "placeholder": "Hamkor {n}"
+      "listLabel": "Hamkor kompaniyalar"
     },
     "features": {
       "title": "AI ish izlovchi va ish beruvchini bogʻlaydi",

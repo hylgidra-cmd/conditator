@@ -453,3 +453,29 @@ body {
     transform: translateY(-12px) rotate(-6deg);
   }
 }
+
+/*
+ * Hamkorlar blokidagi toʻlqinlar: SVG 200% kenglikda, -50% ga siljiydi (davri bir xil, uzilish yoʻq).
+ * Faqat transform; reduced-motion da toʻlqin joyida turadi.
+ */
+svg [class*="ds-drift-"] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ds-wave {
+    animation: ds-wave 14s linear infinite;
+  }
+  .ds-wave-slow {
+    animation-duration: 22s;
+  }
+  .ds-wave-reverse {
+    animation-duration: 18s;
+    animation-direction: reverse;
+  }
+}
+@keyframes ds-wave {
+  to {
+    transform: translateX(-50%);
+  }
+}

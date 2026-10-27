@@ -711,8 +711,7 @@
     },
     "partners": {
       "title": "For <accent>employers</accent> in Tashkent, Samarkand and across Uzbekistan",
-      "listLabel": "Partner companies",
-      "placeholder": "Partner {n}"
+      "listLabel": "Partner companies"
     },
     "features": {
       "title": "AI connects job seekers and employers",

@@ -6,6 +6,9 @@ export const PHONE_DISPLAY = "+998 97 594 11 19";
 export const PHONE_URL = "tel:+998975941119";
 export const EMAIL = "gulgina.erejepova@gmail.com";
 export const EMAIL_URL = `mailto:${EMAIL}`;
+/** Footer dagi "Sayt DENJI tomonidan ishlab chiqilgan" havolasi. */
+export const DEVELOPER_URL =
+  "https://portfolio-website-drab-two-89.vercel.app/";
 
 /** Kompaniya hajmi bo'yicha narxlar (USD). To'lov davri hali tasdiqlanmagan. */
 export const PRICING_TIERS = [

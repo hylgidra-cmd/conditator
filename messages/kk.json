@@ -54,7 +54,8 @@
     "phoneLabel": "Telefon",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS - AI. Barlıq huqıqlar qorǵalǵan."
+    "rights": "© {year} JUMIS AI. Barlıq huqıqlar qorǵalǵan.",
+    "credit": "Sayt DENJI tárepinen islep shıǵılǵan."
   },
   "NotFound": {
     "title": "Bet tabılmadı",

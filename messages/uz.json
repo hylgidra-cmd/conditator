@@ -54,7 +54,8 @@
     "phoneLabel": "Telefon",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS - AI. Barcha huquqlar himoyalangan."
+    "rights": "© {year} JUMIS AI. Barcha huquqlar himoyalangan.",
+    "credit": "Sayt DENJI tomonidan ishlab chiqilgan."
   },
   "NotFound": {
     "title": "Sahifa topilmadi",

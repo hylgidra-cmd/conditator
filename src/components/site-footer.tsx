@@ -4,6 +4,7 @@ import { MailIcon, PhoneIcon, SendIcon } from "@/components/icons";
 import { Logo } from "@/components/ds/logo";
 import { Link } from "@/i18n/navigation";
 import {
+  DEVELOPER_URL,
   EMAIL,
   EMAIL_URL,
   PHONE_DISPLAY,
@@ -126,7 +127,15 @@ export function SiteFooter() {
 
       <div className="border-on-night/10 border-t">
         <p className="page-x text-on-night/60 py-6 text-center text-sm">
-          {t("rights", { year: new Date().getFullYear() })}
+          {t("rights", { year: new Date().getFullYear() })}{" "}
+          <a
+            href={DEVELOPER_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(LINK, "underline-offset-4 hover:underline")}
+          >
+            {t("credit")}
+          </a>
         </p>
       </div>
     </footer>

@@ -54,7 +54,8 @@
     "phoneLabel": "Телефон",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS - AI. Все права защищены."
+    "rights": "© {year} JUMIS AI. Все права защищены.",
+    "credit": "Сайт разработан DENJI."
   },
   "NotFound": {
     "title": "Страница не найдена",

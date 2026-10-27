@@ -49,34 +49,33 @@ export async function Hero() {
         <div className="lg:self-end">
           <h1
             id="hero-title"
-            className="text-display text-text max-w-[12ch] font-extrabold text-balance"
+            className="text-display text-text max-w-[15ch] font-extrabold text-balance"
           >
             {t("title")}
           </h1>
-          <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-7">
-            <ButtonLink href="/#features" size="lg" arrow>
+          {/* Matn uzunroq boʻlgani uchun avval tavsif, keyin tugma. */}
+          <div className="mt-6 flex flex-col items-start gap-7">
+            <p className="text-subtle text-lead max-w-md">{t("text")}</p>
+            <ButtonLink href="/register" size="lg" arrow>
               {t("cta")}
             </ButtonLink>
-            <p className="text-subtle max-w-64 text-[0.9375rem] leading-relaxed">
-              {t("text")}
-            </p>
           </div>
         </div>
 
         {/* Rasm kompozitsiyasi */}
         <div className="relative mx-auto aspect-[10/11] w-full max-w-md sm:max-w-lg lg:col-start-2 lg:row-span-2 lg:max-w-none">
-          <Square className="absolute top-[6%] left-[4%] size-11 sm:size-14" />
-          <Dot className="absolute top-[52%] -left-[1%]" />
-          <Chevrons className="absolute top-[58%] -right-[1%] hidden sm:block" />
-          <Triangle className="absolute right-[2%] bottom-[3%] size-12 sm:size-16" />
-          <Dot className="text-violet absolute bottom-[-2%] left-[48%]" />
+          <Square className="ds-drift-a absolute top-[6%] left-[4%] size-11 sm:size-14" />
+          <Dot className="ds-drift-b absolute top-[52%] -left-[1%]" />
+          <Chevrons className="ds-drift-b ds-drift-delay absolute top-[58%] -right-[1%] hidden sm:block" />
+          <Triangle className="ds-drift-c absolute right-[2%] bottom-[3%] size-12 sm:size-16" />
+          <Dot className="text-violet ds-drift-a ds-drift-delay absolute bottom-[-2%] left-[48%]" />
 
           {/* Katta gradient doira */}
           <div
             aria-hidden
             className="from-primary via-primary/80 to-glow ring-canvas/70 absolute bottom-[8%] left-1/2 aspect-square w-[84%] -translate-x-1/2 rounded-full bg-gradient-to-bl ring-[10px]"
           />
-          <HalfCircle className="absolute bottom-[22%] left-[2%] h-24 w-12 sm:h-32 sm:w-16" />
+          <HalfCircle className="ds-drift-c ds-drift-delay absolute bottom-[22%] left-[2%] h-24 w-12 sm:h-32 sm:w-16" />
 
           {/* Rasm: pasti doira boʻyicha kesiladi, boshi doiradan chiqib turadi. */}
           <div className="absolute bottom-[8%] left-1/2 h-[105%] w-[84%] -translate-x-1/2 overflow-hidden [border-bottom-right-radius:50%_40%] [border-bottom-left-radius:50%_40%]">

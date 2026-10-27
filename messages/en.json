@@ -5,7 +5,7 @@
   },
   "Metadata": {
     "title": "Jumis AI: AI finds the right candidates",
-    "description": "AI platform for companies: 5 matching candidates instead of 100 résumés."
+    "description": "An AI-powered platform that connects job seekers and employers in Uzbekistan."
   },
   "Header": {
     "brand": "Jumis AI",
@@ -40,7 +40,7 @@
     "current": "Language: {locale}"
   },
   "Footer": {
-    "tagline": "An AI-assisted job platform for Uzbekistan: candidates and employers in one place.",
+    "tagline": "An AI-powered platform that connects job seekers and employers in Uzbekistan.",
     "company": "Company",
     "about": "About us",
     "companies": "Companies",
@@ -700,9 +700,9 @@
   },
   "Landing": {
     "hero": {
-      "title": "The home of your dream job",
-      "text": "The AI assistant prepares your CV and finds vacancies that fit you across Uzbekistan.",
-      "cta": "Explore more",
+      "title": "AI writes your resume. You choose the job.",
+      "text": "Enter your details. AI builds your resume and picks matching vacancies from across Uzbekistan.",
+      "cta": "Build my resume",
       "imageAlt": "A smiling young professional woman holding a laptop",
       "statValue": "300k",
       "statTitle": "Active users",
@@ -715,8 +715,8 @@
       "placeholder": "Partner {n}"
     },
     "features": {
-      "title": "We offer plenty of opportunities",
-      "text": "The AI assistant writes your CV, matches your skills to vacancies and shows employers the best-fitting candidates. All in your language, for the local job market.",
+      "title": "AI connects job seekers and employers",
+      "text": "AI helps you write your resume and finds vacancies that match your skills. For employers, it shows the candidates who best fit the requirements. The platform works in Uzbek and is built for Uzbekistan's job market.",
       "cta": "Explore more",
       "counterValue": "+100 000",
       "counterLabel": "available vacancies"
@@ -734,8 +734,8 @@
       "count": "{count} vacancies"
     },
     "profile": {
-      "title": "Build your personal profile",
-      "text": "Fill in your profile in a few minutes: the AI assistant tidies up your CV and employers find you.",
+      "title": "Create a profile, get a resume",
+      "text": "Add your education, experience, and skills in a few minutes. AI turns them into a clean resume. Employers find you on their own.",
       "stepsLabel": "Profile steps",
       "step1": "01.",
       "step1Title": "Upload your CV",
@@ -751,8 +751,8 @@
       "profileAction": "Offer a job"
     },
     "testimonials": {
-      "title": "What our users say about us",
-      "text": "Feedback from candidates and employers.",
+      "title": "What users say",
+      "text": "Job seekers and employers share their experience with JUMIS AI.",
       "region": "User testimonials",
       "prev": "Previous testimonial",
       "next": "Next testimonial",

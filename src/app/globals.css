@@ -416,3 +416,40 @@ body {
     transform: translateY(-8px);
   }
 }
+
+/*
+ * Hero dekor shakllarining yengil harakati: har biri oʻz yoʻli va tezligi bilan.
+ * Faqat transform (layoutga taʼsir qilmaydi); reduced-motion da toʻxtaydi.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-drift-a {
+    animation: ds-drift-a 7s ease-in-out infinite;
+  }
+  .ds-drift-b {
+    animation: ds-drift-b 9s ease-in-out infinite;
+  }
+  .ds-drift-c {
+    animation: ds-drift-c 11s ease-in-out infinite;
+  }
+  .ds-drift-delay {
+    animation-delay: -4s;
+  }
+}
+@keyframes ds-drift-a {
+  50% {
+    transform: translate(6px, -10px) rotate(8deg);
+  }
+}
+@keyframes ds-drift-b {
+  33% {
+    transform: translate(-6px, 6px);
+  }
+  66% {
+    transform: translate(5px, -6px);
+  }
+}
+@keyframes ds-drift-c {
+  50% {
+    transform: translateY(-12px) rotate(-6deg);
+  }
+}

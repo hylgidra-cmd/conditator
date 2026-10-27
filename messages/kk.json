@@ -5,7 +5,7 @@
   },
   "Metadata": {
     "title": "Jumis AI: sáykes kandidatlardı AI tabadı",
-    "description": "Kompaniyalar ushın AI platforma: 100 rezyume ornına 5 sáykes kandidat."
+    "description": "Ózbekstanda jumıs izlewshiler menen jumıs beriwshilerdi baylanıstıratuǵın AI platforma."
   },
   "Header": {
     "brand": "Jumis AI",
@@ -40,7 +40,7 @@
     "current": "Til: {locale}"
   },
   "Footer": {
-    "tagline": "Ózbekstan ushın AI járdemshili jumıs tabıw platforması: kandidatlar hám jumıs beriwshiler bir jerde.",
+    "tagline": "Ózbekstanda jumıs izlewshiler menen jumıs beriwshilerdi baylanıstıratuǵın AI platforma.",
     "company": "Kompaniya",
     "about": "Biz haqqımızda",
     "companies": "Kompaniyalar",
@@ -700,9 +700,9 @@
   },
   "Landing": {
     "hero": {
-      "title": "Ármanıńızdaǵı jumıstıń úyi",
-      "text": "AI járdemshi rezyumeńizdi tayarlaydı hám Ózbekstan boylap sizge say vakansiyalardı tabadı.",
-      "cta": "Kóbirek biliw",
+      "title": "Rezyumeni AI jazadı, jumıstı siz saylaysız",
+      "text": "Maǵlıwmatlarıńızdı kiritiń. AI rezyume tayarlaydı hám pútkil Ózbekstan boyınsha sizge mas vakansiyalardı tańlap beredi.",
+      "cta": "Rezyume dúziwdi baslaw",
       "imageAlt": "Qolında noutbuk penen kúlimsirep turǵan jas qánige hayal",
       "statValue": "300k",
       "statTitle": "Aktiv paydalanıwshılar",
@@ -715,8 +715,8 @@
       "placeholder": "Sherik {n}"
     },
     "features": {
-      "title": "Biz kóplegen múmkinshilikler usınamız",
-      "text": "AI járdemshi rezyumeńizdi dúzedi, kónlikpelerińizdi vakansiyalar menen salıstıradı hám jumıs beriwshige eń say kandidatlardı kórsetedi. Barlıǵı ana tilińizde, jergilikli miynet bazarı ushın.",
+      "title": "AI jumıs izlewshi menen jumıs beriwshini baylanıstıradı",
+      "text": "AI rezyume dúziwde járdem beredi hám kónlikpelerińizge mas vakansiyalardı tabadı. Jumıs beriwshilerge bolsa talapqa eń mas kandidatlardı kórsetedi. Platforma ózbek tilinde isleydi hám Ózbekstan jumıs bazarına beyimlestirilgen.",
       "cta": "Kóbirek biliw",
       "counterValue": "+100 000",
       "counterLabel": "bar vakansiyalar"
@@ -734,8 +734,8 @@
       "count": "{count} vakansiya"
     },
     "profile": {
-      "title": "Jeke profilińizdi jaratıń",
-      "text": "Bir neshe minutta profil toltırıń: AI járdemshi rezyumeni tártipke saladı, jumıs beriwshiler bolsa sizdi ózleri tabadı.",
+      "title": "Profil jaratıń, rezyume tayın",
+      "text": "Bilim, tájiriybe hám kónlikpelerińizdi bir neshe minutta kiritiń. AI olardı tártipli rezyumege aylandıradı. Jumıs beriwshiler sizdi ózleri tabadı.",
       "stepsLabel": "Profil jaratıw qádemleri",
       "step1": "01.",
       "step1Title": "CV júkleń",
@@ -751,8 +751,8 @@
       "profileAction": "Jumısqa usınıs etiw"
     },
     "testimonials": {
-      "title": "Paydalanıwshılarımız biz haqqımızda ne deydi",
-      "text": "Kandidatlar hám jumıs beriwshilerdiń pikirleri.",
+      "title": "Platformadan paydalanǵanlardıń pikiri",
+      "text": "Jumıs izlewshiler hám jumıs beriwshiler JUMIS AI menen islesiw tájiriybesin ózleri aytıp beredi.",
       "region": "Paydalanıwshılar pikirleri",
       "prev": "Aldıńǵı pikir",
       "next": "Keyingi pikir",

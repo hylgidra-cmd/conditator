@@ -5,7 +5,7 @@
   },
   "Metadata": {
     "title": "Jumis AI: rezyume emas, saralangan nomzodlar",
-    "description": "Toshkentdagi kompaniyalar uchun: 100 ta rezyume oʻrniga 5 dan 10 gacha saralangan nomzod."
+    "description": "Oʻzbekistonda ish izlovchilar va ish beruvchilarni bogʻlaydigan AI platforma."
   },
   "Header": {
     "brand": "Jumis AI",
@@ -40,7 +40,7 @@
     "current": "Til: {locale}"
   },
   "Footer": {
-    "tagline": "Oʻzbekiston uchun AI yordamchili ish topish platformasi: nomzodlar va ish beruvchilar bir joyda.",
+    "tagline": "Oʻzbekistonda ish izlovchilar va ish beruvchilarni bogʻlaydigan AI platforma.",
     "company": "Kompaniya",
     "about": "Biz haqimizda",
     "companies": "Kompaniyalar",
@@ -700,9 +700,9 @@
   },
   "Landing": {
     "hero": {
-      "title": "Orzuingizdagi ishning uyi",
-      "text": "AI yordamchi rezyumengizni tayyorlaydi va Oʻzbekiston boʻylab sizga mos vakansiyalarni topadi.",
-      "cta": "Koʻproq bilish",
+      "title": "Rezyumeni AI yozadi, ishni siz tanlaysiz",
+      "text": "Maʼlumotlaringizni kiriting. AI rezyumeni tuzadi va butun Oʻzbekiston boʻyicha sizga mos vakansiyalarni tanlab beradi.",
+      "cta": "Rezyume tuzishni boshlash",
       "imageAlt": "Qoʻlida noutbuk bilan tabassum qilayotgan yosh mutaxassis ayol",
       "statValue": "300k",
       "statTitle": "Faol foydalanuvchilar",
@@ -715,8 +715,8 @@
       "placeholder": "Hamkor {n}"
     },
     "features": {
-      "title": "Biz koʻplab imkoniyatlar taqdim etamiz",
-      "text": "AI yordamchi rezyumengizni tuzadi, koʻnikmalaringizni vakansiyalar bilan solishtiradi va ish beruvchiga eng mos nomzodlarni koʻrsatadi. Hammasi oʻzbek tilida, mahalliy ish bozori uchun.",
+      "title": "AI ish izlovchi va ish beruvchini bogʻlaydi",
+      "text": "AI rezyume tuzishda yordam beradi va koʻnikmalaringizga mos vakansiyalarni topadi. Ish beruvchilarga esa talabga eng mos nomzodlarni koʻrsatadi. Platforma oʻzbek tilida ishlaydi va Oʻzbekiston ish bozoriga moslangan.",
       "cta": "Koʻproq bilish",
       "counterValue": "+100 000",
       "counterLabel": "mavjud vakansiyalar"
@@ -734,8 +734,8 @@
       "count": "{count} ta vakansiya"
     },
     "profile": {
-      "title": "Shaxsiy profilingizni yarating",
-      "text": "Bir necha daqiqada profil toʻldiring: AI yordamchi rezyumeni tartibga soladi, ish beruvchilar esa sizni oʻzlari topadi.",
+      "title": "Profil yarating, rezyume tayyor",
+      "text": "Taʼlim, tajriba va koʻnikmalaringizni bir necha daqiqada kiriting. AI ularni tartibli rezyumega aylantiradi. Ish beruvchilar sizni oʻzlari topadi.",
       "stepsLabel": "Profil yaratish qadamlari",
       "step1": "01.",
       "step1Title": "CV yuklang",
@@ -751,8 +751,8 @@
       "profileAction": "Ishga taklif qilish"
     },
     "testimonials": {
-      "title": "Mijozlarimiz biz haqimizda nima deydi",
-      "text": "Nomzodlar va ish beruvchilarning fikrlari.",
+      "title": "Platformadan foydalanganlar fikri",
+      "text": "Ish izlovchilar va ish beruvchilar JUMIS AI bilan ishlash tajribasini oʻzlari aytib beradi.",
       "region": "Foydalanuvchilar fikrlari",
       "prev": "Oldingi fikr",
       "next": "Keyingi fikr",

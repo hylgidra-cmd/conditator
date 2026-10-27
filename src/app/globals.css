@@ -479,3 +479,28 @@ svg [class*="ds-drift-"] {
     transform: translateX(-50%);
   }
 }
+
+/*
+ * "Imkoniyatlar" blokidagi avatarlarning toʻlqinsimon tebranishi: hammasi bitta yoʻl,
+ * faza (manfiy animation-delay) chapdan oʻngga siljiydi. reduced-motion da joyida turadi.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .ds-bob {
+    animation: ds-bob 4s ease-in-out infinite;
+  }
+}
+@keyframes ds-bob {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(3px, -9px) rotate(2deg);
+  }
+  50% {
+    transform: translate(0, -3px) rotate(0deg);
+  }
+  75% {
+    transform: translate(-3px, 5px) rotate(-2deg);
+  }
+}

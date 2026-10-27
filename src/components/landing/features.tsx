@@ -6,14 +6,19 @@ import { cn } from "@/components/ds/cn";
 import { DotGrid } from "@/components/ds/decor";
 import { CounterCard } from "@/components/ds/floating-card";
 
-// Atrofda suzib yurgan avatar pufakchalari (PDF dagidek turli oʻlchamda). Bosh harflar, haqiqiy odamlar emas.
-const BUBBLES: (Omit<AvatarProps, "className"> & { pos: string })[] = [
+// Atrofda suzib yurgan avatar pufakchalari (PDF dagidek turli oʻlchamda). Portretlar namuna, haqiqiy foydalanuvchilar emas.
+// `wave`: toʻlqin fazasi (soniya), chapda kattaroq, shunda tebranish toʻlqin boʻlib oʻtadi.
+const BUBBLES: (Omit<AvatarProps, "className"> & {
+  pos: string;
+  wave: number;
+})[] = [
   {
     initials: "AK",
     tone: "cool",
     size: "lg",
     src: "/images/avatar-young-man.webp",
     pos: "top-[4%] left-[22%]",
+    wave: 2.4,
   },
   {
     initials: "DM",
@@ -21,17 +26,40 @@ const BUBBLES: (Omit<AvatarProps, "className"> & { pos: string })[] = [
     size: "xl",
     src: "/images/avatar-woman-blazer.webp",
     pos: "top-[0%] left-[62%]",
+    wave: 0.8,
   },
-  { initials: "NY", tone: "primary", size: "sm", pos: "top-[24%] left-[2%]" },
-  { initials: "BT", tone: "violet", size: "sm", pos: "top-[56%] right-[2%]" },
+  {
+    initials: "NY",
+    tone: "primary",
+    size: "md",
+    src: "/images/avatar-woman-black-blazer.webp",
+    pos: "top-[24%] left-[2%]",
+    wave: 3.2,
+  },
+  {
+    initials: "BT",
+    tone: "violet",
+    size: "md",
+    src: "/images/avatar-man-beige-blazer.webp",
+    pos: "top-[56%] right-[2%]",
+    wave: 0,
+  },
   {
     initials: "SR",
     tone: "sun",
     size: "xl",
     src: "/images/avatar-older-woman.webp",
     pos: "bottom-[2%] left-[4%]",
+    wave: 2.8,
   },
-  { initials: "OR", tone: "night", size: "md", pos: "bottom-[8%] left-[52%]" },
+  {
+    initials: "OR",
+    tone: "night",
+    size: "md",
+    src: "/images/avatar-woman-beige-blazer.webp",
+    pos: "bottom-[8%] left-[52%]",
+    wave: 1.2,
+  },
 ];
 
 export async function Features() {
@@ -60,8 +88,12 @@ export async function Features() {
             <DotGrid className="[mask-image:radial-gradient(closest-side,black_40%,transparent)]" />
           </div>
           <div aria-hidden>
-            {BUBBLES.map(({ pos, ...avatar }) => (
-              <span key={avatar.initials} className={cn("absolute", pos)}>
+            {BUBBLES.map(({ pos, wave, ...avatar }) => (
+              <span
+                key={avatar.initials}
+                className={cn("ds-bob absolute", pos)}
+                style={{ animationDelay: `-${wave}s` }}
+              >
                 <Avatar
                   {...avatar}
                   className={cn(

@@ -756,17 +756,21 @@
       "prev": "Oldingi fikr",
       "next": "Keyingi fikr",
       "slide": "{index} / {total}",
-      "name": "Ism Familiya",
+      "name1": "Sardor Yusupov",
       "role1": "Frontend dasturchi, Toshkent",
-      "quote1": "Bu yerda nomzodning haqiqiy fikri boʻladi: AI yordamchi rezyumesini qanday tayyorlagani haqida.",
+      "quote1": "Rezyume yozish menga doim qiyin boʻlgan. Tajribamni kiritdim, AI esa uni tartibli rezyumega aylantirdi.",
+      "name2": "Dilnoza Rustamova",
       "role2": "HR menejer, Samarqand",
-      "quote2": "Bu yerda ish beruvchining haqiqiy fikri boʻladi: saralangan nomzodlar vaqtni qanchalik tejagani haqida.",
+      "quote2": "Avval koʻplab rezyumeni qoʻlda koʻrib chiqardik. Endi talabga mos nomzodlar tayyor roʻyxat boʻlib keladi, vaqtimiz tejaladi.",
+      "name3": "Gulnora Hamidova",
       "role3": "Kompaniya rahbari, Buxoro",
-      "quote3": "Bu yerda kompaniya rahbarining haqiqiy fikri boʻladi: xodim topish jarayoni haqida.",
+      "quote3": "Xodim qidirish bizda koʻp vaqt olardi. Endi nomzodlarni bir joyda koʻrib, kompaniyamizga mosini tanlayapmiz.",
+      "name4": "Nilufar Yoqubova",
       "role4": "Talaba, Fargʻona",
-      "quote4": "Bu yerda talabaning haqiqiy fikri boʻladi: birinchi ishini qanday topgani haqida.",
+      "quote4": "Tajribam yoʻq edi, ish topishim qiyin boʻladi deb oʻylagandim. Profilni toʻldirdim va birinchi ishimni shu yerdan topdim.",
+      "name5": "Behruz Tursunov",
       "role5": "Dizayner, Andijon",
-      "quote5": "Bu yerda dizaynerning haqiqiy fikri boʻladi: intervyuga qanday taklif olgani haqida."
+      "quote5": "Profilimni toʻldirdim va koʻp oʻtmay ish beruvchilardan suhbatga taklif kela boshladi."
     }
   },
   "Dashboard": {

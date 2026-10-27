@@ -756,17 +756,21 @@
       "prev": "Aldıńǵı pikir",
       "next": "Keyingi pikir",
       "slide": "{index} / {total}",
-      "name": "Atı Familiyası",
+      "name1": "Sardor Yusupov",
       "role1": "Frontend baǵdarlamashı, Tashkent",
-      "quote1": "Bul jerde kandidattıń haqıyqıy pikiri boladı: AI járdemshi rezyumesin qalay tayarlaǵanı haqqında.",
+      "quote1": "Rezyume jazıw maǵan hámme waqıt qıyın edi. Tájiriybemdi kiritkenimde, AI onı tártipli rezyumege aylandırıp berdi.",
+      "name2": "Dilnoza Rustamova",
       "role2": "HR menejer, Samarqand",
-      "quote2": "Bul jerde jumıs beriwshiniń haqıyqıy pikiri boladı: saralanǵan kandidatlar waqıttı qanshelli únemlegeni haqqında.",
+      "quote2": "Burın kóplegen rezyumelerdi qolda kórip shıǵatuǵın edik. Endi talapqa mas kandidatlar tayın dizim bolıp keledi, waqtımız únemlenedi.",
+      "name3": "Gulnora Hamidova",
       "role3": "Kompaniya basshısı, Buxara",
-      "quote3": "Bul jerde kompaniya basshısınıń haqıyqıy pikiri boladı: xızmetker tabıw procesi haqqında.",
+      "quote3": "Xızmetker tabıw bizde kóp waqıt alatuǵın edi. Endi kandidatlardı bir jerde kórip, kompaniyamızǵa masın saylap atırmız.",
+      "name4": "Nilufar Yoqubova",
       "role4": "Student, Ferǵana",
-      "quote4": "Bul jerde studenttiń haqıyqıy pikiri boladı: birinshi jumısın qalay tapqanı haqqında.",
+      "quote4": "Tájiriybem joq edi, jumıs tabıw qıyın bolar dep oylaǵan edim. Profildi toltırdım hám birinshi jumısımdı usı jerden taptım.",
+      "name5": "Behruz Tursunov",
       "role5": "Dizayner, Ándijan",
-      "quote5": "Bul jerde dizaynerdiń haqıyqıy pikiri boladı: intervyuǵa qalay usınıs alǵanı haqqında."
+      "quote5": "Profilimdi toltırdım hám kóp ótpey jumıs beriwshilerden intervyuǵa shaqırıw kele basladı."
     }
   },
   "Dashboard": {

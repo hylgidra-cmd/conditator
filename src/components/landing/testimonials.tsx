@@ -1,13 +1,22 @@
 import { getTranslations } from "next-intl/server";
 import { type Testimonial, TestimonialCarousel } from "./testimonial-carousel";
 
-// TODO: real maʼlumot — haqiqiy foydalanuvchilar fikrlari, ism va rasm ularning ruxsati bilan.
+// TODO: real maʼlumot — hozircha namuna ism va fikrlar (jumis-ai-fikrlar.md). Ommaga ochishdan oldin
+// haqiqiy foydalanuvchilar fikri bilan, ism va rasm ularning ruxsati bilan almashtiriladi.
 const ITEMS = [
-  { key: "1", initials: "AK", avatarSrc: "/images/avatar-young-man.webp" },
-  { key: "2", initials: "DM", avatarSrc: "/images/avatar-woman-blazer.webp" },
-  { key: "3", initials: "SR", avatarSrc: "/images/avatar-older-woman.webp" },
-  { key: "4", initials: "NY" },
-  { key: "5", initials: "BT" },
+  { key: "1", initials: "SY", avatarSrc: "/images/avatar-young-man.webp" },
+  { key: "2", initials: "DR", avatarSrc: "/images/avatar-woman-blazer.webp" },
+  { key: "3", initials: "GH", avatarSrc: "/images/avatar-older-woman.webp" },
+  {
+    key: "4",
+    initials: "NY",
+    avatarSrc: "/images/avatar-woman-black-blazer.webp",
+  },
+  {
+    key: "5",
+    initials: "BT",
+    avatarSrc: "/images/avatar-man-beige-blazer.webp",
+  },
 ] as const;
 
 export async function Testimonials() {
@@ -15,7 +24,7 @@ export async function Testimonials() {
 
   const items: Testimonial[] = ITEMS.map(({ key, ...rest }) => ({
     ...rest,
-    name: t("name"),
+    name: t(`name${key}`),
     role: t(`role${key}`),
     quote: t(`quote${key}`),
   }));
@@ -32,7 +41,8 @@ export async function Testimonials() {
           region: t("region"),
           prev: t("prev"),
           next: t("next"),
-          slide: t("slide"),
+          // Shablon xom holda: {index} va {total} ni karusel oʻzi toʻldiradi.
+          slide: t.raw("slide") as string,
         }}
         title={
           <div>

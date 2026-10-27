@@ -756,17 +756,21 @@
       "prev": "Previous testimonial",
       "next": "Next testimonial",
       "slide": "{index} / {total}",
-      "name": "First Last",
+      "name1": "Sardor Yusupov",
       "role1": "Frontend developer, Tashkent",
-      "quote1": "A real candidate testimonial will go here: how the AI assistant prepared their CV.",
+      "quote1": "Writing a resume has always been hard for me. I entered my experience here and AI turned it into a clean resume.",
+      "name2": "Dilnoza Rustamova",
       "role2": "HR manager, Samarkand",
-      "quote2": "A real employer testimonial will go here: how much time the shortlisted candidates saved.",
+      "quote2": "We used to go through many resumes by hand. Now candidates who match our requirements arrive as a ready list, and we save time.",
+      "name3": "Gulnora Hamidova",
       "role3": "Company director, Bukhara",
-      "quote3": "A real director testimonial will go here: about the hiring process.",
+      "quote3": "Finding staff used to take us a lot of time. Now we review candidates in one place and pick the one that fits our company.",
+      "name4": "Nilufar Yoqubova",
       "role4": "Student, Fergana",
-      "quote4": "A real student testimonial will go here: how they found their first job.",
+      "quote4": "I had no experience and thought finding a job would be hard. I filled in my profile and found my first job here.",
+      "name5": "Behruz Tursunov",
       "role5": "Designer, Andijan",
-      "quote5": "A real designer testimonial will go here: how they got an interview invitation."
+      "quote5": "I filled in my profile and soon employers started inviting me to interviews."
     }
   },
   "Dashboard": {

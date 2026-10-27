@@ -199,6 +199,7 @@ tests/                 Vitest integratsiya testlari
 - Binafsha faqat dekor shakllarda. Shrift: Inter (ʻ U+02BB, qoraqalpoq va kirill harflari bor; Plus Jakarta Sans va Outfit da yoʻq).
 - Eski sahifalar hozircha eski tokenlarda; har bir sahifa qayta yigʻilganda `ds` komponentlariga oʻtadi.
 - Bosh sahifa `src/components/landing/` dan yigʻiladi (hero, partners, features, categories, profile, testimonials). Header va footer (`site-header.tsx`, `site-footer.tsx`) shu uslubda, hamma sahifada. Aloqa maʼlumotlari faqat `src/lib/site.ts` da. Rasmlar `public/images/*.webp`. Statistika va fikrlar placeholder: `TODO: real maʼlumot`.
+- Fikrlar (`Landing.testimonials.name1..5`, `role*`, `quote*`) namuna matnlar: ommaga ochishdan oldin haqiqiy, ruxsat berilgan sharhlarga almashtiriladi. "Imkoniyatlar" blokidagi avatarlar `ds-bob` bilan toʻlqinsimon tebranadi (faza `wave` maydonida, reduced-motion da toʻxtaydi).
 
 ## Dashboard (demo, mock maʼlumot)
 

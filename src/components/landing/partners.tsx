@@ -19,7 +19,9 @@ function LogoSlot({ label }: { label: string }) {
         />
         <circle cx="12" cy="12" r="4" className="fill-current opacity-60" />
       </svg>
-      <span className="font-ui text-lg font-bold tracking-tight">{label}</span>
+      <span className="font-ui text-lg font-bold tracking-tight whitespace-nowrap">
+        {label}
+      </span>
     </li>
   );
 }
@@ -57,7 +59,7 @@ export async function Partners() {
           </h2>
           <ul
             aria-label={t("listLabel")}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5 sm:gap-x-14 md:max-w-[62%] md:justify-start md:gap-x-10"
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-10 gap-y-5 sm:gap-x-14 md:max-w-[62%] md:justify-start md:gap-x-8 lg:max-w-[72%] lg:gap-x-7"
           >
             {SLOTS.map((n) => (
               <LogoSlot key={n} label={t("placeholder", { n })} />

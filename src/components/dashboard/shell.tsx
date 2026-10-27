@@ -60,7 +60,7 @@ export async function DashboardShell({
           <Link
             href={`/dashboard/${role}/assistant`}
             className={cn(
-              "text-primary relative mt-1 inline-block rounded-sm text-sm font-semibold hover:underline",
+              "text-primary relative mt-0.5 inline-block rounded-sm py-1 text-sm font-semibold hover:underline",
               "focus-visible:outline-on-night focus-visible:outline-2 focus-visible:outline-offset-2",
             )}
           >

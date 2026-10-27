@@ -38,7 +38,7 @@ export async function Testimonials() {
           <div>
             <h2
               id="testimonials-title"
-              className="text-h2 text-text max-w-xl font-extrabold"
+              className="text-h2 text-text max-w-xl font-extrabold lg:max-w-3xl"
             >
               {t("title")}
             </h2>

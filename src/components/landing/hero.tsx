@@ -80,7 +80,7 @@ export async function Hero() {
 
           {/* Rasm: pasti doira boʻyicha kesiladi, boshi doiradan chiqib turadi. */}
           <div className="absolute bottom-[8%] left-1/2 h-[105%] w-[84%] -translate-x-1/2 overflow-hidden [border-bottom-right-radius:50%_40%] [border-bottom-left-radius:50%_40%]">
-            <div className="absolute bottom-0 left-1/2 aspect-[4/5] w-[86%] -translate-x-1/2">
+            <div className="absolute bottom-0 left-1/2 aspect-[4/5] w-full -translate-x-1/2">
               {HERO_IMAGE ? (
                 <Image
                   src={HERO_IMAGE}

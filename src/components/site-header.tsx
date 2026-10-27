@@ -10,7 +10,7 @@ import { MobileMenu } from "./mobile-menu";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV_LINK = cn(
-  "font-ui text-text hover:text-primary-text rounded-btn text-[0.9375rem] font-medium whitespace-nowrap transition-colors",
+  "font-ui text-text hover:text-primary-text rounded-btn py-1.5 text-[0.9375rem] font-medium whitespace-nowrap transition-colors",
   FOCUS_RING,
 );
 

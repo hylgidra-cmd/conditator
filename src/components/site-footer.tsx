@@ -83,10 +83,13 @@ export function SiteFooter() {
         {columns.map((column) => (
           <nav key={column.title} aria-label={column.title}>
             <h2 className="text-lg font-bold">{column.title}</h2>
-            <ul className="mt-5 flex flex-col gap-3.5 text-[0.9375rem]">
+            <ul className="mt-4 flex flex-col gap-1.5 text-[0.9375rem]">
               {column.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className={LINK}>
+                  <Link
+                    href={link.href}
+                    className={cn("inline-block py-1", LINK)}
+                  >
                     {link.label}
                   </Link>
                 </li>

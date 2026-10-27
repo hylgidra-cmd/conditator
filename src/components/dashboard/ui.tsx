@@ -66,7 +66,7 @@ export function TextLink({
     <Link
       href={href}
       className={cn(
-        "text-primary-text rounded-btn text-sm font-semibold hover:underline",
+        "text-primary-text rounded-btn inline-block py-1 text-sm font-semibold hover:underline",
         FOCUS_RING,
       )}
     >

@@ -11,6 +11,11 @@ import { redirect } from "@/i18n/navigation";
 import { currentUser } from "@/backend/auth/current-user";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { getOwnCv } from "@/backend/cv/service";
+import { getCvDocumentLabels } from "@/backend/cv-document/labels";
+import type {
+  CvDocumentLabels,
+  CvDocumentLanguage,
+} from "@/backend/cv-document/types";
 
 export default async function StudentCvPage() {
   const user = await currentUser();
@@ -35,8 +40,21 @@ export default async function StudentCvPage() {
     sourceText: cv?.sourceText ?? "",
   });
 
+  const [kkLabels, uzLabels, ruLabels, enLabels] = await Promise.all([
+    getCvDocumentLabels("kk"),
+    getCvDocumentLabels("uz"),
+    getCvDocumentLabels("ru"),
+    getCvDocumentLabels("en"),
+  ]);
+  const allLabels: Record<CvDocumentLanguage, CvDocumentLabels> = {
+    kk: kkLabels,
+    uz: uzLabels,
+    ru: ruLabels,
+    en: enLabels,
+  };
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
       <div>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         {!cv ? <p className="text-muted mt-1 text-sm">{t("empty")}</p> : null}
@@ -47,6 +65,7 @@ export default async function StudentCvPage() {
           savedAt: cv?.savedAt?.toISOString() ?? null,
           isVisible: cv?.isVisible ?? false,
         }}
+        labelsMap={allLabels}
       />
     </div>
   );

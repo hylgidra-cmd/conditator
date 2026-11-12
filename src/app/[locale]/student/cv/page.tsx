@@ -28,7 +28,7 @@ export default async function StudentCvPage() {
   const parsed = cv ? cvDataSchema.safeParse(cv.data) : null;
   const data = parsed?.success ? parsed.data : emptyCvData(user.email);
   const draft: CvDraft = draftFromData(data, {
-    title: cv?.title ?? "Mening rezyumem",
+    title: cv?.title ?? "",
     templateId:
       (cv?.templateId as "modern" | "classic" | "minimal") || "modern",
     privacy:

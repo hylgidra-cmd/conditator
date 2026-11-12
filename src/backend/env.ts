@@ -66,10 +66,12 @@ export function emailConfigured(): boolean {
 }
 
 const aiSchema = z.object({
-  AI_PROVIDER: z.enum(["anthropic"]).default("anthropic"),
+  AI_PROVIDER: z.enum(["anthropic", "gemini", "groq", "auto"]).default("auto"),
   ANTHROPIC_API_KEY: z.string().optional(),
-  AI_MODEL_CV: z.string().min(1).default("claude-haiku-5-5"),
-  AI_MODEL_MATCH: z.string().min(1).default("claude-sonnet-5-5"),
+  GEMINI_API_KEY: z.string().optional(),
+  GROQ_API_KEY: z.string().optional(),
+  AI_MODEL_CV: z.string().min(1).default("gemini-2.0-flash"),
+  AI_MODEL_MATCH: z.string().min(1).default("gemini-2.0-flash"),
 });
 
 export type AiEnv = z.infer<typeof aiSchema>;

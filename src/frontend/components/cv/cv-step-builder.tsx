@@ -7,23 +7,7 @@ import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { postJson } from "@/backend/client/api";
 import type { WorkType } from "@prisma/client";
 import type { CvDraft } from "./types";
-
-const SUGGESTED_SKILLS = [
-  "JavaScript",
-  "TypeScript",
-  "React",
-  "Next.js",
-  "Node.js",
-  "Python",
-  "PostgreSQL",
-  "Git",
-  "Figma",
-  "UI/UX",
-  "SMM",
-  "Sales",
-  "Excel",
-  "Buxgalteriya",
-];
+import { getSuggestedSkillsForTitle } from "./profession-skills";
 
 const SUGGESTED_LANGUAGES = [
   { name: "Qaraqalpaq tili", level: "Ona tili" },
@@ -58,6 +42,29 @@ export function CvStepBuilder({
   const tCv = useTranslations("StudentCv");
   const [currentStep, setCurrentStep] = useState(1);
   const [generatingAboutMe, setGeneratingAboutMe] = useState(false);
+  const [customSkills, setCustomSkills] = useState<string[] | null>(null);
+  const [loadingAiSkills, setLoadingAiSkills] = useState(false);
+
+  const suggestedSkills = customSkills ?? getSuggestedSkillsForTitle(draft.title);
+
+  async function handleFetchAiSkills() {
+    if (!draft.title) return;
+    setLoadingAiSkills(true);
+    try {
+      const res = await postJson<{ ok: boolean; skills: string[] }>(
+        "/api/cv/ai-skills",
+        {
+          jobTitle: draft.title,
+          language: draft.language,
+        },
+      );
+      if (res.ok && res.data.skills) {
+        setCustomSkills(res.data.skills);
+      }
+    } finally {
+      setLoadingAiSkills(false);
+    }
+  }
 
   const data = draft.data;
 
@@ -255,7 +262,10 @@ export function CvStepBuilder({
                   <input
                     type="text"
                     value={draft.title}
-                    onChange={(e) => onChange({ ...draft, title: e.target.value })}
+                    onChange={(e) => {
+                      onChange({ ...draft, title: e.target.value });
+                      setCustomSkills(null);
+                    }}
                     placeholder={t("jobTitlePlaceholder")}
                     className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
                   />
@@ -564,18 +574,41 @@ export function CvStepBuilder({
 
                   {/* Makemycv Suggestion Chips */}
                   <div className="space-y-2 pt-1">
-                    <span className="text-xs font-semibold text-muted">
-                      {t("suggestedSkills")}
-                    </span>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-muted">
+                          {draft.title && draft.title.trim().length > 1
+                            ? t("skillsFor", { title: draft.title })
+                            : t("suggestedSkills")}
+                        </span>
+                        {draft.title && draft.title.trim().length > 1 ? (
+                          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-bold text-brand">
+                            {draft.title}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      {draft.title && draft.title.trim().length > 1 ? (
+                        <button
+                          type="button"
+                          disabled={loadingAiSkills}
+                          onClick={handleFetchAiSkills}
+                          className="rounded-lg border border-brand/40 bg-brand/5 px-2.5 py-1 text-xs font-bold text-brand hover:bg-brand/10 disabled:opacity-60 transition-colors"
+                        >
+                          {loadingAiSkills ? t("aiSkillsLoading") : t("aiSkillsBtn")}
+                        </button>
+                      ) : null}
+                    </div>
+
                     <div className="flex flex-wrap gap-1.5">
-                      {SUGGESTED_SKILLS.map((skill) => (
+                      {suggestedSkills.map((skill) => (
                         <button
                           key={skill}
                           type="button"
                           onClick={() => addSkillChip(skill)}
                           className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand hover:text-brand transition-colors"
                         >
-                          + {skill}
+                          {`+ ${skill}`}
                         </button>
                       ))}
                     </div>
@@ -595,7 +628,7 @@ export function CvStepBuilder({
                         onClick={() => addLanguageChip(lang)}
                         className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand hover:text-brand transition-colors"
                       >
-                        + {lang.name}
+                        {`+ ${lang.name}`}
                       </button>
                     ))}
                   </div>

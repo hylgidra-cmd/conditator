@@ -70,11 +70,7 @@ export function SiteFooter() {
             aria-label={tHeader("homeAria")}
             className={cn("inline-block", LINK)}
           >
-            <Logo
-              name={tHeader("logoName")}
-              tag={tHeader("logoTag")}
-              tone="night"
-            />
+            <Logo name={tHeader("logoName")} tone="night" />
           </Link>
           <p className="text-on-night/75 mt-5 text-sm leading-relaxed">
             {t("tagline")}

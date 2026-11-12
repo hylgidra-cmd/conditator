@@ -4,12 +4,12 @@
     "note": "Qoralama tarjima. Mutaxassis tekshirgach status 'reviewed' ga oʻzgartiriladi."
   },
   "Metadata": {
-    "title": "Jumis AI: rezyume emas, saralangan nomzodlar",
+    "title": "Candidator: rezyume emas, saralangan nomzodlar",
     "description": "Oʻzbekistonda ish izlovchilar va ish beruvchilarni bogʻlaydigan AI platforma."
   },
   "Header": {
-    "brand": "Jumis AI",
-    "homeAria": "Jumis AI bosh sahifasi",
+    "brand": "Candidator",
+    "homeAria": "Candidator bosh sahifasi",
     "login": "Kirish",
     "register": "Roʻyxatdan oʻtish",
     "account": "Kabinet",
@@ -28,7 +28,7 @@
     "jobs": "Vakansiyalar",
     "menuOpen": "Menyuni ochish",
     "menuClose": "Menyuni yopish",
-    "logoName": "JUMIS",
+    "logoName": "CANDIDATOR",
     "logoTag": "AI"
   },
   "LocaleSwitcher": {
@@ -54,7 +54,7 @@
     "phoneLabel": "Telefon",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS AI. Barcha huquqlar himoyalangan.",
+    "rights": "© {year} CANDIDATOR. Barcha huquqlar himoyalangan.",
     "credit": "Sayt DENJI tomonidan ishlab chiqilgan."
   },
   "NotFound": {
@@ -64,7 +64,7 @@
   "Auth": {
     "register": {
       "title": "Roʻyxatdan oʻtish",
-      "subtitle": "Jumis AI ga qoʻshiling",
+      "subtitle": "Candidator ga qoʻshiling",
       "email": "Email",
       "password": "Parol",
       "passwordHint": "Kamida 8 belgi",
@@ -164,8 +164,8 @@
   },
   "Email": {
     "reset": {
-      "subject": "Jumis AI: parolni tiklash kodi",
-      "body": "Assalomu alaykum!\n\nParolni tiklash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar buni siz soʻramagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nJumis AI jamoasi"
+      "subject": "Candidator: parolni tiklash kodi",
+      "body": "Assalomu alaykum!\n\nParolni tiklash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar buni siz soʻramagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nCandidator jamoasi"
     }
   },
   "StudentCv": {
@@ -494,15 +494,15 @@
     "toLight": "Kunduzgi rejimga oʻtish"
   },
   "DesignSystem": {
-    "metaTitle": "Dizayn tizimi · JUMIS - AI",
+    "metaTitle": "Dizayn tizimi · CANDIDATOR",
     "eyebrow": "Dizayn tizimi",
-    "title": "JUMIS - AI vizual tili",
+    "title": "CANDIDATOR vizual tili",
     "lead": "Ranglar, shakllar, kartalar va dekorativ elementlar bir joyda. Sahifalar shu qismlardan yigʻiladi. Yuqoridagi oy/quyosh tugmasi bilan tungi rejimni tekshiring.",
     "nav": "Boʻlimlar",
     "logo": {
       "title": "Logotip",
-      "text": "Alanga shaklidagi belgi, “JUMIS” yozuvi va kichik “AI” belgisi. Toʻq fonda ham ishlaydi.",
-      "name": "JUMIS",
+      "text": "Alanga shaklidagi belgi, “CANDIDATOR” yozuvi va kichik “AI” belgisi. Toʻq fonda ham ishlaydi.",
+      "name": "CANDIDATOR",
       "tag": "AI"
     },
     "colors": {
@@ -712,7 +712,7 @@
       "peopleLabel": "Faol foydalanuvchilar avatarlari"
     },
     "partners": {
-      "title": "Toshkent, Samarqand va butun Oʻzbekiston boʻylab <accent>ish beruvchilar</accent> uchun",
+      "title": "Nukus / Qoraqalpog’iston, Toshkent / O’zbekiston boʻylab <accent>ish beruvchilar</accent> uchun",
       "listLabel": "Hamkor kompaniyalar"
     },
     "features": {
@@ -753,7 +753,7 @@
     },
     "testimonials": {
       "title": "Platformadan foydalanganlar fikri",
-      "text": "Ish izlovchilar va ish beruvchilar JUMIS AI bilan ishlash tajribasini oʻzlari aytib beradi.",
+      "text": "Ish izlovchilar va ish beruvchilar CANDIDATOR bilan ishlash tajribasini oʻzlari aytib beradi.",
       "region": "Foydalanuvchilar fikrlari",
       "prev": "Oldingi fikr",
       "next": "Keyingi fikr",
@@ -776,7 +776,7 @@
     }
   },
   "Dashboard": {
-    "metaTitle": "Dashboard — JUMIS - AI",
+    "metaTitle": "Dashboard — CANDIDATOR",
     "demo": "Namunaviy maʼlumotlar: hisob hali ulanmagan, raqamlar va roʻyxatlar haqiqiy emas.",
     "skip": "Asosiy qismga oʻtish",
     "roles": {
@@ -993,7 +993,7 @@
       "you": "Siz",
       "ai": "AI yordamchi",
       "greeting": {
-        "candidate": "Salom! Men JUMIS AI yordamchisiman. Rezyumengizni tahlil qilib, uni ish beruvchilar uchun aniqroq qilishga yordam beraman. Quyidagi savollardan birini tanlang yoki oʻzingiz yozing.",
+        "candidate": "Salom! Men CANDIDATOR yordamchisiman. Rezyumengizni tahlil qilib, uni ish beruvchilar uchun aniqroq qilishga yordam beraman. Quyidagi savollardan birini tanlang yoki oʻzingiz yozing.",
         "employer": "Salom! Vakansiya tavsifini yozish, arizalarni saralash va intervyu savollarini tayyorlashda yordam beraman. Savol tanlang yoki oʻzingiz yozing."
       },
       "suggestionsLabel": "Tayyor savollar",

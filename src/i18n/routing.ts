@@ -5,7 +5,7 @@ import { defineRouting } from "next-intl/routing";
 // avtomatik aniqlash o'chirilgan (localeDetection: false).
 export const routing = defineRouting({
   locales: ["kk", "uz", "ru", "en"],
-  defaultLocale: "uz",
+  defaultLocale: "kk",
   localeDetection: false,
 });
 

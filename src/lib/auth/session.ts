@@ -4,7 +4,8 @@ import type { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ApiError } from "@/lib/http/errors";
 
-export const SESSION_COOKIE = "jumis_session";
+export const SESSION_COOKIE = "candidator_session";
+export const LEGACY_SESSION_COOKIE = "jumis_session";
 const SESSION_TTL_MS = 7 * 24 * 60 * 60_000;
 
 export type SessionUser = Pick<
@@ -37,6 +38,11 @@ export async function createSession(
 
 export function clearSessionCookie(response: NextResponse): void {
   response.cookies.set(SESSION_COOKIE, "", {
+    httpOnly: true,
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(LEGACY_SESSION_COOKIE, "", {
     httpOnly: true,
     path: "/",
     maxAge: 0,
@@ -81,7 +87,10 @@ export async function userFromToken(
 export function getSessionUser(
   request: NextRequest,
 ): Promise<SessionUser | null> {
-  return userFromToken(request.cookies.get(SESSION_COOKIE)?.value);
+  const token =
+    request.cookies.get(SESSION_COOKIE)?.value ??
+    request.cookies.get(LEGACY_SESSION_COOKIE)?.value;
+  return userFromToken(token);
 }
 
 /**

@@ -4,13 +4,12 @@ import type { ReactNode } from "react";
 import { cn, FOCUS_RING } from "@/components/ds/cn";
 import { Input } from "@/components/ds/input";
 import { Logo, LogoMark } from "@/components/ds/logo";
-import { ArrowLeftIcon, SearchIcon, SparkIcon } from "@/components/icons";
+import { ArrowLeftIcon, SearchIcon } from "@/components/icons";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getPathname, Link } from "@/i18n/navigation";
 import type { Role } from "@/lib/dashboard/mock";
 import { MobileDrawer } from "./mobile-drawer";
-import { RoleSwitch } from "./role-switch";
 import { SidebarNav } from "./sidebar-nav";
 import { NotificationsMenu, ProfileMenu } from "./topbar-menus";
 import { ROUND_BUTTON } from "./ui";
@@ -43,30 +42,10 @@ export async function DashboardShell({
         aria-label={tHeader("homeAria")}
         className={cn("rounded-btn self-start px-2", FOCUS_RING)}
       >
-        <Logo name={tHeader("logoName")} tag={tHeader("logoTag")} />
+        <Logo name={tHeader("logoName")} />
       </Link>
-      <RoleSwitch role={role} />
       <SidebarNav role={role} />
       <div className="mt-auto flex flex-col gap-4">
-        <div className="bg-night text-on-night rounded-card relative overflow-hidden p-4">
-          <span
-            aria-hidden
-            className="bg-primary/25 absolute -top-6 -right-6 size-20 rounded-full"
-          />
-          <SparkIcon size={22} className="text-primary relative" />
-          <p className="relative mt-2 text-sm font-semibold">
-            {t("assistant.title")}
-          </p>
-          <Link
-            href={`/dashboard/${role}/assistant`}
-            className={cn(
-              "text-primary relative mt-0.5 inline-block rounded-sm py-1 text-sm font-semibold hover:underline",
-              "focus-visible:outline-on-night focus-visible:outline-2 focus-visible:outline-offset-2",
-            )}
-          >
-            {t("nav.assistant")}
-          </Link>
-        </div>
         <div className="flex items-center gap-2 lg:hidden">
           {themeToggle}
           <LocaleSwitcher />

@@ -7,8 +7,7 @@ const testDatabaseUrl =
   "postgresql://jumis:jumis@localhost:5432/jumis_test?schema=public";
 
 export default defineConfig({
-  // tsconfig da jsx: "preserve" (Next.js uchun); testlarda JSX ni o'zimiz o'giramiz.
-  oxc: { jsx: { runtime: "automatic" } },
+  esbuild: { jsx: "automatic" },
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),

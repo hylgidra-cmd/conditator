@@ -68,7 +68,7 @@ export async function SiteHeader() {
           aria-label={t("homeAria")}
           className={cn("rounded-btn shrink-0", FOCUS_RING)}
         >
-          <Logo name={t("logoName")} tag={t("logoTag")} />
+          <Logo name={t("logoName")} />
         </Link>
 
         <nav

@@ -5,7 +5,7 @@
  * Qiymat yoʻq boʻlsa tizim sozlamasi (prefers-color-scheme) CSS orqali ishlaydi.
  */
 export const THEME_COOKIE = "theme";
-export const THEME_STORAGE_KEY = "jumis-theme";
+export const THEME_STORAGE_KEY = "candidator-theme";
 
 export type Theme = "light" | "dark";
 

@@ -1,10 +1,10 @@
-/** Saytdagi aloqa ma'lumotlari va tariflar (bitta joyda). Header, footer va "Aloqa" bo'limi shu yerdan oladi. */
-export const TELEGRAM_USERNAME = "gulginamann";
+/** Saytdagi aloqa ma'lumotlari va tariflar. */
+export const TELEGRAM_USERNAME = "candidator_uz";
 export const TELEGRAM_URL = `https://t.me/${TELEGRAM_USERNAME}`;
 export const TELEGRAM_HANDLE = `@${TELEGRAM_USERNAME}`;
-export const PHONE_DISPLAY = "+998 97 594 11 19";
-export const PHONE_URL = "tel:+998975941119";
-export const EMAIL = "gulgina.erejepova@gmail.com";
+export const PHONE_DISPLAY = "+998 71 200 00 00";
+export const PHONE_URL = "tel:+998712000000";
+export const EMAIL = "info@candidator.uz";
 export const EMAIL_URL = `mailto:${EMAIL}`;
 /** Footer dagi "Sayt DENJI tomonidan ishlab chiqilgan" havolasi. */
 export const DEVELOPER_URL =

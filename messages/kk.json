@@ -4,12 +4,12 @@
     "note": "Qoralama awdarma (qaraqalpaq tili, latın jazıwı). Qánige tekserip shıqqannan keyin status 'reviewed' bolıp ózgertiledi."
   },
   "Metadata": {
-    "title": "Jumis AI: sáykes kandidatlardı AI tabadı",
+    "title": "Candidator: sáykes kandidatlardı AI tabadı",
     "description": "Ózbekstanda jumıs izlewshiler menen jumıs beriwshilerdi baylanıstıratuǵın AI platforma."
   },
   "Header": {
-    "brand": "Jumis AI",
-    "homeAria": "Jumis AI bas beti",
+    "brand": "Candidator",
+    "homeAria": "Candidator bas beti",
     "login": "Kiriw",
     "register": "Dizimnen ótiw",
     "account": "Kabinet",
@@ -28,7 +28,7 @@
     "jobs": "Vakansiyalar",
     "menuOpen": "Menyudı ashıw",
     "menuClose": "Menyudı jabıw",
-    "logoName": "JUMIS",
+    "logoName": "CANDIDATOR",
     "logoTag": "AI"
   },
   "LocaleSwitcher": {
@@ -54,7 +54,7 @@
     "phoneLabel": "Telefon",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS AI. Barlıq huqıqlar qorǵalǵan.",
+    "rights": "© {year} CANDIDATOR. Barlıq huqıqlar qorǵalǵan.",
     "credit": "Sayt DENJI tárepinen islep shıǵılǵan."
   },
   "NotFound": {
@@ -64,7 +64,7 @@
   "Auth": {
     "register": {
       "title": "Dizimnen ótiw",
-      "subtitle": "Jumis AI ǵa qosılıń",
+      "subtitle": "Candidator ǵa qosılıń",
       "email": "Email",
       "password": "Parol",
       "passwordHint": "Keminde 8 belgi",
@@ -164,8 +164,8 @@
   },
   "Email": {
     "reset": {
-      "subject": "Jumis AI: paroldı tiklew kodı",
-      "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nJumis AI komandası"
+      "subject": "Candidator: paroldı tiklew kodı",
+      "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nCandidator komandası"
     }
   },
   "StudentCv": {
@@ -494,15 +494,15 @@
     "toLight": "Kunduzgi rejimga oʻtish"
   },
   "DesignSystem": {
-    "metaTitle": "Dizayn sisteması · JUMIS - AI",
+    "metaTitle": "Dizayn sisteması · CANDIDATOR",
     "eyebrow": "Dizayn sisteması",
-    "title": "JUMIS - AI vizual tili",
+    "title": "CANDIDATOR vizual tili",
     "lead": "Reńler, formalar, kartalar hám dekorativ elementler bir jerde. Betler usı bóleklerden jıynaladı. Joqarıdaǵı ay/quyash túymesi menen túngi rejimdi tekseriń.",
     "nav": "Bólimler",
     "logo": {
       "title": "Logotip",
-      "text": "Jalın formasındaǵı belgi, “JUMIS” jazıwı hám kishi “AI” belgisi. Qarańǵı fonda da isleydi.",
-      "name": "JUMIS",
+      "text": "Jalın formasındaǵı belgi, “CANDIDATOR” jazıwı hám kishi “AI” belgisi. Qarańǵı fonda da isleydi.",
+      "name": "CANDIDATOR",
       "tag": "AI"
     },
     "colors": {
@@ -712,7 +712,7 @@
       "peopleLabel": "Aktiv paydalanıwshılar avatarları"
     },
     "partners": {
-      "title": "Tashkent, Samarqand hám pútkil Ózbekstan boylap <accent>jumıs beriwshiler</accent> ushın",
+      "title": "Nókis / Qaraqalpaqstan, Tashkent / Ózbekstan boylap <accent>jumıs beriwshiler</accent> ushın",
       "listLabel": "Sherik kompaniyalar"
     },
     "features": {
@@ -753,7 +753,7 @@
     },
     "testimonials": {
       "title": "Platformadan paydalanǵanlardıń pikiri",
-      "text": "Jumıs izlewshiler hám jumıs beriwshiler JUMIS AI menen islesiw tájiriybesin ózleri aytıp beredi.",
+      "text": "Jumıs izlewshiler hám jumıs beriwshiler CANDIDATOR menen islesiw tájiriybesin ózleri aytıp beredi.",
       "region": "Paydalanıwshılar pikirleri",
       "prev": "Aldıńǵı pikir",
       "next": "Keyingi pikir",
@@ -776,7 +776,7 @@
     }
   },
   "Dashboard": {
-    "metaTitle": "Dashboard — JUMIS - AI",
+    "metaTitle": "Dashboard — CANDIDATOR",
     "demo": "Úlgi maǵlıwmatlar: akkaunt ele baylanıspaǵan, sanlar hám dizimler haqıyqıy emes.",
     "skip": "Tiykarǵı bólimge ótiw",
     "roles": {
@@ -993,7 +993,7 @@
       "you": "Siz",
       "ai": "AI járdemshi",
       "greeting": {
-        "candidate": "Sálem! Men JUMIS AI járdemshisimen. Rezyumeńizdi talqılap, onı jumıs beriwshiler ushın anıǵıraq etiwge járdem beremen. Tómendegi sorawlardan birin tańlań yamasa ózińiz jazıń.",
+        "candidate": "Sálem! Men CANDIDATOR járdemshisimen. Rezyumeńizdi talqılap, onı jumıs beriwshiler ushın anıǵıraq etiwge járdem beremen. Tómendegi sorawlardan birin tańlań yamasa ózińiz jazıń.",
         "employer": "Sálem! Vakansiya tárifin jazıw, arzalardı saralaw hám intervyu sorawların tayarlawda járdem beremen. Soraw tańlań yamasa ózińiz jazıń."
       },
       "suggestionsLabel": "Tayar sorawlar",

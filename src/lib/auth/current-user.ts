@@ -1,7 +1,12 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { SESSION_COOKIE, type SessionUser, userFromToken } from "./session";
+import {
+  LEGACY_SESSION_COOKIE,
+  SESSION_COOKIE,
+  type SessionUser,
+  userFromToken,
+} from "./session";
 
 /**
  * Server komponentlar (sahifalar) uchun joriy foydalanuvchi.
@@ -9,5 +14,7 @@ import { SESSION_COOKIE, type SessionUser, userFromToken } from "./session";
  */
 export const currentUser = cache(async (): Promise<SessionUser | null> => {
   const store = await cookies();
-  return userFromToken(store.get(SESSION_COOKIE)?.value);
+  const token =
+    store.get(SESSION_COOKIE)?.value ?? store.get(LEGACY_SESSION_COOKIE)?.value;
+  return userFromToken(token);
 });

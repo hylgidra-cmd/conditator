@@ -4,12 +4,12 @@
     "note": "Draft translation. Change status to 'reviewed' after a specialist checks it."
   },
   "Metadata": {
-    "title": "Jumis AI: AI finds the right candidates",
+    "title": "Candidator: AI finds the right candidates",
     "description": "An AI-powered platform that connects job seekers and employers in Uzbekistan."
   },
   "Header": {
-    "brand": "Jumis AI",
-    "homeAria": "Jumis AI home page",
+    "brand": "Candidator",
+    "homeAria": "Candidator home page",
     "login": "Log in",
     "register": "Sign up",
     "account": "Dashboard",
@@ -28,7 +28,7 @@
     "jobs": "Jobs",
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
-    "logoName": "JUMIS",
+    "logoName": "CANDIDATOR",
     "logoTag": "AI"
   },
   "LocaleSwitcher": {
@@ -54,7 +54,7 @@
     "phoneLabel": "Phone",
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
-    "rights": "© {year} JUMIS AI. All rights reserved.",
+    "rights": "© {year} CANDIDATOR. All rights reserved.",
     "credit": "Website developed by DENJI."
   },
   "NotFound": {
@@ -64,7 +64,7 @@
   "Auth": {
     "register": {
       "title": "Sign up",
-      "subtitle": "Join Jumis AI",
+      "subtitle": "Join Candidator",
       "email": "Email",
       "password": "Password",
       "passwordHint": "At least 8 characters",
@@ -164,8 +164,8 @@
   },
   "Email": {
     "reset": {
-      "subject": "Jumis AI: password reset code",
-      "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Jumis AI team"
+      "subject": "Candidator: password reset code",
+      "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Candidator team"
     }
   },
   "StudentCv": {
@@ -494,15 +494,15 @@
     "toLight": "Kunduzgi rejimga oʻtish"
   },
   "DesignSystem": {
-    "metaTitle": "Design system · JUMIS - AI",
+    "metaTitle": "Design system · CANDIDATOR",
     "eyebrow": "Design system",
-    "title": "The JUMIS - AI visual language",
+    "title": "The CANDIDATOR visual language",
     "lead": "Colours, shapes, cards and decorative elements in one place. Pages are assembled from these parts. Use the moon/sun button at the top to check dark mode.",
     "nav": "Sections",
     "logo": {
       "title": "Logo",
-      "text": "A flame-shaped mark, the “JUMIS” wordmark and a small “AI” tag. Works on dark backgrounds too.",
-      "name": "JUMIS",
+      "text": "A flame-shaped mark, the “CANDIDATOR” wordmark and a small “AI” tag. Works on dark backgrounds too.",
+      "name": "CANDIDATOR",
       "tag": "AI"
     },
     "colors": {
@@ -712,7 +712,7 @@
       "peopleLabel": "Active user avatars"
     },
     "partners": {
-      "title": "For <accent>employers</accent> in Tashkent, Samarkand and across Uzbekistan",
+      "title": "For <accent>employers</accent> across Nukus / Karakalpakstan, Tashkent / Uzbekistan",
       "listLabel": "Partner companies"
     },
     "features": {
@@ -753,7 +753,7 @@
     },
     "testimonials": {
       "title": "What users say",
-      "text": "Job seekers and employers share their experience with JUMIS AI.",
+      "text": "Job seekers and employers share their experience with CANDIDATOR.",
       "region": "User testimonials",
       "prev": "Previous testimonial",
       "next": "Next testimonial",
@@ -776,7 +776,7 @@
     }
   },
   "Dashboard": {
-    "metaTitle": "Dashboard — JUMIS - AI",
+    "metaTitle": "Dashboard — CANDIDATOR",
     "demo": "Sample data: no account is connected yet, so numbers and lists are not real.",
     "skip": "Skip to main content",
     "roles": {
@@ -993,7 +993,7 @@
       "you": "You",
       "ai": "AI assistant",
       "greeting": {
-        "candidate": "Hi! I'm the JUMIS AI assistant. I'll review your resume and help make it clearer for employers. Pick one of the questions below or write your own.",
+        "candidate": "Hi! I'm the CANDIDATOR assistant. I'll review your resume and help make it clearer for employers. Pick one of the questions below or write your own.",
         "employer": "Hi! I can help write vacancy descriptions, screen applications and prepare interview questions. Pick a question or write your own."
       },
       "suggestionsLabel": "Suggested questions",

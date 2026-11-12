@@ -1,52 +1,78 @@
 import { cn } from "./cn";
 
-/** Logo belgisi: alanga/tomchi shakli, ichida kichik yorugʻlik tomchisi. */
-export function LogoMark({ className }: { className?: string }) {
+/**
+ * Candidator yangi vektor SVG logo belgisi:
+ * Qora (yoki oq) "C" harfi (#1A1A1A), ichida to'q sariq galstuk (#F07A1A).
+ */
+export function LogoMark({
+  className,
+  tone = "default",
+}: {
+  className?: string;
+  tone?: "default" | "night";
+}) {
+  const cColor = tone === "night" ? "#FFFFFF" : "#1A1A1A";
+  const tieColor = "#F07A1A";
+
   return (
-    <svg aria-hidden viewBox="0 0 24 28" className={cn("h-7 w-6", className)}>
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      className={cn("h-8 w-8 shrink-0", className)}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {/* "C" harfi — tekis, geometrik qora/oq aylana arkasi */}
       <path
-        d="M12 1.5c.6 3.7 3 5.6 5.2 7.9 2.1 2.2 3.8 4.6 3.8 8.2A9 9 0 0 1 3 17.6c0-3.4 1.6-5.6 3.3-7.4.4 1.9 1.4 3 2.7 3.5C8.5 9 9.6 4.6 12 1.5Z"
-        className="fill-primary"
+        d="M 75 23 A 38 38 0 1 0 75 77 L 65 67 A 24 24 0 1 1 65 33 Z"
+        fill={cColor}
       />
+      {/* Galstuk tuguni (yuqori qism) */}
       <path
-        d="M12.3 13.2c1.6 1.6 3.2 3 3.2 5.2a3.5 3.5 0 0 1-7 0c0-1.3.6-2.2 1.3-3 .2.9.7 1.4 1.3 1.6-.2-1.4.2-2.8 1.2-3.8Z"
-        className="fill-canvas"
+        d="M 43 32 Q 43 31 44 31 L 52 31 Q 53 31 53 32 L 52 40 Q 52 41 51 41 L 45 41 Q 44 41 44 40 Z"
+        fill={tieColor}
+      />
+      {/* Galstuk asosiy qismi */}
+      <path
+        d="M 44.5 42.5 L 51.5 42.5 L 56 71 L 48 83 L 40 71 Z"
+        fill={tieColor}
       />
     </svg>
   );
 }
 
-/** "JUMIS" + kichik "AI" belgisi. Matnlar tarjimadan keladi. */
+/**
+ * Candidator to'liq logotipi:
+ * Logo belgisi + "CANDIDATOR" matni.
+ */
 export function Logo({
-  name,
+  name = "CANDIDATOR",
   tag,
   className,
   tone = "default",
 }: {
-  name: string;
-  tag: string;
+  name?: string;
+  tag?: string;
   className?: string;
-  /** `night`: toʻq fonda (footer). */
+  /** `night`: to'q fonda (footer). */
   tone?: "default" | "night";
 }) {
   return (
-    <span className={cn("font-ui inline-flex items-center gap-2", className)}>
-      <LogoMark
-        className={
-          tone === "night" ? "[&>path:last-child]:fill-night" : undefined
-        }
-      />
+    <span className={cn("font-ui inline-flex items-center gap-2.5", className)}>
+      <LogoMark tone={tone} className="h-7 w-7" />
       <span
         className={cn(
-          "text-xl font-extrabold tracking-tight",
-          tone === "night" ? "text-on-night" : "text-text",
+          "text-xl font-black tracking-tight",
+          tone === "night" ? "text-white" : "text-[#1A1A1A] dark:text-white",
         )}
       >
         {name}
       </span>
-      <span className="bg-primary text-on-primary -ml-0.5 self-start rounded px-1 py-px text-[0.625rem] leading-tight font-extrabold tracking-wide">
-        {tag}
-      </span>
+      {tag ? (
+        <span className="-ml-0.5 self-start rounded bg-[#F07A1A] px-1 py-px text-[0.625rem] leading-tight font-extrabold tracking-wide text-white">
+          {tag}
+        </span>
+      ) : null}
     </span>
   );
 }

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ds/badge";
 import { buttonClass } from "@/components/ds/button";
 import { cn } from "@/components/ds/cn";
 import { DashboardSkeleton } from "@/components/dashboard/skeletons";
-import { parseState, StateSwitcher } from "@/components/dashboard/page-state";
+import { parseState } from "@/components/dashboard/page-state";
 import {
   EmptyState,
   MatchMeter,
@@ -58,22 +58,37 @@ const STAT_ICONS = {
   avgMatch: ChartIcon,
 } as const;
 
+import { redirect } from "@/i18n/navigation";
+import { currentUser } from "@/lib/auth/current-user";
+
 export default async function OverviewPage({ params, searchParams }: Props) {
   const { locale, role } = await params;
   if (!hasLocale(routing.locales, locale) || !isRole(role)) notFound();
   setRequestLocale(locale);
+
+  const user = await currentUser();
+  if (!user) {
+    return redirect({ href: "/login", locale });
+  }
+
+  // Talaba kompaniya sahifasini ocha olmaydi va aksincha
+  if (
+    role === "candidate" &&
+    user.role !== "STUDENT" &&
+    user.role !== "ADMIN"
+  ) {
+    return redirect({ href: "/account", locale });
+  }
+  if (role === "employer" && user.role !== "COMPANY" && user.role !== "ADMIN") {
+    return redirect({ href: "/account", locale });
+  }
+
   const state = parseState((await searchParams).state);
   const t = await getTranslations("Dashboard");
   const base = `/dashboard/${role}`;
-  const switcher = <StateSwitcher href={base} current={state} />;
 
   if (state === "loading")
-    return (
-      <>
-        <DashboardSkeleton variant="overview" label={t("loading")} />
-        {switcher}
-      </>
-    );
+    return <DashboardSkeleton variant="overview" label={t("loading")} />;
 
   const empty = state === "empty";
   const steps = PROFILE_STEPS[role].map((s) => ({
@@ -314,7 +329,6 @@ export default async function OverviewPage({ params, searchParams }: Props) {
           </section>
         </div>
       </div>
-      {switcher}
     </>
   );
 }

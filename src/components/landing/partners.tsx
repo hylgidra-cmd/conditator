@@ -8,16 +8,10 @@ type Partner = {
   bleed?: boolean;
 };
 
-// Logolar public/partners/ da: qirqilgan, 128px gacha kichraytirilgan WebP (har biri 1–6 KB).
+// Logolar public/partners/ da: faqat IT Park va QMU (Karsu).
 const PARTNERS: Partner[] = [
   { name: "IT Park", logo: "/partners/it-park.webp" },
-  { name: "KarSU", logo: "/partners/karsu.webp" },
-  { name: "EPAM", logo: "/partners/epam.webp" },
-  { name: "Uzinfocom", logo: "/partners/uzinfocom.webp" },
-  { name: "ASAKA BANK", logo: "/partners/asaka-bank.webp" },
-  { name: "UZUM MARKET", logo: "/partners/uzum-market.webp", bleed: true },
-  { name: "TATU", logo: "/partners/tatu.webp" },
-  { name: "ASAXIY", logo: "/partners/asaxiy.webp", bleed: true },
+  { name: "QMU (Karsu)", logo: "/partners/karsu.webp" },
 ];
 
 /*

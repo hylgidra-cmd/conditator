@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import {
   emptyCvData,
   type CvDraft,
+  type CvTemplateId,
   draftFromData,
   type WorkTypeValue,
   type CvPrivacyState,
@@ -29,8 +30,7 @@ export default async function StudentCvPage() {
   const data = parsed?.success ? parsed.data : emptyCvData(user.email);
   const draft: CvDraft = draftFromData(data, {
     title: cv?.title ?? "",
-    templateId:
-      (cv?.templateId as "modern" | "classic" | "minimal") || "modern",
+    templateId: (cv?.templateId as CvTemplateId) || "modern-1",
     privacy:
       typeof cv?.privacy === "object" && cv?.privacy !== null
         ? (cv.privacy as Partial<CvPrivacyState>)

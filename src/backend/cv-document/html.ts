@@ -58,7 +58,7 @@ export async function buildCvHtml(cv: CvDocumentInput): Promise<string> {
   const labels = await getCvDocumentLabels(cv.language);
   const body = renderToStaticMarkup(createElement(CvDocument, { cv, labels }));
   const title = escapeHtml(cv.data.fullName ?? "CV");
-  return `<!doctype html><html lang="${cv.language}"><head><meta charset="utf-8"><title>${title}</title><style>${await embeddedFonts()}
+  return `<!doctype html><html lang="${cv.language}"><head><meta charset="utf-8"><title>${title}</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"><style>${await embeddedFonts()}
 html,body{margin:0;background:#fff}</style></head><body>${body}</body></html>`;
 }
 

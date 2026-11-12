@@ -6,8 +6,16 @@ import type { CvDocumentLabels, CvDocumentLanguage } from "@/backend/cv-document
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { postJson } from "@/backend/client/api";
 import type { WorkType } from "@prisma/client";
-import type { CvDraft } from "./types";
+import type { CvDraft, CvTemplateId } from "./types";
 import { getSuggestedSkillsForTitle } from "./profession-skills";
+import {
+  CV_TEMPLATE_CATEGORIES,
+  CV_TEMPLATE_NAMES,
+  CV_TEMPLATE_DESCRIPTIONS,
+  listTemplates,
+  getCategoryForTemplate,
+  normalizeTemplateId,
+} from "@/frontend/components/cv-templates/cv-templates";
 
 const SUGGESTED_LANGUAGES = [
   { name: "Qaraqalpaq tili", level: "Ona tili" },
@@ -16,6 +24,260 @@ const SUGGESTED_LANGUAGES = [
   { name: "Rus tili", level: "B2 - Upper-Intermediate" },
   { name: "Nemis tili", level: "B1 - Intermediate" },
 ];
+
+function TemplateThumbnail({ id }: { id: string }) {
+  if (id === "modern-1") {
+    return (
+      <div className="flex h-full w-full">
+        <div className="w-1/3 bg-[#1C1C1E] p-1.5 flex flex-col items-center gap-1">
+          <div className="h-4 w-4 rounded-full border border-[#F97316] bg-[#2C2C2E]" />
+          <div className="h-1 w-full rounded-full bg-white/20" />
+          <div className="h-1 w-3/4 rounded-full bg-white/20" />
+        </div>
+        <div className="flex-1 p-1.5 space-y-1 bg-white">
+          <div className="h-1.5 w-3/4 rounded-full bg-[#111]" />
+          <div className="h-1 w-1/2 rounded-full bg-[#F97316]" />
+          <div className="h-1 w-full rounded-full bg-muted/30 pt-1" />
+          <div className="h-1 w-4/5 rounded-full bg-muted/20" />
+        </div>
+      </div>
+    );
+  }
+  if (id === "modern-2") {
+    return (
+      <div className="flex h-full w-full flex-col">
+        <div className="h-6 w-full bg-gradient-to-r from-[#EA580C] via-[#F97316] to-[#FB923C] p-1 flex items-center gap-1">
+          <div className="h-4 w-4 rounded bg-white/30" />
+          <div className="h-1.5 w-1/2 rounded-full bg-white" />
+        </div>
+        <div className="grid grid-cols-3 gap-1 p-1 flex-1 bg-white">
+          <div className="col-span-2 space-y-1">
+            <div className="h-1 w-full rounded bg-muted/30" />
+            <div className="h-1 w-3/4 rounded bg-muted/20" />
+          </div>
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded bg-[#FFF1E6]" />
+            <div className="h-1 w-full rounded bg-[#FFF1E6]" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "modern-3") {
+    return (
+      <div className="flex h-full w-full flex-col items-center p-1.5 bg-white space-y-1">
+        <div className="h-4 w-4 rounded-full border-2 border-[#EA580C] bg-[#FFF1E6]" />
+        <div className="h-1.5 w-12 rounded-full bg-[#111]" />
+        <div className="w-full flex gap-1 items-start pt-1">
+          <div className="w-1 h-8 bg-[#FBE3D3] rounded flex items-center justify-center">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#EA580C]" />
+          </div>
+          <div className="flex-1 space-y-1">
+            <div className="h-1 w-full rounded bg-muted/30" />
+            <div className="h-1 w-2/3 rounded bg-muted/20" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "modern-4") {
+    return (
+      <div className="flex h-full w-full">
+        <div className="flex-1 p-1.5 space-y-1 bg-white">
+          <div className="h-2 w-3/4 rounded bg-[#111]" />
+          <div className="h-1 w-8 rounded bg-[#F97316]" />
+          <div className="h-1 w-full rounded bg-muted/30" />
+          <div className="h-1 w-3/4 rounded bg-muted/20" />
+        </div>
+        <div className="w-1/3 bg-[#FFF4EC] p-1.5 flex flex-col items-center gap-1">
+          <div className="h-5 w-5 rounded-lg bg-[#FFE1CC]" />
+          <div className="h-1 w-full rounded bg-[#F97316]/40" />
+        </div>
+      </div>
+    );
+  }
+  if (id === "modern-5") {
+    return (
+      <div className="flex h-full w-full flex-col bg-white">
+        <div className="h-6 w-full bg-[#18181B] p-1 flex justify-between items-center">
+          <div className="h-1.5 w-1/2 rounded bg-[#F97316]" />
+          <div className="h-4 w-4 rounded-full border-2 border-white bg-zinc-800" />
+        </div>
+        <div className="grid grid-cols-2 gap-1 p-1 flex-1">
+          <div className="rounded bg-zinc-100 p-1 space-y-1 border-t-2 border-[#F97316]">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+          <div className="rounded bg-zinc-100 p-1 space-y-1 border-t-2 border-[#F97316]">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "classic-1") {
+    return (
+      <div className="flex h-full w-full flex-col items-center p-1.5 bg-white space-y-1">
+        <div className="h-1.5 w-16 rounded bg-[#1E3A8A]" />
+        <div className="h-0.5 w-full bg-[#1E3A8A]" />
+        <div className="w-full space-y-1 pt-0.5">
+          <div className="h-1 w-full rounded bg-zinc-400" />
+          <div className="h-1 w-4/5 rounded bg-zinc-300" />
+          <div className="h-1 w-2/3 rounded bg-zinc-300" />
+        </div>
+      </div>
+    );
+  }
+  if (id === "classic-2") {
+    return (
+      <div className="flex h-full w-full">
+        <div className="w-1/3 bg-[#1E3A8A] p-1.5 flex flex-col items-center gap-1">
+          <div className="h-4 w-4 rounded-full border-2 border-white bg-[#3554B0]" />
+          <div className="h-1 w-full rounded bg-white/40" />
+          <div className="h-1 w-2/3 rounded bg-white/30" />
+        </div>
+        <div className="flex-1 p-1.5 space-y-1 bg-white">
+          <div className="h-1.5 w-3/4 rounded bg-[#1E3A8A]" />
+          <div className="h-1 w-full rounded bg-muted/40" />
+          <div className="h-1 w-4/5 rounded bg-muted/30" />
+        </div>
+      </div>
+    );
+  }
+  if (id === "classic-3") {
+    return (
+      <div className="flex h-full w-full flex-col bg-white">
+        <div className="h-6 w-full bg-[#172554] p-1 flex items-center justify-between">
+          <div className="h-1.5 w-1/2 rounded bg-white" />
+          <div className="h-3 w-3 rounded border border-[#C9A227] bg-[#1E3A8A]" />
+        </div>
+        <div className="h-0.5 w-full bg-[#C9A227]" />
+        <div className="grid grid-cols-3 gap-1 p-1 flex-1">
+          <div className="col-span-2 space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-400" />
+            <div className="h-1 w-3/4 rounded bg-zinc-300" />
+          </div>
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-200" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "classic-4") {
+    return (
+      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
+        <div className="border-b-2 border-double border-[#1E3A8A] pb-0.5 flex justify-between">
+          <div className="h-1.5 w-12 rounded bg-[#1E3A8A]" />
+          <div className="h-1 w-6 rounded bg-zinc-400" />
+        </div>
+        <div className="grid grid-cols-3 gap-1 pt-1">
+          <div className="h-1.5 w-6 rounded bg-[#1E3A8A]" />
+          <div className="col-span-2 space-y-0.5">
+            <div className="h-1 w-full rounded bg-zinc-400" />
+            <div className="h-1 w-3/4 rounded bg-zinc-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "classic-5") {
+    return (
+      <div className="h-full w-full p-1 bg-white">
+        <div className="h-full w-full border border-double border-[#1E3A8A] p-1 flex flex-col items-center space-y-1">
+          <div className="h-3 w-3 rounded-full border border-[#1E3A8A]" />
+          <div className="h-1 w-10 rounded bg-[#1E3A8A]" />
+          <div className="h-0.5 w-12 bg-zinc-300" />
+          <div className="grid grid-cols-2 gap-1 w-full">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "minimal-1") {
+    return (
+      <div className="flex h-full w-full flex-col p-2 bg-white space-y-1.5">
+        <div className="h-2 w-16 rounded bg-zinc-900" />
+        <div className="h-1 w-10 rounded bg-zinc-400" />
+        <div className="space-y-1 pt-1 border-t border-zinc-200">
+          <div className="h-1 w-full rounded bg-zinc-300" />
+          <div className="h-1 w-3/4 rounded bg-zinc-200" />
+        </div>
+      </div>
+    );
+  }
+  if (id === "minimal-2") {
+    return (
+      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
+        <div className="flex justify-between items-center pb-1 border-b border-zinc-300">
+          <div className="h-1.5 w-12 rounded bg-zinc-900" />
+          <div className="h-3 w-3 rounded bg-zinc-200" />
+        </div>
+        <div className="grid grid-cols-3 gap-1 pt-0.5">
+          <div className="h-1 w-6 rounded bg-zinc-500" />
+          <div className="col-span-2 space-y-0.5">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "minimal-3") {
+    return (
+      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
+        <div className="h-1.5 w-14 rounded bg-zinc-900" />
+        <div className="h-1 w-8 rounded bg-zinc-500" />
+        <div className="grid grid-cols-3 gap-1 pt-1 border-t border-zinc-200">
+          <div className="col-span-2 space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+          <div className="border-l border-zinc-200 pl-1 space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-200" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (id === "minimal-4") {
+    return (
+      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
+        <div className="border-b-2 border-black pb-1 flex justify-between items-end">
+          <div className="h-3 w-16 rounded bg-black" />
+          <div className="h-1 w-6 rounded bg-zinc-500" />
+        </div>
+        <div className="grid grid-cols-3 gap-1 pt-0.5">
+          <div className="col-span-2 space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-400" />
+          </div>
+          <div className="space-y-1">
+            <div className="h-1 w-full rounded bg-zinc-300" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-full w-full flex-col p-1.5 bg-white items-center space-y-1">
+      <div className="h-1.5 w-12 rounded bg-zinc-900" />
+      <div className="h-0.5 w-full bg-zinc-300" />
+      <div className="grid grid-cols-3 gap-1 w-full pt-0.5">
+        <div className="space-y-0.5">
+          <div className="h-1 w-full rounded bg-zinc-300" />
+          <div className="h-1 w-2/3 rounded bg-zinc-200" />
+        </div>
+        <div className="space-y-0.5">
+          <div className="h-1 w-full rounded bg-zinc-300" />
+          <div className="h-1 w-2/3 rounded bg-zinc-200" />
+        </div>
+        <div className="space-y-0.5">
+          <div className="h-1 w-full rounded bg-zinc-300" />
+          <div className="h-1 w-2/3 rounded bg-zinc-200" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 type Props = {
   draft: CvDraft;
@@ -44,6 +306,10 @@ export function CvStepBuilder({
   const [generatingAboutMe, setGeneratingAboutMe] = useState(false);
   const [customSkills, setCustomSkills] = useState<string[] | null>(null);
   const [loadingAiSkills, setLoadingAiSkills] = useState(false);
+  const activeTemplateId = normalizeTemplateId(draft.templateId);
+  const [selectedCategory, setSelectedCategory] = useState<"modern" | "classic" | "minimal">(
+    getCategoryForTemplate(activeTemplateId)
+  );
 
   const suggestedSkills = customSkills ?? getSuggestedSkillsForTitle(draft.title);
 
@@ -692,39 +958,72 @@ export function CvStepBuilder({
                   </p>
                 </div>
 
-                {/* Templates Cards */}
-                <div className="space-y-3">
+                {/* 15 Templates Selector: 3 Categories × 5 Templates */}
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-foreground">
-                      {tCv("templates.title")}
-                    </label>
-                    <span className="text-[11px] font-semibold text-muted">
-                      {tCv(`templates.${draft.templateId || "modern"}`)}
+                    <div>
+                      <label className="text-xs font-bold text-foreground">
+                        {tCv("templates.title")}
+                      </label>
+                      <p className="text-[11px] text-muted">
+                        {CV_TEMPLATE_NAMES[activeTemplateId] ?? activeTemplateId} · {selectedCategory.toUpperCase()}
+                      </p>
+                    </div>
+                    <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-[10px] font-bold text-brand">
+                      {CV_TEMPLATE_NAMES[activeTemplateId] || activeTemplateId}
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                    {[
-                      {
-                        id: "modern",
-                        name: tCv("templates.modern"),
-                        desc: tCv("templates.modernDesc"),
-                        color: "#F07A1A",
-                      },
-                      {
-                        id: "classic",
-                        name: tCv("templates.classic"),
-                        desc: tCv("templates.classicDesc"),
-                        color: "#1E3A8A",
-                      },
-                      {
-                        id: "minimal",
-                        name: tCv("templates.minimal"),
-                        desc: tCv("templates.minimalDesc"),
-                        color: "#27272A",
-                      },
-                    ].map((tpl) => {
-                      const isSelected = draft.templateId === tpl.id;
+                  {/* Category Tabs: Modern, Classic, Minimal */}
+                  <div className="flex rounded-xl bg-muted/20 p-1 border border-border/60">
+                    {CV_TEMPLATE_CATEGORIES.map((cat) => {
+                      const isCatActive = selectedCategory === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCategory(cat.id);
+                            if (!activeTemplateId.startsWith(cat.id + "-")) {
+                              onChange({
+                                ...draft,
+                                templateId: `${cat.id}-1` as CvTemplateId,
+                              });
+                            }
+                          }}
+                          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
+                            isCatActive
+                              ? "bg-surface text-foreground shadow-xs border border-border/80"
+                              : "text-muted hover:text-foreground"
+                          }`}
+                        >
+                          <span
+                            className="h-2 w-2 rounded-full"
+                            style={{ backgroundColor: cat.color }}
+                          />
+                          <span>{cat.name}</span>
+                          <span className="text-[10px] opacity-60">(5)</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* 5 Templates Grid for the Selected Category */}
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
+                    {listTemplates(selectedCategory).map((tpl) => {
+                      const isSelected = activeTemplateId === tpl.id;
+                      const langKey = (draft.language as "kk" | "uz" | "ru" | "en") || "uz";
+                      const desc =
+                        CV_TEMPLATE_DESCRIPTIONS[tpl.id]?.[langKey] ||
+                        CV_TEMPLATE_DESCRIPTIONS[tpl.id]?.uz ||
+                        "";
+                      const catColor =
+                        selectedCategory === "modern"
+                          ? "#F97316"
+                          : selectedCategory === "classic"
+                          ? "#1E3A8A"
+                          : "#27272A";
+
                       return (
                         <button
                           key={tpl.id}
@@ -732,83 +1031,38 @@ export function CvStepBuilder({
                           onClick={() =>
                             onChange({
                               ...draft,
-                              templateId: tpl.id as "modern" | "classic" | "minimal",
+                              templateId: tpl.id as CvTemplateId,
                             })
                           }
-                          className={`group relative flex flex-col justify-between rounded-2xl border-2 p-3.5 text-left transition-all ${
+                          className={`group relative flex flex-col justify-between rounded-2xl border-2 p-3 text-left transition-all ${
                             isSelected
                               ? "border-brand bg-brand/5 shadow-md ring-2 ring-brand/30"
                               : "border-border bg-surface hover:border-brand/40"
                           }`}
                         >
                           {isSelected ? (
-                            <div className="absolute top-2.5 right-2.5 rounded-full bg-brand px-2 py-0.5 text-[9px] font-bold text-brand-foreground shadow">
+                            <div className="absolute top-2 right-2 rounded-full bg-brand px-2 py-0.5 text-[9px] font-bold text-brand-foreground shadow">
                               {tCv("templates.selectedBadge")}
                             </div>
                           ) : null}
 
-                          {/* Mini visual template thumbnail */}
-                          <div className="mb-3 flex h-20 w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface shadow-xs">
-                            {tpl.id === "modern" && (
-                              <>
-                                <div className="h-5 w-full bg-brand p-1 flex items-center justify-between">
-                                  <div className="h-1.5 w-12 rounded-full bg-white/90" />
-                                  <div className="h-1.5 w-5 rounded-full bg-white/60" />
-                                </div>
-                                <div className="p-2 space-y-1">
-                                  <div className="h-1 w-full rounded-full bg-muted/40" />
-                                  <div className="h-1 w-4/5 rounded-full bg-muted/30" />
-                                  <div className="pt-1 flex gap-1">
-                                    <div className="h-1.5 w-5 rounded bg-brand/30" />
-                                    <div className="h-1.5 w-5 rounded bg-brand/30" />
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                            {tpl.id === "classic" && (
-                              <div className="p-2 space-y-1.5">
-                                <div className="border-b border-blue-900/40 pb-1 flex items-center justify-between">
-                                  <div className="h-1.5 w-14 rounded-full bg-blue-900" />
-                                  <div className="h-1 w-6 rounded-full bg-blue-800/60" />
-                                </div>
-                                <div className="grid grid-cols-3 gap-1 pt-0.5">
-                                  <div className="h-7 rounded bg-blue-950/20 p-1 space-y-1">
-                                    <div className="h-1 w-full rounded-full bg-blue-900/40" />
-                                  </div>
-                                  <div className="col-span-2 space-y-1">
-                                    <div className="h-1 w-full rounded-full bg-muted/30" />
-                                    <div className="h-1 w-3/4 rounded-full bg-muted/20" />
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                            {tpl.id === "minimal" && (
-                              <div className="p-2 space-y-1.5">
-                                <div className="flex items-center gap-1">
-                                  <div className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
-                                  <div className="h-1.5 w-16 rounded-full bg-zinc-800" />
-                                </div>
-                                <div className="space-y-1 pt-1">
-                                  <div className="h-1 w-full rounded-full bg-zinc-600/30" />
-                                  <div className="h-1 w-4/5 rounded-full bg-zinc-600/20" />
-                                  <div className="h-1 w-2/3 rounded-full bg-zinc-600/20" />
-                                </div>
-                              </div>
-                            )}
+                          {/* Mini visual thumbnail */}
+                          <div className="mb-2.5 flex h-20 w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface shadow-xs">
+                            <TemplateThumbnail id={tpl.id} />
                           </div>
 
                           <div>
                             <div className="flex items-center gap-1.5">
                               <div
-                                className="h-2.5 w-2.5 rounded-full shadow-xs"
-                                style={{ backgroundColor: tpl.color }}
+                                className="h-2 w-2 rounded-full shadow-xs"
+                                style={{ backgroundColor: catColor }}
                               />
                               <span className="text-xs font-bold text-foreground">
                                 {tpl.name}
                               </span>
                             </div>
-                            <p className="mt-1 text-[11px] text-muted leading-tight">
-                              {tpl.desc}
+                            <p className="mt-0.5 text-[10.5px] text-muted leading-tight line-clamp-2">
+                              {desc}
                             </p>
                           </div>
                         </button>
@@ -906,7 +1160,7 @@ export function CvStepBuilder({
                 {t("livePreview")}
               </span>
               <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-bold text-brand">
-                {draft.templateId ?? "modern"}
+                {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
               </span>
             </div>
 

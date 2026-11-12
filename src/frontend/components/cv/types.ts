@@ -2,7 +2,26 @@ import type { CvData } from "@/backend/cv/schema";
 
 export type CvLanguage = "kk" | "uz" | "ru" | "en";
 export type WorkTypeValue = "FULL_TIME" | "PART_TIME" | "REMOTE" | "INTERNSHIP";
-export type CvTemplateId = "modern" | "classic" | "minimal";
+export type CvTemplateId =
+  | "modern"
+  | "classic"
+  | "minimal"
+  | "modern-1"
+  | "modern-2"
+  | "modern-3"
+  | "modern-4"
+  | "modern-5"
+  | "classic-1"
+  | "classic-2"
+  | "classic-3"
+  | "classic-4"
+  | "classic-5"
+  | "minimal-1"
+  | "minimal-2"
+  | "minimal-3"
+  | "minimal-4"
+  | "minimal-5"
+  | (string & {});
 
 export type CvPrivacyState = {
   hideName: boolean;

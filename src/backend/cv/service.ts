@@ -33,7 +33,7 @@ export const WORK_TYPES = [
 
 export const cvSaveSchema = z.object({
   title: z.string().trim().max(100).optional(),
-  templateId: z.enum(["modern", "classic", "minimal"]).optional(),
+  templateId: z.string().trim().max(50).optional(),
   privacy: z
     .object({
       hideName: z.boolean().optional(),

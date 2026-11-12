@@ -11,7 +11,7 @@ export class GeminiProvider implements AiProvider {
 
   constructor(
     private readonly apiKey: string | undefined,
-    private readonly defaultModel: string = "gemini-2.0-flash",
+    private readonly defaultModel: string = "gemini-2.5-flash",
   ) {}
 
   async generateJson(request: AiJsonRequest): Promise<AiRawResponse> {
@@ -19,7 +19,10 @@ export class GeminiProvider implements AiProvider {
       throw new AiProviderError("AUTH");
     }
 
-    const model = request.model.startsWith("gemini") ? request.model : this.defaultModel;
+    const model =
+      request.model.startsWith("gemini") && request.model !== "gemini-2.0-flash"
+        ? request.model
+        : this.defaultModel;
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
 
     const promptText = `${request.system}\n\nJSON Schema/Instruction:\nReturn ONLY a valid JSON object matching the requested schema.\n\nInput Data:\n${request.input}`;

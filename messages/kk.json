@@ -317,10 +317,14 @@
       "download": "PDF júklep alıw"
     },
     "templates": {
-      "title": "CV shablonı",
-      "modern": "Zamanagóy",
-      "classic": "Klassikalıq",
-      "minimal": "Minimal"
+      "title": "Dizayn shablonı",
+      "modern": "Modern",
+      "modernDesc": "Zamanagóy IT hám startaplar ushın",
+      "classic": "Classic",
+      "classicDesc": "Biznes hám dástúriy tarawlar ushın",
+      "minimal": "Minimal",
+      "minimalDesc": "Yqsham, taza hám anıq dizayn",
+      "selectedBadge": "Saylanǵan"
     },
     "privacy": {
       "title": "Jasırınlıq sazlawları",

@@ -118,13 +118,17 @@ export function CvStepBuilder({
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean);
-      const education = data.education.map((e) => e.institution);
-      const experience = data.experience.map(
-        (e) => `${e.position || ""} at ${e.organization}`,
-      );
+      const education = data.education
+        .map((e) => [e.institution, e.degree, e.field].filter(Boolean).join(" - "))
+        .filter(Boolean);
+      const experience = data.experience
+        .map((e) => [e.position, e.organization, e.description].filter(Boolean).join(" at "))
+        .filter(Boolean);
       const res = await postJson<{ ok: boolean; aboutMe: string }>(
         "/api/cv/ai-about-me",
         {
+          jobTitle: draft.title,
+          fullName: data.fullName,
           skills,
           education,
           experience,
@@ -690,55 +694,144 @@ export function CvStepBuilder({
 
                 {/* Templates Cards */}
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-foreground">
-                    Dizayn shabloni
-                  </label>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-foreground">
+                      {tCv("templates.title")}
+                    </label>
+                    <span className="text-[11px] font-semibold text-muted">
+                      {tCv(`templates.${draft.templateId || "modern"}`)}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     {[
-                      { id: "modern", name: "Modern", color: "#F07A1A" },
-                      { id: "classic", name: "Classic", color: "#1E3A8A" },
-                      { id: "minimal", name: "Minimal", color: "#27272A" },
-                    ].map((tpl) => (
-                      <button
-                        key={tpl.id}
-                        type="button"
-                        onClick={() =>
-                          onChange({
-                            ...draft,
-                            templateId: tpl.id as "modern" | "classic" | "minimal",
-                          })
-                        }
-                        className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3.5 text-center transition-all ${
-                          draft.templateId === tpl.id
-                            ? "border-brand bg-brand/5 shadow-md"
-                            : "border-border bg-surface hover:border-brand/40"
-                        }`}
-                      >
-                        <div
-                          className="h-5 w-5 rounded-full mb-1.5 shadow"
-                          style={{ backgroundColor: tpl.color }}
-                        />
-                        <span className="text-xs font-bold">{tpl.name}</span>
-                      </button>
-                    ))}
+                      {
+                        id: "modern",
+                        name: tCv("templates.modern"),
+                        desc: tCv("templates.modernDesc"),
+                        color: "#F07A1A",
+                      },
+                      {
+                        id: "classic",
+                        name: tCv("templates.classic"),
+                        desc: tCv("templates.classicDesc"),
+                        color: "#1E3A8A",
+                      },
+                      {
+                        id: "minimal",
+                        name: tCv("templates.minimal"),
+                        desc: tCv("templates.minimalDesc"),
+                        color: "#27272A",
+                      },
+                    ].map((tpl) => {
+                      const isSelected = draft.templateId === tpl.id;
+                      return (
+                        <button
+                          key={tpl.id}
+                          type="button"
+                          onClick={() =>
+                            onChange({
+                              ...draft,
+                              templateId: tpl.id as "modern" | "classic" | "minimal",
+                            })
+                          }
+                          className={`group relative flex flex-col justify-between rounded-2xl border-2 p-3.5 text-left transition-all ${
+                            isSelected
+                              ? "border-brand bg-brand/5 shadow-md ring-2 ring-brand/30"
+                              : "border-border bg-surface hover:border-brand/40"
+                          }`}
+                        >
+                          {isSelected ? (
+                            <div className="absolute top-2.5 right-2.5 rounded-full bg-brand px-2 py-0.5 text-[9px] font-bold text-brand-foreground shadow">
+                              {tCv("templates.selectedBadge")}
+                            </div>
+                          ) : null}
+
+                          {/* Mini visual template thumbnail */}
+                          <div className="mb-3 flex h-20 w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface shadow-xs">
+                            {tpl.id === "modern" && (
+                              <>
+                                <div className="h-5 w-full bg-brand p-1 flex items-center justify-between">
+                                  <div className="h-1.5 w-12 rounded-full bg-white/90" />
+                                  <div className="h-1.5 w-5 rounded-full bg-white/60" />
+                                </div>
+                                <div className="p-2 space-y-1">
+                                  <div className="h-1 w-full rounded-full bg-muted/40" />
+                                  <div className="h-1 w-4/5 rounded-full bg-muted/30" />
+                                  <div className="pt-1 flex gap-1">
+                                    <div className="h-1.5 w-5 rounded bg-brand/30" />
+                                    <div className="h-1.5 w-5 rounded bg-brand/30" />
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                            {tpl.id === "classic" && (
+                              <div className="p-2 space-y-1.5">
+                                <div className="border-b border-blue-900/40 pb-1 flex items-center justify-between">
+                                  <div className="h-1.5 w-14 rounded-full bg-blue-900" />
+                                  <div className="h-1 w-6 rounded-full bg-blue-800/60" />
+                                </div>
+                                <div className="grid grid-cols-3 gap-1 pt-0.5">
+                                  <div className="h-7 rounded bg-blue-950/20 p-1 space-y-1">
+                                    <div className="h-1 w-full rounded-full bg-blue-900/40" />
+                                  </div>
+                                  <div className="col-span-2 space-y-1">
+                                    <div className="h-1 w-full rounded-full bg-muted/30" />
+                                    <div className="h-1 w-3/4 rounded-full bg-muted/20" />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                            {tpl.id === "minimal" && (
+                              <div className="p-2 space-y-1.5">
+                                <div className="flex items-center gap-1">
+                                  <div className="h-1.5 w-1.5 rounded-full bg-zinc-700" />
+                                  <div className="h-1.5 w-16 rounded-full bg-zinc-800" />
+                                </div>
+                                <div className="space-y-1 pt-1">
+                                  <div className="h-1 w-full rounded-full bg-zinc-600/30" />
+                                  <div className="h-1 w-4/5 rounded-full bg-zinc-600/20" />
+                                  <div className="h-1 w-2/3 rounded-full bg-zinc-600/20" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div>
+                            <div className="flex items-center gap-1.5">
+                              <div
+                                className="h-2.5 w-2.5 rounded-full shadow-xs"
+                                style={{ backgroundColor: tpl.color }}
+                              />
+                              <span className="text-xs font-bold text-foreground">
+                                {tpl.name}
+                              </span>
+                            </div>
+                            <p className="mt-1 text-[11px] text-muted leading-tight">
+                              {tpl.desc}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
                 {/* Privacy Settings */}
                 <div className="space-y-3 pt-3 border-t border-border/40">
                   <label className="text-xs font-bold text-foreground">
-                    Maxfiylik sozlamalari
+                    {tCv("privacy.title")}
                   </label>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     {[
-                      { key: "hidePhone", label: "Telefonni yashirish" },
-                      { key: "hideEmail", label: "Emailni yashirish" },
-                      { key: "hidePhoto", label: "Rasmni yashirish" },
-                      { key: "hideAddress", label: "Manzilni yashirish" },
+                      { key: "hidePhone", label: tCv("privacy.hidePhone") },
+                      { key: "hideEmail", label: tCv("privacy.hideEmail") },
+                      { key: "hidePhoto", label: tCv("privacy.hidePhoto") },
+                      { key: "hideAddress", label: tCv("privacy.hideAddress") },
                     ].map((item) => (
                       <label
                         key={item.key}
-                        className="flex items-center gap-2 rounded-xl border border-border p-2.5 bg-surface cursor-pointer"
+                        className="flex items-center gap-2 rounded-xl border border-border p-2.5 bg-surface cursor-pointer hover:border-brand/40 transition-colors"
                       >
                         <input
                           type="checkbox"

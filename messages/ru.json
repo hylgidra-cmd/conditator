@@ -317,10 +317,14 @@
       "download": "Скачать PDF"
     },
     "templates": {
-      "title": "Шаблон резюме",
-      "modern": "Современный",
-      "classic": "Классический",
-      "minimal": "Минималистичный"
+      "title": "Шаблон оформления",
+      "modern": "Modern",
+      "modernDesc": "Для IT, стартапов и креатива",
+      "classic": "Classic",
+      "classicDesc": "Для бизнеса и классических сфер",
+      "minimal": "Minimal",
+      "minimalDesc": "Лаконичный, чистый и строгий",
+      "selectedBadge": "Выбран"
     },
     "privacy": {
       "title": "Настройки приватности",

@@ -317,10 +317,14 @@
       "download": "PDF yuklab olish"
     },
     "templates": {
-      "title": "Rezyume shabloni",
-      "modern": "Zamonaviy",
-      "classic": "Klassik",
-      "minimal": "Minimal"
+      "title": "Dizayn shabloni",
+      "modern": "Modern",
+      "modernDesc": "Zamonaviy IT va startaplar uchun",
+      "classic": "Classic",
+      "classicDesc": "Biznes va anʼanaviy sohalar uchun",
+      "minimal": "Minimal",
+      "minimalDesc": "Ixcham, toza va aniq dizayn",
+      "selectedBadge": "Tanlangan"
     },
     "privacy": {
       "title": "Maxfiylik sozlamalari",

@@ -106,34 +106,78 @@ const aboutMeSchema = z.object({
   aboutMe: z.string(),
 });
 
+function fallbackAboutMe(
+  language: Lang,
+  profession: string,
+  skills: string[],
+): string {
+  const skillsStr = skills.slice(0, 5).join(", ");
+  switch (language) {
+    case "kk":
+      return `Men ${profession} baǵdarı boyınsha zamanagóy bilim hám kónlikpelerge iye, óz ústinde turaqlı islewshi hám jańalıqlardı tez ózlestiriwshi qániygemen.${
+        skillsStr ? ` ${skillsStr} sıyaqlı texnologiyalar menen islew tájiriybeme iye bolıp, ` : " "
+      }kompaniyanıń rawajlanıwına óz úlesimdi qosıwǵa hám professional jaqtan rawajlanıwǵa tayınman.`;
+    case "ru":
+      return `Целеустремленный специалист в области ${profession}, обладающий современными знаниями и стремлением к профессиональному росту.${
+        skillsStr ? ` Имею навыки работы с ${skillsStr}. ` : " "
+      }Готов вносить практический вклад в развитие компании и быстро осваивать новые технологии.`;
+    case "en":
+      return `Dedicated and results-oriented ${profession} with a strong foundation in modern industry practices.${
+        skillsStr ? ` Experienced with ${skillsStr}. ` : " "
+      }Eager to contribute effectively to organizational success while continuously expanding technical expertise.`;
+    case "uz":
+    default:
+      return `Men ${profession} yoʻnalishi boʻyicha zamonaviy bilim va koʻnikmalarga ega, oʻz ustida doimiy ishlovchi va yangiliklarni tez oʻzlashtiruvchi mutaxassisman.${
+        skillsStr ? ` ${skillsStr} kabi texnologiyalar bilan ishlashga qiziqaman va ` : " "
+      }kompaniyaning rivojlanishiga oʻz hissamni qoʻshishga hamda professional darajada oʻsishga tayyorman.`;
+  }
+}
+
 export async function generateAboutMe(input: {
-  userId: string;
+  userId?: string;
   language: Lang;
+  jobTitle?: string;
+  fullName?: string;
   skills: string[];
   education?: string[];
   experience?: string[];
 }) {
+  const profession = input.jobTitle?.trim() || "Mutaxassis";
+  const skillsStr = input.skills.join(", ");
+  const eduStr = input.education?.filter(Boolean).join("; ");
+  const expStr = input.experience?.filter(Boolean).join("; ");
+
   const prompt = [
-    `Generate a professional, compelling, and concise "About Me" / career summary paragraph (2-3 sentences) in ${LANGUAGE_NAMES[input.language]}.`,
-    "Candidate skills: " + (input.skills.join(", ") || "General"),
-    input.education?.length ? "Education: " + input.education.join(", ") : "",
-    input.experience?.length
-      ? "Experience: " + input.experience.join(", ")
-      : "",
-    "Highlight strengths, passion for continuous learning, and value to employers.",
+    `Kasbi / Yo'nalishi: "${profession}"`,
+    input.fullName ? `Ismi: "${input.fullName}"` : "",
+    skillsStr ? `Ko'nikmalari: ${skillsStr}` : "",
+    eduStr ? `Ta'limi: ${eduStr}` : "",
+    expStr ? `Ish tajribasi: ${expStr}` : "Hozircha rasmiy ish tajribasi yo'q (talaba / yosh mutaxassis)",
+    "",
+    `Ko'rsatma: Ushbu nomzodning kiritilgan kasbi ("${profession}"), ko'nikmalari, ta'limi va tajribasi asosida uning CV (rezyume) si uchun 2-3 ta ixcham, professional va mazmunli jumlalardan iborat "O'zi haqida qisqacha ma'lumot" (Career summary / About me) matnini ${LANGUAGE_NAMES[input.language]}da yozing.`,
+    "Birinchi shaxs nomidan yozilsin (masalan: 'Men ... sohasida ...').",
+    "Faqat JSON formatida qaytaring: {\"aboutMe\": \"...\"}.",
   ]
     .filter(Boolean)
     .join("\n");
 
-  const result = await runJsonTask({
-    task: "CV_GEN",
-    system:
-      "You write concise, compelling professional summaries for job seeker CVs. Return JSON with key aboutMe.",
-    input: prompt,
-    schema: aboutMeSchema,
-    maxTokens: 500,
-    userId: input.userId,
-  });
+  try {
+    const result = await runJsonTask({
+      task: "CV_GEN",
+      system:
+        "You write concise, compelling professional summaries for job seeker CVs based on their exact profile. Return JSON with key aboutMe.",
+      input: prompt,
+      schema: aboutMeSchema,
+      maxTokens: 500,
+      userId: input.userId,
+    });
 
-  return result.aboutMe;
+    if (result.aboutMe && result.aboutMe.trim().length > 15) {
+      return result.aboutMe.trim();
+    }
+  } catch (err) {
+    console.warn("AI generation failed, using intelligent template fallback:", err);
+  }
+
+  return fallbackAboutMe(input.language, profession, input.skills);
 }

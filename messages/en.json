@@ -317,10 +317,14 @@
       "download": "Download PDF"
     },
     "templates": {
-      "title": "CV Template",
+      "title": "Design template",
       "modern": "Modern",
+      "modernDesc": "Best for IT, tech & startups",
       "classic": "Classic",
-      "minimal": "Minimal"
+      "classicDesc": "Best for business & formal roles",
+      "minimal": "Minimal",
+      "minimalDesc": "Clean, concise & distraction-free",
+      "selectedBadge": "Selected"
     },
     "privacy": {
       "title": "Privacy Settings",

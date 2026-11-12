@@ -12,11 +12,13 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { skills, education, experience, language } = body;
+    const { skills, education, experience, language, jobTitle, fullName } = body;
 
     const aboutMe = await generateAboutMe({
       userId: user.id,
       language: (language as Lang) || (user.locale as Lang) || "uz",
+      jobTitle: typeof jobTitle === "string" ? jobTitle : undefined,
+      fullName: typeof fullName === "string" ? fullName : undefined,
       skills: Array.isArray(skills) ? skills : [],
       education: Array.isArray(education) ? education : [],
       experience: Array.isArray(experience) ? experience : [],

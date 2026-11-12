@@ -28,11 +28,19 @@ export function CvDocument({
   const customLabels = {
     ...defaultLabels,
     ...(labels?.sections?.profile ? { about: labels.sections.profile } : {}),
-    ...(labels?.sections?.experience ? { experience: labels.sections.experience } : {}),
-    ...(labels?.sections?.education ? { education: labels.sections.education } : {}),
+    ...(labels?.sections?.experience
+      ? { experience: labels.sections.experience }
+      : {}),
+    ...(labels?.sections?.education
+      ? { education: labels.sections.education }
+      : {}),
     ...(labels?.sections?.skills ? { skills: labels.sections.skills } : {}),
-    ...(labels?.sections?.languages ? { languages: labels.sections.languages } : {}),
-    ...(labels?.sections?.certificates ? { certificates: labels.sections.certificates } : {}),
+    ...(labels?.sections?.languages
+      ? { languages: labels.sections.languages }
+      : {}),
+    ...(labels?.sections?.certificates
+      ? { certificates: labels.sections.certificates }
+      : {}),
   };
 
   const html = renderCvTemplate(normalizedId, templateData, {
@@ -40,7 +48,7 @@ export function CvDocument({
   });
 
   return (
-    <div className="cv-document-container w-full overflow-x-auto flex justify-center">
+    <div className="cv-document-container flex w-full justify-center overflow-x-auto">
       <style dangerouslySetInnerHTML={{ __html: CV_TEMPLATES_CSS }} />
       <div dangerouslySetInnerHTML={{ __html: html }} />
     </div>

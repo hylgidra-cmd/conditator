@@ -28,7 +28,17 @@ type ProfessionRule = {
 export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   // 1. Frontend
   {
-    keywords: ["frontend", "front-end", "front end", "react", "vue", "angular", "html", "css", "web dasturchi"],
+    keywords: [
+      "frontend",
+      "front-end",
+      "front end",
+      "react",
+      "vue",
+      "angular",
+      "html",
+      "css",
+      "web dasturchi",
+    ],
     skills: [
       "HTML5",
       "CSS3",
@@ -48,7 +58,20 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 2. Backend
   {
-    keywords: ["backend", "back-end", "back end", "node", "django", "fastapi", "spring", "nest", "laravel", "php", "golang", "go dasturchi"],
+    keywords: [
+      "backend",
+      "back-end",
+      "back end",
+      "node",
+      "django",
+      "fastapi",
+      "spring",
+      "nest",
+      "laravel",
+      "php",
+      "golang",
+      "go dasturchi",
+    ],
     skills: [
       "Node.js",
       "Express.js",
@@ -87,7 +110,17 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 4. Mobile (Flutter, React Native, iOS, Android)
   {
-    keywords: ["mobile", "mobil", "flutter", "android", "ios", "react native", "swift", "kotlin", "dart"],
+    keywords: [
+      "mobile",
+      "mobil",
+      "flutter",
+      "android",
+      "ios",
+      "react native",
+      "swift",
+      "kotlin",
+      "dart",
+    ],
     skills: [
       "Flutter",
       "Dart",
@@ -105,7 +138,18 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 5. Dizayn (UI/UX, Grafik, 3D, Web design)
   {
-    keywords: ["dizayn", "design", "ui", "ux", "grafik", "illustrator", "photoshop", "figma", "3d", "art"],
+    keywords: [
+      "dizayn",
+      "design",
+      "ui",
+      "ux",
+      "grafik",
+      "illustrator",
+      "photoshop",
+      "figma",
+      "3d",
+      "art",
+    ],
     skills: [
       "Figma",
       "UI/UX Design",
@@ -140,7 +184,16 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 7. DevOps & System Administration
   {
-    keywords: ["devops", "cloud", "admin", "administrator", "linux", "aws", "infrastructure", "server"],
+    keywords: [
+      "devops",
+      "cloud",
+      "admin",
+      "administrator",
+      "linux",
+      "aws",
+      "infrastructure",
+      "server",
+    ],
     skills: [
       "Linux (Ubuntu, CentOS)",
       "Docker",
@@ -157,7 +210,16 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 8. Data Science, Data Analytics & AI
   {
-    keywords: ["data", "sun'iy intellekt", "ai", "machine learning", "ml", "analitik", "analytics", "tahlil"],
+    keywords: [
+      "data",
+      "sun'iy intellekt",
+      "ai",
+      "machine learning",
+      "ml",
+      "analitik",
+      "analytics",
+      "tahlil",
+    ],
     skills: [
       "Python",
       "SQL",
@@ -175,7 +237,14 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 9. Kiberxavfsizlik (Cybersecurity)
   {
-    keywords: ["kiber", "cyber", "xavfsizlik", "security", "axborot xavfsizligi", "pentest"],
+    keywords: [
+      "kiber",
+      "cyber",
+      "xavfsizlik",
+      "security",
+      "axborot xavfsizligi",
+      "pentest",
+    ],
     skills: [
       "Network Security",
       "Penetration Testing",
@@ -192,7 +261,17 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 10. Buxgalteriya & Moliya
   {
-    keywords: ["buxgalter", "moliya", "iqtisod", "hisobchi", "auditor", "bank", "kassir", "finance", "accounting"],
+    keywords: [
+      "buxgalter",
+      "moliya",
+      "iqtisod",
+      "hisobchi",
+      "auditor",
+      "bank",
+      "kassir",
+      "finance",
+      "accounting",
+    ],
     skills: [
       "1C: Korxona 8.3",
       "Buxgalteriya hisobi",
@@ -208,7 +287,17 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 11. Marketing, SMM & Reklama
   {
-    keywords: ["marketing", "smm", "target", "reklama", "kopirayter", "seo", "kontent", "media", "pr"],
+    keywords: [
+      "marketing",
+      "smm",
+      "target",
+      "reklama",
+      "kopirayter",
+      "seo",
+      "kontent",
+      "media",
+      "pr",
+    ],
     skills: [
       "SMM (Instagram, Telegram)",
       "Targeting reklama (Facebook Ads)",
@@ -224,7 +313,16 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 12. Sotuv & Savdo (Sales)
   {
-    keywords: ["sales", "sotuv", "savdo", "menejer", "operator", "call center", "kassir", "savdo agenti"],
+    keywords: [
+      "sales",
+      "sotuv",
+      "savdo",
+      "menejer",
+      "operator",
+      "call center",
+      "kassir",
+      "savdo agenti",
+    ],
     skills: [
       "B2B va B2C Savdo",
       "Muzokara olib borish",
@@ -239,7 +337,14 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 13. HR & Rekruting
   {
-    keywords: ["hr", "rekruter", "kadr", "xodimlar", "recruitment", "human resources"],
+    keywords: [
+      "hr",
+      "rekruter",
+      "kadr",
+      "xodimlar",
+      "recruitment",
+      "human resources",
+    ],
     skills: [
       "Nomzodlarni saralash (Sourcing)",
       "Intervyu va suhbat o'tkazish",
@@ -253,7 +358,16 @@ export const PROFESSION_SKILLS_MAP: ProfessionRule[] = [
   },
   // 14. O'qituvchi / Ta'lim / Tarjimon
   {
-    keywords: ["o'qituvchi", "ustoz", "muallim", "pedagog", "tarjimon", "repetitor", "ingliz tili", "matematika"],
+    keywords: [
+      "o'qituvchi",
+      "ustoz",
+      "muallim",
+      "pedagog",
+      "tarjimon",
+      "repetitor",
+      "ingliz tili",
+      "matematika",
+    ],
     skills: [
       "Dars berish metodikasi",
       "Pedagogik mahorat",

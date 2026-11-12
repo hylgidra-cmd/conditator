@@ -24,50 +24,66 @@
  *   CVTemplates.FONTS_URL                     -> Google Fonts havolasi (ixtiyoriy)
  */
 (function (root, factory) {
-  if (typeof module === 'object' && module.exports) module.exports = factory();
+  if (typeof module === "object" && module.exports) module.exports = factory();
   else root.CVTemplates = factory();
-})(typeof self !== 'undefined' ? self : this, function () {
-  'use strict';
+})(typeof self !== "undefined" ? self : this, function () {
+  "use strict";
 
   /* ------------------------------------------------------------------ */
   /*  Sozlamalar                                                         */
   /* ------------------------------------------------------------------ */
   const LABELS = {
-    contact: 'Aloqa',
-    about: 'Haqimda',
-    experience: 'Ish tajribasi',
+    contact: "Aloqa",
+    about: "Haqimda",
+    experience: "Ish tajribasi",
     education: "Ta'lim",
     skills: "Ko'nikmalar",
-    languages: 'Tillar',
-    certificates: 'Sertifikatlar',
-    projects: 'Loyihalar',
-    hobbies: 'Qiziqishlar',
-    present: 'Hozirgacha',
+    languages: "Tillar",
+    certificates: "Sertifikatlar",
+    projects: "Loyihalar",
+    hobbies: "Qiziqishlar",
+    present: "Hozirgacha",
   };
 
   const FONTS_URL =
-    'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap';
+    "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap";
 
   /* ------------------------------------------------------------------ */
   /*  Yordamchilar                                                       */
   /* ------------------------------------------------------------------ */
-  const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-  const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (ch) => ESC[ch]);
+  const ESC = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  const esc = (v) =>
+    String(v == null ? "" : v).replace(/[&<>"']/g, (ch) => ESC[ch]);
   const arr = (v) => (Array.isArray(v) ? v.filter(Boolean) : []);
-  const join = (a, s = ' · ') => a.filter(Boolean).map(esc).join(s);
+  const join = (a, s = " · ") => a.filter(Boolean).map(esc).join(s);
 
   // Matn: "- " bilan boshlangan qatorlar ro'yxatga aylanadi, qolgani <br>
   function rich(t) {
-    if (!t) return '';
-    const lines = String(t).split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    if (!t) return "";
+    const lines = String(t)
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter(Boolean);
     const isBullet = (l) => /^[-•*]\s+/.test(l);
     if (lines.length && lines.every(isBullet))
-      return '<ul>' + lines.map((l) => '<li>' + esc(l.replace(/^[-•*]\s+/, '')) + '</li>').join('') + '</ul>';
-    return lines.map(esc).join('<br>');
+      return (
+        "<ul>" +
+        lines
+          .map((l) => "<li>" + esc(l.replace(/^[-•*]\s+/, "")) + "</li>")
+          .join("") +
+        "</ul>"
+      );
+    return lines.map(esc).join("<br>");
   }
 
   function levelPct(v) {
-    if (v === '' || v == null) return null;
+    if (v === "" || v == null) return null;
     const n = Number(v);
     if (!isNaN(n)) return Math.max(0, Math.min(100, n <= 5 ? n * 20 : n));
     const s = String(v).toLowerCase().trim();
@@ -83,44 +99,51 @@
   function norm(d) {
     d = d || {};
     return {
-      fullName: d.fullName || d.full_name || '',
-      position: d.position || d.title || '',
-      photo: d.photo || '',
-      email: d.email || '',
-      phone: d.phone || '',
-      address: d.address || d.location || '',
-      website: d.website || '',
-      linkedin: d.linkedin || '',
-      github: d.github || '',
-      telegram: d.telegram || '',
-      summary: d.summary || d.about || '',
+      fullName: d.fullName || d.full_name || "",
+      position: d.position || d.title || "",
+      photo: d.photo || "",
+      email: d.email || "",
+      phone: d.phone || "",
+      address: d.address || d.location || "",
+      website: d.website || "",
+      linkedin: d.linkedin || "",
+      github: d.github || "",
+      telegram: d.telegram || "",
+      summary: d.summary || d.about || "",
       experience: arr(d.experience),
       education: arr(d.education),
       projects: arr(d.projects),
       certificates: arr(d.certificates),
       skills: arr(d.skills).map((s) =>
-        typeof s === 'string' ? { name: s, level: null } : { name: s.name, level: levelPct(s.level) }
+        typeof s === "string"
+          ? { name: s, level: null }
+          : { name: s.name, level: levelPct(s.level) },
       ),
       languages: arr(d.languages).map((s) =>
-        typeof s === 'string'
-          ? { name: s, level: '', pct: null }
-          : { name: s.name, level: s.level == null ? '' : s.level, pct: levelPct(s.level) }
+        typeof s === "string"
+          ? { name: s, level: "", pct: null }
+          : {
+              name: s.name,
+              level: s.level == null ? "" : s.level,
+              pct: levelPct(s.level),
+            },
       ),
-      hobbies: arr(d.hobbies).map((h) => (typeof h === 'string' ? h : h.name)),
+      hobbies: arr(d.hobbies).map((h) => (typeof h === "string" ? h : h.name)),
     };
   }
 
   function period(x, L) {
-    const s = x.start || x.start_date || x.from || '';
-    let e = x.end || x.end_date || x.to || '';
+    const s = x.start || x.start_date || x.from || "";
+    let e = x.end || x.end_date || x.to || "";
     if (!e && (x.current || s)) e = L.present;
-    if (s || e) return [s, e].filter(Boolean).map(esc).join(' — ');
-    return esc(x.year || x.date || '');
+    if (s || e) return [s, e].filter(Boolean).map(esc).join(" — ");
+    return esc(x.year || x.date || "");
   }
 
   const ICONS = {
     mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
-    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    phone:
+      '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>',
     pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
     web: '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
     in: '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" r="2"/>',
@@ -129,85 +152,177 @@
   };
   const ico = (n) =>
     '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
-    ICONS[n] + '</svg>';
+    ICONS[n] +
+    "</svg>";
 
   const initials = (n) =>
-    String(n || '').trim().split(/\s+/).slice(0, 2).map((w) => w[0] || '').join('').toUpperCase();
+    String(n || "")
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0] || "")
+      .join("")
+      .toUpperCase();
 
   const photo = (d) =>
-    d.photo ? `<img class="ph" src="${esc(d.photo)}" alt="">` : `<div class="ph">${esc(initials(d.fullName))}</div>`;
+    d.photo
+      ? `<img class="ph" src="${esc(d.photo)}" alt="">`
+      : `<div class="ph">${esc(initials(d.fullName))}</div>`;
 
-  const sec = (t, b, cls = '') =>
-    b ? `<section class="s ${cls}"><h3 class="s-t">${esc(t)}</h3><div class="s-b">${b}</div></section>` : '';
+  const sec = (t, b, cls = "") =>
+    b
+      ? `<section class="s ${cls}"><h3 class="s-t">${esc(t)}</h3><div class="s-b">${b}</div></section>`
+      : "";
 
-  function items(list, mode = '') {
-    if (!list.length) return '';
-    const row = mode.split(' ').includes('row');
+  function items(list, mode = "") {
+    if (!list.length) return "";
+    const row = mode.split(" ").includes("row");
     return (
       `<div class="items ${mode}">` +
       list
         .map((i) => {
-          const t = i.t ? `<div class="it-t">${esc(i.t)}</div>` : '';
-          const s = i.s ? `<div class="it-s">${i.s}</div>` : '';
-          const x = i.x ? `<div class="it-x">${rich(i.x)}</div>` : '';
-          const d = `<div class="it-d">${i.d || ''}</div>`;
+          const t = i.t ? `<div class="it-t">${esc(i.t)}</div>` : "";
+          const s = i.s ? `<div class="it-s">${i.s}</div>` : "";
+          const x = i.x ? `<div class="it-x">${rich(i.x)}</div>` : "";
+          const d = `<div class="it-d">${i.d || ""}</div>`;
           return row
             ? `<div class="it">${d}<div class="it-b">${t}${s}${x}</div></div>`
-            : `<div class="it"><div class="it-h">${t}${i.d ? d : ''}</div>${s}${x}</div>`;
+            : `<div class="it"><div class="it-h">${t}${i.d ? d : ""}</div>${s}${x}</div>`;
         })
-        .join('') +
-      '</div>'
+        .join("") +
+      "</div>"
     );
   }
 
   const dots = (p) =>
-    '<span class="dots">' + [1, 2, 3, 4, 5].map((i) => `<i class="${i * 20 <= p + 10 ? 'on' : ''}"></i>`).join('') + '</span>';
+    '<span class="dots">' +
+    [1, 2, 3, 4, 5]
+      .map((i) => `<i class="${i * 20 <= p + 10 ? "on" : ""}"></i>`)
+      .join("") +
+    "</span>";
 
   function skills(list, mode) {
-    if (!list.length) return '';
+    if (!list.length) return "";
     switch (mode) {
-      case 'bars':
-        return '<div class="sks">' + list.map((s) =>
-          `<div class="sk"><div class="sk-n">${esc(s.name)}</div>${s.level != null ? `<div class="bar"><i style="width:${s.level}%"></i></div>` : ''}</div>`
-        ).join('') + '</div>';
-      case 'dots':
-        return '<div class="sks">' + list.map((s) =>
-          `<div class="sk-r"><span>${esc(s.name)}</span>${s.level != null ? dots(s.level) : ''}</div>`
-        ).join('') + '</div>';
-      case 'chips':
-        return '<div class="chips">' + list.map((s) => `<span class="chip">${esc(s.name)}</span>`).join('') + '</div>';
-      case 'cols':
-        return '<ul class="cols3">' + list.map((s) => `<li>${esc(s.name)}</li>`).join('') + '</ul>';
+      case "bars":
+        return (
+          '<div class="sks">' +
+          list
+            .map(
+              (s) =>
+                `<div class="sk"><div class="sk-n">${esc(s.name)}</div>${s.level != null ? `<div class="bar"><i style="width:${s.level}%"></i></div>` : ""}</div>`,
+            )
+            .join("") +
+          "</div>"
+        );
+      case "dots":
+        return (
+          '<div class="sks">' +
+          list
+            .map(
+              (s) =>
+                `<div class="sk-r"><span>${esc(s.name)}</span>${s.level != null ? dots(s.level) : ""}</div>`,
+            )
+            .join("") +
+          "</div>"
+        );
+      case "chips":
+        return (
+          '<div class="chips">' +
+          list.map((s) => `<span class="chip">${esc(s.name)}</span>`).join("") +
+          "</div>"
+        );
+      case "cols":
+        return (
+          '<ul class="cols3">' +
+          list.map((s) => `<li>${esc(s.name)}</li>`).join("") +
+          "</ul>"
+        );
       default:
-        return `<p class="inl">${list.map((s) => esc(s.name)).join(' · ')}</p>`;
+        return `<p class="inl">${list.map((s) => esc(s.name)).join(" · ")}</p>`;
     }
   }
 
   function langs(list, mode) {
-    if (!list.length) return '';
-    const lv = (l) => (l.level !== '' && isNaN(Number(l.level)) ? esc(l.level) : '');
-    if (mode === 'bars')
-      return skills(list.map((l) => ({ name: l.name + (lv(l) ? ' — ' + l.level : ''), level: l.pct })), 'bars');
-    if (mode === 'dots')
-      return '<div class="sks">' + list.map((l) =>
-        `<div class="sk-r"><span>${esc(l.name)}</span>${l.pct != null ? dots(l.pct) : `<span class="lv">${lv(l)}</span>`}</div>`
-      ).join('') + '</div>';
-    if (mode === 'inline')
-      return `<p class="inl">${list.map((l) => esc(l.name) + (lv(l) ? ` (${lv(l)})` : '')).join(' · ')}</p>`;
-    return '<div class="sks">' + list.map((l) =>
-      `<div class="sk-r"><span>${esc(l.name)}</span><span class="lv">${lv(l)}</span></div>`
-    ).join('') + '</div>';
+    if (!list.length) return "";
+    const lv = (l) =>
+      l.level !== "" && isNaN(Number(l.level)) ? esc(l.level) : "";
+    if (mode === "bars")
+      return skills(
+        list.map((l) => ({
+          name: l.name + (lv(l) ? " — " + l.level : ""),
+          level: l.pct,
+        })),
+        "bars",
+      );
+    if (mode === "dots")
+      return (
+        '<div class="sks">' +
+        list
+          .map(
+            (l) =>
+              `<div class="sk-r"><span>${esc(l.name)}</span>${l.pct != null ? dots(l.pct) : `<span class="lv">${lv(l)}</span>`}</div>`,
+          )
+          .join("") +
+        "</div>"
+      );
+    if (mode === "inline")
+      return `<p class="inl">${list.map((l) => esc(l.name) + (lv(l) ? ` (${lv(l)})` : "")).join(" · ")}</p>`;
+    return (
+      '<div class="sks">' +
+      list
+        .map(
+          (l) =>
+            `<div class="sk-r"><span>${esc(l.name)}</span><span class="lv">${lv(l)}</span></div>`,
+        )
+        .join("") +
+      "</div>"
+    );
   }
 
   function contacts(d, mode) {
-    const c = [['mail', d.email], ['phone', d.phone], ['pin', d.address], ['web', d.website],
-      ['in', d.linkedin], ['gh', d.github], ['tg', d.telegram]].filter((x) => x[1]);
-    if (!c.length) return '';
-    if (mode === 'text') return '<div class="cts">' + c.map((x) => `<span class="ct">${esc(x[1])}</span>`).join('') + '</div>';
-    if (mode === 'lines') return '<div class="cts">' + c.map((x) => `<div class="ct">${esc(x[1])}</div>`).join('') + '</div>';
-    if (mode === 'iconsInline')
-      return '<div class="cts">' + c.map((x) => `<span class="ct">${ico(x[0])}<span>${esc(x[1])}</span></span>`).join('') + '</div>';
-    return '<div class="cts">' + c.map((x) => `<div class="ct">${ico(x[0])}<span>${esc(x[1])}</span></div>`).join('') + '</div>';
+    const c = [
+      ["mail", d.email],
+      ["phone", d.phone],
+      ["pin", d.address],
+      ["web", d.website],
+      ["in", d.linkedin],
+      ["gh", d.github],
+      ["tg", d.telegram],
+    ].filter((x) => x[1]);
+    if (!c.length) return "";
+    if (mode === "text")
+      return (
+        '<div class="cts">' +
+        c.map((x) => `<span class="ct">${esc(x[1])}</span>`).join("") +
+        "</div>"
+      );
+    if (mode === "lines")
+      return (
+        '<div class="cts">' +
+        c.map((x) => `<div class="ct">${esc(x[1])}</div>`).join("") +
+        "</div>"
+      );
+    if (mode === "iconsInline")
+      return (
+        '<div class="cts">' +
+        c
+          .map(
+            (x) =>
+              `<span class="ct">${ico(x[0])}<span>${esc(x[1])}</span></span>`,
+          )
+          .join("") +
+        "</div>"
+      );
+    return (
+      '<div class="cts">' +
+      c
+        .map(
+          (x) => `<div class="ct">${ico(x[0])}<span>${esc(x[1])}</span></div>`,
+        )
+        .join("") +
+      "</div>"
+    );
   }
 
   function ctx(raw, opts) {
@@ -216,23 +331,66 @@
     const d = norm(raw);
     const parts = d.fullName.trim().split(/\s+/);
     return {
-      d, L,
+      d,
+      L,
       name: esc(d.fullName),
-      name2: `<span class="n1">${esc(parts[0] || '')}</span> <span class="n2">${esc(parts.slice(1).join(' '))}</span>`,
+      name2: `<span class="n1">${esc(parts[0] || "")}</span> <span class="n2">${esc(parts.slice(1).join(" "))}</span>`,
       pos: esc(d.position),
       ph: photo(d),
       hasPhoto: !!d.photo,
       ini: esc(initials(d.fullName)),
-      sum: () => (d.summary ? `<p class="sum">${rich(d.summary)}</p>` : ''),
-      exp: (m = '') => items(d.experience.map((e) => ({ t: e.position || e.title, s: join([e.company, e.location]), d: period(e, L), x: e.description })), m),
-      edu: (m = '') => items(d.education.map((e) => ({ t: e.degree || e.field, s: join([e.school || e.institution, e.location]), d: period(e, L), x: e.description })), m),
-      prj: (m = '') => items(d.projects.map((p) => ({ t: p.name, s: esc(p.link || ''), d: esc(p.year || ''), x: p.description })), m),
-      crt: (m = '') => items(d.certificates.map((x) => ({ t: x.name, s: esc(x.issuer || ''), d: esc(x.year || x.date || '') })), m),
+      sum: () => (d.summary ? `<p class="sum">${rich(d.summary)}</p>` : ""),
+      exp: (m = "") =>
+        items(
+          d.experience.map((e) => ({
+            t: e.position || e.title,
+            s: join([e.company, e.location]),
+            d: period(e, L),
+            x: e.description,
+          })),
+          m,
+        ),
+      edu: (m = "") =>
+        items(
+          d.education.map((e) => ({
+            t: e.degree || e.field,
+            s: join([e.school || e.institution, e.location]),
+            d: period(e, L),
+            x: e.description,
+          })),
+          m,
+        ),
+      prj: (m = "") =>
+        items(
+          d.projects.map((p) => ({
+            t: p.name,
+            s: esc(p.link || ""),
+            d: esc(p.year || ""),
+            x: p.description,
+          })),
+          m,
+        ),
+      crt: (m = "") =>
+        items(
+          d.certificates.map((x) => ({
+            t: x.name,
+            s: esc(x.issuer || ""),
+            d: esc(x.year || x.date || ""),
+          })),
+          m,
+        ),
       sk: (m) => skills(d.skills, m),
       lg: (m) => langs(d.languages, m),
-      hb: (m) => !d.hobbies.length ? '' : m === 'chips'
-        ? '<div class="chips">' + d.hobbies.map((h) => `<span class="chip">${esc(h)}</span>`).join('') + '</div>'
-        : `<p class="inl">${d.hobbies.map(esc).join(' · ')}</p>`,
+      hb: (m) =>
+        !d.hobbies.length
+          ? ""
+          : m === "chips"
+            ? '<div class="chips">' +
+              d.hobbies
+                .map((h) => `<span class="chip">${esc(h)}</span>`)
+                .join("") +
+              "</div>"
+            : `<p class="inl">${d.hobbies.map(esc).join(" · ")}</p>`,
       ct: (m) => contacts(d, m),
     };
   }
@@ -243,32 +401,32 @@
   const T = {};
 
   // Modern 1 — qora yon panel
-  T['modern-1'] = (c, L = c.L) => `
+  T["modern-1"] = (c, L = c.L) => `
 <div class="cv cv-m1">
   <aside>
     ${c.ph}
-    ${sec(L.contact, c.ct('icons'))}
-    ${sec(L.skills, c.sk('bars'))}
-    ${sec(L.languages, c.lg('bars'))}
-    ${sec(L.hobbies, c.hb('chips'))}
+    ${sec(L.contact, c.ct("icons"))}
+    ${sec(L.skills, c.sk("bars"))}
+    ${sec(L.languages, c.lg("bars"))}
+    ${sec(L.hobbies, c.hb("chips"))}
   </aside>
   <main>
     <header><h1>${c.name}</h1><div class="pos">${c.pos}</div></header>
     ${sec(L.about, c.sum())}
-    ${sec(L.experience, c.exp('tl'))}
-    ${sec(L.education, c.edu('tl'))}
+    ${sec(L.experience, c.exp("tl"))}
+    ${sec(L.education, c.edu("tl"))}
     ${sec(L.projects, c.prj())}
     ${sec(L.certificates, c.crt())}
   </main>
 </div>`;
 
   // Modern 2 — gradient sarlavha
-  T['modern-2'] = (c, L = c.L) => {
-    const cts = c.ct('iconsInline');
+  T["modern-2"] = (c, L = c.L) => {
+    const cts = c.ct("iconsInline");
     return `
 <div class="cv cv-m2">
   <div class="hd">${c.ph}<div><h1>${c.name}</h1><div class="pos">${c.pos}</div></div></div>
-  ${cts ? `<div class="cbar">${cts}</div>` : ''}
+  ${cts ? `<div class="cbar">${cts}</div>` : ""}
   <div class="cols">
     <main>
       ${sec(L.about, c.sum())}
@@ -276,31 +434,31 @@
       ${sec(L.projects, c.prj())}
     </main>
     <aside>
-      ${sec(L.skills, c.sk('chips'))}
+      ${sec(L.skills, c.sk("chips"))}
       ${sec(L.education, c.edu())}
-      ${sec(L.languages, c.lg('dots'))}
+      ${sec(L.languages, c.lg("dots"))}
       ${sec(L.certificates, c.crt())}
-      ${sec(L.hobbies, c.hb('chips'))}
+      ${sec(L.hobbies, c.hb("chips"))}
     </aside>
   </div>
 </div>`;
   };
 
   // Modern 3 — markazlashgan, vaqt chizig'i
-  T['modern-3'] = (c, L = c.L) => `
+  T["modern-3"] = (c, L = c.L) => `
 <div class="cv cv-m3">
-  <header class="hd">${c.ph}<h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct('iconsInline')}</header>
+  <header class="hd">${c.ph}<h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("iconsInline")}</header>
   ${c.sum()}
-  ${sec(L.experience, c.exp('row tl'))}
-  ${sec(L.projects, c.prj('row'))}
+  ${sec(L.experience, c.exp("row tl"))}
+  ${sec(L.projects, c.prj("row"))}
   <div class="grid2">
     <div>${sec(L.education, c.edu())}${sec(L.certificates, c.crt())}</div>
-    <div>${sec(L.skills, c.sk('chips'))}${sec(L.languages, c.lg('bars'))}${sec(L.hobbies, c.hb())}</div>
+    <div>${sec(L.skills, c.sk("chips"))}${sec(L.languages, c.lg("bars"))}${sec(L.hobbies, c.hb())}</div>
   </div>
 </div>`;
 
   // Modern 4 — o'ng tomonda och panel
-  T['modern-4'] = (c, L = c.L) => `
+  T["modern-4"] = (c, L = c.L) => `
 <div class="cv cv-m4">
   <main>
     <header><h1>${c.name2}</h1><div class="pos">${c.pos}</div><div class="ln"></div></header>
@@ -311,19 +469,19 @@
   </main>
   <aside>
     ${c.ph}
-    ${sec(L.contact, c.ct('icons'))}
-    ${sec(L.skills, c.sk('dots'))}
-    ${sec(L.languages, c.lg('rows'))}
+    ${sec(L.contact, c.ct("icons"))}
+    ${sec(L.skills, c.sk("dots"))}
+    ${sec(L.languages, c.lg("rows"))}
     ${sec(L.certificates, c.crt())}
-    ${sec(L.hobbies, c.hb('chips'))}
+    ${sec(L.hobbies, c.hb("chips"))}
   </aside>
 </div>`;
 
   // Modern 5 — geometrik sarlavha + kartalar
-  T['modern-5'] = (c, L = c.L) => `
+  T["modern-5"] = (c, L = c.L) => `
 <div class="cv cv-m5">
   <header class="hd">
-    <div class="hd-l"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct('icons')}</div>
+    <div class="hd-l"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("icons")}</div>
     ${c.ph}
   </header>
   <div class="body">
@@ -333,11 +491,11 @@
       ${sec(L.projects, c.prj())}
     </div>
     <div>
-      ${sec(L.skills, c.sk('bars'))}
+      ${sec(L.skills, c.sk("bars"))}
       ${sec(L.education, c.edu())}
-      ${sec(L.languages, c.lg('dots'))}
+      ${sec(L.languages, c.lg("dots"))}
       ${sec(L.certificates, c.crt())}
-      ${sec(L.hobbies, c.hb('chips'))}
+      ${sec(L.hobbies, c.hb("chips"))}
     </div>
   </div>
 </div>`;
@@ -347,28 +505,28 @@
   /* ------------------------------------------------------------------ */
 
   // Classic 1 — an'anaviy, bir ustun
-  T['classic-1'] = (c, L = c.L) => `
+  T["classic-1"] = (c, L = c.L) => `
 <div class="cv cv-c1">
-  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct('text')}</header>
+  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
   ${sec(L.about, c.sum())}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
-  ${sec(L.skills, c.sk('list'))}
-  ${sec(L.languages, c.lg('inline'))}
+  ${sec(L.skills, c.sk("list"))}
+  ${sec(L.languages, c.lg("inline"))}
   ${sec(L.certificates, c.crt())}
   ${sec(L.hobbies, c.hb())}
 </div>`;
 
   // Classic 2 — ko'k yon panel
-  T['classic-2'] = (c, L = c.L) => `
+  T["classic-2"] = (c, L = c.L) => `
 <div class="cv cv-c2">
   <aside>
     ${c.ph}
     <h1>${c.name}</h1><div class="pos">${c.pos}</div>
-    ${sec(L.contact, c.ct('icons'))}
-    ${sec(L.skills, c.sk('bars'))}
-    ${sec(L.languages, c.lg('rows'))}
+    ${sec(L.contact, c.ct("icons"))}
+    ${sec(L.skills, c.sk("bars"))}
+    ${sec(L.languages, c.lg("rows"))}
     ${sec(L.hobbies, c.hb())}
   </aside>
   <main>
@@ -381,11 +539,11 @@
 </div>`;
 
   // Classic 3 — Executive (ko'k + oltin)
-  T['classic-3'] = (c, L = c.L) => `
+  T["classic-3"] = (c, L = c.L) => `
 <div class="cv cv-c3">
   <header class="hd">
     <div class="hd-l">${c.ph}<div><h1>${c.name}</h1><div class="pos">${c.pos}</div></div></div>
-    ${c.ct('icons')}
+    ${c.ct("icons")}
   </header>
   <div class="strip"></div>
   <div class="body">
@@ -396,8 +554,8 @@
     </main>
     <aside>
       ${sec(L.education, c.edu())}
-      ${sec(L.skills, c.sk('dots'))}
-      ${sec(L.languages, c.lg('rows'))}
+      ${sec(L.skills, c.sk("dots"))}
+      ${sec(L.languages, c.lg("rows"))}
       ${sec(L.certificates, c.crt())}
       ${sec(L.hobbies, c.hb())}
     </aside>
@@ -405,31 +563,31 @@
 </div>`;
 
   // Classic 4 — akademik (sarlavhalar chapda)
-  T['classic-4'] = (c, L = c.L) => `
+  T["classic-4"] = (c, L = c.L) => `
 <div class="cv cv-c4">
   <header class="hd">
     <div><h1>${c.name}</h1><div class="pos">${c.pos}</div></div>
-    ${c.ct('lines')}
+    ${c.ct("lines")}
   </header>
   ${sec(L.about, c.sum())}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
-  ${sec(L.skills, c.sk('chips'))}
-  ${sec(L.languages, c.lg('inline'))}
+  ${sec(L.skills, c.sk("chips"))}
+  ${sec(L.languages, c.lg("inline"))}
   ${sec(L.certificates, c.crt())}
   ${sec(L.hobbies, c.hb())}
 </div>`;
 
   // Classic 5 — ramkali, nafis
-  T['classic-5'] = (c, L = c.L) => `
+  T["classic-5"] = (c, L = c.L) => `
 <div class="cv cv-c5">
   <div class="frame">
     <header class="hd">
       ${c.hasPhoto ? c.ph : `<div class="mono">${c.ini}</div>`}
       <h1>${c.name}</h1><div class="pos">${c.pos}</div>
       <div class="orn"><span>&#10070;</span></div>
-      ${c.ct('text')}
+      ${c.ct("text")}
     </header>
     ${c.sum()}
     <div class="body">
@@ -439,8 +597,8 @@
       </div>
       <div>
         ${sec(L.education, c.edu())}
-        ${sec(L.skills, c.sk('dots'))}
-        ${sec(L.languages, c.lg('rows'))}
+        ${sec(L.skills, c.sk("dots"))}
+        ${sec(L.languages, c.lg("rows"))}
         ${sec(L.certificates, c.crt())}
         ${sec(L.hobbies, c.hb())}
       </div>
@@ -453,39 +611,39 @@
   /* ------------------------------------------------------------------ */
 
   // Minimal 1 — toza, bir ustun
-  T['minimal-1'] = (c, L = c.L) => `
+  T["minimal-1"] = (c, L = c.L) => `
 <div class="cv cv-n1">
-  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct('text')}</header>
+  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
   ${sec(L.about, c.sum())}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
-  ${sec(L.skills, c.sk('list'))}
-  ${sec(L.languages, c.lg('inline'))}
+  ${sec(L.skills, c.sk("list"))}
+  ${sec(L.languages, c.lg("inline"))}
   ${sec(L.certificates, c.crt())}
   ${sec(L.hobbies, c.hb())}
 </div>`;
 
   // Minimal 2 — chapda yorliqlar, o'ngda mazmun
-  T['minimal-2'] = (c, L = c.L) => `
+  T["minimal-2"] = (c, L = c.L) => `
 <div class="cv cv-n2">
   <header class="hd">
     <div><h1>${c.name}</h1><div class="pos">${c.pos}</div></div>
-    ${c.hasPhoto ? c.ph : ''}
+    ${c.hasPhoto ? c.ph : ""}
   </header>
-  ${sec(L.contact, c.ct('lines'))}
+  ${sec(L.contact, c.ct("lines"))}
   ${sec(L.about, c.sum())}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
-  ${sec(L.skills, c.sk('chips'))}
-  ${sec(L.languages, c.lg('inline'))}
+  ${sec(L.skills, c.sk("chips"))}
+  ${sec(L.languages, c.lg("inline"))}
   ${sec(L.certificates, c.crt())}
   ${sec(L.hobbies, c.hb())}
 </div>`;
 
   // Minimal 3 — monospace, dasturchi uslubi
-  T['minimal-3'] = (c, L = c.L) => `
+  T["minimal-3"] = (c, L = c.L) => `
 <div class="cv cv-n3">
   <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div></header>
   <div class="body">
@@ -495,10 +653,10 @@
       ${sec(L.projects, c.prj())}
     </main>
     <aside>
-      ${sec(L.contact, c.ct('lines'))}
-      ${sec(L.skills, c.sk('chips'))}
+      ${sec(L.contact, c.ct("lines"))}
+      ${sec(L.skills, c.sk("chips"))}
       ${sec(L.education, c.edu())}
-      ${sec(L.languages, c.lg('rows'))}
+      ${sec(L.languages, c.lg("rows"))}
       ${sec(L.certificates, c.crt())}
       ${sec(L.hobbies, c.hb())}
     </aside>
@@ -506,11 +664,11 @@
 </div>`;
 
   // Minimal 4 — Swiss uslub, katta ism
-  T['minimal-4'] = (c, L = c.L) => `
+  T["minimal-4"] = (c, L = c.L) => `
 <div class="cv cv-n4">
   <header class="hd">
     <h1>${c.name2}</h1>
-    <div class="hd-r"><div class="pos">${c.pos}</div>${c.ct('lines')}</div>
+    <div class="hd-r"><div class="pos">${c.pos}</div>${c.ct("lines")}</div>
   </header>
   <div class="body">
     <main>
@@ -520,8 +678,8 @@
     </main>
     <aside>
       ${sec(L.education, c.edu())}
-      ${sec(L.skills, c.sk('list'))}
-      ${sec(L.languages, c.lg('rows'))}
+      ${sec(L.skills, c.sk("list"))}
+      ${sec(L.languages, c.lg("rows"))}
       ${sec(L.certificates, c.crt())}
       ${sec(L.hobbies, c.hb())}
     </aside>
@@ -529,16 +687,16 @@
 </div>`;
 
   // Minimal 5 — ixcham, bir sahifaga sig'adigan
-  T['minimal-5'] = (c, L = c.L) => `
+  T["minimal-5"] = (c, L = c.L) => `
 <div class="cv cv-n5">
-  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct('text')}</header>
+  <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
   ${sec(L.about, c.sum())}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
-  ${sec(L.skills, c.sk('cols'))}
+  ${sec(L.skills, c.sk("cols"))}
   ${sec(L.projects, c.prj())}
   <div class="grid2">
-    ${sec(L.languages, c.lg('inline'))}
+    ${sec(L.languages, c.lg("inline"))}
     ${sec(L.certificates, c.crt())}
   </div>
   ${sec(L.hobbies, c.hb())}
@@ -548,7 +706,8 @@
   /*  CSS                                                                */
   /* ------------------------------------------------------------------ */
   const SERIF = "Merriweather,Georgia,'Times New Roman',serif";
-  const MONO = "'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+  const MONO =
+    "'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
 
   const CSS = `
 .cv{width:794px;min-height:1122px;box-sizing:border-box;background:#fff;color:#1f2937;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;line-height:1.5;position:relative;overflow:hidden;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -827,21 +986,37 @@
   /*  Public API                                                         */
   /* ------------------------------------------------------------------ */
   const CATEGORIES = [
-    { id: 'modern', name: 'Modern', color: '#F97316' },
-    { id: 'classic', name: 'Classic', color: '#1E3A8A' },
-    { id: 'minimal', name: 'Minimal', color: '#27272A' },
+    { id: "modern", name: "Modern", color: "#F97316" },
+    { id: "classic", name: "Classic", color: "#1E3A8A" },
+    { id: "minimal", name: "Minimal", color: "#27272A" },
   ];
 
   const NAMES = {
-    'modern-1': 'Sidebar', 'modern-2': 'Gradient', 'modern-3': 'Timeline', 'modern-4': 'Split', 'modern-5': 'Geometric',
-    'classic-1': 'Traditional', 'classic-2': 'Navy', 'classic-3': 'Executive', 'classic-4': 'Academic', 'classic-5': 'Elegant',
-    'minimal-1': 'Clean', 'minimal-2': 'Grid', 'minimal-3': 'Mono', 'minimal-4': 'Swiss', 'minimal-5': 'Compact',
+    "modern-1": "Sidebar",
+    "modern-2": "Gradient",
+    "modern-3": "Timeline",
+    "modern-4": "Split",
+    "modern-5": "Geometric",
+    "classic-1": "Traditional",
+    "classic-2": "Navy",
+    "classic-3": "Executive",
+    "classic-4": "Academic",
+    "classic-5": "Elegant",
+    "minimal-1": "Clean",
+    "minimal-2": "Grid",
+    "minimal-3": "Mono",
+    "minimal-4": "Swiss",
+    "minimal-5": "Compact",
   };
 
   function ensureStyles() {
-    if (typeof document === 'undefined' || document.getElementById('cv-templates-css')) return;
-    const st = document.createElement('style');
-    st.id = 'cv-templates-css';
+    if (
+      typeof document === "undefined" ||
+      document.getElementById("cv-templates-css")
+    )
+      return;
+    const st = document.createElement("style");
+    st.id = "cv-templates-css";
     st.textContent = CSS;
     document.head.appendChild(st);
   }
@@ -850,13 +1025,13 @@
     const tpl = T[id];
     if (!tpl) throw new Error('CVTemplates: "' + id + '" shablon topilmadi');
     ensureStyles();
-    return tpl(ctx(data, opts)).replace(/\n\s*/g, '');
+    return tpl(ctx(data, opts)).replace(/\n\s*/g, "");
   }
 
   function list(category) {
     return Object.keys(T)
-      .filter((id) => !category || id.indexOf(category + '-') === 0)
-      .map((id) => ({ id, category: id.split('-')[0], name: NAMES[id] }));
+      .filter((id) => !category || id.indexOf(category + "-") === 0)
+      .map((id) => ({ id, category: id.split("-")[0], name: NAMES[id] }));
   }
 
   return { render, list, categories: CATEGORIES, CSS, FONTS_URL, LABELS };

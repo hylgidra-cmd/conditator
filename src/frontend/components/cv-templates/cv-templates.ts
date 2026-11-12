@@ -91,7 +91,8 @@ const ESC: Record<string, string> = {
 };
 const esc = (v: unknown): string =>
   String(v == null ? "" : v).replace(/[&<>"']/g, (ch) => ESC[ch] || ch);
-const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v.filter(Boolean) as T[]) : []);
+const arr = <T>(v: unknown): T[] =>
+  Array.isArray(v) ? (v.filter(Boolean) as T[]) : [];
 const join = (a: unknown[], s = " · "): string =>
   a
     .filter(Boolean)
@@ -108,7 +109,9 @@ function rich(t: unknown): string {
   if (lines.length && lines.every(isBullet)) {
     return (
       "<ul>" +
-      lines.map((l) => "<li>" + esc(l.replace(/^[-•*]\s+/, "")) + "</li>").join("") +
+      lines
+        .map((l) => "<li>" + esc(l.replace(/^[-•*]\s+/, "")) + "</li>")
+        .join("") +
       "</ul>"
     );
   }
@@ -120,7 +123,14 @@ function levelPct(v: unknown): number | null {
   const n = Number(v);
   if (!isNaN(n)) return Math.max(0, Math.min(100, n <= 5 ? n * 20 : n));
   const s = String(v).toLowerCase().trim();
-  const cefr: Record<string, number> = { a1: 20, a2: 35, b1: 50, b2: 65, c1: 80, c2: 95 };
+  const cefr: Record<string, number> = {
+    a1: 20,
+    a2: 35,
+    b1: 50,
+    b2: 65,
+    c1: 80,
+    c2: 95,
+  };
   if (cefr[s]) return cefr[s];
   if (/ona|native|родн/.test(s)) return 100;
   if (/yuqori|advanced|fluent|erkin|свобод|высок/.test(s)) return 85;
@@ -243,20 +253,30 @@ function norm(d: RawCvTemplateData | undefined) {
     experience: arr<TemplateExperienceItem>(d.experience),
     education: arr<TemplateEducationItem>(d.education),
     projects: arr<TemplateProjectItem>(d.projects),
-    certificates: arr<TemplateCertificateItem | string>(d.certificates).map((c) =>
-      typeof c === "string" ? { name: c, issuer: "", year: "" } : c
+    certificates: arr<TemplateCertificateItem | string>(d.certificates).map(
+      (c) => (typeof c === "string" ? { name: c, issuer: "", year: "" } : c),
     ),
-    skills: arr<TemplateSkillItem | { name: string; level?: unknown } | string>(d.skills).map((s) =>
+    skills: arr<TemplateSkillItem | { name: string; level?: unknown } | string>(
+      d.skills,
+    ).map((s) =>
       typeof s === "string"
         ? { name: s, level: null }
-        : { name: s.name, level: levelPct(s.level) }
+        : { name: s.name, level: levelPct(s.level) },
     ),
-    languages: arr<TemplateLanguageItem | { name: string; level?: unknown } | string>(d.languages).map((s) =>
+    languages: arr<
+      TemplateLanguageItem | { name: string; level?: unknown } | string
+    >(d.languages).map((s) =>
       typeof s === "string"
         ? { name: s, level: "", pct: null }
-        : { name: s.name, level: s.level == null ? "" : String(s.level), pct: levelPct(s.level) }
+        : {
+            name: s.name,
+            level: s.level == null ? "" : String(s.level),
+            pct: levelPct(s.level),
+          },
     ),
-    hobbies: arr<string | { name?: string }>(d.hobbies).map((h) => (typeof h === "string" ? h : h.name || "")),
+    hobbies: arr<string | { name?: string }>(d.hobbies).map((h) =>
+      typeof h === "string" ? h : h.name || "",
+    ),
   };
 }
 
@@ -275,7 +295,7 @@ function period(
     date?: string;
     startYear?: string;
   },
-  L: CvTemplateLabels
+  L: CvTemplateLabels,
 ) {
   const s = x.start || x.start_date || x.from || x.startDate || "";
   let e = x.end || x.end_date || x.to || x.endDate || "";
@@ -314,7 +334,9 @@ const photo = (d: ReturnType<typeof norm>) =>
     : `<div class="ph">${esc(initials(d.fullName))}</div>`;
 
 const sec = (t: string, b: string, cls = "") =>
-  b ? `<section class="s ${cls}"><h3 class="s-t">${esc(t)}</h3><div class="s-b">${b}</div></section>` : "";
+  b
+    ? `<section class="s ${cls}"><h3 class="s-t">${esc(t)}</h3><div class="s-b">${b}</div></section>`
+    : "";
 
 function items(list: ItemEntry[], mode = "") {
   if (!list.length) return "";
@@ -338,7 +360,9 @@ function items(list: ItemEntry[], mode = "") {
 
 const dots = (p: number) =>
   '<span class="dots">' +
-  [1, 2, 3, 4, 5].map((i) => `<i class="${i * 20 <= p + 10 ? "on" : ""}"></i>`).join("") +
+  [1, 2, 3, 4, 5]
+    .map((i) => `<i class="${i * 20 <= p + 10 ? "on" : ""}"></i>`)
+    .join("") +
   "</span>";
 
 function skills(list: TemplateSkillItem[], mode: string) {
@@ -351,8 +375,10 @@ function skills(list: TemplateSkillItem[], mode: string) {
           .map(
             (s) =>
               `<div class="sk"><div class="sk-n">${esc(s.name)}</div>${
-                s.level != null ? `<div class="bar"><i style="width:${s.level}%"></i></div>` : ""
-              }</div>`
+                s.level != null
+                  ? `<div class="bar"><i style="width:${s.level}%"></i></div>`
+                  : ""
+              }</div>`,
           )
           .join("") +
         "</div>"
@@ -365,7 +391,7 @@ function skills(list: TemplateSkillItem[], mode: string) {
             (s) =>
               `<div class="sk-r"><span>${esc(s.name)}</span>${
                 s.level != null ? dots(s.level) : ""
-              }</div>`
+              }</div>`,
           )
           .join("") +
         "</div>"
@@ -377,7 +403,11 @@ function skills(list: TemplateSkillItem[], mode: string) {
         "</div>"
       );
     case "cols":
-      return '<ul class="cols3">' + list.map((s) => `<li>${esc(s.name)}</li>`).join("") + "</ul>";
+      return (
+        '<ul class="cols3">' +
+        list.map((s) => `<li>${esc(s.name)}</li>`).join("") +
+        "</ul>"
+      );
     default:
       return `<p class="inl">${list.map((s) => esc(s.name)).join(" · ")}</p>`;
   }
@@ -385,14 +415,15 @@ function skills(list: TemplateSkillItem[], mode: string) {
 
 function langs(list: TemplateLanguageItem[], mode: string) {
   if (!list.length) return "";
-  const lv = (l: TemplateLanguageItem) => (l.level !== "" && isNaN(Number(l.level)) ? esc(l.level) : "");
+  const lv = (l: TemplateLanguageItem) =>
+    l.level !== "" && isNaN(Number(l.level)) ? esc(l.level) : "";
   if (mode === "bars") {
     return skills(
       list.map((l) => ({
         name: l.name + (lv(l) ? " — " + l.level : ""),
         level: l.pct,
       })),
-      "bars"
+      "bars",
     );
   }
   if (mode === "dots") {
@@ -403,7 +434,7 @@ function langs(list: TemplateLanguageItem[], mode: string) {
           (l) =>
             `<div class="sk-r"><span>${esc(l.name)}</span>${
               l.pct != null ? dots(l.pct) : `<span class="lv">${lv(l)}</span>`
-            }</div>`
+            }</div>`,
         )
         .join("") +
       "</div>"
@@ -418,7 +449,8 @@ function langs(list: TemplateLanguageItem[], mode: string) {
     '<div class="sks">' +
     list
       .map(
-        (l) => `<div class="sk-r"><span>${esc(l.name)}</span><span class="lv">${lv(l)}</span></div>`
+        (l) =>
+          `<div class="sk-r"><span>${esc(l.name)}</span><span class="lv">${lv(l)}</span></div>`,
       )
       .join("") +
     "</div>"
@@ -437,23 +469,41 @@ function contacts(d: ReturnType<typeof norm>, mode: string) {
   ].filter((x) => x[1]);
   if (!c.length) return "";
   if (mode === "text")
-    return '<div class="cts">' + c.map((x) => `<span class="ct">${esc(x[1])}</span>`).join("") + "</div>";
+    return (
+      '<div class="cts">' +
+      c.map((x) => `<span class="ct">${esc(x[1])}</span>`).join("") +
+      "</div>"
+    );
   if (mode === "lines")
-    return '<div class="cts">' + c.map((x) => `<div class="ct">${esc(x[1])}</div>`).join("") + "</div>";
+    return (
+      '<div class="cts">' +
+      c.map((x) => `<div class="ct">${esc(x[1])}</div>`).join("") +
+      "</div>"
+    );
   if (mode === "iconsInline")
     return (
       '<div class="cts">' +
-      c.map((x) => `<span class="ct">${ico(x[0])}<span>${esc(x[1])}</span></span>`).join("") +
+      c
+        .map(
+          (x) =>
+            `<span class="ct">${ico(x[0])}<span>${esc(x[1])}</span></span>`,
+        )
+        .join("") +
       "</div>"
     );
   return (
     '<div class="cts">' +
-    c.map((x) => `<div class="ct">${ico(x[0])}<span>${esc(x[1])}</span></div>`).join("") +
+    c
+      .map((x) => `<div class="ct">${ico(x[0])}<span>${esc(x[1])}</span></div>`)
+      .join("") +
     "</div>"
   );
 }
 
-function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTemplateLabels> }) {
+function ctx(
+  raw: RawCvTemplateData | undefined,
+  opts?: { labels?: Partial<CvTemplateLabels> },
+) {
   opts = opts || {};
   const defaultLabels = CV_TEMPLATE_LABELS.uz;
   const L = Object.assign({}, defaultLabels, opts.labels) as CvTemplateLabels;
@@ -464,7 +514,7 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
     L,
     name: esc(d.fullName),
     name2: `<span class="n1">${esc(parts[0] || "")}</span> <span class="n2">${esc(
-      parts.slice(1).join(" ")
+      parts.slice(1).join(" "),
     )}</span>`,
     pos: esc(d.position),
     ph: photo(d),
@@ -479,7 +529,7 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
           d: period(e, L),
           x: e.description,
         })),
-        m
+        m,
       ),
     edu: (m = "") =>
       items(
@@ -489,7 +539,7 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
           d: period(e, L),
           x: e.description,
         })),
-        m
+        m,
       ),
     prj: (m = "") =>
       items(
@@ -499,7 +549,7 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
           d: esc(p.year || ""),
           x: p.description,
         })),
-        m
+        m,
       ),
     crt: (m = "") =>
       items(
@@ -508,7 +558,7 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
           s: esc(x.issuer || ""),
           d: esc(x.year || x.date || ""),
         })),
-        m
+        m,
       ),
     sk: (m: string) => skills(d.skills, m),
     lg: (m: string) => langs(d.languages, m),
@@ -516,8 +566,12 @@ function ctx(raw: RawCvTemplateData | undefined, opts?: { labels?: Partial<CvTem
       !d.hobbies.length
         ? ""
         : m === "chips"
-        ? '<div class="chips">' + d.hobbies.map((h) => `<span class="chip">${esc(h)}</span>`).join("") + "</div>"
-        : `<p class="inl">${d.hobbies.map(esc).join(" · ")}</p>`,
+          ? '<div class="chips">' +
+            d.hobbies
+              .map((h) => `<span class="chip">${esc(h)}</span>`)
+              .join("") +
+            "</div>"
+          : `<p class="inl">${d.hobbies.map(esc).join(" · ")}</p>`,
     ct: (m: string) => contacts(d, m),
   };
 }
@@ -826,7 +880,8 @@ T["minimal-5"] = (c, L = c.L) => `
 /*  CSS                                                                */
 /* ------------------------------------------------------------------ */
 const SERIF = "Merriweather,Georgia,'Times New Roman',serif";
-const MONO = "'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
+const MONO =
+  "'JetBrains Mono','IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace";
 
 export const CV_TEMPLATES_CSS = `
 .cv{width:794px;min-height:1122px;box-sizing:border-box;background:#fff;color:#1f2937;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:13px;line-height:1.5;position:relative;overflow:hidden;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -1125,7 +1180,10 @@ export const CV_TEMPLATE_NAMES: Record<string, string> = {
   "minimal-5": "Compact",
 };
 
-export const CV_TEMPLATE_DESCRIPTIONS: Record<string, Record<string, string>> = {
+export const CV_TEMPLATE_DESCRIPTIONS: Record<
+  string,
+  Record<string, string>
+> = {
   "modern-1": {
     uz: "Qora yon panel va toʻq sariq urgʻular",
     kk: "Qara qaptal panel hám qızǵısh-sarı túsler",
@@ -1228,19 +1286,24 @@ export function normalizeTemplateId(id?: string | null): string {
   return "modern-1";
 }
 
-export function getCategoryForTemplate(id?: string | null): "modern" | "classic" | "minimal" {
+export function getCategoryForTemplate(
+  id?: string | null,
+): "modern" | "classic" | "minimal" {
   const normId = normalizeTemplateId(id);
   const cat = normId.split("-")[0];
   if (cat === "classic" || cat === "minimal") return cat;
   return "modern";
 }
 
-export function listTemplates(category?: "modern" | "classic" | "minimal"): CvTemplateItem[] {
+export function listTemplates(
+  category?: "modern" | "classic" | "minimal",
+): CvTemplateItem[] {
   return Object.keys(T)
     .filter((id) => !category || id.startsWith(category + "-"))
     .map((id) => ({
       id,
-      category: (id.split("-")[0] as "modern" | "classic" | "minimal") || "modern",
+      category:
+        (id.split("-")[0] as "modern" | "classic" | "minimal") || "modern",
       name: CV_TEMPLATE_NAMES[id] || id,
     }));
 }
@@ -1248,7 +1311,7 @@ export function listTemplates(category?: "modern" | "classic" | "minimal"): CvTe
 export function renderCvTemplate(
   id: string,
   data: RawCvTemplateData,
-  opts?: { labels?: Partial<CvTemplateLabels> }
+  opts?: { labels?: Partial<CvTemplateLabels> },
 ): string {
   const normalizedId = normalizeTemplateId(id);
   const tpl = T[normalizedId] || T["modern-1"];

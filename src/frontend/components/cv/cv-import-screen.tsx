@@ -70,7 +70,9 @@ export function CvImportScreen({
         try {
           const rawText = await selectedFile.text();
           // Filter readable characters
-          const cleanText = rawText.replace(/[^\x20-\x7E\s\u0400-\u04FF]/g, " ").trim();
+          const cleanText = rawText
+            .replace(/[^\x20-\x7E\s\u0400-\u04FF]/g, " ")
+            .trim();
           if (cleanText.length > 30) {
             textContent = cleanText;
           } else {
@@ -85,13 +87,10 @@ export function CvImportScreen({
         textContent = selectedFile?.name ?? "Rezyume";
       }
 
-      const res = await postJson<{ cv: AiCvDraft }>(
-        "/api/cv/generate",
-        {
-          text: textContent,
-          language: currentLanguage,
-        },
-      );
+      const res = await postJson<{ cv: AiCvDraft }>("/api/cv/generate", {
+        text: textContent,
+        language: currentLanguage,
+      });
 
       if (res.ok && res.data?.cv) {
         onImportSuccess({ cv: res.data.cv, text: textContent });
@@ -129,15 +128,13 @@ export function CvImportScreen({
   }
 
   return (
-    <div className="mx-auto max-w-xl py-8 px-4">
-      <div className="rounded-3xl border border-border bg-surface p-8 shadow-sm text-center space-y-6">
+    <div className="mx-auto max-w-xl px-4 py-8">
+      <div className="border-border bg-surface space-y-6 rounded-3xl border p-8 text-center shadow-sm">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">
             {t("uploadTitle")}
           </h2>
-          <p className="text-muted mt-2 text-sm">
-            {t("uploadSub")}
-          </p>
+          <p className="text-muted mt-2 text-sm">{t("uploadSub")}</p>
         </div>
 
         {/* Drag and Drop Zone */}
@@ -162,7 +159,7 @@ export function CvImportScreen({
             className="hidden"
           />
 
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-brand/10 text-brand">
+          <div className="bg-brand/10 text-brand mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
             <svg
               className="h-8 w-8"
               fill="none"
@@ -180,13 +177,13 @@ export function CvImportScreen({
 
           <div className="mt-4 space-y-1">
             {selectedFile ? (
-              <p className="font-bold text-foreground text-sm">
+              <p className="text-foreground text-sm font-bold">
                 {selectedFile.name}
               </p>
             ) : (
               <button
                 type="button"
-                className="rounded-xl bg-brand px-6 py-2 text-sm font-bold text-brand-foreground shadow hover:opacity-95"
+                className="bg-brand text-brand-foreground rounded-xl px-6 py-2 text-sm font-bold shadow hover:opacity-95"
               >
                 {t("browse")}
               </button>
@@ -199,9 +196,11 @@ export function CvImportScreen({
           <button
             type="button"
             onClick={() => setShowPasteArea(!showPasteArea)}
-            className="text-xs font-semibold text-brand hover:underline"
+            className="text-brand text-xs font-semibold hover:underline"
           >
-            {showPasteArea ? "— Matn maydonini yopish" : "+ Yoki rezyume matnini to'g'ridan-to'g'ri joylang"}
+            {showPasteArea
+              ? "— Matn maydonini yopish"
+              : "+ Yoki rezyume matnini to'g'ridan-to'g'ri joylang"}
           </button>
           {showPasteArea && (
             <textarea
@@ -209,21 +208,21 @@ export function CvImportScreen({
               value={manualText}
               onChange={(e) => setManualText(e.target.value)}
               placeholder="O'quv yurti, tajriba, ko'nikmalar matnini shu yerga nusxalab qo'ying..."
-              className="mt-2 w-full rounded-xl border border-border bg-surface p-3 text-xs outline-none focus:ring-2 focus:ring-brand/40"
+              className="border-border bg-surface focus:ring-brand/40 mt-2 w-full rounded-xl border p-3 text-xs outline-none focus:ring-2"
             />
           )}
         </div>
 
         {errorMsg && (
-          <p className="text-red-500 text-xs font-medium">{errorMsg}</p>
+          <p className="text-xs font-medium text-red-500">{errorMsg}</p>
         )}
 
         {/* Buttons */}
-        <div className="flex items-center justify-between pt-4 border-t border-border/60">
+        <div className="border-border/60 flex items-center justify-between border-t pt-4">
           <button
             type="button"
             onClick={onBack}
-            className="text-sm font-semibold text-muted hover:text-foreground"
+            className="text-muted hover:text-foreground text-sm font-semibold"
           >
             {t("back")}
           </button>
@@ -232,7 +231,7 @@ export function CvImportScreen({
             type="button"
             onClick={handleImport}
             disabled={importing}
-            className="rounded-xl bg-brand px-6 py-2.5 text-sm font-bold text-brand-foreground shadow hover:opacity-95 transition-opacity disabled:opacity-60"
+            className="bg-brand text-brand-foreground rounded-xl px-6 py-2.5 text-sm font-bold shadow transition-opacity hover:opacity-95 disabled:opacity-60"
           >
             {importing ? "Yuklanmoqda..." : t("importBtn")}
           </button>

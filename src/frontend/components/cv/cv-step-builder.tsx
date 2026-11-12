@@ -2,7 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import type { CvDocumentLabels, CvDocumentLanguage } from "@/backend/cv-document/types";
+import type {
+  CvDocumentLabels,
+  CvDocumentLanguage,
+} from "@/backend/cv-document/types";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { postJson } from "@/backend/client/api";
 import type { WorkType } from "@prisma/client";
@@ -17,28 +20,68 @@ import {
   normalizeTemplateId,
 } from "@/frontend/components/cv-templates/cv-templates";
 
-const SUGGESTED_LANGUAGES = [
-  { name: "Qaraqalpaq tili", level: "Ona tili" },
-  { name: "O'zbek tili", level: "Ona tili" },
-  { name: "Ingliz tili", level: "B2 - Upper-Intermediate" },
-  { name: "Rus tili", level: "B2 - Upper-Intermediate" },
-  { name: "Nemis tili", level: "B1 - Intermediate" },
+const POPULAR_LANGUAGES = [
+  "Qaraqalpaq tili",
+  "O'zbek tili",
+  "Ingliz tili",
+  "Rus tili",
+  "Nemis tili",
+  "Turk tili",
+  "Fransuz tili",
+  "Koreys tili",
+  "Xitoy tili",
+  "Arab tili",
+];
+
+const LANGUAGE_LEVEL_OPTIONS = [
+  { value: "Ona tili", label: "Ona tili (Native)" },
+  { value: "C2 - Mukammal", label: "C2 - Mukammal (Mastery)" },
+  { value: "C1 - Ilg'or", label: "C1 - Ilg'or (Advanced)" },
+  {
+    value: "B2 - O'rta-yuqori",
+    label: "B2 - O'rta-yuqori (Upper-Intermediate)",
+  },
+  { value: "B1 - O'rta", label: "B1 - O'rta (Intermediate)" },
+  {
+    value: "A2 - Boshlang'ich-o'rta",
+    label: "A2 - Boshlang'ich-o'rta (Elementary)",
+  },
+  { value: "A1 - Boshlang'ich", label: "A1 - Boshlang'ich (Beginner)" },
+];
+
+const POPULAR_HOBBIES = [
+  "Dasturlash",
+  "Kitobxonlik",
+  "Shaxmat",
+  "Futbol",
+  "Musiqa",
+  "Sayohat",
+  "Fotografiya",
+  "Volontyorlik",
+  "Robototexnika",
+];
+
+const CV_LANGUAGES: Array<{ code: CvDocumentLanguage; label: string }> = [
+  { code: "kk", label: "Qaraqalpaqsha" },
+  { code: "uz", label: "O'zbekcha" },
+  { code: "ru", label: "Русский" },
+  { code: "en", label: "English" },
 ];
 
 function TemplateThumbnail({ id }: { id: string }) {
   if (id === "modern-1") {
     return (
       <div className="flex h-full w-full">
-        <div className="w-1/3 bg-[#1C1C1E] p-1.5 flex flex-col items-center gap-1">
+        <div className="flex w-1/3 flex-col items-center gap-1 bg-[#1C1C1E] p-1.5">
           <div className="h-4 w-4 rounded-full border border-[#F97316] bg-[#2C2C2E]" />
           <div className="h-1 w-full rounded-full bg-white/20" />
           <div className="h-1 w-3/4 rounded-full bg-white/20" />
         </div>
-        <div className="flex-1 p-1.5 space-y-1 bg-white">
+        <div className="flex-1 space-y-1 bg-white p-1.5">
           <div className="h-1.5 w-3/4 rounded-full bg-[#111]" />
           <div className="h-1 w-1/2 rounded-full bg-[#F97316]" />
-          <div className="h-1 w-full rounded-full bg-muted/30 pt-1" />
-          <div className="h-1 w-4/5 rounded-full bg-muted/20" />
+          <div className="bg-muted/30 h-1 w-full rounded-full pt-1" />
+          <div className="bg-muted/20 h-1 w-4/5 rounded-full" />
         </div>
       </div>
     );
@@ -46,14 +89,14 @@ function TemplateThumbnail({ id }: { id: string }) {
   if (id === "modern-2") {
     return (
       <div className="flex h-full w-full flex-col">
-        <div className="h-6 w-full bg-gradient-to-r from-[#EA580C] via-[#F97316] to-[#FB923C] p-1 flex items-center gap-1">
+        <div className="flex h-6 w-full items-center gap-1 bg-gradient-to-r from-[#EA580C] via-[#F97316] to-[#FB923C] p-1">
           <div className="h-4 w-4 rounded bg-white/30" />
           <div className="h-1.5 w-1/2 rounded-full bg-white" />
         </div>
-        <div className="grid grid-cols-3 gap-1 p-1 flex-1 bg-white">
+        <div className="grid flex-1 grid-cols-3 gap-1 bg-white p-1">
           <div className="col-span-2 space-y-1">
-            <div className="h-1 w-full rounded bg-muted/30" />
-            <div className="h-1 w-3/4 rounded bg-muted/20" />
+            <div className="bg-muted/30 h-1 w-full rounded" />
+            <div className="bg-muted/20 h-1 w-3/4 rounded" />
           </div>
           <div className="space-y-1">
             <div className="h-1 w-full rounded bg-[#FFF1E6]" />
@@ -65,16 +108,16 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "modern-3") {
     return (
-      <div className="flex h-full w-full flex-col items-center p-1.5 bg-white space-y-1">
+      <div className="flex h-full w-full flex-col items-center space-y-1 bg-white p-1.5">
         <div className="h-4 w-4 rounded-full border-2 border-[#EA580C] bg-[#FFF1E6]" />
         <div className="h-1.5 w-12 rounded-full bg-[#111]" />
-        <div className="w-full flex gap-1 items-start pt-1">
-          <div className="w-1 h-8 bg-[#FBE3D3] rounded flex items-center justify-center">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#EA580C]" />
+        <div className="flex w-full items-start gap-1 pt-1">
+          <div className="flex h-8 w-1 items-center justify-center rounded bg-[#FBE3D3]">
+            <div className="h-1.5 w-1.5 rounded-full bg-[#EA580C]" />
           </div>
           <div className="flex-1 space-y-1">
-            <div className="h-1 w-full rounded bg-muted/30" />
-            <div className="h-1 w-2/3 rounded bg-muted/20" />
+            <div className="bg-muted/30 h-1 w-full rounded" />
+            <div className="bg-muted/20 h-1 w-2/3 rounded" />
           </div>
         </div>
       </div>
@@ -83,13 +126,13 @@ function TemplateThumbnail({ id }: { id: string }) {
   if (id === "modern-4") {
     return (
       <div className="flex h-full w-full">
-        <div className="flex-1 p-1.5 space-y-1 bg-white">
+        <div className="flex-1 space-y-1 bg-white p-1.5">
           <div className="h-2 w-3/4 rounded bg-[#111]" />
           <div className="h-1 w-8 rounded bg-[#F97316]" />
-          <div className="h-1 w-full rounded bg-muted/30" />
-          <div className="h-1 w-3/4 rounded bg-muted/20" />
+          <div className="bg-muted/30 h-1 w-full rounded" />
+          <div className="bg-muted/20 h-1 w-3/4 rounded" />
         </div>
-        <div className="w-1/3 bg-[#FFF4EC] p-1.5 flex flex-col items-center gap-1">
+        <div className="flex w-1/3 flex-col items-center gap-1 bg-[#FFF4EC] p-1.5">
           <div className="h-5 w-5 rounded-lg bg-[#FFE1CC]" />
           <div className="h-1 w-full rounded bg-[#F97316]/40" />
         </div>
@@ -99,15 +142,15 @@ function TemplateThumbnail({ id }: { id: string }) {
   if (id === "modern-5") {
     return (
       <div className="flex h-full w-full flex-col bg-white">
-        <div className="h-6 w-full bg-[#18181B] p-1 flex justify-between items-center">
+        <div className="flex h-6 w-full items-center justify-between bg-[#18181B] p-1">
           <div className="h-1.5 w-1/2 rounded bg-[#F97316]" />
           <div className="h-4 w-4 rounded-full border-2 border-white bg-zinc-800" />
         </div>
-        <div className="grid grid-cols-2 gap-1 p-1 flex-1">
-          <div className="rounded bg-zinc-100 p-1 space-y-1 border-t-2 border-[#F97316]">
+        <div className="grid flex-1 grid-cols-2 gap-1 p-1">
+          <div className="space-y-1 rounded border-t-2 border-[#F97316] bg-zinc-100 p-1">
             <div className="h-1 w-full rounded bg-zinc-300" />
           </div>
-          <div className="rounded bg-zinc-100 p-1 space-y-1 border-t-2 border-[#F97316]">
+          <div className="space-y-1 rounded border-t-2 border-[#F97316] bg-zinc-100 p-1">
             <div className="h-1 w-full rounded bg-zinc-300" />
           </div>
         </div>
@@ -116,7 +159,7 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "classic-1") {
     return (
-      <div className="flex h-full w-full flex-col items-center p-1.5 bg-white space-y-1">
+      <div className="flex h-full w-full flex-col items-center space-y-1 bg-white p-1.5">
         <div className="h-1.5 w-16 rounded bg-[#1E3A8A]" />
         <div className="h-0.5 w-full bg-[#1E3A8A]" />
         <div className="w-full space-y-1 pt-0.5">
@@ -130,15 +173,15 @@ function TemplateThumbnail({ id }: { id: string }) {
   if (id === "classic-2") {
     return (
       <div className="flex h-full w-full">
-        <div className="w-1/3 bg-[#1E3A8A] p-1.5 flex flex-col items-center gap-1">
+        <div className="flex w-1/3 flex-col items-center gap-1 bg-[#1E3A8A] p-1.5">
           <div className="h-4 w-4 rounded-full border-2 border-white bg-[#3554B0]" />
           <div className="h-1 w-full rounded bg-white/40" />
           <div className="h-1 w-2/3 rounded bg-white/30" />
         </div>
-        <div className="flex-1 p-1.5 space-y-1 bg-white">
+        <div className="flex-1 space-y-1 bg-white p-1.5">
           <div className="h-1.5 w-3/4 rounded bg-[#1E3A8A]" />
-          <div className="h-1 w-full rounded bg-muted/40" />
-          <div className="h-1 w-4/5 rounded bg-muted/30" />
+          <div className="bg-muted/40 h-1 w-full rounded" />
+          <div className="bg-muted/30 h-1 w-4/5 rounded" />
         </div>
       </div>
     );
@@ -146,12 +189,12 @@ function TemplateThumbnail({ id }: { id: string }) {
   if (id === "classic-3") {
     return (
       <div className="flex h-full w-full flex-col bg-white">
-        <div className="h-6 w-full bg-[#172554] p-1 flex items-center justify-between">
+        <div className="flex h-6 w-full items-center justify-between bg-[#172554] p-1">
           <div className="h-1.5 w-1/2 rounded bg-white" />
           <div className="h-3 w-3 rounded border border-[#C9A227] bg-[#1E3A8A]" />
         </div>
         <div className="h-0.5 w-full bg-[#C9A227]" />
-        <div className="grid grid-cols-3 gap-1 p-1 flex-1">
+        <div className="grid flex-1 grid-cols-3 gap-1 p-1">
           <div className="col-span-2 space-y-1">
             <div className="h-1 w-full rounded bg-zinc-400" />
             <div className="h-1 w-3/4 rounded bg-zinc-300" />
@@ -165,8 +208,8 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "classic-4") {
     return (
-      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
-        <div className="border-b-2 border-double border-[#1E3A8A] pb-0.5 flex justify-between">
+      <div className="flex h-full w-full flex-col space-y-1 bg-white p-1.5">
+        <div className="flex justify-between border-b-2 border-double border-[#1E3A8A] pb-0.5">
           <div className="h-1.5 w-12 rounded bg-[#1E3A8A]" />
           <div className="h-1 w-6 rounded bg-zinc-400" />
         </div>
@@ -182,12 +225,12 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "classic-5") {
     return (
-      <div className="h-full w-full p-1 bg-white">
-        <div className="h-full w-full border border-double border-[#1E3A8A] p-1 flex flex-col items-center space-y-1">
+      <div className="h-full w-full bg-white p-1">
+        <div className="flex h-full w-full flex-col items-center space-y-1 border border-double border-[#1E3A8A] p-1">
           <div className="h-3 w-3 rounded-full border border-[#1E3A8A]" />
           <div className="h-1 w-10 rounded bg-[#1E3A8A]" />
           <div className="h-0.5 w-12 bg-zinc-300" />
-          <div className="grid grid-cols-2 gap-1 w-full">
+          <div className="grid w-full grid-cols-2 gap-1">
             <div className="h-1 w-full rounded bg-zinc-300" />
             <div className="h-1 w-full rounded bg-zinc-300" />
           </div>
@@ -197,10 +240,10 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "minimal-1") {
     return (
-      <div className="flex h-full w-full flex-col p-2 bg-white space-y-1.5">
+      <div className="flex h-full w-full flex-col space-y-1.5 bg-white p-2">
         <div className="h-2 w-16 rounded bg-zinc-900" />
         <div className="h-1 w-10 rounded bg-zinc-400" />
-        <div className="space-y-1 pt-1 border-t border-zinc-200">
+        <div className="space-y-1 border-t border-zinc-200 pt-1">
           <div className="h-1 w-full rounded bg-zinc-300" />
           <div className="h-1 w-3/4 rounded bg-zinc-200" />
         </div>
@@ -209,8 +252,8 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "minimal-2") {
     return (
-      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
-        <div className="flex justify-between items-center pb-1 border-b border-zinc-300">
+      <div className="flex h-full w-full flex-col space-y-1 bg-white p-1.5">
+        <div className="flex items-center justify-between border-b border-zinc-300 pb-1">
           <div className="h-1.5 w-12 rounded bg-zinc-900" />
           <div className="h-3 w-3 rounded bg-zinc-200" />
         </div>
@@ -225,14 +268,14 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "minimal-3") {
     return (
-      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
+      <div className="flex h-full w-full flex-col space-y-1 bg-white p-1.5">
         <div className="h-1.5 w-14 rounded bg-zinc-900" />
         <div className="h-1 w-8 rounded bg-zinc-500" />
-        <div className="grid grid-cols-3 gap-1 pt-1 border-t border-zinc-200">
+        <div className="grid grid-cols-3 gap-1 border-t border-zinc-200 pt-1">
           <div className="col-span-2 space-y-1">
             <div className="h-1 w-full rounded bg-zinc-300" />
           </div>
-          <div className="border-l border-zinc-200 pl-1 space-y-1">
+          <div className="space-y-1 border-l border-zinc-200 pl-1">
             <div className="h-1 w-full rounded bg-zinc-200" />
           </div>
         </div>
@@ -241,8 +284,8 @@ function TemplateThumbnail({ id }: { id: string }) {
   }
   if (id === "minimal-4") {
     return (
-      <div className="flex h-full w-full flex-col p-1.5 bg-white space-y-1">
-        <div className="border-b-2 border-black pb-1 flex justify-between items-end">
+      <div className="flex h-full w-full flex-col space-y-1 bg-white p-1.5">
+        <div className="flex items-end justify-between border-b-2 border-black pb-1">
           <div className="h-3 w-16 rounded bg-black" />
           <div className="h-1 w-6 rounded bg-zinc-500" />
         </div>
@@ -258,10 +301,10 @@ function TemplateThumbnail({ id }: { id: string }) {
     );
   }
   return (
-    <div className="flex h-full w-full flex-col p-1.5 bg-white items-center space-y-1">
+    <div className="flex h-full w-full flex-col items-center space-y-1 bg-white p-1.5">
       <div className="h-1.5 w-12 rounded bg-zinc-900" />
       <div className="h-0.5 w-full bg-zinc-300" />
-      <div className="grid grid-cols-3 gap-1 w-full pt-0.5">
+      <div className="grid w-full grid-cols-3 gap-1 pt-0.5">
         <div className="space-y-0.5">
           <div className="h-1 w-full rounded bg-zinc-300" />
           <div className="h-1 w-2/3 rounded bg-zinc-200" />
@@ -306,12 +349,17 @@ export function CvStepBuilder({
   const [generatingAboutMe, setGeneratingAboutMe] = useState(false);
   const [customSkills, setCustomSkills] = useState<string[] | null>(null);
   const [loadingAiSkills, setLoadingAiSkills] = useState(false);
+  const [customLangInput, setCustomLangInput] = useState("");
+  const [customHobbyInput, setCustomHobbyInput] = useState("");
+  const [zoomScale, setZoomScale] = useState(0.58);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const activeTemplateId = normalizeTemplateId(draft.templateId);
-  const [selectedCategory, setSelectedCategory] = useState<"modern" | "classic" | "minimal">(
-    getCategoryForTemplate(activeTemplateId)
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    "modern" | "classic" | "minimal"
+  >(getCategoryForTemplate(activeTemplateId));
 
-  const suggestedSkills = customSkills ?? getSuggestedSkillsForTitle(draft.title);
+  const suggestedSkills =
+    customSkills ?? getSuggestedSkillsForTitle(draft.title);
 
   async function handleFetchAiSkills() {
     if (!draft.title) return;
@@ -365,16 +413,166 @@ export function CvStepBuilder({
     }
   }
 
-  function addLanguageChip(lang: { name: string; level: string }) {
-    if (!data.languages.some((l) => l.name.toLowerCase() === lang.name.toLowerCase())) {
+  // --- Languages management ---
+  function toggleLanguage(langName: string) {
+    const exists = data.languages.some(
+      (l) => l.name.toLowerCase() === langName.toLowerCase(),
+    );
+    if (exists) {
+      const updated = data.languages.filter(
+        (l) => l.name.toLowerCase() !== langName.toLowerCase(),
+      );
+      onChange({ ...draft, data: { ...data, languages: updated } });
+    } else {
+      const isNative = /qaraqalpaq|o'zbek|uzbek|karakalpak/i.test(langName);
+      const defaultLevel = isNative ? "Ona tili" : "B2 - O'rta-yuqori";
       onChange({
         ...draft,
         data: {
           ...data,
-          languages: [...data.languages, { name: lang.name, level: lang.level }],
+          languages: [
+            ...data.languages,
+            { name: langName, level: defaultLevel },
+          ],
         },
       });
     }
+  }
+
+  function handleAddCustomLanguage() {
+    const trimmed = customLangInput.trim();
+    if (!trimmed) return;
+    if (
+      !data.languages.some(
+        (l) => l.name.toLowerCase() === trimmed.toLowerCase(),
+      )
+    ) {
+      onChange({
+        ...draft,
+        data: {
+          ...data,
+          languages: [
+            ...data.languages,
+            { name: trimmed, level: "B2 - O'rta-yuqori" },
+          ],
+        },
+      });
+    }
+    setCustomLangInput("");
+  }
+
+  function updateLanguageLevel(index: number, level: string) {
+    const updated = [...data.languages];
+    const item = updated[index];
+    if (!item) return;
+    updated[index] = { ...item, level };
+    onChange({ ...draft, data: { ...data, languages: updated } });
+  }
+
+  function removeLanguage(index: number) {
+    const updated = data.languages.filter((_, i) => i !== index);
+    onChange({ ...draft, data: { ...data, languages: updated } });
+  }
+
+  // --- Projects management ---
+  const projectsList = data.projects || [];
+  function addProject() {
+    onChange({
+      ...draft,
+      data: {
+        ...data,
+        projects: [
+          ...projectsList,
+          { name: "", link: "", year: "", description: "" },
+        ],
+      },
+    });
+  }
+
+  function updateProject(
+    index: number,
+    patch: Partial<(typeof projectsList)[number]>,
+  ) {
+    const updated = [...projectsList];
+    const item = updated[index];
+    if (!item) return;
+    updated[index] = { ...item, ...patch };
+    onChange({ ...draft, data: { ...data, projects: updated } });
+  }
+
+  function removeProject(index: number) {
+    const updated = projectsList.filter((_, i) => i !== index);
+    onChange({ ...draft, data: { ...data, projects: updated } });
+  }
+
+  // --- Certificates management ---
+  const certsList = (data.certificates || []).map((c) =>
+    typeof c === "string" ? { name: c, issuer: "", year: "" } : c,
+  );
+
+  function addCertificate() {
+    onChange({
+      ...draft,
+      data: {
+        ...data,
+        certificates: [...certsList, { name: "", issuer: "", year: "" }],
+      },
+    });
+  }
+
+  function updateCertificate(
+    index: number,
+    patch: { name?: string; issuer?: string; year?: string },
+  ) {
+    const updated = [...certsList];
+    const item = updated[index];
+    if (!item) return;
+    updated[index] = { ...item, ...patch };
+    onChange({ ...draft, data: { ...data, certificates: updated } });
+  }
+
+  function removeCertificate(index: number) {
+    const updated = certsList.filter((_, i) => i !== index);
+    onChange({ ...draft, data: { ...data, certificates: updated } });
+  }
+
+  // --- Hobbies management ---
+  const hobbiesList = data.hobbies || [];
+  function toggleHobby(hobby: string) {
+    if (hobbiesList.some((h) => h.toLowerCase() === hobby.toLowerCase())) {
+      onChange({
+        ...draft,
+        data: {
+          ...data,
+          hobbies: hobbiesList.filter(
+            (h) => h.toLowerCase() !== hobby.toLowerCase(),
+          ),
+        },
+      });
+    } else {
+      onChange({
+        ...draft,
+        data: {
+          ...data,
+          hobbies: [...hobbiesList, hobby],
+        },
+      });
+    }
+  }
+
+  function handleAddCustomHobby() {
+    const trimmed = customHobbyInput.trim();
+    if (!trimmed) return;
+    if (!hobbiesList.some((h) => h.toLowerCase() === trimmed.toLowerCase())) {
+      onChange({
+        ...draft,
+        data: {
+          ...data,
+          hobbies: [...hobbiesList, trimmed],
+        },
+      });
+    }
+    setCustomHobbyInput("");
   }
 
   async function handleGenerateAboutMe() {
@@ -385,10 +583,16 @@ export function CvStepBuilder({
         .map((s) => s.trim())
         .filter(Boolean);
       const education = data.education
-        .map((e) => [e.institution, e.degree, e.field].filter(Boolean).join(" - "))
+        .map((e) =>
+          [e.institution, e.degree, e.field].filter(Boolean).join(" - "),
+        )
         .filter(Boolean);
       const experience = data.experience
-        .map((e) => [e.position, e.organization, e.description].filter(Boolean).join(" at "))
+        .map((e) =>
+          [e.position, e.organization, e.description]
+            .filter(Boolean)
+            .join(" at "),
+        )
         .filter(Boolean);
       const res = await postJson<{ ok: boolean; aboutMe: string }>(
         "/api/cv/ai-about-me",
@@ -426,28 +630,52 @@ export function CvStepBuilder({
   return (
     <div className="space-y-6">
       {/* Top Wizard Control */}
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface px-5 py-3 shadow-sm">
+      <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-5 py-3 shadow-sm">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-muted uppercase tracking-wider">
+          <span className="text-muted text-xs font-bold tracking-wider uppercase">
             {currentStep}/6 — {stepsList[currentStep - 1]?.label}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+
+        {/* CV Language Switcher in Header */}
+        <div className="flex items-center gap-2">
+          <span className="text-muted hidden text-[11px] font-semibold sm:inline">
+            {t("cvLanguage")}:
+          </span>
+          <div className="bg-muted/20 border-border/60 flex rounded-xl border p-1">
+            {CV_LANGUAGES.map((lang) => {
+              const isActive = draft.language === lang.code;
+              return (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => onChange({ ...draft, language: lang.code })}
+                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                    isActive
+                      ? "bg-brand text-brand-foreground shadow-xs"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  {lang.label}
+                </button>
+              );
+            })}
+          </div>
           <button
             type="button"
             onClick={onRestart}
-            className="text-xs font-semibold text-muted hover:text-foreground"
+            className="text-muted hover:text-foreground ml-2 text-xs font-semibold"
           >
             {t("restartWizard")}
           </button>
         </div>
       </div>
 
-      {/* Main 2-Column / Split Layout */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+      {/* Main 3-Column / Responsive Split Layout */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 xl:gap-8">
         {/* Left Column: Step Navigation (2 cols on desktop) */}
-        <div className="lg:col-span-3">
-          <nav className="sticky top-20 rounded-3xl border border-border bg-surface p-4 shadow-sm space-y-1.5">
+        <div className="lg:col-span-2">
+          <nav className="border-border bg-surface sticky top-20 space-y-1.5 rounded-3xl border p-3 shadow-sm">
             {stepsList.map((s) => {
               const isCurrent = currentStep === s.id;
               const isPast = currentStep > s.id;
@@ -457,7 +685,7 @@ export function CvStepBuilder({
                   key={s.id}
                   type="button"
                   onClick={() => setCurrentStep(s.id)}
-                  className={`flex w-full items-center gap-3 rounded-2xl px-3.5 py-3 text-left text-sm font-semibold transition-all ${
+                  className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left text-xs font-semibold transition-all ${
                     isCurrent
                       ? "bg-brand text-brand-foreground shadow"
                       : isPast
@@ -468,10 +696,10 @@ export function CvStepBuilder({
                   <span
                     className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                       isCurrent
-                        ? "bg-white text-brand"
+                        ? "text-brand bg-white"
                         : isPast
                           ? "bg-emerald-500 text-white"
-                          : "border border-border text-muted"
+                          : "border-border text-muted border"
                     }`}
                   >
                     {isPast ? "✓" : s.id}
@@ -485,12 +713,12 @@ export function CvStepBuilder({
 
         {/* Center Column: Form Inputs (5 cols on desktop) */}
         <div className="space-y-6 lg:col-span-5">
-          <div className="rounded-3xl border border-border bg-surface p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="border-border bg-surface space-y-6 rounded-3xl border p-6 shadow-sm sm:p-8">
             {/* Step 1: Contact Details */}
             {currentStep === 1 && (
               <div className="space-y-5">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepContactTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -500,7 +728,7 @@ export function CvStepBuilder({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-foreground/80">
+                    <label className="text-foreground/80 text-xs font-bold">
                       {t("firstName")}
                     </label>
                     <input
@@ -508,11 +736,11 @@ export function CvStepBuilder({
                       value={firstName}
                       onChange={(e) => updateName(e.target.value, lastName)}
                       placeholder="Elsa"
-                      className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-foreground/80">
+                    <label className="text-foreground/80 text-xs font-bold">
                       {t("lastName")}
                     </label>
                     <input
@@ -520,13 +748,13 @@ export function CvStepBuilder({
                       value={lastName}
                       onChange={(e) => updateName(firstName, e.target.value)}
                       placeholder="Manet"
-                      className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-foreground/80">
+                  <label className="text-foreground/80 text-xs font-bold">
                     {t("jobTitle")}
                   </label>
                   <input
@@ -537,13 +765,13 @@ export function CvStepBuilder({
                       setCustomSkills(null);
                     }}
                     placeholder={t("jobTitlePlaceholder")}
-                    className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                    className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-foreground/80">
+                    <label className="text-foreground/80 text-xs font-bold">
                       Email
                     </label>
                     <input
@@ -551,11 +779,11 @@ export function CvStepBuilder({
                       value={data.contact.email ?? ""}
                       onChange={(e) => updateContact({ email: e.target.value })}
                       placeholder="elsa.manet@gmail.com"
-                      className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-foreground/80">
+                    <label className="text-foreground/80 text-xs font-bold">
                       Telefon
                     </label>
                     <input
@@ -563,13 +791,13 @@ export function CvStepBuilder({
                       value={data.contact.phone ?? ""}
                       onChange={(e) => updateContact({ phone: e.target.value })}
                       placeholder="+998 90 123 45 67"
-                      className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-foreground/80">
+                  <label className="text-foreground/80 text-xs font-bold">
                     {t("city")}
                   </label>
                   <input
@@ -582,8 +810,100 @@ export function CvStepBuilder({
                       })
                     }
                     placeholder="Nukus, Toshkent"
-                    className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                    className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                   />
+                </div>
+
+                {/* Profile Photo URL */}
+                <div className="border-border/40 space-y-1.5 border-t pt-2">
+                  <label className="text-foreground/80 text-xs font-bold">
+                    {t("photoOptional")}
+                  </label>
+                  <div className="flex items-center gap-3">
+                    <div className="border-border bg-muted/30 text-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border text-xs font-bold">
+                      {data.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={data.photo}
+                          alt="Avatar"
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        firstName[0] || "?"
+                      )}
+                    </div>
+                    <input
+                      type="url"
+                      value={data.photo ?? ""}
+                      onChange={(e) =>
+                        onChange({
+                          ...draft,
+                          data: { ...data, photo: e.target.value },
+                        })
+                      }
+                      placeholder={t("photoUrlPlaceholder")}
+                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-xs outline-none focus:ring-2"
+                    />
+                    {data.photo && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onChange({
+                            ...draft,
+                            data: { ...data, photo: "" },
+                          })
+                        }
+                        className="border-border text-muted rounded-lg border px-2.5 py-2 text-xs hover:text-red-500"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Social Networks & Links */}
+                <div className="border-border/40 space-y-3 border-t pt-2">
+                  <label className="text-foreground text-xs font-bold">
+                    {t("socialLinksTitle")}
+                  </label>
+                  <div className="grid grid-cols-2 gap-2.5">
+                    <input
+                      type="text"
+                      value={data.contact.telegram ?? ""}
+                      onChange={(e) =>
+                        updateContact({ telegram: e.target.value })
+                      }
+                      placeholder="Telegram: @username"
+                      className="border-border bg-surface focus:ring-brand/40 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                    <input
+                      type="text"
+                      value={data.contact.github ?? ""}
+                      onChange={(e) =>
+                        updateContact({ github: e.target.value })
+                      }
+                      placeholder="GitHub: username"
+                      className="border-border bg-surface focus:ring-brand/40 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                    <input
+                      type="text"
+                      value={data.contact.linkedin ?? ""}
+                      onChange={(e) =>
+                        updateContact({ linkedin: e.target.value })
+                      }
+                      placeholder="LinkedIn: in/username"
+                      className="border-border bg-surface focus:ring-brand/40 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                    <input
+                      type="text"
+                      value={data.contact.website ?? ""}
+                      onChange={(e) =>
+                        updateContact({ website: e.target.value })
+                      }
+                      placeholder="Portfolio / Veb-sayt"
+                      className="border-border bg-surface focus:ring-brand/40 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -592,7 +912,7 @@ export function CvStepBuilder({
             {currentStep === 2 && (
               <div className="space-y-5">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepExperienceTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -604,17 +924,24 @@ export function CvStepBuilder({
                   {data.experience.map((item, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl border border-border bg-surface p-4 shadow-sm space-y-3"
+                      className="border-border bg-surface space-y-3 rounded-2xl border p-4 shadow-sm"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm">
-                          {item.position || item.organization || `#${index + 1}`}
+                        <span className="text-sm font-bold">
+                          {item.position ||
+                            item.organization ||
+                            `#${index + 1}`}
                         </span>
                         <button
                           type="button"
                           onClick={() => {
-                            const updated = data.experience.filter((_, i) => i !== index);
-                            onChange({ ...draft, data: { ...data, experience: updated } });
+                            const updated = data.experience.filter(
+                              (_, i) => i !== index,
+                            );
+                            onChange({
+                              ...draft,
+                              data: { ...data, experience: updated },
+                            });
                           }}
                           className="text-xs text-red-500 hover:underline"
                         >
@@ -629,10 +956,16 @@ export function CvStepBuilder({
                           placeholder="Kompaniya / Tashkilot"
                           onChange={(e) => {
                             const updated = [...data.experience];
-                            updated[index] = { ...item, organization: e.target.value };
-                            onChange({ ...draft, data: { ...data, experience: updated } });
+                            updated[index] = {
+                              ...item,
+                              organization: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, experience: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                         <input
                           type="text"
@@ -640,10 +973,16 @@ export function CvStepBuilder({
                           placeholder="Lavozim"
                           onChange={(e) => {
                             const updated = [...data.experience];
-                            updated[index] = { ...item, position: e.target.value };
-                            onChange({ ...draft, data: { ...data, experience: updated } });
+                            updated[index] = {
+                              ...item,
+                              position: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, experience: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                       </div>
 
@@ -654,10 +993,16 @@ export function CvStepBuilder({
                           placeholder="Boshlangan sana (masalan, 2022)"
                           onChange={(e) => {
                             const updated = [...data.experience];
-                            updated[index] = { ...item, startDate: e.target.value };
-                            onChange({ ...draft, data: { ...data, experience: updated } });
+                            updated[index] = {
+                              ...item,
+                              startDate: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, experience: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                         <input
                           type="text"
@@ -665,10 +1010,16 @@ export function CvStepBuilder({
                           placeholder="Tugagan sana / Hozirgacha"
                           onChange={(e) => {
                             const updated = [...data.experience];
-                            updated[index] = { ...item, endDate: e.target.value };
-                            onChange({ ...draft, data: { ...data, experience: updated } });
+                            updated[index] = {
+                              ...item,
+                              endDate: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, experience: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                       </div>
 
@@ -678,10 +1029,16 @@ export function CvStepBuilder({
                         placeholder="Vazifalar va yutuqlar..."
                         onChange={(e) => {
                           const updated = [...data.experience];
-                          updated[index] = { ...item, description: e.target.value };
-                          onChange({ ...draft, data: { ...data, experience: updated } });
+                          updated[index] = {
+                            ...item,
+                            description: e.target.value,
+                          };
+                          onChange({
+                            ...draft,
+                            data: { ...data, experience: updated },
+                          });
                         }}
-                        className="w-full rounded-lg border border-border bg-surface p-2 text-xs outline-none"
+                        className="border-border bg-surface w-full rounded-lg border p-2 text-xs outline-none"
                       />
                     </div>
                   ))}
@@ -691,11 +1048,20 @@ export function CvStepBuilder({
                     onClick={() => {
                       const updated = [
                         ...data.experience,
-                        { organization: "", position: "", startDate: "", endDate: "", description: "" },
+                        {
+                          organization: "",
+                          position: "",
+                          startDate: "",
+                          endDate: "",
+                          description: "",
+                        },
                       ];
-                      onChange({ ...draft, data: { ...data, experience: updated } });
+                      onChange({
+                        ...draft,
+                        data: { ...data, experience: updated },
+                      });
                     }}
-                    className="w-full rounded-xl border border-dashed border-brand/60 bg-brand/5 py-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+                    className="border-brand/60 bg-brand/5 text-brand hover:bg-brand/10 w-full rounded-xl border border-dashed py-3 text-xs font-bold transition-colors"
                   >
                     {t("addExperience")}
                   </button>
@@ -707,7 +1073,7 @@ export function CvStepBuilder({
             {currentStep === 3 && (
               <div className="space-y-5">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepEducationTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -719,17 +1085,22 @@ export function CvStepBuilder({
                   {data.education.map((item, index) => (
                     <div
                       key={index}
-                      className="rounded-2xl border border-border bg-surface p-4 shadow-sm space-y-3"
+                      className="border-border bg-surface space-y-3 rounded-2xl border p-4 shadow-sm"
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-sm">
+                        <span className="text-sm font-bold">
                           {item.institution || `#${index + 1}`}
                         </span>
                         <button
                           type="button"
                           onClick={() => {
-                            const updated = data.education.filter((_, i) => i !== index);
-                            onChange({ ...draft, data: { ...data, education: updated } });
+                            const updated = data.education.filter(
+                              (_, i) => i !== index,
+                            );
+                            onChange({
+                              ...draft,
+                              data: { ...data, education: updated },
+                            });
                           }}
                           className="text-xs text-red-500 hover:underline"
                         >
@@ -743,10 +1114,16 @@ export function CvStepBuilder({
                         placeholder="Universitet / Kollej nomi"
                         onChange={(e) => {
                           const updated = [...data.education];
-                          updated[index] = { ...item, institution: e.target.value };
-                          onChange({ ...draft, data: { ...data, education: updated } });
+                          updated[index] = {
+                            ...item,
+                            institution: e.target.value,
+                          };
+                          onChange({
+                            ...draft,
+                            data: { ...data, education: updated },
+                          });
                         }}
-                        className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                        className="border-border bg-surface w-full rounded-lg border px-3 py-1.5 text-xs outline-none"
                       />
 
                       <div className="grid grid-cols-2 gap-2">
@@ -756,10 +1133,16 @@ export function CvStepBuilder({
                           placeholder="Daraja (masalan, Bakalavr)"
                           onChange={(e) => {
                             const updated = [...data.education];
-                            updated[index] = { ...item, degree: e.target.value };
-                            onChange({ ...draft, data: { ...data, education: updated } });
+                            updated[index] = {
+                              ...item,
+                              degree: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, education: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                         <input
                           type="text"
@@ -768,9 +1151,12 @@ export function CvStepBuilder({
                           onChange={(e) => {
                             const updated = [...data.education];
                             updated[index] = { ...item, field: e.target.value };
-                            onChange({ ...draft, data: { ...data, education: updated } });
+                            onChange({
+                              ...draft,
+                              data: { ...data, education: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                       </div>
 
@@ -781,10 +1167,16 @@ export function CvStepBuilder({
                           placeholder="Boshlangan yili"
                           onChange={(e) => {
                             const updated = [...data.education];
-                            updated[index] = { ...item, startYear: e.target.value };
-                            onChange({ ...draft, data: { ...data, education: updated } });
+                            updated[index] = {
+                              ...item,
+                              startYear: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, education: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                         <input
                           type="text"
@@ -792,10 +1184,16 @@ export function CvStepBuilder({
                           placeholder="Tugash yili"
                           onChange={(e) => {
                             const updated = [...data.education];
-                            updated[index] = { ...item, endYear: e.target.value };
-                            onChange({ ...draft, data: { ...data, education: updated } });
+                            updated[index] = {
+                              ...item,
+                              endYear: e.target.value,
+                            };
+                            onChange({
+                              ...draft,
+                              data: { ...data, education: updated },
+                            });
                           }}
-                          className="rounded-lg border border-border bg-surface px-3 py-1.5 text-xs outline-none"
+                          className="border-border bg-surface rounded-lg border px-3 py-1.5 text-xs outline-none"
                         />
                       </div>
                     </div>
@@ -806,11 +1204,20 @@ export function CvStepBuilder({
                     onClick={() => {
                       const updated = [
                         ...data.education,
-                        { institution: "", degree: "", field: "", startYear: "", endYear: "" },
+                        {
+                          institution: "",
+                          degree: "",
+                          field: "",
+                          startYear: "",
+                          endYear: "",
+                        },
                       ];
-                      onChange({ ...draft, data: { ...data, education: updated } });
+                      onChange({
+                        ...draft,
+                        data: { ...data, education: updated },
+                      });
                     }}
-                    className="w-full rounded-xl border border-dashed border-brand/60 bg-brand/5 py-3 text-xs font-bold text-brand hover:bg-brand/10 transition-colors"
+                    className="border-brand/60 bg-brand/5 text-brand hover:bg-brand/10 w-full rounded-xl border border-dashed py-3 text-xs font-bold transition-colors"
                   >
                     {t("addEducation")}
                   </button>
@@ -822,7 +1229,7 @@ export function CvStepBuilder({
             {currentStep === 4 && (
               <div className="space-y-5">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepSkillsTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -831,28 +1238,30 @@ export function CvStepBuilder({
                 </div>
 
                 <div className="space-y-3">
-                  <label className="text-xs font-bold text-foreground">
+                  <label className="text-foreground text-xs font-bold">
                     {tCv("fields.skills")}
                   </label>
                   <textarea
                     rows={3}
                     value={draft.skillsText}
-                    onChange={(e) => onChange({ ...draft, skillsText: e.target.value })}
+                    onChange={(e) =>
+                      onChange({ ...draft, skillsText: e.target.value })
+                    }
                     placeholder="JavaScript, React, Figma, Python..."
-                    className="w-full rounded-xl border border-border bg-surface p-3 text-sm outline-none focus:ring-2 focus:ring-brand/40"
+                    className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border p-3 text-sm outline-none focus:ring-2"
                   />
 
                   {/* Makemycv Suggestion Chips */}
                   <div className="space-y-2 pt-1">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-semibold text-muted">
+                        <span className="text-muted text-xs font-semibold">
                           {draft.title && draft.title.trim().length > 1
                             ? t("skillsFor", { title: draft.title })
                             : t("suggestedSkills")}
                         </span>
                         {draft.title && draft.title.trim().length > 1 ? (
-                          <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-bold text-brand">
+                          <span className="bg-brand/10 text-brand rounded-full px-2 py-0.5 text-[10px] font-bold">
                             {draft.title}
                           </span>
                         ) : null}
@@ -863,9 +1272,11 @@ export function CvStepBuilder({
                           type="button"
                           disabled={loadingAiSkills}
                           onClick={handleFetchAiSkills}
-                          className="rounded-lg border border-brand/40 bg-brand/5 px-2.5 py-1 text-xs font-bold text-brand hover:bg-brand/10 disabled:opacity-60 transition-colors"
+                          className="border-brand/40 bg-brand/5 text-brand hover:bg-brand/10 rounded-lg border px-2.5 py-1 text-xs font-bold transition-colors disabled:opacity-60"
                         >
-                          {loadingAiSkills ? t("aiSkillsLoading") : t("aiSkillsBtn")}
+                          {loadingAiSkills
+                            ? t("aiSkillsLoading")
+                            : t("aiSkillsBtn")}
                         </button>
                       ) : null}
                     </div>
@@ -876,7 +1287,7 @@ export function CvStepBuilder({
                           key={skill}
                           type="button"
                           onClick={() => addSkillChip(skill)}
-                          className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand hover:text-brand transition-colors"
+                          className="border-border bg-surface text-foreground hover:border-brand hover:text-brand rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors"
                         >
                           {`+ ${skill}`}
                         </button>
@@ -885,22 +1296,377 @@ export function CvStepBuilder({
                   </div>
                 </div>
 
-                {/* Languages with chips */}
-                <div className="space-y-3 pt-4 border-t border-border/40">
-                  <label className="text-xs font-bold text-foreground">
-                    {tCv("sections.languages")}
-                  </label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {SUGGESTED_LANGUAGES.map((lang) => (
-                      <button
-                        key={lang.name}
-                        type="button"
-                        onClick={() => addLanguageChip(lang)}
-                        className="rounded-lg border border-border bg-surface px-2.5 py-1 text-xs font-medium text-foreground hover:border-brand hover:text-brand transition-colors"
+                {/* 2. Tillar (Languages) — Interactive List & Selector */}
+                <div className="border-border/40 space-y-3.5 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-foreground text-xs font-bold">
+                      {t("languagesTitle")}
+                    </label>
+                    <span className="text-muted text-[11px]">
+                      {data.languages.length} ta qoʻshildi
+                    </span>
+                  </div>
+
+                  {/* Selected Languages List with Level Selector */}
+                  <div className="space-y-2">
+                    {data.languages.length === 0 ? (
+                      <p className="text-muted bg-muted/10 border-border/60 rounded-xl border border-dashed p-3 text-xs italic">
+                        {t("noLanguagesYet")}
+                      </p>
+                    ) : (
+                      data.languages.map((lang, idx) => (
+                        <div
+                          key={idx}
+                          className="border-border bg-surface flex items-center justify-between gap-3 rounded-xl border p-2.5 shadow-2xs"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="bg-brand/10 text-brand flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold">
+                              🌐
+                            </span>
+                            <span className="text-foreground text-xs font-bold">
+                              {lang.name}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <select
+                              value={lang.level ?? "B2 - O'rta-yuqori"}
+                              onChange={(e) =>
+                                updateLanguageLevel(idx, e.target.value)
+                              }
+                              className="border-border bg-surface focus:ring-brand text-foreground cursor-pointer rounded-lg border px-2 py-1 text-xs font-medium outline-none focus:ring-1"
+                            >
+                              {LANGUAGE_LEVEL_OPTIONS.map((opt) => (
+                                <option key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </option>
+                              ))}
+                            </select>
+
+                            <button
+                              type="button"
+                              onClick={() => removeLanguage(idx)}
+                              className="text-muted flex h-6 w-6 items-center justify-center rounded-md transition-colors hover:bg-red-50 hover:text-red-500"
+                              title={t("deleteEntry")}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  {/* Quick Add Language Chips */}
+                  <div className="space-y-1.5 pt-1">
+                    <span className="text-muted text-[11px] font-semibold">
+                      {t("suggestedLanguages")}
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {POPULAR_LANGUAGES.map((langName) => {
+                        const isSelected = data.languages.some(
+                          (l) =>
+                            l.name.toLowerCase() === langName.toLowerCase(),
+                        );
+                        return (
+                          <button
+                            key={langName}
+                            type="button"
+                            onClick={() => toggleLanguage(langName)}
+                            className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-colors ${
+                              isSelected
+                                ? "bg-brand text-brand-foreground shadow-2xs"
+                                : "border-border bg-surface text-foreground hover:border-brand hover:text-brand border"
+                            }`}
+                          >
+                            {isSelected ? `✓ ${langName}` : `+ ${langName}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Custom Language Input */}
+                  <div className="flex items-center gap-2 pt-1">
+                    <input
+                      type="text"
+                      value={customLangInput}
+                      onChange={(e) => setCustomLangInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomLanguage();
+                        }
+                      }}
+                      placeholder={t("customLanguagePlaceholder")}
+                      className="border-border bg-surface focus:ring-brand/40 flex-1 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomLanguage}
+                      className="border-border text-foreground hover:bg-muted/30 rounded-xl border px-3 py-1.5 text-xs font-bold"
+                    >
+                      {t("addLanguageBtn")}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 3. Loyihalar (Projects) */}
+                <div className="border-border/40 space-y-3 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-foreground text-xs font-bold">
+                      {t("projectsTitle")}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addProject}
+                      className="text-brand text-xs font-bold hover:underline"
+                    >
+                      {t("addProject")}
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {projectsList.map((proj, pIdx) => (
+                      <div
+                        key={pIdx}
+                        className="border-border bg-surface space-y-2.5 rounded-2xl border p-3.5 shadow-2xs"
                       >
-                        {`+ ${lang.name}`}
-                      </button>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold">
+                            {proj.name || `#${pIdx + 1} ${t("projectsTitle")}`}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeProject(pIdx)}
+                            className="text-[11px] text-red-500 hover:underline"
+                          >
+                            {t("deleteEntry")}
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="col-span-2">
+                            <input
+                              type="text"
+                              value={proj.name}
+                              placeholder={t("projectName")}
+                              onChange={(e) =>
+                                updateProject(pIdx, { name: e.target.value })
+                              }
+                              className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              value={proj.year ?? ""}
+                              placeholder={t("projectYear")}
+                              onChange={(e) =>
+                                updateProject(pIdx, { year: e.target.value })
+                              }
+                              className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                            />
+                          </div>
+                        </div>
+
+                        <input
+                          type="text"
+                          value={proj.link ?? ""}
+                          placeholder={t("projectLink")}
+                          onChange={(e) =>
+                            updateProject(pIdx, { link: e.target.value })
+                          }
+                          className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                        />
+
+                        <textarea
+                          rows={2}
+                          value={proj.description ?? ""}
+                          placeholder={t("projectDesc")}
+                          onChange={(e) =>
+                            updateProject(pIdx, { description: e.target.value })
+                          }
+                          className="border-border bg-surface w-full rounded-lg border p-2 text-xs outline-none"
+                        />
+                      </div>
                     ))}
+
+                    {projectsList.length === 0 && (
+                      <button
+                        type="button"
+                        onClick={addProject}
+                        className="border-border text-muted hover:border-brand hover:text-brand w-full rounded-xl border border-dashed py-2.5 text-xs transition-colors"
+                      >
+                        {t("addProject")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 4. Sertifikatlar (Certificates) */}
+                <div className="border-border/40 space-y-3 border-t pt-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-foreground text-xs font-bold">
+                      {t("certificatesTitle")}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addCertificate}
+                      className="text-brand text-xs font-bold hover:underline"
+                    >
+                      {t("addCertificate")}
+                    </button>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {certsList.map((cert, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="border-border bg-surface space-y-2 rounded-xl border p-3 shadow-2xs"
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold">
+                            {cert.name ||
+                              `#${cIdx + 1} ${t("certificatesTitle")}`}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeCertificate(cIdx)}
+                            className="text-[11px] text-red-500 hover:underline"
+                          >
+                            {t("deleteEntry")}
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-12 gap-2">
+                          <div className="col-span-5">
+                            <input
+                              type="text"
+                              value={cert.name}
+                              placeholder={t("certName")}
+                              onChange={(e) =>
+                                updateCertificate(cIdx, {
+                                  name: e.target.value,
+                                })
+                              }
+                              className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                            />
+                          </div>
+                          <div className="col-span-4">
+                            <input
+                              type="text"
+                              value={cert.issuer ?? ""}
+                              placeholder={t("certIssuer")}
+                              onChange={(e) =>
+                                updateCertificate(cIdx, {
+                                  issuer: e.target.value,
+                                })
+                              }
+                              className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                            />
+                          </div>
+                          <div className="col-span-3">
+                            <input
+                              type="text"
+                              value={cert.year ?? ""}
+                              placeholder={t("certYear")}
+                              onChange={(e) =>
+                                updateCertificate(cIdx, {
+                                  year: e.target.value,
+                                })
+                              }
+                              className="border-border bg-surface w-full rounded-lg border px-2.5 py-1 text-xs outline-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+
+                    {certsList.length === 0 && (
+                      <button
+                        type="button"
+                        onClick={addCertificate}
+                        className="border-border text-muted hover:border-brand hover:text-brand w-full rounded-xl border border-dashed py-2.5 text-xs transition-colors"
+                      >
+                        {t("addCertificate")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 5. Qiziqishlar (Hobbies) */}
+                <div className="border-border/40 space-y-3 border-t pt-4">
+                  <label className="text-foreground text-xs font-bold">
+                    {t("hobbiesTitle")}
+                  </label>
+
+                  {/* Selected Hobbies */}
+                  {hobbiesList.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {hobbiesList.map((h) => (
+                        <span
+                          key={h}
+                          className="bg-brand/10 text-brand inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold"
+                        >
+                          {h}
+                          <button
+                            type="button"
+                            onClick={() => toggleHobby(h)}
+                            className="hover:text-red-500"
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Quick Suggestion Hobbies */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {POPULAR_HOBBIES.map((h) => {
+                      const active = hobbiesList.some(
+                        (item) => item.toLowerCase() === h.toLowerCase(),
+                      );
+                      return (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHobby(h)}
+                          className={`rounded-lg px-2 py-0.5 text-xs font-medium transition-colors ${
+                            active
+                              ? "bg-brand text-brand-foreground"
+                              : "border-border bg-surface text-foreground hover:border-brand border"
+                          }`}
+                        >
+                          {active ? `✓ ${h}` : `+ ${h}`}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Custom Hobby Input */}
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={customHobbyInput}
+                      onChange={(e) => setCustomHobbyInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddCustomHobby();
+                        }
+                      }}
+                      placeholder={t("hobbyPlaceholder")}
+                      className="border-border bg-surface focus:ring-brand/40 flex-1 rounded-xl border px-3 py-1.5 text-xs outline-none focus:ring-2"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddCustomHobby}
+                      className="border-border text-foreground hover:bg-muted/30 rounded-xl border px-3 py-1.5 text-xs font-bold"
+                    >
+                      {t("addHobby")}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -910,7 +1676,7 @@ export function CvStepBuilder({
             {currentStep === 5 && (
               <div className="space-y-5">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepSummaryTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -920,7 +1686,7 @@ export function CvStepBuilder({
 
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-foreground">
+                    <label className="text-foreground text-xs font-bold">
                       {tCv("fields.goal")}
                     </label>
 
@@ -929,18 +1695,25 @@ export function CvStepBuilder({
                       type="button"
                       onClick={handleGenerateAboutMe}
                       disabled={generatingAboutMe}
-                      className="flex items-center gap-1.5 rounded-lg bg-brand/10 px-3 py-1 text-xs font-bold text-brand hover:bg-brand/20 transition-colors disabled:opacity-50"
+                      className="bg-brand/10 text-brand hover:bg-brand/20 flex items-center gap-1.5 rounded-lg px-3 py-1 text-xs font-bold transition-colors disabled:opacity-50"
                     >
-                      {generatingAboutMe ? t("aiGenerating") : t("aiGenerateBtn")}
+                      {generatingAboutMe
+                        ? t("aiGenerating")
+                        : t("aiGenerateBtn")}
                     </button>
                   </div>
 
                   <textarea
                     rows={6}
                     value={data.goal ?? ""}
-                    onChange={(e) => onChange({ ...draft, data: { ...data, goal: e.target.value } })}
+                    onChange={(e) =>
+                      onChange({
+                        ...draft,
+                        data: { ...data, goal: e.target.value },
+                      })
+                    }
                     placeholder="Men IT va dasturlash sohasiga qiziquvchi, o'rganishga intiluvchan mutaxassisman..."
-                    className="w-full rounded-xl border border-border bg-surface p-3.5 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-brand/40"
+                    className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border p-3.5 text-sm leading-relaxed outline-none focus:ring-2"
                   />
                 </div>
               </div>
@@ -950,7 +1723,7 @@ export function CvStepBuilder({
             {currentStep === 6 && (
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-2xl font-black tracking-tight text-foreground">
+                  <h2 className="text-foreground text-2xl font-black tracking-tight">
                     {t("stepFinalizeTitle")}
                   </h2>
                   <p className="text-muted mt-1 text-xs">
@@ -962,20 +1735,22 @@ export function CvStepBuilder({
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <label className="text-xs font-bold text-foreground">
+                      <label className="text-foreground text-xs font-bold">
                         {tCv("templates.title")}
                       </label>
-                      <p className="text-[11px] text-muted">
-                        {CV_TEMPLATE_NAMES[activeTemplateId] ?? activeTemplateId} · {selectedCategory.toUpperCase()}
+                      <p className="text-muted text-[11px]">
+                        {CV_TEMPLATE_NAMES[activeTemplateId] ??
+                          activeTemplateId}{" "}
+                        · {selectedCategory.toUpperCase()}
                       </p>
                     </div>
-                    <span className="rounded-full bg-brand/10 px-2.5 py-0.5 text-[10px] font-bold text-brand">
+                    <span className="bg-brand/10 text-brand rounded-full px-2.5 py-0.5 text-[10px] font-bold">
                       {CV_TEMPLATE_NAMES[activeTemplateId] || activeTemplateId}
                     </span>
                   </div>
 
                   {/* Category Tabs: Modern, Classic, Minimal */}
-                  <div className="flex rounded-xl bg-muted/20 p-1 border border-border/60">
+                  <div className="bg-muted/20 border-border/60 flex rounded-xl border p-1">
                     {CV_TEMPLATE_CATEGORIES.map((cat) => {
                       const isCatActive = selectedCategory === cat.id;
                       return (
@@ -991,9 +1766,9 @@ export function CvStepBuilder({
                               });
                             }
                           }}
-                          className={`flex-1 flex items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
+                          className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-bold transition-all ${
                             isCatActive
-                              ? "bg-surface text-foreground shadow-xs border border-border/80"
+                              ? "bg-surface text-foreground border-border/80 border shadow-xs"
                               : "text-muted hover:text-foreground"
                           }`}
                         >
@@ -1012,7 +1787,8 @@ export function CvStepBuilder({
                   <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3">
                     {listTemplates(selectedCategory).map((tpl) => {
                       const isSelected = activeTemplateId === tpl.id;
-                      const langKey = (draft.language as "kk" | "uz" | "ru" | "en") || "uz";
+                      const langKey =
+                        (draft.language as "kk" | "uz" | "ru" | "en") || "uz";
                       const desc =
                         CV_TEMPLATE_DESCRIPTIONS[tpl.id]?.[langKey] ||
                         CV_TEMPLATE_DESCRIPTIONS[tpl.id]?.uz ||
@@ -1021,8 +1797,8 @@ export function CvStepBuilder({
                         selectedCategory === "modern"
                           ? "#F97316"
                           : selectedCategory === "classic"
-                          ? "#1E3A8A"
-                          : "#27272A";
+                            ? "#1E3A8A"
+                            : "#27272A";
 
                       return (
                         <button
@@ -1036,18 +1812,18 @@ export function CvStepBuilder({
                           }
                           className={`group relative flex flex-col justify-between rounded-2xl border-2 p-3 text-left transition-all ${
                             isSelected
-                              ? "border-brand bg-brand/5 shadow-md ring-2 ring-brand/30"
+                              ? "border-brand bg-brand/5 ring-brand/30 shadow-md ring-2"
                               : "border-border bg-surface hover:border-brand/40"
                           }`}
                         >
                           {isSelected ? (
-                            <div className="absolute top-2 right-2 rounded-full bg-brand px-2 py-0.5 text-[9px] font-bold text-brand-foreground shadow">
+                            <div className="bg-brand text-brand-foreground absolute top-2 right-2 rounded-full px-2 py-0.5 text-[9px] font-bold shadow">
                               {tCv("templates.selectedBadge")}
                             </div>
                           ) : null}
 
                           {/* Mini visual thumbnail */}
-                          <div className="mb-2.5 flex h-20 w-full flex-col overflow-hidden rounded-xl border border-border/80 bg-surface shadow-xs">
+                          <div className="border-border/80 bg-surface mb-2.5 flex h-20 w-full flex-col overflow-hidden rounded-xl border shadow-xs">
                             <TemplateThumbnail id={tpl.id} />
                           </div>
 
@@ -1057,11 +1833,11 @@ export function CvStepBuilder({
                                 className="h-2 w-2 rounded-full shadow-xs"
                                 style={{ backgroundColor: catColor }}
                               />
-                              <span className="text-xs font-bold text-foreground">
+                              <span className="text-foreground text-xs font-bold">
                                 {tpl.name}
                               </span>
                             </div>
-                            <p className="mt-0.5 text-[10.5px] text-muted leading-tight line-clamp-2">
+                            <p className="text-muted mt-0.5 line-clamp-2 text-[10.5px] leading-tight">
                               {desc}
                             </p>
                           </div>
@@ -1072,11 +1848,11 @@ export function CvStepBuilder({
                 </div>
 
                 {/* Privacy Settings */}
-                <div className="space-y-3 pt-3 border-t border-border/40">
-                  <label className="text-xs font-bold text-foreground">
+                <div className="border-border/40 space-y-3 border-t pt-3">
+                  <label className="text-foreground text-xs font-bold">
                     {tCv("privacy.title")}
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                  <div className="grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                     {[
                       { key: "hidePhone", label: tCv("privacy.hidePhone") },
                       { key: "hideEmail", label: tCv("privacy.hideEmail") },
@@ -1085,11 +1861,15 @@ export function CvStepBuilder({
                     ].map((item) => (
                       <label
                         key={item.key}
-                        className="flex items-center gap-2 rounded-xl border border-border p-2.5 bg-surface cursor-pointer hover:border-brand/40 transition-colors"
+                        className="border-border bg-surface hover:border-brand/40 flex cursor-pointer items-center gap-2 rounded-xl border p-2.5 transition-colors"
                       >
                         <input
                           type="checkbox"
-                          checked={Boolean(draft.privacy?.[item.key as keyof typeof draft.privacy])}
+                          checked={Boolean(
+                            draft.privacy?.[
+                              item.key as keyof typeof draft.privacy
+                            ],
+                          )}
                           onChange={(e) =>
                             onChange({
                               ...draft,
@@ -1100,41 +1880,56 @@ export function CvStepBuilder({
                             })
                           }
                         />
-                        <span className="text-muted font-medium">{item.label}</span>
+                        <span className="text-muted font-medium">
+                          {item.label}
+                        </span>
                       </label>
                     ))}
                   </div>
                 </div>
 
                 {/* Visibility */}
-                <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-4">
-                  <span className="text-xs font-bold">{tCv("visibility.label")}</span>
+                <div className="border-border bg-surface flex items-center justify-between rounded-2xl border p-4">
+                  <span className="text-xs font-bold">
+                    {tCv("visibility.label")}
+                  </span>
                   <input
                     type="checkbox"
                     checked={isVisible}
                     onChange={(e) => onToggleVisibility(e.target.checked)}
-                    className="h-5 w-5 rounded text-brand focus:ring-brand"
+                    className="text-brand focus:ring-brand h-5 w-5 rounded"
                   />
                 </div>
               </div>
             )}
 
             {/* Bottom Form Navigation Buttons */}
-            <div className="flex items-center justify-between pt-4 border-t border-border/60">
+            <div className="border-border/60 flex items-center justify-between gap-2 border-t pt-4">
               <button
                 type="button"
                 disabled={currentStep === 1}
                 onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1))}
-                className="rounded-xl border border-border px-5 py-2.5 text-xs font-bold text-muted hover:text-foreground disabled:opacity-30"
+                className="border-border text-muted hover:text-foreground rounded-xl border px-5 py-2.5 text-xs font-bold disabled:opacity-30"
               >
                 {t("prev")}
+              </button>
+
+              {/* Mobile Preview Trigger */}
+              <button
+                type="button"
+                onClick={() => setFullscreenOpen(true)}
+                className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 rounded-xl border px-3 py-2 text-xs font-bold transition-colors lg:hidden"
+              >
+                ⛶ {t("fullscreenPreview")}
               </button>
 
               {currentStep < 6 ? (
                 <button
                   type="button"
-                  onClick={() => setCurrentStep((prev) => Math.min(6, prev + 1))}
-                  className="rounded-xl bg-brand px-6 py-2.5 text-xs font-bold text-brand-foreground shadow hover:opacity-95"
+                  onClick={() =>
+                    setCurrentStep((prev) => Math.min(6, prev + 1))
+                  }
+                  className="bg-brand text-brand-foreground rounded-xl px-6 py-2.5 text-xs font-bold shadow hover:opacity-95"
                 >
                   {t("next")}
                 </button>
@@ -1143,7 +1938,7 @@ export function CvStepBuilder({
                   type="button"
                   disabled={saving}
                   onClick={onSave}
-                  className="rounded-xl bg-brand px-7 py-2.5 text-xs font-black text-brand-foreground shadow hover:opacity-95 disabled:opacity-60"
+                  className="bg-brand text-brand-foreground rounded-xl px-7 py-2.5 text-xs font-black shadow hover:opacity-95 disabled:opacity-60"
                 >
                   {saving ? tCv("save") : t("finish")}
                 </button>
@@ -1152,35 +1947,122 @@ export function CvStepBuilder({
           </div>
         </div>
 
-        {/* Right Column: Live A4 Document Paper Preview (4 cols on desktop) */}
-        <div className="hidden lg:col-span-4 lg:block">
-          <div className="sticky top-20 rounded-3xl border border-border bg-muted/20 p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between px-1">
-              <span className="text-xs font-bold text-muted uppercase tracking-wider">
-                {t("livePreview")}
-              </span>
-              <span className="rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-bold text-brand">
-                {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
-              </span>
+        {/* Right Column: Live A4 Document Paper Preview (5 cols on desktop) */}
+        <div className="hidden lg:col-span-5 lg:block">
+          <div className="border-border bg-muted/20 sticky top-20 rounded-3xl border p-4 shadow-sm">
+            <div className="mb-3 flex items-center justify-between gap-2 px-1">
+              <div className="flex items-center gap-2">
+                <span className="text-muted text-xs font-bold tracking-wider uppercase">
+                  {t("livePreview")}
+                </span>
+                <span className="bg-brand/10 text-brand rounded-full px-2 py-0.5 text-[10px] font-bold">
+                  {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
+                </span>
+              </div>
+
+              {/* Zoom & Fullscreen Controls */}
+              <div className="flex items-center gap-1">
+                {[0.5, 0.6, 0.75].map((scale) => (
+                  <button
+                    key={scale}
+                    type="button"
+                    onClick={() => setZoomScale(scale)}
+                    className={`rounded-lg px-2 py-1 text-[10px] font-bold transition-colors ${
+                      zoomScale === scale
+                        ? "bg-brand text-brand-foreground"
+                        : "bg-surface border-border text-muted hover:text-foreground border"
+                    }`}
+                  >
+                    {Math.round(scale * 100)}%
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setFullscreenOpen(true)}
+                  title={t("fullscreenPreview")}
+                  className="bg-surface border-border text-foreground hover:bg-muted/40 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-colors"
+                >
+                  ⛶
+                </button>
+              </div>
             </div>
 
-            {/* A4 Paper Scaled Wrapper */}
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface shadow-md">
-              <div className="origin-top scale-[0.62] transform p-4 -mb-[38%]">
-                <CvDocument
-                  cv={{
-                    data,
-                    language: draft.language as CvDocumentLanguage,
-                    workTypes: draft.workTypes as WorkType[],
-                    templateId: draft.templateId,
+            {/* A4 Paper Scaled Wrapper (Centered, non-clipped) */}
+            <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
+              <div
+                className="flex justify-center transition-transform duration-200"
+                style={{
+                  height: `${1123 * zoomScale + 32}px`,
+                }}
+              >
+                <div
+                  style={{
+                    width: "794px",
+                    minWidth: "794px",
+                    transform: `scale(${zoomScale})`,
+                    transformOrigin: "top center",
                   }}
-                  labels={labels}
-                />
+                  className="pt-2"
+                >
+                  <CvDocument
+                    cv={{
+                      data,
+                      language: draft.language as CvDocumentLanguage,
+                      workTypes: draft.workTypes as WorkType[],
+                      templateId: draft.templateId,
+                    }}
+                    labels={labels}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Fullscreen Overlay Modal */}
+      {fullscreenOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex flex-col bg-black/85 p-4 backdrop-blur-sm sm:p-6"
+          onClick={() => setFullscreenOpen(false)}
+        >
+          <div className="mx-auto flex w-full max-w-[850px] items-center justify-between pb-3 text-white">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold">
+                {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
+              </span>
+              <span className="bg-brand rounded-full px-2 py-0.5 text-[10px] font-bold text-white">
+                100% A4
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFullscreenOpen(false)}
+              className="rounded-xl bg-white/10 px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-white/20"
+            >
+              ✕ {t("close")}
+            </button>
+          </div>
+          <div
+            className="flex flex-1 items-start justify-center overflow-auto p-2 sm:p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="my-auto rounded-sm bg-white shadow-2xl">
+              <CvDocument
+                cv={{
+                  data,
+                  language: draft.language as CvDocumentLanguage,
+                  workTypes: draft.workTypes as WorkType[],
+                  templateId: draft.templateId,
+                }}
+                labels={labels}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

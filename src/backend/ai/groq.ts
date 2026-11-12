@@ -18,7 +18,9 @@ export class GroqProvider implements AiProvider {
       throw new AiProviderError("AUTH");
     }
 
-    const model = request.model.startsWith("llama") ? request.model : this.defaultModel;
+    const model = request.model.startsWith("llama")
+      ? request.model
+      : this.defaultModel;
     const url = "https://api.groq.com/openai/v1/chat/completions";
 
     try {
@@ -31,7 +33,10 @@ export class GroqProvider implements AiProvider {
         body: JSON.stringify({
           model,
           messages: [
-            { role: "system", content: `${request.system}\nOutput MUST be valid JSON.` },
+            {
+              role: "system",
+              content: `${request.system}\nOutput MUST be valid JSON.`,
+            },
             { role: "user", content: request.input },
           ],
           response_format: { type: "json_object" },

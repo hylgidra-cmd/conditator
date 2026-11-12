@@ -10,6 +10,11 @@ export const CV_TEXT_MAX = 3000;
 export const aiCvDraftSchema = z.object({
   goal: z.string().nullable(),
   location: z.string().nullable(),
+  photo: z.string().nullable().optional(),
+  telegram: z.string().nullable().optional(),
+  github: z.string().nullable().optional(),
+  linkedin: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
   education: z.array(
     z.object({
       institution: z.string(),
@@ -28,11 +33,34 @@ export const aiCvDraftSchema = z.object({
       description: z.string().nullable(),
     }),
   ),
+  projects: z
+    .array(
+      z.object({
+        name: z.string(),
+        link: z.string().nullable().optional(),
+        year: z.string().nullable().optional(),
+        description: z.string().nullable().optional(),
+      }),
+    )
+    .optional(),
   skills: z.array(z.string()),
   languages: z.array(
     z.object({ name: z.string(), level: z.string().nullable() }),
   ),
-  certificates: z.array(z.string()),
+  certificates: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          name: z.string(),
+          issuer: z.string().nullable().optional(),
+          year: z.string().nullable().optional(),
+        }),
+      ]),
+    )
+    .optional()
+    .default([]),
+  hobbies: z.array(z.string()).optional(),
 });
 
 export type AiCvDraft = z.infer<typeof aiCvDraftSchema>;
@@ -43,6 +71,10 @@ export const cvDataSchema = aiCvDraftSchema.extend({
   contact: z.object({
     email: z.string().nullable(),
     phone: z.string().nullable(),
+    telegram: z.string().nullable().optional(),
+    github: z.string().nullable().optional(),
+    linkedin: z.string().nullable().optional(),
+    website: z.string().nullable().optional(),
   }),
 });
 

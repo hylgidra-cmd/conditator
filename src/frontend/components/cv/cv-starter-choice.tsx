@@ -16,14 +16,12 @@ export function CvStarterChoice({
   const t = useTranslations("StudentCv.onboarding");
 
   return (
-    <div className="mx-auto max-w-2xl py-8 px-4 text-center">
+    <div className="mx-auto max-w-2xl px-4 py-8 text-center">
       <div className="mb-10 space-y-2">
         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
           {t("choiceTitle")}
         </h1>
-        <p className="text-muted text-base">
-          {t("choiceDesc")}
-        </p>
+        <p className="text-muted text-base">{t("choiceDesc")}</p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -31,14 +29,14 @@ export function CvStarterChoice({
         <button
           type="button"
           onClick={() => onSelectChoice("import")}
-          className="group relative flex flex-col items-center justify-center rounded-3xl border-2 border-brand/40 bg-surface p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-brand hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-brand/20"
+          className="group border-brand/40 bg-surface hover:border-brand focus:ring-brand/20 relative flex flex-col items-center justify-center rounded-3xl border-2 p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl focus:ring-4 focus:outline-none"
         >
           {/* Recommended Pill Badge */}
-          <div className="absolute -top-3.5 rounded-full bg-brand px-3.5 py-1 text-xs font-bold text-brand-foreground shadow">
+          <div className="bg-brand text-brand-foreground absolute -top-3.5 rounded-full px-3.5 py-1 text-xs font-bold shadow">
             {t("importBadge")}
           </div>
 
-          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-brand/10 text-brand transition-transform group-hover:scale-110">
+          <div className="bg-brand/10 text-brand mb-5 flex h-20 w-20 items-center justify-center rounded-2xl transition-transform group-hover:scale-110">
             <svg
               className="h-10 w-10"
               fill="none"
@@ -54,7 +52,7 @@ export function CvStarterChoice({
             </svg>
           </div>
 
-          <h3 className="text-xl font-bold tracking-tight group-hover:text-brand transition-colors">
+          <h3 className="group-hover:text-brand text-xl font-bold tracking-tight transition-colors">
             {t("importTitle")}
           </h3>
           <p className="text-muted mt-2 text-sm leading-relaxed">
@@ -66,7 +64,7 @@ export function CvStarterChoice({
         <button
           type="button"
           onClick={() => onSelectChoice("scratch")}
-          className="group relative flex flex-col items-center justify-center rounded-3xl border-2 border-border bg-surface p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-brand hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-brand/20"
+          className="group border-border bg-surface hover:border-brand focus:ring-brand/20 relative flex flex-col items-center justify-center rounded-3xl border-2 p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl focus:ring-4 focus:outline-none"
         >
           <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 transition-transform group-hover:scale-110">
             <svg
@@ -84,7 +82,7 @@ export function CvStarterChoice({
             </svg>
           </div>
 
-          <h3 className="text-xl font-bold tracking-tight group-hover:text-brand transition-colors">
+          <h3 className="group-hover:text-brand text-xl font-bold tracking-tight transition-colors">
             {t("scratchTitle")}
           </h3>
           <p className="text-muted mt-2 text-sm leading-relaxed">
@@ -95,7 +93,7 @@ export function CvStarterChoice({
 
       {/* Edit existing resume link if already created */}
       {hasExistingCv && onEditExisting && (
-        <div className="mt-10 pt-6 border-t border-border/60">
+        <div className="border-border/60 mt-10 border-t pt-6">
           <button
             type="button"
             onClick={onEditExisting}

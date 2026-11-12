@@ -63,8 +63,13 @@ export const cvSaveSchema = z.object({
         .nullable()
         .transform((value) => (value ? value : null))
         .pipe(z.email({ error: "INVALID_EMAIL" }).nullable()),
-      phone: text(30),
+      phone: text(50),
+      telegram: text(100).optional(),
+      github: text(150).optional(),
+      linkedin: text(150).optional(),
+      website: text(150).optional(),
     }),
+    photo: text(500).optional(),
     goal: text(1000),
     location: text(100),
     education: list(
@@ -87,9 +92,29 @@ export const cvSaveSchema = z.object({
       }),
       20,
     ),
+    projects: list(
+      z.object({
+        name: required(150),
+        link: z.string().trim().max(200).nullable().optional(),
+        year: z.string().trim().max(50).nullable().optional(),
+        description: z.string().trim().max(1000).nullable().optional(),
+      }),
+      20,
+    ).optional(),
     skills: list(required(60), 50),
-    languages: list(z.object({ name: required(50), level: text(30) }), 20),
-    certificates: list(required(300), 30),
+    languages: list(z.object({ name: required(50), level: text(50) }), 20),
+    certificates: list(
+      z.union([
+        required(300),
+        z.object({
+          name: required(200),
+          issuer: z.string().trim().max(150).nullable().optional(),
+          year: z.string().trim().max(50).nullable().optional(),
+        }),
+      ]),
+      30,
+    ).default([]),
+    hobbies: list(required(60), 30).optional(),
   }),
 });
 
@@ -122,7 +147,11 @@ export function buildSearchText(cv: CvData): string {
     ]),
     ...cv.skills,
     ...cv.languages.map((item) => item.name),
-    ...cv.certificates,
+    ...(cv.certificates ?? []).map((item) =>
+      typeof item === "string" ? item : item.name,
+    ),
+    ...(cv.projects ?? []).flatMap((p) => [p.name, p.description]),
+    ...(cv.hobbies ?? []),
   ]
     .filter(Boolean)
     .join(" ")

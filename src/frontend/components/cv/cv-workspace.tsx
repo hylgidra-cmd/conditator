@@ -169,19 +169,19 @@ export function CvWorkspace({
     return (
       <div className="space-y-4">
         {/* Yuqori boshqaruv paneli: rejimni o'zgartirish va holat */}
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-surface/80 p-3 shadow-sm backdrop-blur-sm">
+        <div className="border-border/80 bg-surface/80 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-3 shadow-sm backdrop-blur-sm">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setMode("choice")}
-              className="rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted hover:text-foreground transition-colors"
+              className="border-border bg-surface text-muted hover:text-foreground rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors"
             >
               {t("onboarding.restartWizard")}
             </button>
             <button
               type="button"
               onClick={() => setMode("classic")}
-              className="rounded-xl border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-muted hover:text-foreground transition-colors"
+              className="border-border bg-surface text-muted hover:text-foreground rounded-xl border px-3 py-1.5 text-xs font-semibold transition-colors"
             >
               {t("onboarding.switchFullEditor")}
             </button>
@@ -229,14 +229,14 @@ export function CvWorkspace({
   // Standart to'liq muharrir (Classic view)
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface p-3 shadow-sm">
-        <span className="text-xs font-medium text-muted">
+      <div className="border-border bg-surface flex items-center justify-between rounded-2xl border p-3 shadow-sm">
+        <span className="text-muted text-xs font-medium">
           {t("onboarding.switchFullEditor")}
         </span>
         <button
           type="button"
           onClick={() => setMode("builder")}
-          className="rounded-xl bg-brand px-3.5 py-1.5 text-xs font-bold text-brand-foreground shadow hover:opacity-90 transition-opacity"
+          className="bg-brand text-brand-foreground rounded-xl px-3.5 py-1.5 text-xs font-bold shadow transition-opacity hover:opacity-90"
         >
           {t("onboarding.switchStepBuilder")}
         </button>

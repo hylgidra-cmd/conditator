@@ -44,19 +44,28 @@ export async function getAiProvider(): Promise<AiProvider> {
   if (cached) return cached;
   const env = aiEnv();
 
-  if (env.AI_PROVIDER === "gemini" || (env.AI_PROVIDER === "auto" && env.GEMINI_API_KEY)) {
+  if (
+    env.AI_PROVIDER === "gemini" ||
+    (env.AI_PROVIDER === "auto" && env.GEMINI_API_KEY)
+  ) {
     const { GeminiProvider } = await import("./gemini");
     cached = new GeminiProvider(env.GEMINI_API_KEY);
     return cached;
   }
 
-  if (env.AI_PROVIDER === "groq" || (env.AI_PROVIDER === "auto" && env.GROQ_API_KEY)) {
+  if (
+    env.AI_PROVIDER === "groq" ||
+    (env.AI_PROVIDER === "auto" && env.GROQ_API_KEY)
+  ) {
     const { GroqProvider } = await import("./groq");
     cached = new GroqProvider(env.GROQ_API_KEY);
     return cached;
   }
 
-  if (env.AI_PROVIDER === "anthropic" || (env.AI_PROVIDER === "auto" && env.ANTHROPIC_API_KEY)) {
+  if (
+    env.AI_PROVIDER === "anthropic" ||
+    (env.AI_PROVIDER === "auto" && env.ANTHROPIC_API_KEY)
+  ) {
     const { AnthropicProvider } = await import("./anthropic");
     cached = new AnthropicProvider(env.ANTHROPIC_API_KEY);
     return cached;

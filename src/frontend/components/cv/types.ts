@@ -53,14 +53,24 @@ export type SavedCvMeta = {
 export function emptyCvData(email: string): CvData {
   return {
     fullName: null,
-    contact: { email, phone: null },
+    contact: {
+      email,
+      phone: null,
+      telegram: null,
+      github: null,
+      linkedin: null,
+      website: null,
+    },
+    photo: null,
     goal: null,
     location: null,
     education: [],
     experience: [],
+    projects: [],
     skills: [],
     languages: [],
     certificates: [],
+    hobbies: [],
   };
 }
 
@@ -73,10 +83,18 @@ export function draftFromData(
   },
 ): CvDraft {
   const { privacy: userPrivacy, ...otherRest } = rest;
+  const certsText = (data.certificates || [])
+    .map((c) =>
+      typeof c === "string"
+        ? c
+        : [c.name, c.issuer, c.year].filter(Boolean).join(" · "),
+    )
+    .join("\n");
+
   return {
     ...otherRest,
     title: rest.title || "Mening rezyumem",
-    templateId: rest.templateId || "modern",
+    templateId: rest.templateId || "modern-1",
     privacy: {
       hideName: Boolean(userPrivacy?.hideName),
       hidePhone: Boolean(userPrivacy?.hidePhone),
@@ -84,23 +102,35 @@ export function draftFromData(
       hideAddress: Boolean(userPrivacy?.hideAddress),
       hidePhoto: Boolean(userPrivacy?.hidePhoto),
     },
-    data,
-    skillsText: data.skills.join(", "),
-    certificatesText: data.certificates.join("\n"),
+    data: {
+      ...data,
+      projects: data.projects || [],
+      hobbies: data.hobbies || [],
+      certificates: data.certificates || [],
+    },
+    skillsText: (data.skills || []).join(", "),
+    certificatesText: certsText,
   };
 }
 
 /** Matn ko'rinishidagi ro'yxatlarni CvData ga qaytaradi. */
 export function dataFromDraft(draft: CvDraft): CvData {
+  const skills = draft.skillsText
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  const certificates =
+    draft.data.certificates && draft.data.certificates.length > 0
+      ? draft.data.certificates
+      : draft.certificatesText
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean);
+
   return {
     ...draft.data,
-    skills: draft.skillsText
-      .split(",")
-      .map((item) => item.trim())
-      .filter(Boolean),
-    certificates: draft.certificatesText
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean),
+    skills,
+    certificates,
   };
 }

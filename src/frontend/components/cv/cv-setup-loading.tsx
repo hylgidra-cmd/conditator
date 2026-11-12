@@ -33,18 +33,18 @@ export function CvSetupLoading({ onDone }: Props) {
   ];
 
   return (
-    <div className="mx-auto flex min-h-[460px] max-w-lg flex-col items-center justify-center py-12 px-4 text-center">
-      <div className="w-full rounded-3xl border border-border bg-surface p-10 shadow-lg space-y-8">
+    <div className="mx-auto flex min-h-[460px] max-w-lg flex-col items-center justify-center px-4 py-12 text-center">
+      <div className="border-border bg-surface w-full space-y-8 rounded-3xl border p-10 shadow-lg">
         <div>
-          <h2 className="text-2xl font-black tracking-tight sm:text-3xl text-foreground">
+          <h2 className="text-foreground text-2xl font-black tracking-tight sm:text-3xl">
             {t("loadingTitle")}
           </h2>
         </div>
 
         {/* Animated Brand Gears Graphic */}
         <div className="relative mx-auto flex h-32 w-32 items-center justify-center">
-          <div className="absolute inset-0 rounded-full bg-brand/10 blur-xl animate-pulse" />
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-tr from-brand to-orange-400 text-white shadow-xl shadow-brand/30">
+          <div className="bg-brand/10 absolute inset-0 animate-pulse rounded-full blur-xl" />
+          <div className="from-brand shadow-brand/30 relative flex h-24 w-24 items-center justify-center rounded-2xl bg-gradient-to-tr to-orange-400 text-white shadow-xl">
             <svg
               className="h-12 w-12 animate-spin text-white"
               style={{ animationDuration: "6s" }}
@@ -69,7 +69,7 @@ export function CvSetupLoading({ onDone }: Props) {
         </div>
 
         {/* Step by step checklist with checkmarks */}
-        <div className="space-y-3.5 text-left max-w-xs mx-auto">
+        <div className="mx-auto max-w-xs space-y-3.5 text-left">
           {steps.map((s) => {
             const isDone = activeStep > s.id;
             const isCurrent = activeStep === s.id;
@@ -87,12 +87,14 @@ export function CvSetupLoading({ onDone }: Props) {
                       ? "bg-emerald-500 text-white"
                       : isCurrent
                         ? "bg-brand text-brand-foreground animate-pulse"
-                        : "border border-border text-muted"
+                        : "border-border text-muted border"
                   }`}
                 >
                   {isDone ? "✓" : s.id}
                 </div>
-                <span className={`text-sm font-medium ${isDone ? "text-foreground font-semibold" : "text-muted"}`}>
+                <span
+                  className={`text-sm font-medium ${isDone ? "text-foreground font-semibold" : "text-muted"}`}
+                >
                   {s.label}
                 </span>
               </div>

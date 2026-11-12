@@ -12,7 +12,8 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { skills, education, experience, language, jobTitle, fullName } = body;
+    const { skills, education, experience, language, jobTitle, fullName } =
+      body;
 
     const aboutMe = await generateAboutMe({
       userId: user.id,

@@ -28,6 +28,14 @@ export default async function StudentCvPage() {
   const cv = await getOwnCv(user.id);
   const parsed = cv ? cvDataSchema.safeParse(cv.data) : null;
   const data = parsed?.success ? parsed.data : emptyCvData(user.email);
+  const routeLang = (
+    ["kk", "uz", "ru", "en"].includes(locale) ? locale : "uz"
+  ) as CvDocumentLanguage;
+  const draftLang: CvDocumentLanguage =
+    (cv?.language && cv.language !== "en"
+      ? (cv.language as CvDocumentLanguage)
+      : routeLang) || routeLang;
+
   const draft: CvDraft = draftFromData(data, {
     title: cv?.title ?? "",
     templateId: (cv?.templateId as CvTemplateId) || "modern-1",
@@ -35,7 +43,7 @@ export default async function StudentCvPage() {
       typeof cv?.privacy === "object" && cv?.privacy !== null
         ? (cv.privacy as Partial<CvPrivacyState>)
         : undefined,
-    language: cv?.language ?? "en",
+    language: draftLang,
     workTypes: (cv?.workTypes ?? []) as WorkTypeValue[],
     sourceText: cv?.sourceText ?? "",
   });
@@ -54,7 +62,7 @@ export default async function StudentCvPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6 px-4 py-8">
+    <div className="mx-auto w-full max-w-[1680px] space-y-6 px-3 py-6 sm:px-6 lg:px-8">
       <div>
         <h1 className="text-2xl font-bold">{t("title")}</h1>
         {!cv ? <p className="text-muted mt-1 text-sm">{t("empty")}</p> : null}

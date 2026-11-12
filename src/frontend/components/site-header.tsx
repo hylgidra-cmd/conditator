@@ -24,28 +24,35 @@ export async function SiteHeader() {
   const tTheme = await getTranslations("Theme");
   const user = await currentUser();
 
-  // Bosh sahifa boʻlimlariga havolalar. TODO: Vakansiyalar va Hamjamiyat boʻlimlari keyingi bosqichda quriladi.
+  // Bosh sahifa boʻlimlariga havolalar.
   const sections = [
     { href: "/", label: t("home") },
+    { href: "/vacancies", label: t("jobs") },
     { href: "/#companies", label: t("companies") },
-    { href: "/#community", label: t("community") },
-    { href: "/#categories", label: t("jobs") },
   ];
 
   // Kirgan foydalanuvchi uchun rol boʻyicha havolalar (mavjud kabinet sahifalari).
   const roleLinks = user
     ? [
         ...(user.role === "STUDENT"
-          ? [{ href: "/student/cv", label: t("myCv") }]
+          ? [
+              { href: "/vacancies", label: t("jobs") },
+              { href: "/student/cv", label: t("myCv") },
+              { href: "/chat", label: t("chat") },
+            ]
           : []),
         ...(user.role === "COMPANY"
           ? [
               { href: "/company/vacancies", label: t("vacancies") },
+              { href: "/chat", label: t("chat") },
               { href: "/company", label: t("company") },
             ]
           : []),
         ...(user.role === "ADMIN"
-          ? [{ href: "/admin", label: t("admin") }]
+          ? [
+              { href: "/admin", label: t("admin") },
+              { href: "/chat", label: t("chat") },
+            ]
           : []),
         { href: "/account", label: t("account") },
       ]

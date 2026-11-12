@@ -1,4 +1,5 @@
 import type { Lang } from "@prisma/client";
+import { z } from "zod";
 import {
   type AiCvDraft,
   aiCvDraftSchema,
@@ -99,4 +100,40 @@ export async function generateCv(input: GenerateCvInput) {
     contact: { email: input.email, phone: input.phone?.trim() || null },
   };
   return { cv, missingFields: missingFields(cv) };
+}
+
+const aboutMeSchema = z.object({
+  aboutMe: z.string(),
+});
+
+export async function generateAboutMe(input: {
+  userId: string;
+  language: Lang;
+  skills: string[];
+  education?: string[];
+  experience?: string[];
+}) {
+  const prompt = [
+    `Generate a professional, compelling, and concise "About Me" / career summary paragraph (2-3 sentences) in ${LANGUAGE_NAMES[input.language]}.`,
+    "Candidate skills: " + (input.skills.join(", ") || "General"),
+    input.education?.length ? "Education: " + input.education.join(", ") : "",
+    input.experience?.length
+      ? "Experience: " + input.experience.join(", ")
+      : "",
+    "Highlight strengths, passion for continuous learning, and value to employers.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const result = await runJsonTask({
+    task: "CV_GEN",
+    system:
+      "You write concise, compelling professional summaries for job seeker CVs. Return JSON with key aboutMe.",
+    input: prompt,
+    schema: aboutMeSchema,
+    maxTokens: 500,
+    userId: input.userId,
+  });
+
+  return result.aboutMe;
 }

@@ -1,5 +1,11 @@
 import { createHash } from "node:crypto";
-import type { Company, Lang, MatchDecision, Vacancy } from "@prisma/client";
+import type {
+  CandidateStageType,
+  Company,
+  Lang,
+  MatchDecision,
+  Vacancy,
+} from "@prisma/client";
 import {
   MATCH_BATCH_SIZE,
   MATCH_PROMPT_VERSION,
@@ -10,6 +16,7 @@ import { AiError } from "@/backend/ai/run";
 import { companyAccess } from "@/backend/company/access";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
+import { isVacancyUnlocked } from "@/backend/payment/service";
 import {
   type CandidateRow,
   type FilterStats,
@@ -25,6 +32,11 @@ export type MatchNotice =
 export type MatchItem = {
   cvId: string;
   score: number;
+  baseScore: number;
+  likeBonus: number;
+  likesCount: number;
+  likedByCompany: boolean;
+  isLocked: boolean;
   /** AI izohi (AI rejimida). */
   reason: string | null;
   /** Mos kelgan kalit so'zlar (zaxira qidiruv rejimida). */
@@ -33,6 +45,7 @@ export type MatchItem = {
   location: string | null;
   /** Kompaniya qarori: "Tanlandi" / "Mos emas". */
   decision: MatchDecision;
+  stage?: CandidateStageType;
 };
 
 export type MatchOutcome = {
@@ -45,6 +58,7 @@ export type MatchOutcome = {
   considered: number;
   /** Ulardan AI natijasi yo'q yoki eskirganlar (yangi/o'zgargan CV yoki talab). */
   pending: number;
+  isVacancyUnlocked: boolean;
 };
 
 /**
@@ -78,21 +92,42 @@ function keywordResults(
   candidates: CandidateRow[],
   terms: string[],
   decisions: Map<string, MatchDecision>,
+  likesMap: Map<string, { count: number; byThisCompany: boolean }>,
+  stagesMap: Map<string, CandidateStageType>,
+  isUnlocked: boolean,
 ): MatchItem[] {
   return candidates
-    .map((row, order) => ({
-      order,
-      item: {
-        cvId: row.id,
-        score: terms.length
-          ? Math.round((100 * row.matchedTerms.length) / terms.length)
-          : 0,
-        reason: null,
-        matchedTerms: row.matchedTerms,
-        decision: decisions.get(row.id) ?? ("NONE" as const),
-        ...displayInfo(row),
-      },
-    }))
+    .map((row, order) => {
+      const baseScore = terms.length
+        ? Math.round((100 * row.matchedTerms.length) / terms.length)
+        : 0;
+      const likeInfo = likesMap.get(row.id) ?? {
+        count: 0,
+        byThisCompany: false,
+      };
+      const likeBonus = Math.min(10, likeInfo.count);
+      const finalScore = Math.min(100, baseScore + likeBonus);
+      const isLocked = finalScore >= 80 && !isUnlocked;
+
+      return {
+        order,
+        item: {
+          cvId: row.id,
+          score: finalScore,
+          baseScore,
+          likeBonus,
+          likesCount: likeInfo.count,
+          likedByCompany: likeInfo.byThisCompany,
+          isLocked,
+          reason: null,
+          matchedTerms: row.matchedTerms,
+          decision: decisions.get(row.id) ?? ("NONE" as const),
+          stage: stagesMap.get(row.id),
+          ...displayInfo(row),
+        },
+      };
+    })
+    .filter(({ item }) => item.score >= 50)
     .sort((a, b) => b.item.score - a.item.score || a.order - b.order)
     .slice(0, MATCH_SHOW)
     .map(({ item }) => item);
@@ -103,12 +138,41 @@ async function loadState(vacancy: Vacancy, locale: Lang) {
   const hashes = new Map(
     candidates.map((row) => [row.id, matchHash(vacancy, row, locale)]),
   );
-  const stored = await db.match.findMany({
-    where: {
-      vacancyId: vacancy.id,
-      cvId: { in: candidates.map((row) => row.id) },
-    },
-  });
+  const candidateIds = candidates.map((row) => row.id);
+  const [stored, likesData, stagesData, unlocked] = await Promise.all([
+    db.match.findMany({
+      where: {
+        vacancyId: vacancy.id,
+        cvId: { in: candidateIds },
+      },
+    }),
+    db.candidateLike.findMany({
+      where: { cvId: { in: candidateIds } },
+      select: { cvId: true, companyId: true },
+    }),
+    db.candidateStage.findMany({
+      where: {
+        vacancyId: vacancy.id,
+        cvId: { in: candidateIds },
+      },
+    }),
+    isVacancyUnlocked(vacancy.companyId, vacancy.id),
+  ]);
+
+  const likesMap = new Map<string, { count: number; byThisCompany: boolean }>();
+  for (const like of likesData) {
+    const cur = likesMap.get(like.cvId) ?? { count: 0, byThisCompany: false };
+    cur.count += 1;
+    if (like.companyId === vacancy.companyId) {
+      cur.byThisCompany = true;
+    }
+    likesMap.set(like.cvId, cur);
+  }
+
+  const stagesMap = new Map<string, CandidateStageType>(
+    stagesData.map((s) => [s.cvId, s.stage]),
+  );
+
   const valid = stored.filter((match) => hashes.get(match.cvId) === match.hash);
   const validIds = new Set(valid.map((match) => match.cvId));
   return {
@@ -118,6 +182,9 @@ async function loadState(vacancy: Vacancy, locale: Lang) {
     hashes,
     valid,
     decisions: new Map(stored.map((match) => [match.cvId, match.decision])),
+    likesMap,
+    stagesMap,
+    isVacancyUnlocked: unlocked,
     stale: candidates.filter((row) => !validIds.has(row.id)),
   };
 }
@@ -126,17 +193,41 @@ type State = Awaited<ReturnType<typeof loadState>>;
 
 function aiOutcome(state: State): MatchOutcome {
   const rows = new Map(state.candidates.map((row) => [row.id, row]));
-  const results = [...state.valid]
+  const results = state.valid
+    .map((match) => {
+      const row = rows.get(match.cvId);
+      if (!row) return null;
+      const baseScore = match.score;
+      const likeInfo = state.likesMap.get(match.cvId) ?? {
+        count: 0,
+        byThisCompany: false,
+      };
+      const likeBonus = Math.min(10, likeInfo.count);
+      const finalScore = Math.min(100, baseScore + likeBonus);
+      const isLocked = finalScore >= 80 && !state.isVacancyUnlocked;
+
+      return {
+        cvId: match.cvId,
+        score: finalScore,
+        baseScore,
+        likeBonus,
+        likesCount: likeInfo.count,
+        likedByCompany: likeInfo.byThisCompany,
+        isLocked,
+        reason: match.reason,
+        matchedTerms: null,
+        decision: match.decision,
+        stage: state.stagesMap.get(match.cvId),
+        ...displayInfo(row),
+      };
+    })
+    .filter(
+      (item): item is NonNullable<typeof item> =>
+        item !== null && item.score >= 50,
+    )
     .sort((a, b) => b.score - a.score || a.cvId.localeCompare(b.cvId))
-    .slice(0, MATCH_SHOW)
-    .map((match) => ({
-      cvId: match.cvId,
-      score: match.score,
-      reason: match.reason,
-      matchedTerms: null,
-      decision: match.decision,
-      ...displayInfo(rows.get(match.cvId)!),
-    }));
+    .slice(0, MATCH_SHOW);
+
   return {
     mode: "ai",
     notice: null,
@@ -144,6 +235,7 @@ function aiOutcome(state: State): MatchOutcome {
     stats: state.stats,
     considered: state.candidates.length,
     pending: state.stale.length,
+    isVacancyUnlocked: state.isVacancyUnlocked,
   };
 }
 
@@ -151,10 +243,18 @@ function fallbackOutcome(state: State, notice: MatchNotice): MatchOutcome {
   return {
     mode: "fallback",
     notice,
-    results: keywordResults(state.candidates, state.terms, state.decisions),
+    results: keywordResults(
+      state.candidates,
+      state.terms,
+      state.decisions,
+      state.likesMap,
+      state.stagesMap,
+      state.isVacancyUnlocked,
+    ),
     stats: state.stats,
     considered: state.candidates.length,
     pending: state.stale.length,
+    isVacancyUnlocked: state.isVacancyUnlocked,
   };
 }
 

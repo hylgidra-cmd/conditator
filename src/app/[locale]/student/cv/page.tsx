@@ -4,6 +4,7 @@ import {
   type CvDraft,
   draftFromData,
   type WorkTypeValue,
+  type CvPrivacyState,
 } from "@/frontend/components/cv/types";
 import { CvWorkspace } from "@/frontend/components/cv/cv-workspace";
 import { redirect } from "@/i18n/navigation";
@@ -22,6 +23,13 @@ export default async function StudentCvPage() {
   const parsed = cv ? cvDataSchema.safeParse(cv.data) : null;
   const data = parsed?.success ? parsed.data : emptyCvData(user.email);
   const draft: CvDraft = draftFromData(data, {
+    title: cv?.title ?? "Mening rezyumem",
+    templateId:
+      (cv?.templateId as "modern" | "classic" | "minimal") || "modern",
+    privacy:
+      typeof cv?.privacy === "object" && cv?.privacy !== null
+        ? (cv.privacy as Partial<CvPrivacyState>)
+        : undefined,
     language: cv?.language ?? "en",
     workTypes: (cv?.workTypes ?? []) as WorkTypeValue[],
     sourceText: cv?.sourceText ?? "",

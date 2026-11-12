@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import { type CvField, missingFields } from "@/backend/cv/schema";
+import { postJson } from "@/backend/client/api";
 import { type CvDraft, dataFromDraft, type WorkTypeValue } from "./types";
 
 const WORK_TYPES: WorkTypeValue[] = [
@@ -13,6 +14,34 @@ const WORK_TYPES: WorkTypeValue[] = [
 ];
 const INPUT =
   "border-border bg-surface focus:border-brand focus:ring-brand-soft w-full rounded-lg border px-3 py-2 outline-none focus:ring-2";
+
+const SUGGESTED_SKILLS = [
+  "JavaScript",
+  "TypeScript",
+  "React",
+  "Next.js",
+  "Node.js",
+  "Python",
+  "PostgreSQL",
+  "Git",
+  "Figma",
+  "UI/UX",
+  "SMM",
+  "Copywriting",
+  "Sales",
+  "Mijozlar bilan ishlash",
+  "Buxgalteriya",
+  "Excel",
+];
+
+const SUGGESTED_LANGUAGES = [
+  { name: "Qaraqalpaq tili", level: "Ona tili" },
+  { name: "O'zbek tili", level: "Ona tili" },
+  { name: "Ingliz tili", level: "B2 - Upper-Intermediate" },
+  { name: "Rus tili", level: "B2 - Upper-Intermediate" },
+  { name: "Nemis tili", level: "B1 - Intermediate" },
+  { name: "Turk tili", level: "B1 - Intermediate" },
+];
 
 type Props = {
   draft: CvDraft;
@@ -25,9 +54,63 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
   const t = useTranslations("StudentCv");
   const missing = new Set<CvField>(missingFields(dataFromDraft(draft)));
   const data = draft.data;
+  const [generatingAboutMe, setGeneratingAboutMe] = useState(false);
 
   const setData = (patch: Partial<CvDraft["data"]>) =>
     onChange({ ...draft, data: { ...data, ...patch } });
+
+  function addSkillChip(skill: string) {
+    const current = draft.skillsText
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!current.some((s) => s.toLowerCase() === skill.toLowerCase())) {
+      const updated = [...current, skill].join(", ");
+      onChange({ ...draft, skillsText: updated });
+    }
+  }
+
+  function addLanguageChip(lang: { name: string; level: string }) {
+    if (
+      !data.languages.some(
+        (l) => l.name.toLowerCase() === lang.name.toLowerCase(),
+      )
+    ) {
+      setData({
+        languages: [...data.languages, { name: lang.name, level: lang.level }],
+      });
+    }
+  }
+
+  async function handleGenerateAboutMe() {
+    setGeneratingAboutMe(true);
+    try {
+      const skills = draft.skillsText
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const education = data.education.map((e) => e.institution);
+      const experience = data.experience.map(
+        (e) => `${e.position || ""} at ${e.organization}`,
+      );
+      const res = await postJson<{ ok: boolean; aboutMe: string }>(
+        "/api/cv/ai-about-me",
+        {
+          skills,
+          education,
+          experience,
+          language: draft.language,
+        },
+      );
+      if (res.ok && res.data.aboutMe) {
+        setData({ goal: res.data.aboutMe });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setGeneratingAboutMe(false);
+    }
+  }
 
   /** Ro'yxat elementini yangilash yordamchisi (ta'lim, tajriba, tillar). */
   function updateItem<K extends "education" | "experience" | "languages">(
@@ -71,6 +154,32 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
 
   return (
     <div className="space-y-4">
+      <Section title={t("templates.title")}>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {(["modern", "classic", "minimal"] as const).map((tmpl) => (
+            <button
+              key={tmpl}
+              type="button"
+              onClick={() => onChange({ ...draft, templateId: tmpl })}
+              className={`flex flex-col items-center justify-center rounded-xl border p-4 text-sm font-semibold transition-all ${
+                draft.templateId === tmpl
+                  ? "border-brand bg-brand-soft ring-brand ring-2"
+                  : "border-border bg-surface hover:border-gray-400"
+              }`}
+            >
+              <span className="capitalize">{t(`templates.${tmpl}`)}</span>
+              <span className="text-muted mt-1 text-xs font-normal">
+                {tmpl === "modern"
+                  ? "Zamonaviy dizayn"
+                  : tmpl === "classic"
+                    ? "Klassik korporativ"
+                    : "Minimalist va toza"}
+              </span>
+            </button>
+          ))}
+        </div>
+      </Section>
+
       <Section title={t("sections.personal")}>
         <div className="grid gap-3 sm:grid-cols-2">
           {text(
@@ -113,6 +222,18 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
         missing={missing.has("goal")}
         fillIn={t("fillIn")}
       >
+        <div className="flex justify-end">
+          <button
+            type="button"
+            onClick={handleGenerateAboutMe}
+            disabled={generatingAboutMe}
+            className="text-brand bg-brand-soft hover:bg-brand/10 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
+          >
+            {generatingAboutMe
+              ? t("chips.generatingAboutMe")
+              : t("chips.generateAboutMe")}
+          </button>
+        </div>
         {text(
           "data.goal",
           t("fields.goal"),
@@ -269,6 +390,23 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
           onValue={(value) => onChange({ ...draft, skillsText: value })}
           error={errorText(firstErrorWithPrefix(errors, "data.skills"))}
         />
+        <div className="space-y-1.5 pt-2">
+          <p className="text-muted text-xs font-medium">
+            {t("chips.skillsTitle")}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {SUGGESTED_SKILLS.map((skill) => (
+              <button
+                key={skill}
+                type="button"
+                onClick={() => addSkillChip(skill)}
+                className="bg-surface hover:bg-brand-soft hover:border-brand border-border text-foreground rounded-full border px-2.5 py-1 text-xs transition-colors"
+              >
+                + {skill}
+              </button>
+            ))}
+          </div>
+        </div>
       </Section>
 
       <Section
@@ -298,14 +436,33 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
             </div>
           </ItemCard>
         ))}
-        <AddButton
-          label={t("add")}
-          onClick={() =>
-            setData({
-              languages: [...data.languages, { name: "", level: null }],
-            })
-          }
-        />
+        <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <AddButton
+            label={t("add")}
+            onClick={() =>
+              setData({
+                languages: [...data.languages, { name: "", level: null }],
+              })
+            }
+          />
+        </div>
+        <div className="space-y-1.5 pt-2">
+          <p className="text-muted text-xs font-medium">
+            {t("chips.languagesTitle")}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {SUGGESTED_LANGUAGES.map((lang) => (
+              <button
+                key={lang.name}
+                type="button"
+                onClick={() => addLanguageChip(lang)}
+                className="bg-surface hover:bg-brand-soft hover:border-brand border-border text-foreground rounded-full border px-2.5 py-1 text-xs transition-colors"
+              >
+                + {lang.name}
+              </button>
+            ))}
+          </div>
+        </div>
       </Section>
 
       <Section
@@ -344,6 +501,38 @@ export function CvEditor({ draft, errors, errorText, onChange }: Props) {
                 }
               />
               {t(`workTypes.${type}`)}
+            </label>
+          ))}
+        </div>
+      </Section>
+
+      <Section title={t("privacy.title")}>
+        <p className="text-muted -mt-1 text-xs">{t("privacy.subtitle")}</p>
+        <div className="grid gap-2.5 pt-2 sm:grid-cols-2">
+          {(
+            [
+              "hideName",
+              "hidePhone",
+              "hideEmail",
+              "hideAddress",
+              "hidePhoto",
+            ] as const
+          ).map((key) => (
+            <label
+              key={key}
+              className="border-border has-[:checked]:border-brand has-[:checked]:bg-brand-soft flex cursor-pointer items-center gap-2 rounded-lg border p-3 text-sm"
+            >
+              <input
+                type="checkbox"
+                checked={Boolean(draft.privacy?.[key])}
+                onChange={(e) =>
+                  onChange({
+                    ...draft,
+                    privacy: { ...draft.privacy, [key]: e.target.checked },
+                  })
+                }
+              />
+              <span>{t(`privacy.${key}`)}</span>
             </label>
           ))}
         </div>

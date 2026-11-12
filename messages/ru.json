@@ -18,6 +18,7 @@
     "company": "Компания",
     "vacancies": "Вакансии",
     "admin": "Админ",
+    "chat": "Сообщения",
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
@@ -157,7 +158,14 @@
     "FILE_TYPE_NOT_ALLOWED": "Можно загрузить только изображение PNG, JPG или WEBP.",
     "TITLE_OR_TEXT_REQUIRED": "Укажите должность или опишите требования свободным текстом.",
     "INVALID_NUMBER": "Введите целое число от 0 до 50.",
-    "CANNOT_BLOCK_ADMIN": "Администратора нельзя заблокировать."
+    "CANNOT_BLOCK_ADMIN": "Администратора нельзя заблокировать.",
+    "CONVERSATION_NOT_FOUND": "Беседа не найдена.",
+    "ONE_MESSAGE_RULE_AWAIT_REPLY": "Вы не можете отправить следующее сообщение, пока компания не ответит.",
+    "PAYMENT_NOT_FOUND": "Платеж не найден.",
+    "VACANCY_NOT_FOUND": "Вакансия не найдена.",
+    "VACANCY_INACTIVE_OR_EXPIRED": "Срок действия вакансии истек или она закрыта.",
+    "INVALID_OR_UNSAVED_CV": "Сначала сохраните резюме.",
+    "ALREADY_APPLIED": "Вы уже подали заявку на эту вакансию."
   },
   "Form": {
     "submitting": "Отправка…"
@@ -241,6 +249,27 @@
       "note": "Это последняя сохранённая версия резюме. PDF выглядит точно так же.",
       "back": "Вернуться к редактированию",
       "download": "Скачать PDF"
+    },
+    "templates": {
+      "title": "Шаблон резюме",
+      "modern": "Современный",
+      "classic": "Классический",
+      "minimal": "Минималистичный"
+    },
+    "privacy": {
+      "title": "Настройки приватности",
+      "subtitle": "Вы можете скрыть свои личные данные от работодателей",
+      "hideName": "Скрыть имя (Анонимный кандидат)",
+      "hidePhone": "Скрыть номер телефона",
+      "hideEmail": "Скрыть email",
+      "hideAddress": "Скрыть адрес проживания",
+      "hidePhoto": "Скрыть фото"
+    },
+    "chips": {
+      "skillsTitle": "Рекомендуемые навыки (Makemycv):",
+      "languagesTitle": "Рекомендуемые языки:",
+      "generateAboutMe": "✨ Написать через ИИ",
+      "generatingAboutMe": "ИИ составляет текст…"
     }
   },
   "CvDocument": {
@@ -374,7 +403,14 @@
     "openCv": "Открыть резюме",
     "score": "{score} / 100",
     "downloadPdf": "PDF",
-    "decided": "Кандидаты с решением"
+    "decided": "Кандидаты с решением",
+    "tabs": {
+      "matches": "Подходящие кандидаты",
+      "applications": "Отклики ({count})"
+    },
+    "applicationsEmpty": "На эту вакансию пока не поступало откликов.",
+    "appliedAt": "Отправлено: {date}",
+    "viewApplication": "Посмотреть"
   },
   "Candidate": {
     "back": "← Кандидаты",
@@ -436,7 +472,8 @@
           "COMPANY_REJECT": "Компания отклонена: {target}",
           "SUBSCRIPTION_SET": "Подписка до {to}: {target}",
           "SUBSCRIPTION_OFF": "Подписка отключена: {target}",
-          "AI_LIMIT_SET": "Месячный лимит ИИ: {to} $"
+          "AI_LIMIT_SET": "Месячный лимит ИИ: {to} $",
+          "RESOLVE_COMPLAINT": "Жалоба рассмотрена: {target}"
         }
       }
     },
@@ -1070,5 +1107,51 @@
     },
     "labelValue": "{label}: {value}",
     "percent": "{value}%"
+  },
+  "VacanciesList": {
+    "title": "Все открытые вакансии",
+    "description": "Ознакомьтесь с актуальными вакансиями от ведущих компаний и откликнитесь в один клик.",
+    "searchPlaceholder": "Профессия, навык или компания...",
+    "allWorkTypes": "Все типы занятости",
+    "search": "Поиск",
+    "empty": "Подходящих открытых вакансий пока не найдено.",
+    "salaryNegotiable": "Зарплата по договоренности",
+    "experience": "⏱ Опыт: {years} лет",
+    "noExperience": "⏱ Не требуется",
+    "location": "📍 {location}",
+    "moreSkills": "+{count}",
+    "workTypes": {
+      "FULL_TIME": "Полная занятость",
+      "PART_TIME": "Частичная занятость",
+      "REMOTE": "Удаленная работа",
+      "INTERNSHIP": "Стажировка"
+    }
+  },
+  "VacancyDetail": {
+    "back": "← Назад ко всем вакансиям",
+    "salary": "Зарплата",
+    "salaryNegotiable": "Зарплата: По договоренности",
+    "loginPromptTitle": "Войдите для подачи заявки",
+    "loginPromptDesc": "Для отклика на эту вакансию войдите в студенческий аккаунт.",
+    "login": "Войти 🔑",
+    "descTitle": "Требования и описание вакансии",
+    "noDesc": "Дополнительное описание не указано.",
+    "skillsTitle": "Требуемые навыки:",
+    "languagesTitle": "Требуемые языки:",
+    "postedAt": "Опубликовано: {date}",
+    "experience": "⏱ Опыт: {years} лет",
+    "noExperience": "⏱ Не требуется",
+    "location": "📍 {location}",
+    "workTypes": {
+      "FULL_TIME": "Полная занятость",
+      "PART_TIME": "Частичная занятость",
+      "REMOTE": "Удаленная работа",
+      "INTERNSHIP": "Стажировка"
+    }
+  },
+  "Chat": {
+    "title": "Сообщения",
+    "subtitleStudent": "Прямая связь с работодателями и обсуждение откликов",
+    "subtitleCompany": "Собеседования с кандидатами и информация об откликах"
   }
 }

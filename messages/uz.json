@@ -18,6 +18,7 @@
     "company": "Kompaniya",
     "vacancies": "Talablar",
     "admin": "Admin",
+    "chat": "Xabarlar",
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
@@ -157,7 +158,14 @@
     "FILE_TYPE_NOT_ALLOWED": "Faqat PNG, JPG yoki WEBP rasm yuklash mumkin.",
     "TITLE_OR_TEXT_REQUIRED": "Lavozimni yoki talabni erkin matn bilan yozing.",
     "INVALID_NUMBER": "0 dan 50 gacha butun son kiriting.",
-    "CANNOT_BLOCK_ADMIN": "Administratorni bloklab boʻlmaydi."
+    "CANNOT_BLOCK_ADMIN": "Administratorni bloklab boʻlmaydi.",
+    "CONVERSATION_NOT_FOUND": "Suhbat topilmadi.",
+    "ONE_MESSAGE_RULE_AWAIT_REPLY": "Kompaniya javob bermaguncha keyingi xabarni yubora olmaysiz.",
+    "PAYMENT_NOT_FOUND": "Toʻlov topilmadi.",
+    "VACANCY_NOT_FOUND": "Vakansiya topilmadi.",
+    "VACANCY_INACTIVE_OR_EXPIRED": "Ushbu vakansiya muddati oʻtgan yoki yopilgan.",
+    "INVALID_OR_UNSAVED_CV": "Avval rezyumeyingizni saqlang.",
+    "ALREADY_APPLIED": "Siz ushbu vakansiyaga allaqachon ariza yuborgansiz."
   },
   "Form": {
     "submitting": "Yuborilmoqda…"
@@ -241,6 +249,27 @@
       "note": "Bu CV ning oxirgi saqlangan varianti. PDF ham aynan shunday chiqadi.",
       "back": "Tahrirlashga qaytish",
       "download": "PDF yuklab olish"
+    },
+    "templates": {
+      "title": "Rezyume shabloni",
+      "modern": "Zamonaviy",
+      "classic": "Klassik",
+      "minimal": "Minimal"
+    },
+    "privacy": {
+      "title": "Maxfiylik sozlamalari",
+      "subtitle": "Kompaniyalar oldida oʻzingiz haqdagi maʼlumotlarni yashirishingiz mumkin",
+      "hideName": "Ismni yashirish (Anonim nomzod)",
+      "hidePhone": "Telefon raqamni yashirish",
+      "hideEmail": "Emailni yashirish",
+      "hideAddress": "Yashash manzilini yashirish",
+      "hidePhoto": "Suratni yashirish"
+    },
+    "chips": {
+      "skillsTitle": "Tavsiya etilgan koʻnikmalar (Makemycv):",
+      "languagesTitle": "Tavsiya etilgan tillar:",
+      "generateAboutMe": "✨ AI orqali yozib berish",
+      "generatingAboutMe": "AI yozmoqda…"
     }
   },
   "CvDocument": {
@@ -374,7 +403,14 @@
     "openCv": "CV ni koʻrish",
     "score": "{score} / 100",
     "downloadPdf": "PDF",
-    "decided": "Qaror qoʻyilgan nomzodlar"
+    "decided": "Qaror qoʻyilgan nomzodlar",
+    "tabs": {
+      "matches": "Mos nomzodlar",
+      "applications": "Arizalar ({count})"
+    },
+    "applicationsEmpty": "Ushbu vakansiyaga hozircha ariza kelib tushmadi.",
+    "appliedAt": "Yuborildi: {date}",
+    "viewApplication": "Koʻrish"
   },
   "Candidate": {
     "back": "← Nomzodlar",
@@ -436,7 +472,8 @@
           "COMPANY_REJECT": "Kompaniya rad etildi: {target}",
           "SUBSCRIPTION_SET": "Obuna {to} gacha: {target}",
           "SUBSCRIPTION_OFF": "Obuna oʻchirildi: {target}",
-          "AI_LIMIT_SET": "AI oylik limiti: {to} $"
+          "AI_LIMIT_SET": "AI oylik limiti: {to} $",
+          "RESOLVE_COMPLAINT": "Shikoyat koʻrib chiqildi: {target}"
         }
       }
     },
@@ -1070,5 +1107,51 @@
     },
     "labelValue": "{label}: {value}",
     "percent": "{value}%"
+  },
+  "VacanciesList": {
+    "title": "Barcha ochiq vakansiyalar",
+    "description": "Yetakchi kompaniyalarning dolzarb ish oʻrinlari bilan tanishing va bir tugma orqali ariza yuboring.",
+    "searchPlaceholder": "Kasb, koʻnikma yoki kompaniya...",
+    "allWorkTypes": "Barcha ish turlari",
+    "search": "Qidirish",
+    "empty": "Hozircha mos keladigan ochiq vakansiyalar topilmadi.",
+    "salaryNegotiable": "Oylik kelishuv asosida",
+    "experience": "⏱ Tajriba: {years} yil",
+    "noExperience": "⏱ Talab etilmaydi",
+    "location": "📍 {location}",
+    "moreSkills": "+{count}",
+    "workTypes": {
+      "FULL_TIME": "Toʻliq stavka",
+      "PART_TIME": "Yarim stavka",
+      "REMOTE": "Masofaviy",
+      "INTERNSHIP": "Amaliyot"
+    }
+  },
+  "VacancyDetail": {
+    "back": "← Barcha vakansiyalarga qaytish",
+    "salary": "Oylik",
+    "salaryNegotiable": "Oylik: Kelishuv asosida",
+    "loginPromptTitle": "Ariza topshirish uchun tizimga kiring",
+    "loginPromptDesc": "Ushbu vakansiyaga CV yuborish uchun talaba akkauntingizga kiring.",
+    "login": "Kirish 🔑",
+    "descTitle": "Vakansiya talablari va tavsifi",
+    "noDesc": "Qoʻshimcha tavsif kiritilmagan.",
+    "skillsTitle": "Talab etiladigan koʻnikmalar:",
+    "languagesTitle": "Talap etiladigan tillar:",
+    "postedAt": "Joylashtirildi: {date}",
+    "experience": "⏱ Tajriba: {years} yil",
+    "noExperience": "⏱ Talab etilmaydi",
+    "location": "📍 {location}",
+    "workTypes": {
+      "FULL_TIME": "Toʻliq stavka",
+      "PART_TIME": "Yarim stavka",
+      "REMOTE": "Masofaviy",
+      "INTERNSHIP": "Amaliyot"
+    }
+  },
+  "Chat": {
+    "title": "Xabarlar",
+    "subtitleStudent": "Ish beruvchilar bilan toʻgʻridan-toʻgʻri aloqa va ariza muhokamasi",
+    "subtitleCompany": "Nomzodlar bilan suhbatlar va ariza maʼlumotlari"
   }
 }

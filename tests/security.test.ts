@@ -173,7 +173,7 @@ describe("talaba boshqa talabaning CV sini ko'ra olmaydi", () => {
       }),
       ctx,
     );
-    const aliceCv = await db.cv.findUniqueOrThrow({
+    const aliceCv = await db.cv.findFirstOrThrow({
       where: { userId: aliceUser.id },
     });
     expect(aliceCv.isVisible).toBe(false);

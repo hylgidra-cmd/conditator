@@ -1,4 +1,4 @@
-// Jumis AI ma'lumotlar bazasi sxemasi.
+// Jumis AI (Candidator) ma'lumotlar bazasi sxemasi.
 // Tavsif va aloqalar: docs/DB-SCHEMA.md. Reja: docs/PLAN.md, 2-bo'lim.
 
 generator client {
@@ -61,6 +61,66 @@ enum AiTask {
   MATCH
 }
 
+enum VacancyStatus {
+  ACTIVE
+  CLOSED
+  CANCELLED
+}
+
+enum ApplicationStatus {
+  SUBMITTED
+  VIEWED
+  INTERESTED
+  ACCEPTED
+  REJECTED
+}
+
+enum CandidateStageType {
+  NEW
+  REVIEWING
+  LIKED
+  INTERVIEW
+  ACCEPTED
+  REJECTED
+}
+
+enum CompanyRole {
+  OWNER
+  MANAGER
+  OBSERVER
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+  BLOCKED
+}
+
+enum ComplaintStatus {
+  PENDING
+  INVESTIGATING
+  RESOLVED
+  DISMISSED
+}
+
+enum PaymentPurpose {
+  CV_CREATION
+  VACANCY_UNLOCK
+}
+
+enum PaymentProvider {
+  CLICK
+  PAYME
+  TEST
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
 // ---------- Foydalanuvchilar va kirish ----------
 
 model User {
@@ -70,17 +130,24 @@ model User {
   role            Role
   status          UserStatus @default(ACTIVE)
   emailVerifiedAt DateTime?
-  locale          Lang       @default(uz)
+  locale          Lang       @default(kk)
   consentAt       DateTime? /// shaxsiy ma'lumotlarni qayta ishlashga rozilik
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 
-  sessions   Session[]
-  emailCodes EmailCode[]
-  cv         Cv?
-  company    Company?
-  aiLogs     AiLog[]
-  adminLogs  AdminLog[]
+  sessions           Session[]
+  emailCodes         EmailCode[]
+  cvs                Cv[]
+  company            Company?
+  aiLogs             AiLog[]
+  adminLogs          AdminLog[]
+  applications       VacancyApplication[]
+  companyMembers     CompanyMember[]
+  sentMessages       ChatMessage[]
+  payments           Payment[]
+  notifications      Notification[]
+  filedComplaints    Complaint[]          @relation("Reporter")
+  reportedComplaints Complaint[]          @relation("ReportedUser")
 
   @@index([role, status])
 }
@@ -115,15 +182,19 @@ model EmailCode {
   @@index([userId, purpose])
 }
 
-// ---------- Talaba ----------
+// ---------- Talaba & CV ----------
 
 model Cv {
   id            String     @id @default(cuid()) /// AI ga anonim ID sifatida shu yuboriladi
-  userId        String     @unique
+  userId        String
+  title         String     @default("Mening rezyumem")
+  templateId    String     @default("modern")
+  privacy       Json       @default("{\"hideName\":false,\"hidePhone\":false,\"hideEmail\":false,\"hideAddress\":false,\"hidePhoto\":false}")
+  isPaid        Boolean    @default(true)
   language      Lang       @default(en)
   sourceText    String? /// talabaning erkin matni (≤ 3000 belgi)
   /// CV maydonlari: ism, aloqa, maqsad, ta'lim, tajriba, ko'nikmalar, tillar, sertifikatlar.
-  /// Tuzilmasi zod sxemasi bilan belgilanadi (src/lib/cv).
+  /// Tuzilmasi zod sxemasi bilan belgilanadi (src/backend/cv).
   data          Json       @default("{}")
   missingFields String[] /// AI to'ldira olmagan maydonlar ("to'ldiring" belgisi)
   isVisible     Boolean    @default(false)
@@ -137,10 +208,15 @@ model Cv {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  matches Match[]
-  views   CvView[]
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  views        CvView[]
+  applications VacancyApplication[]
+  likes        CandidateLike[]
+  stages       CandidateStage[]
+  payments     Payment[]
 
+  @@index([userId])
   @@index([isVisible, language])
   @@index([skills], type: Gin)
   @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "Cv_searchText_trgm_idx")
@@ -163,9 +239,15 @@ model Company {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vacancies Vacancy[]
-  cvViews   CvView[]
+  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vacancies     Vacancy[]
+  cvViews       CvView[]
+  members       CompanyMember[]
+  likes         CandidateLike[]
+  stages        CandidateStage[]
+  unlocks       VacancyUnlock[]
+  conversations Conversation[]
+  payments      Payment[]
 
   @@index([approval])
 }
@@ -186,7 +268,7 @@ model CvView {
 }
 
 model Vacancy {
-  id                 String    @id @default(cuid())
+  id                 String        @id @default(cuid())
   companyId          String
   title              String
   rawText            String? /// erkin matnli talab (istalgan tilda)
@@ -195,13 +277,25 @@ model Vacancy {
   minExperienceYears Int?
   location           String?
   workType           WorkType?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  salaryFrom         Int?
+  salaryTo           Int?
+  currency           String        @default("UZS")
+  education          String?
+  status             VacancyStatus @default(ACTIVE)
+  closeReason        String?
+  expiresAt          DateTime?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
 
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  matches Match[]
+  company      Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  matches      Match[]
+  applications VacancyApplication[]
+  stages       CandidateStage[]
+  unlocks      VacancyUnlock[]
+  conversations Conversation[]
 
   @@index([companyId, createdAt])
+  @@index([status])
 }
 
 /// Saralash natijasi. hash = xesh(talab + CV versiyasi): o'zgarmagan bo'lsa AI qayta chaqirilmaydi.
@@ -222,6 +316,191 @@ model Match {
   @@unique([vacancyId, cvId])
   @@index([vacancyId, score])
   @@index([cvId, decision])
+}
+
+// ---------- Arizalar, Bosqichlar, Yoqdi va Jamoa ----------
+
+model VacancyApplication {
+  id        String            @id @default(cuid())
+  vacancyId String
+  cvId      String
+  studentId String
+  status    ApplicationStatus @default(SUBMITTED)
+  note      String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  vacancy Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  cv      Cv      @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  student User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([vacancyId, cvId])
+  @@index([vacancyId, status])
+  @@index([studentId])
+}
+
+model CandidateLike {
+  id        String   @id @default(cuid())
+  companyId String
+  cvId      String
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  cv      Cv      @relation(fields: [cvId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, cvId])
+  @@index([cvId])
+}
+
+model CandidateStage {
+  id        String             @id @default(cuid())
+  vacancyId String
+  cvId      String
+  companyId String
+  stage     CandidateStageType @default(NEW)
+  note      String?
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  vacancy Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  cv      Cv      @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([vacancyId, cvId])
+  @@index([companyId, stage])
+}
+
+model CompanyMember {
+  id        String      @id @default(cuid())
+  companyId String
+  userId    String
+  role      CompanyRole @default(MANAGER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId])
+  @@index([userId])
+}
+
+// ---------- Chat va Shikoyatlar ----------
+
+model Conversation {
+  id          String             @id @default(cuid())
+  vacancyId   String?
+  companyId   String
+  studentId   String
+  studentCvId String?
+  status      ConversationStatus @default(ACTIVE)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  company    Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  vacancy    Vacancy?      @relation(fields: [vacancyId], references: [id], onDelete: SetNull)
+  messages   ChatMessage[]
+  complaints Complaint[]
+
+  @@unique([companyId, studentId, vacancyId])
+  @@index([companyId, updatedAt])
+  @@index([studentId, updatedAt])
+}
+
+model ChatMessage {
+  id             String    @id @default(cuid())
+  conversationId String
+  senderId       String
+  senderRole     Role
+  text           String
+  fileUrl        String?
+  fileName       String?
+  fileSize       Int?
+  isSystem       Boolean   @default(false)
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+}
+
+model Complaint {
+  id             String          @id @default(cuid())
+  reporterId     String
+  reportedUserId String
+  conversationId String?
+  reason         String
+  details        String?
+  status         ComplaintStatus @default(PENDING)
+  resolvedAt     DateTime?
+  resolvedById   String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  reporter     User          @relation("Reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser User          @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+// ---------- Monetizatsiya & To'lovlar ----------
+
+model Payment {
+  id                 String          @id @default(cuid())
+  userId             String
+  companyId          String?
+  vacancyId          String?
+  cvId               String?
+  amount             Int
+  purpose            PaymentPurpose
+  provider           PaymentProvider
+  status             PaymentStatus   @default(PENDING)
+  externalId         String?
+  transactionDetails Json            @default("{}")
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  cv      Cv?      @relation(fields: [cvId], references: [id], onDelete: SetNull)
+
+  @@index([userId, status])
+  @@index([externalId])
+}
+
+model VacancyUnlock {
+  id        String   @id @default(cuid())
+  vacancyId String
+  companyId String
+  paymentId String?
+  paidAt    DateTime @default(now())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  vacancy Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([vacancyId, companyId])
+  @@index([expiresAt])
+}
+
+// ---------- Bildirishnomalar ----------
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
 }
 
 // ---------- AI va sozlamalar ----------
@@ -254,6 +533,7 @@ enum AdminAction {
   SUBSCRIPTION_SET
   SUBSCRIPTION_OFF
   AI_LIMIT_SET
+  RESOLVE_COMPLAINT
 }
 
 /// Admin harakatlari jurnali. Admin o'chirilsa ham yozuv qoladi (adminId bo'shatiladi).
@@ -261,7 +541,7 @@ model AdminLog {
   id         String      @id @default(cuid())
   adminId    String?
   action     AdminAction
-  targetType String /// "User", "Company", "Setting"
+  targetType String /// "User", "Company", "Setting", "Complaint"
   targetId   String
   /// Qisqa tafsilot: oldingi va yangi qiymat, nishon email/nomi (keyin o'chirilsa ham tushunarli bo'lsin).
   details    Json        @default("{}")
@@ -273,7 +553,7 @@ model AdminLog {
   @@index([targetType, targetId])
 }
 
-/// Kalit-qiymat sozlamalar, masalan monthlyAiLimitUsd.
+/// Kalit-qiymat sozlamalar, masalan monthlyAiLimitUsd, cvCreationPriceUzs, candidateUnlockPriceUzs.
 model Setting {
   key       String   @id
   value     String

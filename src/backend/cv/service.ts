@@ -32,6 +32,17 @@ export const WORK_TYPES = [
 ] as const;
 
 export const cvSaveSchema = z.object({
+  title: z.string().trim().max(100).optional(),
+  templateId: z.enum(["modern", "classic", "minimal"]).optional(),
+  privacy: z
+    .object({
+      hideName: z.boolean().optional(),
+      hidePhone: z.boolean().optional(),
+      hideEmail: z.boolean().optional(),
+      hideAddress: z.boolean().optional(),
+      hidePhoto: z.boolean().optional(),
+    })
+    .optional(),
   language: z.enum(["kk", "uz", "ru", "en"], { error: "LANGUAGE_REQUIRED" }),
   sourceText: z
     .string()
@@ -122,6 +133,10 @@ export function buildSearchText(cv: CvData): string {
 
 export type StudentCv = Pick<
   Cv,
+  | "id"
+  | "title"
+  | "templateId"
+  | "privacy"
   | "language"
   | "data"
   | "missingFields"
@@ -132,6 +147,10 @@ export type StudentCv = Pick<
 >;
 
 const STUDENT_CV_SELECT = {
+  id: true,
+  title: true,
+  templateId: true,
+  privacy: true,
   language: true,
   data: true,
   missingFields: true,
@@ -141,8 +160,15 @@ const STUDENT_CV_SELECT = {
   sourceText: true,
 } as const;
 
-export function getOwnCv(userId: string): Promise<StudentCv | null> {
-  return db.cv.findUnique({ where: { userId }, select: STUDENT_CV_SELECT });
+export function getOwnCv(
+  userId: string,
+  cvId?: string,
+): Promise<StudentCv | null> {
+  return db.cv.findFirst({
+    where: cvId ? { id: cvId, userId } : { userId },
+    orderBy: { updatedAt: "desc" },
+    select: STUDENT_CV_SELECT,
+  });
 }
 
 /**
@@ -152,6 +178,7 @@ export function getOwnCv(userId: string): Promise<StudentCv | null> {
 export async function saveOwnCv(
   userId: string,
   input: CvSaveInput,
+  cvId?: string,
 ): Promise<StudentCv> {
   const data: CvData = input.data;
   const fields = {
@@ -165,11 +192,37 @@ export async function saveOwnCv(
     workTypes: [...new Set(input.workTypes)] as WorkType[],
     searchText: buildSearchText(data),
     ...(input.sourceText !== undefined ? { sourceText: input.sourceText } : {}),
+    ...(input.title !== undefined ? { title: input.title } : {}),
+    ...(input.templateId !== undefined ? { templateId: input.templateId } : {}),
+    ...(input.privacy !== undefined ? { privacy: input.privacy } : {}),
   };
-  return db.cv.upsert({
+
+  if (cvId) {
+    const existing = await db.cv.findFirst({ where: { id: cvId, userId } });
+    if (existing) {
+      return db.cv.update({
+        where: { id: cvId },
+        data: fields,
+        select: STUDENT_CV_SELECT,
+      });
+    }
+  }
+
+  const existing = await db.cv.findFirst({
     where: { userId },
-    create: { userId, isVisible: false, ...fields },
-    update: fields,
+    orderBy: { updatedAt: "desc" },
+  });
+
+  if (existing) {
+    return db.cv.update({
+      where: { id: existing.id },
+      data: fields,
+      select: STUDENT_CV_SELECT,
+    });
+  }
+
+  return db.cv.create({
+    data: { userId, isVisible: false, ...fields },
     select: STUDENT_CV_SELECT,
   });
 }
@@ -177,15 +230,17 @@ export async function saveOwnCv(
 export async function setOwnCvVisibility(
   userId: string,
   isVisible: boolean,
+  cvId?: string,
 ): Promise<StudentCv> {
-  const cv = await db.cv.findUnique({
-    where: { userId },
-    select: { savedAt: true },
+  const cv = await db.cv.findFirst({
+    where: cvId ? { id: cvId, userId } : { userId },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true, savedAt: true },
   });
   // Saqlanmagan CV ni ochiq qilib bo'lmaydi.
   if (!cv?.savedAt) throw new ApiError(409, "CV_NOT_SAVED");
   return db.cv.update({
-    where: { userId },
+    where: { id: cv.id },
     data: { isVisible },
     select: STUDENT_CV_SELECT,
   });

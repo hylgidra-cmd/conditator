@@ -177,14 +177,18 @@ export async function studentCv(
     workTypes: options.workTypes ?? [],
     data,
   });
+  const savedCv = await db.cv.findFirstOrThrow({
+    where: { userId: user.id },
+    orderBy: { updatedAt: "desc" },
+  });
   if (options.visible !== false)
     await db.cv.update({
-      where: { userId: user.id },
+      where: { id: savedCv.id },
       data: { isVisible: true },
     });
   return {
     userId: user.id,
-    cvId: (await db.cv.findUniqueOrThrow({ where: { userId: user.id } })).id,
+    cvId: savedCv.id,
     cv,
   };
 }

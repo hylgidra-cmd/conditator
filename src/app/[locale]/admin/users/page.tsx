@@ -127,7 +127,9 @@ export default async function AdminUsersPage({
                   {user.role === "COMPANY" ? (
                     <span>
                       {user.companyName ?? t("noCompanyName")} ·{" "}
-                      {t(`approvals.${user.companyApproval ?? "PENDING"}`)}
+                      {t(
+                        `approvals.${user.companyApproval ?? "PENDING"}` as "approvals.PENDING",
+                      )}
                     </span>
                   ) : null}
                   <span>

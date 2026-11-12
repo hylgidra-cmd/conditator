@@ -21,8 +21,12 @@ export function CvDocument({
   const { data } = cv;
   const contact = [data.contact.email, data.contact.phone, data.location];
 
+  const templateClass = cv.templateId
+    ? `cvdoc-${cv.templateId}`
+    : "cvdoc-modern";
+
   return (
-    <article className="cvdoc" lang={cv.language}>
+    <article className={`cvdoc ${templateClass}`} lang={cv.language}>
       <style>{CV_DOCUMENT_CSS}</style>
       <header className="cvdoc-header">
         {data.fullName ? <h1 className="cvdoc-name">{data.fullName}</h1> : null}

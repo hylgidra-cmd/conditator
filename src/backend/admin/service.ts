@@ -53,22 +53,29 @@ export async function listUsers(query: UserListQuery) {
         emailVerifiedAt: true,
         createdAt: true,
         company: { select: { name: true, approval: true } },
-        cv: { select: { savedAt: true, isVisible: true } },
+        cvs: {
+          select: { savedAt: true, isVisible: true },
+          take: 1,
+          orderBy: { updatedAt: "desc" },
+        },
       },
     }),
   ]);
-  const items = rows.map((row) => ({
-    id: row.id,
-    email: row.email,
-    role: row.role,
-    status: row.status,
-    verified: row.emailVerifiedAt !== null,
-    createdAt: row.createdAt.toISOString(),
-    companyName: row.company?.name ?? null,
-    companyApproval: row.company?.approval ?? null,
-    cvSaved: Boolean(row.cv?.savedAt),
-    cvVisible: Boolean(row.cv?.savedAt && row.cv.isVisible),
-  }));
+  const items = rows.map((row) => {
+    const primaryCv = row.cvs[0];
+    return {
+      id: row.id,
+      email: row.email,
+      role: row.role,
+      status: row.status,
+      verified: row.emailVerifiedAt !== null,
+      createdAt: row.createdAt.toISOString(),
+      companyName: row.company?.name ?? null,
+      companyApproval: row.company?.approval ?? null,
+      cvSaved: Boolean(primaryCv?.savedAt),
+      cvVisible: Boolean(primaryCv?.savedAt && primaryCv.isVisible),
+    };
+  });
   return paged(items, total, query.page);
 }
 

@@ -22,4 +22,5 @@ export type CvDocumentInput = {
   data: CvData;
   language: CvDocumentLanguage;
   workTypes: WorkType[];
+  templateId?: string;
 };

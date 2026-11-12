@@ -18,6 +18,7 @@
     "company": "Company",
     "vacancies": "Vacancies",
     "admin": "Admin",
+    "chat": "Messages",
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
@@ -157,7 +158,14 @@
     "FILE_TYPE_NOT_ALLOWED": "Only PNG, JPG or WEBP images can be uploaded.",
     "TITLE_OR_TEXT_REQUIRED": "Enter a job title or describe the requirements in free text.",
     "INVALID_NUMBER": "Enter a whole number from 0 to 50.",
-    "CANNOT_BLOCK_ADMIN": "An administrator cannot be blocked."
+    "CANNOT_BLOCK_ADMIN": "An administrator cannot be blocked.",
+    "CONVERSATION_NOT_FOUND": "Conversation not found.",
+    "ONE_MESSAGE_RULE_AWAIT_REPLY": "You cannot send another message until the company replies.",
+    "PAYMENT_NOT_FOUND": "Payment not found.",
+    "VACANCY_NOT_FOUND": "Vacancy not found.",
+    "VACANCY_INACTIVE_OR_EXPIRED": "This vacancy has expired or is closed.",
+    "INVALID_OR_UNSAVED_CV": "Please save your CV first.",
+    "ALREADY_APPLIED": "You have already applied to this vacancy."
   },
   "Form": {
     "submitting": "Sending…"
@@ -241,6 +249,27 @@
       "note": "This is the last saved version of your CV. The PDF looks exactly the same.",
       "back": "Back to editing",
       "download": "Download PDF"
+    },
+    "templates": {
+      "title": "CV Template",
+      "modern": "Modern",
+      "classic": "Classic",
+      "minimal": "Minimal"
+    },
+    "privacy": {
+      "title": "Privacy Settings",
+      "subtitle": "You can hide your personal details from employers",
+      "hideName": "Hide Name (Anonymous Candidate)",
+      "hidePhone": "Hide Phone Number",
+      "hideEmail": "Hide Email Address",
+      "hideAddress": "Hide Location/Address",
+      "hidePhoto": "Hide Photo"
+    },
+    "chips": {
+      "skillsTitle": "Recommended skills (Makemycv):",
+      "languagesTitle": "Recommended languages:",
+      "generateAboutMe": "✨ Generate with AI",
+      "generatingAboutMe": "AI is generating…"
     }
   },
   "CvDocument": {
@@ -374,7 +403,14 @@
     "openCv": "View CV",
     "score": "{score} / 100",
     "downloadPdf": "PDF",
-    "decided": "Candidates with a decision"
+    "decided": "Candidates with a decision",
+    "tabs": {
+      "matches": "Matching Candidates",
+      "applications": "Applications ({count})"
+    },
+    "applicationsEmpty": "No applications received for this vacancy yet.",
+    "appliedAt": "Applied: {date}",
+    "viewApplication": "View"
   },
   "Candidate": {
     "back": "← Candidates",
@@ -436,7 +472,8 @@
           "COMPANY_REJECT": "Company rejected: {target}",
           "SUBSCRIPTION_SET": "Subscription until {to}: {target}",
           "SUBSCRIPTION_OFF": "Subscription turned off: {target}",
-          "AI_LIMIT_SET": "Monthly AI limit: {to} $"
+          "AI_LIMIT_SET": "Monthly AI limit: {to} $",
+          "RESOLVE_COMPLAINT": "Complaint resolved: {target}"
         }
       }
     },
@@ -1070,5 +1107,51 @@
     },
     "labelValue": "{label}: {value}",
     "percent": "{value}%"
+  },
+  "VacanciesList": {
+    "title": "All open vacancies",
+    "description": "Explore up-to-date opportunities from leading employers and apply in one click.",
+    "searchPlaceholder": "Profession, skill, or company...",
+    "allWorkTypes": "All work types",
+    "search": "Search",
+    "empty": "No matching open vacancies found.",
+    "salaryNegotiable": "Salary negotiable",
+    "experience": "⏱ Experience: {years} years",
+    "noExperience": "⏱ Not required",
+    "location": "📍 {location}",
+    "moreSkills": "+{count}",
+    "workTypes": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "REMOTE": "Remote",
+      "INTERNSHIP": "Internship"
+    }
+  },
+  "VacancyDetail": {
+    "back": "← Back to all vacancies",
+    "salary": "Salary",
+    "salaryNegotiable": "Salary: Negotiable",
+    "loginPromptTitle": "Sign in to submit an application",
+    "loginPromptDesc": "Please sign in to your student account to submit your CV for this vacancy.",
+    "login": "Sign In 🔑",
+    "descTitle": "Vacancy requirements and description",
+    "noDesc": "No additional description provided.",
+    "skillsTitle": "Required skills:",
+    "languagesTitle": "Required languages:",
+    "postedAt": "Posted: {date}",
+    "experience": "⏱ Experience: {years} years",
+    "noExperience": "⏱ Not required",
+    "location": "📍 {location}",
+    "workTypes": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "REMOTE": "Remote",
+      "INTERNSHIP": "Internship"
+    }
+  },
+  "Chat": {
+    "title": "Messages",
+    "subtitleStudent": "Direct communication with employers and application follow-up",
+    "subtitleCompany": "Candidate interviews and application details"
   }
 }

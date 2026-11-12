@@ -7,7 +7,7 @@ export const CV_DOCUMENT_CSS = `
   --cv-ink: #111827;
   --cv-muted: #4b5563;
   --cv-line: #d1d5db;
-  --cv-accent: #0f766e;
+  --cv-accent: #F07A1A;
   font-family: "Noto Sans Variable", "Noto Sans", sans-serif;
   color: var(--cv-ink);
   background: #fff;
@@ -39,4 +39,36 @@ export const CV_DOCUMENT_CSS = `
 .cvdoc-tags li { list-style: none; border: 0.75pt solid var(--cv-line); border-radius: 3pt; padding: 1pt 6pt; font-size: 9.5pt; }
 .cvdoc-list { padding-left: 14pt; }
 .cvdoc-list li { margin-top: 2pt; break-inside: avoid; page-break-inside: avoid; }
+
+/* Shablon: Klassik */
+.cvdoc.cvdoc-classic {
+  --cv-ink: #0f172a;
+  --cv-muted: #475569;
+  --cv-line: #cbd5e1;
+  --cv-accent: #1e3a8a;
+  font-family: Georgia, Cambria, "Times New Roman", serif;
+}
+.cvdoc.cvdoc-classic .cvdoc-header {
+  border-bottom: 2pt double var(--cv-accent);
+  text-align: center;
+}
+.cvdoc.cvdoc-classic .cvdoc-section > h2 {
+  text-align: center;
+  border-bottom: 1pt solid var(--cv-accent);
+}
+
+/* Shablon: Minimal */
+.cvdoc.cvdoc-minimal {
+  --cv-ink: #18181b;
+  --cv-muted: #71717a;
+  --cv-line: #e4e4e7;
+  --cv-accent: #27272a;
+}
+.cvdoc.cvdoc-minimal .cvdoc-header {
+  border-bottom: 1pt solid var(--cv-line);
+}
+.cvdoc.cvdoc-minimal .cvdoc-section > h2 {
+  border-bottom: 0.5pt solid var(--cv-line);
+  letter-spacing: 0.12em;
+}
 `;

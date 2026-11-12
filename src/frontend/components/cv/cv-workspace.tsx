@@ -51,6 +51,9 @@ export function CvWorkspace({
     setError(undefined);
     setFieldErrors({});
     const result = await requestJson<SavedCvResponse>("PUT", "/api/cv/me", {
+      title: draft.title,
+      templateId: draft.templateId,
+      privacy: draft.privacy,
       language: draft.language,
       workTypes: draft.workTypes,
       sourceText: draft.sourceText || null,

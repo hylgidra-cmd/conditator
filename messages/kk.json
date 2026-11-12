@@ -18,6 +18,7 @@
     "company": "Kompaniya",
     "vacancies": "Talaplar",
     "admin": "Admin",
+    "chat": "Xabarlar",
     "howItWorks": "Qanday ishlaydi",
     "pricing": "Narxlar",
     "faq": "Savollar",
@@ -157,7 +158,14 @@
     "FILE_TYPE_NOT_ALLOWED": "Tek PNG, JPG yamasa WEBP súwret júklewge boladı.",
     "TITLE_OR_TEXT_REQUIRED": "Lawazımdı yamasa talaptı erkin tekst penen jazıń.",
     "INVALID_NUMBER": "0 den 50 ge shekem pútin san kiritiń.",
-    "CANNOT_BLOCK_ADMIN": "Administratordı bloklawǵa bolmaydı."
+    "CANNOT_BLOCK_ADMIN": "Administratordı bloklawǵa bolmaydı.",
+    "CONVERSATION_NOT_FOUND": "Sóylesiw tabılmadı.",
+    "ONE_MESSAGE_RULE_AWAIT_REPLY": "Kompaniya juwap bermegenshe keyingi xabardı jbere almaysız.",
+    "PAYMENT_NOT_FOUND": "Tólem tabılmadı.",
+    "VACANCY_NOT_FOUND": "Vakansiya tabılmadı.",
+    "VACANCY_INACTIVE_OR_EXPIRED": "Bul vakansiyanıń múddeti ótken yamasa jabılǵan.",
+    "INVALID_OR_UNSAVED_CV": "Aldın CV-ıńızdı saqlań.",
+    "ALREADY_APPLIED": "Siz bul vakansiyaǵa aldın arza jibergensiz."
   },
   "Form": {
     "submitting": "Jiberilmekte…"
@@ -241,6 +249,27 @@
       "note": "Bul CV nıń aqırǵı saqlanǵan varianti. PDF te dál usınday shıǵadı.",
       "back": "Ózgertiwge qaytıw",
       "download": "PDF júklep alıw"
+    },
+    "templates": {
+      "title": "CV shablonı",
+      "modern": "Zamanagóy",
+      "classic": "Klassikalıq",
+      "minimal": "Minimal"
+    },
+    "privacy": {
+      "title": "Jasırınlıq sazlawları",
+      "subtitle": "Kompaniyalar aldında ózińiz haqqındaǵı maǵlıwmatlardı jasırıwıńız múmkin",
+      "hideName": "Attı jasırıw (Anonim nomzod)",
+      "hidePhone": "Telefon nomerdi jasırıw",
+      "hideEmail": "Emaildi jasırıw",
+      "hideAddress": "Mánzildi jasırıw",
+      "hidePhoto": "Súwretti jasırıw"
+    },
+    "chips": {
+      "skillsTitle": "Usınıs etilgen kónlikpeler (Makemycv):",
+      "languagesTitle": "Usınıs etilgen tiller:",
+      "generateAboutMe": "✨ AI arqalı jazdırıw",
+      "generatingAboutMe": "AI jazbaqta…"
     }
   },
   "CvDocument": {
@@ -374,7 +403,14 @@
     "openCv": "CV nı kóriw",
     "score": "{score} / 100",
     "downloadPdf": "PDF",
-    "decided": "Sheshim qoyılǵan kandidatlar"
+    "decided": "Sheshim qoyılǵan kandidatlar",
+    "tabs": {
+      "matches": "Sáykes kandidatlar",
+      "applications": "Arzalar ({count})"
+    },
+    "applicationsEmpty": "Bul vakansiyaǵa házirshe arza kelip túspedi.",
+    "appliedAt": "Jiberildi: {date}",
+    "viewApplication": "Kóriw"
   },
   "Candidate": {
     "back": "← Kandidatlar",
@@ -436,7 +472,8 @@
           "COMPANY_REJECT": "Kompaniya biykarlandı: {target}",
           "SUBSCRIPTION_SET": "Jazılıw {to} ge shekem: {target}",
           "SUBSCRIPTION_OFF": "Jazılıw óshirildi: {target}",
-          "AI_LIMIT_SET": "AI aylıq limiti: {to} $"
+          "AI_LIMIT_SET": "AI aylıq limiti: {to} $",
+          "RESOLVE_COMPLAINT": "Shaǵım kórip shıǵıldı: {target}"
         }
       }
     },
@@ -1070,5 +1107,51 @@
     },
     "labelValue": "{label}: {value}",
     "percent": "{value}%"
+  },
+  "VacanciesList": {
+    "title": "Barlıq ashıq vakansiyalar",
+    "description": "Jetekshi kompaniyalardıń dál waqıttaǵı jumıs orınları menen tanısıń hám bir túyme arqalı arza jiberiń.",
+    "searchPlaceholder": "Kásip, kónlikpe yamasa kompaniya...",
+    "allWorkTypes": "Barlıq jumıs túrleri",
+    "search": "Izlew",
+    "empty": "Házirshe say keletuǵın ashıq vakansiyalar tabılmadı.",
+    "salaryNegotiable": "Aylıq kelisim tiykarında",
+    "experience": "⏱ Tájiriybe: {years} jıl",
+    "noExperience": "⏱ Talap etilmeydi",
+    "location": "📍 {location}",
+    "moreSkills": "+{count}",
+    "workTypes": {
+      "FULL_TIME": "Tolıq stavka",
+      "PART_TIME": "Yarım stavka",
+      "REMOTE": "Qashıqtan",
+      "INTERNSHIP": "Ámeliyat"
+    }
+  },
+  "VacancyDetail": {
+    "back": "← Barlıq vakansiyalarǵa qaytıw",
+    "salary": "Aylıq",
+    "salaryNegotiable": "Aylıq: Kelisim tiykarında",
+    "loginPromptTitle": "Arza tapsırıw ushın sistemaǵa kiriń",
+    "loginPromptDesc": "Bul vakansiyaǵa CV jiberiw ushın talaba akkauntıńızǵa kiriń.",
+    "login": "Kiriw 🔑",
+    "descTitle": "Vakansiya talapları hám táriyipi",
+    "noDesc": "Qosımsha táriyip kiritilmegen.",
+    "skillsTitle": "Talap etiletuǵın kónlikpeler:",
+    "languagesTitle": "Talap etiletuǵın tiller:",
+    "postedAt": "Jaylastırıldı: {date}",
+    "experience": "⏱ Tájiriybe: {years} jıl",
+    "noExperience": "⏱ Talap etilmeydi",
+    "location": "📍 {location}",
+    "workTypes": {
+      "FULL_TIME": "Tolıq stavka",
+      "PART_TIME": "Yarım stavka",
+      "REMOTE": "Qashıqtan",
+      "INTERNSHIP": "Ámeliyat"
+    }
+  },
+  "Chat": {
+    "title": "Xabarlar",
+    "subtitleStudent": "Jumıs beriwshiler menen tikkeley baylanıs hám arza talqılawı",
+    "subtitleCompany": "Kandidatlar menen sáwbetler hám arza maǵlıwmatları"
   }
 }

@@ -4,6 +4,10 @@ export type ApiResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: string; fields?: Record<string, string> };
 
+export function getJson<T = unknown>(path: string): Promise<ApiResult<T>> {
+  return requestJson<T>("GET", path);
+}
+
 export function postJson<T = unknown>(
   path: string,
   body?: unknown,
@@ -12,14 +16,16 @@ export function postJson<T = unknown>(
 }
 
 export async function requestJson<T = unknown>(
-  method: "POST" | "PUT" | "PATCH",
+  method: "GET" | "POST" | "PUT" | "PATCH",
   path: string,
   body?: unknown,
 ): Promise<ApiResult<T>> {
   try {
     const response = await fetch(path, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      },
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const data = await response.json().catch(() => ({}));

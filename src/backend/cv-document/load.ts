@@ -1,4 +1,5 @@
 import "server-only";
+import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import type { CvDocumentInput } from "./types";
@@ -9,16 +10,25 @@ import type { CvDocumentInput } from "./types";
  */
 export async function loadSavedCvDocument(
   userId: string,
+  cvId?: string,
 ): Promise<CvDocumentInput | null> {
-  const cv = await db.cv.findUnique({
-    where: { userId },
-    select: { data: true, language: true, workTypes: true, savedAt: true },
+  const cv = await db.cv.findFirst({
+    where: cvId ? { id: cvId, userId } : { userId },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      data: true,
+      language: true,
+      workTypes: true,
+      savedAt: true,
+      templateId: true,
+    },
   });
   if (!cv?.savedAt) return null;
   return {
     data: cvDataSchema.parse(cv.data),
     language: cv.language,
     workTypes: cv.workTypes,
+    templateId: cv.templateId,
   };
 }
 
@@ -99,6 +109,7 @@ export function pdfContentDisposition(fullName: string | null): string {
  */
 export async function loadVisibleCvDocument(
   cvId: string,
+  options?: { isLocked?: boolean; isOwnerOrAdmin?: boolean },
 ): Promise<(CvDocumentInput & { id: string }) | null> {
   const cv = await db.cv.findFirst({
     where: {
@@ -107,13 +118,29 @@ export async function loadVisibleCvDocument(
       savedAt: { not: null },
       user: { status: "ACTIVE" },
     },
-    select: { id: true, data: true, language: true, workTypes: true },
+    select: {
+      id: true,
+      data: true,
+      language: true,
+      workTypes: true,
+      templateId: true,
+      privacy: true,
+    },
   });
   if (!cv) return null;
+  const rawData = cvDataSchema.parse(cv.data);
+  const privacySettings = parsePrivacy(cv.privacy);
+  const sanitized = sanitizeCvData(rawData, {
+    privacy: privacySettings,
+    isLocked: options?.isLocked,
+    isOwnerOrAdmin: options?.isOwnerOrAdmin,
+  });
+
   return {
     id: cv.id,
-    data: cvDataSchema.parse(cv.data),
+    data: sanitized,
     language: cv.language,
     workTypes: cv.workTypes,
+    templateId: cv.templateId,
   };
 }

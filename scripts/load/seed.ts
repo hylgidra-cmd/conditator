@@ -3,9 +3,9 @@
 import { createHash, randomBytes } from "node:crypto";
 import { writeFileSync } from "node:fs";
 import { PrismaClient, type Lang, type WorkType } from "@prisma/client";
-import { buildSearchText } from "../../src/lib/cv/service";
-import type { CvData } from "../../src/lib/cv/schema";
-import { hashPassword } from "../../src/lib/auth/password";
+import { buildSearchText } from "../../src/backend/cv/service";
+import type { CvData } from "../../src/backend/cv/schema";
+import { hashPassword } from "../../src/backend/auth/password";
 import { assertDevDatabase } from "./guard";
 
 assertDevDatabase();
@@ -214,8 +214,10 @@ async function main() {
       missingFields: [],
       isVisible: saved && i % 5 !== 0, // ~76% ochiq
       savedAt: saved ? new Date(now.getTime() - i * 30_000) : null,
-      skills: data.skills.map((s) => s.toLowerCase()),
-      languages: data.languages.map((l) => l.name.toLowerCase()),
+      skills: data.skills.map((s: string) => s.toLowerCase()),
+      languages: data.languages.map((l: { name: string }) =>
+        l.name.toLowerCase(),
+      ),
       location: data.location,
       workTypes: some(WORK, 0, 2),
       searchText: buildSearchText(data),

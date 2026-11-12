@@ -4,11 +4,11 @@ import { POST as register } from "@/app/api/auth/register/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { PUT as putCv } from "@/app/api/cv/me/route";
 import { GET as getPdf } from "@/app/api/cv/me/pdf/route";
-import { CvDocument } from "@/components/cv-document/cv-document";
-import { getCvDocumentLabels } from "@/lib/cv-document/labels";
-import { pdfContentDisposition } from "@/lib/cv-document/load";
-import { closePdfBrowser } from "@/lib/cv-document/pdf";
-import type { CvData } from "@/lib/cv/schema";
+import { CvDocument } from "@/frontend/components/cv-document/cv-document";
+import { getCvDocumentLabels } from "@/backend/cv-document/labels";
+import { pdfContentDisposition } from "@/backend/cv-document/load";
+import { closePdfBrowser } from "@/backend/cv-document/pdf";
+import type { CvData } from "@/backend/cv/schema";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;

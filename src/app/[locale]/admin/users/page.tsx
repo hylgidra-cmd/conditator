@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
-import { AdminNav } from "@/components/admin/admin-nav";
-import { UserStatusButton } from "@/components/admin/user-status-button";
-import { Pagination } from "@/components/ui/pagination";
+import { AdminNav } from "@/frontend/components/admin/admin-nav";
+import { UserStatusButton } from "@/frontend/components/admin/user-status-button";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { Link } from "@/i18n/navigation";
-import { requireAdminPage } from "@/lib/admin/page";
-import { fromSearchParams, userListSchema } from "@/lib/admin/schema";
-import { listUsers } from "@/lib/admin/service";
-import { formatDate } from "@/lib/format-date";
+import { requireAdminPage } from "@/backend/admin/page";
+import { fromSearchParams, userListSchema } from "@/backend/admin/schema";
+import { listUsers } from "@/backend/admin/service";
+import { formatDate } from "@/backend/format-date";
 
 const SELECT = "border-border bg-surface rounded-lg border px-3 py-2 text-sm";
 

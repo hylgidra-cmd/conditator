@@ -7,9 +7,9 @@ import { PUT as putDecision } from "@/app/api/vacancies/[id]/candidates/[cvId]/d
 import { POST as matchPost } from "@/app/api/vacancies/[id]/match/route";
 import { GET as matchesGet } from "@/app/api/vacancies/[id]/matches/route";
 import { GET as listVacancies } from "@/app/api/vacancies/route";
-import { setAiProviderForTests } from "@/lib/ai/provider";
-import { db } from "@/lib/db";
-import { decisionCounts, listDecided } from "@/lib/match/decision";
+import { setAiProviderForTests } from "@/backend/ai/provider";
+import { db } from "@/backend/db";
+import { decisionCounts, listDecided } from "@/backend/match/decision";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 import {
   companySession,

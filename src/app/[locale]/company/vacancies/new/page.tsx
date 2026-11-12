@@ -1,9 +1,12 @@
 import { getTranslations } from "next-intl/server";
-import { EMPTY_VACANCY, VacancyForm } from "@/components/vacancy/vacancy-form";
-import { requireCompanyPage } from "@/lib/company/page";
-import { db } from "@/lib/db";
-import { formValuesFrom } from "@/lib/vacancy/form";
-import { vacancyView } from "@/lib/vacancy/service";
+import {
+  EMPTY_VACANCY,
+  VacancyForm,
+} from "@/frontend/components/vacancy/vacancy-form";
+import { requireCompanyPage } from "@/backend/company/page";
+import { db } from "@/backend/db";
+import { formValuesFrom } from "@/backend/vacancy/form";
+import { vacancyView } from "@/backend/vacancy/service";
 
 /** Yangi talab. `?from=<id>` bo'lsa, o'z talabining nusxasi bilan to'ldiriladi. */
 export default async function NewVacancyPage({

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { AuthCard } from "@/components/auth/auth-card";
-import { LoginForm } from "@/components/auth/login-form";
+import { AuthCard } from "@/frontend/components/auth/auth-card";
+import { LoginForm } from "@/frontend/components/auth/login-form";
 
 type Props = {
   searchParams: Promise<{

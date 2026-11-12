@@ -19,11 +19,11 @@ import { GET as companyCv } from "@/app/api/cv/[id]/route";
 import { GET as companyCvPdf } from "@/app/api/cv/[id]/pdf/route";
 import { PUT as putCv } from "@/app/api/cv/me/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
-import { createSession } from "@/lib/auth/session";
-import { companyAccess } from "@/lib/company/access";
-import { LOGO_MAX_BYTES } from "@/lib/company/logo";
-import { closePdfBrowser } from "@/lib/cv-document/pdf";
-import { db } from "@/lib/db";
+import { createSession } from "@/backend/auth/session";
+import { companyAccess } from "@/backend/company/access";
+import { LOGO_MAX_BYTES } from "@/backend/company/logo";
+import { closePdfBrowser } from "@/backend/cv-document/pdf";
+import { db } from "@/backend/db";
 import { NextResponse } from "next/server";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 

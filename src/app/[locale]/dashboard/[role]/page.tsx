@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Avatar } from "@/components/ds/avatar";
-import { Badge } from "@/components/ds/badge";
-import { buttonClass } from "@/components/ds/button";
-import { cn } from "@/components/ds/cn";
-import { DashboardSkeleton } from "@/components/dashboard/skeletons";
-import { parseState } from "@/components/dashboard/page-state";
+import { Avatar } from "@/frontend/components/ds/avatar";
+import { Badge } from "@/frontend/components/ds/badge";
+import { buttonClass } from "@/frontend/components/ds/button";
+import { cn } from "@/frontend/components/ds/cn";
+import { DashboardSkeleton } from "@/frontend/components/dashboard/skeletons";
+import { parseState } from "@/frontend/components/dashboard/page-state";
 import {
   EmptyState,
   MatchMeter,
@@ -16,7 +16,7 @@ import {
   SectionTitle,
   StatCard,
   TextLink,
-} from "@/components/dashboard/ui";
+} from "@/frontend/components/dashboard/ui";
 import {
   BookmarkIcon,
   BriefcaseIcon,
@@ -27,7 +27,7 @@ import {
   MapPinIcon,
   UserIcon,
   UsersIcon,
-} from "@/components/icons";
+} from "@/frontend/components/icons";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import {
@@ -40,8 +40,8 @@ import {
   VACANCIES,
   formatSom,
   vacancyById,
-} from "@/lib/dashboard/mock";
-import { formatDateTime } from "@/lib/format-date";
+} from "@/backend/dashboard/mock";
+import { formatDateTime } from "@/backend/format-date";
 
 type Props = {
   params: Promise<{ locale: string; role: string }>;
@@ -59,7 +59,7 @@ const STAT_ICONS = {
 } as const;
 
 import { redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
+import { currentUser } from "@/backend/auth/current-user";
 
 export default async function OverviewPage({ params, searchParams }: Props) {
   const { locale, role } = await params;

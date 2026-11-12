@@ -34,10 +34,10 @@ import * as match from "@/app/api/vacancies/[id]/match/route";
 import * as matches from "@/app/api/vacancies/[id]/matches/route";
 import * as vacancyById from "@/app/api/vacancies/[id]/route";
 import * as vacancies from "@/app/api/vacancies/route";
-import { FakeAiProvider } from "@/lib/ai/fake";
-import { setAiProviderForTests } from "@/lib/ai/provider";
-import { createSession } from "@/lib/auth/session";
-import { db } from "@/lib/db";
+import { FakeAiProvider } from "@/backend/ai/fake";
+import { setAiProviderForTests } from "@/backend/ai/provider";
+import { createSession } from "@/backend/auth/session";
+import { db } from "@/backend/db";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 type Role = "anon" | "student" | "pending" | "company" | "admin";

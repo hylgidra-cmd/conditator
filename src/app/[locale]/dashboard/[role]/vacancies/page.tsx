@@ -1,16 +1,23 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { buttonClass } from "@/components/ds/button";
-import { cn } from "@/components/ds/cn";
-import { parseState, StateSwitcher } from "@/components/dashboard/page-state";
-import { DashboardSkeleton } from "@/components/dashboard/skeletons";
-import { EmptyState, PageHeader, PANEL } from "@/components/dashboard/ui";
-import { VacancyTable } from "@/components/dashboard/vacancy-table";
-import { BriefcaseIcon, PlusIcon } from "@/components/icons";
+import { buttonClass } from "@/frontend/components/ds/button";
+import { cn } from "@/frontend/components/ds/cn";
+import {
+  parseState,
+  StateSwitcher,
+} from "@/frontend/components/dashboard/page-state";
+import { DashboardSkeleton } from "@/frontend/components/dashboard/skeletons";
+import {
+  EmptyState,
+  PageHeader,
+  PANEL,
+} from "@/frontend/components/dashboard/ui";
+import { VacancyTable } from "@/frontend/components/dashboard/vacancy-table";
+import { BriefcaseIcon, PlusIcon } from "@/frontend/components/icons";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { isRole, VACANCIES } from "@/lib/dashboard/mock";
+import { isRole, VACANCIES } from "@/backend/dashboard/mock";
 
 type Props = {
   params: Promise<{ locale: string; role: string }>;

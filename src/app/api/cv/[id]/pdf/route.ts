@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireApprovedCompany } from "@/lib/company/access";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireApprovedCompany } from "@/backend/company/access";
 import {
   loadVisibleCvDocument,
   pdfContentDisposition,
-} from "@/lib/cv-document/load";
-import { renderCvPdf } from "@/lib/cv-document/pdf";
-import { db } from "@/lib/db";
-import { ApiError } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+} from "@/backend/cv-document/load";
+import { renderCvPdf } from "@/backend/cv-document/pdf";
+import { db } from "@/backend/db";
+import { ApiError } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 export const runtime = "nodejs";
 

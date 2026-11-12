@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { requireApprovedCompany } from "@/lib/company/access";
-import { route } from "@/lib/http/route";
-import { getMatchResults } from "@/lib/match/service";
-import { getOwnVacancy } from "@/lib/vacancy/service";
+import { requireApprovedCompany } from "@/backend/company/access";
+import { route } from "@/backend/http/route";
+import { getMatchResults } from "@/backend/match/service";
+import { getOwnVacancy } from "@/backend/vacancy/service";
 
 type Context = { params: Promise<{ id: string }> };
 

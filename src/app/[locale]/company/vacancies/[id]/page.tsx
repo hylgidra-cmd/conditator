@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { VacancyForm } from "@/components/vacancy/vacancy-form";
+import { VacancyForm } from "@/frontend/components/vacancy/vacancy-form";
 import { Link } from "@/i18n/navigation";
-import { requireCompanyPage } from "@/lib/company/page";
-import { db } from "@/lib/db";
-import { formValuesFrom } from "@/lib/vacancy/form";
-import { vacancyView } from "@/lib/vacancy/service";
+import { requireCompanyPage } from "@/backend/company/page";
+import { db } from "@/backend/db";
+import { formValuesFrom } from "@/backend/vacancy/form";
+import { vacancyView } from "@/backend/vacancy/service";
 
 export default async function EditVacancyPage({
   params,

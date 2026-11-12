@@ -3,7 +3,7 @@
 // Ishga tushirish: npm run db:seed (Docker'da migrate xizmati avtomatik bajaradi).
 import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
-import { hashPassword } from "../src/lib/auth/password";
+import { hashPassword } from "../src/backend/auth/password";
 
 const db = new PrismaClient();
 

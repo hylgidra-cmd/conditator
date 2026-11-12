@@ -1,18 +1,21 @@
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Avatar } from "@/components/ds/avatar";
-import { cn, FOCUS_RING } from "@/components/ds/cn";
-import { parseState, StateSwitcher } from "@/components/dashboard/page-state";
-import { DashboardSkeleton } from "@/components/dashboard/skeletons";
+import { Avatar } from "@/frontend/components/ds/avatar";
+import { cn, FOCUS_RING } from "@/frontend/components/ds/cn";
+import {
+  parseState,
+  StateSwitcher,
+} from "@/frontend/components/dashboard/page-state";
+import { DashboardSkeleton } from "@/frontend/components/dashboard/skeletons";
 import {
   EmptyState,
   MatchMeter,
   PageHeader,
   PANEL,
   StatusBadge,
-} from "@/components/dashboard/ui";
-import { FileTextIcon, MapPinIcon } from "@/components/icons";
+} from "@/frontend/components/dashboard/ui";
+import { FileTextIcon, MapPinIcon } from "@/frontend/components/icons";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import {
@@ -22,8 +25,8 @@ import {
   type EmployerAppStatus,
   isRole,
   vacancyById,
-} from "@/lib/dashboard/mock";
-import { formatDate } from "@/lib/format-date";
+} from "@/backend/dashboard/mock";
+import { formatDate } from "@/backend/format-date";
 
 type Props = {
   params: Promise<{ locale: string; role: string }>;

@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { AuthCard } from "@/components/auth/auth-card";
-import { ResetForm } from "@/components/auth/reset-form";
-import { emailSchema } from "@/lib/auth/schemas";
+import { AuthCard } from "@/frontend/components/auth/auth-card";
+import { ResetForm } from "@/frontend/components/auth/reset-form";
+import { emailSchema } from "@/backend/auth/schemas";
 
 type Props = { searchParams: Promise<{ email?: string }> };
 

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { requireRole } from "@/lib/auth/session";
-import { cvSaveSchema, getOwnCv, saveOwnCv } from "@/lib/cv/service";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { requireRole } from "@/backend/auth/session";
+import { cvSaveSchema, getOwnCv, saveOwnCv } from "@/backend/cv/service";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Talabaning o'z CV si. Boshqa talabaning CV siga yo'l yo'q: faqat sessiyadagi foydalanuvchi. */
 export const GET = route(async (request) => {

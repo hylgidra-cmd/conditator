@@ -5,8 +5,8 @@ import {
   consumeCode,
   hashCode,
   issueCode,
-} from "@/lib/auth/email-code";
-import { db } from "@/lib/db";
+} from "@/backend/auth/email-code";
+import { db } from "@/backend/db";
 
 async function createUser() {
   return db.user.create({

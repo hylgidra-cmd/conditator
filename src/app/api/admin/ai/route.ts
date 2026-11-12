@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { aiLimitSchema } from "@/lib/admin/schema";
-import { aiStats, setAiLimit } from "@/lib/admin/service";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireRole } from "@/lib/auth/session";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { aiLimitSchema } from "@/backend/admin/schema";
+import { aiStats, setAiLimit } from "@/backend/admin/service";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireRole } from "@/backend/auth/session";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Shu oydagi AI so'rovlari, xarajat va oylik limit. */
 export const GET = route(async (request) => {

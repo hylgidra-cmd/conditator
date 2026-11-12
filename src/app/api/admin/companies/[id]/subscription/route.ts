@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { subscriptionSchema } from "@/lib/admin/schema";
-import { setSubscription } from "@/lib/admin/service";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireRole } from "@/lib/auth/session";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { subscriptionSchema } from "@/backend/admin/schema";
+import { setSubscription } from "@/backend/admin/service";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireRole } from "@/backend/auth/session";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Obunani qo'lda yoqish (tugash sanasi bilan) yoki o'chirish (`until: null`). */
 export const PATCH = route<{ params: Promise<{ id: string }> }>(

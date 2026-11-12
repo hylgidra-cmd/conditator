@@ -1,9 +1,9 @@
 import { afterAll, beforeEach, vi } from "vitest";
-import { resetRateLimits } from "@/lib/auth/rate-limit";
-import { db } from "@/lib/db";
+import { resetRateLimits } from "@/backend/auth/rate-limit";
+import { db } from "@/backend/db";
 import { sentMails } from "./mail-outbox";
 
-vi.mock("@/lib/email/mailer", async () => {
+vi.mock("@/backend/email/mailer", async () => {
   const { sentMails: outbox } = await import("./mail-outbox");
   return {
     sendMail: async (message: {

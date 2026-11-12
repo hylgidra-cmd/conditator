@@ -10,9 +10,9 @@ import { GET as adminUsers } from "@/app/api/admin/users/route";
 import { POST as forgot } from "@/app/api/auth/forgot/route";
 import { POST as register } from "@/app/api/auth/register/route";
 import { POST as reset } from "@/app/api/auth/reset/route";
-import { ADMIN_PAGE_SIZE } from "@/lib/admin/schema";
-import { createSession } from "@/lib/auth/session";
-import { db } from "@/lib/db";
+import { ADMIN_PAGE_SIZE } from "@/backend/admin/schema";
+import { createSession } from "@/backend/auth/session";
+import { db } from "@/backend/db";
 import {
   getRequest,
   jsonRequest,

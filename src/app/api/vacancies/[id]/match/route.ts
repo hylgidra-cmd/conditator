@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireApprovedCompany } from "@/lib/company/access";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
-import { runMatching } from "@/lib/match/service";
-import { getOwnVacancy } from "@/lib/vacancy/service";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireApprovedCompany } from "@/backend/company/access";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
+import { runMatching } from "@/backend/match/service";
+import { getOwnVacancy } from "@/backend/vacancy/service";
 
 type Context = { params: Promise<{ id: string }> };
 

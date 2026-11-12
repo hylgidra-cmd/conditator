@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireCompany } from "@/lib/company/access";
+import { requireCompany } from "@/backend/company/access";
 import {
   companyProfileSchema,
   publicCompany,
   saveCompanyProfile,
-} from "@/lib/company/profile";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+} from "@/backend/company/profile";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Kompaniyaning o'z profili. Tasdiqlanmagan kompaniya ham tahrirlay oladi. */
 export const GET = route(async (request) => {

@@ -2,7 +2,7 @@ import { getLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { ClientMessages } from "@/i18n/client-messages";
 import { redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
+import { currentUser } from "@/backend/auth/current-user";
 
 // Kirgan foydalanuvchi auth sahifalarini ko'rmaydi: kabinetga yo'naltiriladi.
 export default async function AuthLayout({

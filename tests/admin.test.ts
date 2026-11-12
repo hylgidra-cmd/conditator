@@ -10,12 +10,12 @@ import { PATCH as userStatus } from "@/app/api/admin/users/[id]/status/route";
 import { GET as users } from "@/app/api/admin/users/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { GET as getCv } from "@/app/api/cv/me/route";
-import { monthStart } from "@/lib/ai/budget";
-import { endOfDayTashkent } from "@/lib/admin/service";
-import { hashPassword } from "@/lib/auth/password";
-import { createSession } from "@/lib/auth/session";
-import { companyAccess } from "@/lib/company/access";
-import { db } from "@/lib/db";
+import { monthStart } from "@/backend/ai/budget";
+import { endOfDayTashkent } from "@/backend/admin/service";
+import { hashPassword } from "@/backend/auth/password";
+import { createSession } from "@/backend/auth/session";
+import { companyAccess } from "@/backend/company/access";
+import { db } from "@/backend/db";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;

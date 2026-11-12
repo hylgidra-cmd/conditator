@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { DashboardSkeleton } from "@/components/dashboard/skeletons";
+import { DashboardSkeleton } from "@/frontend/components/dashboard/skeletons";
 
 export default async function Loading() {
   const t = await getTranslations("Dashboard");

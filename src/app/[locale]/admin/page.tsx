@@ -1,10 +1,10 @@
 import { getTranslations } from "next-intl/server";
-import { AdminNav } from "@/components/admin/admin-nav";
-import { AiLimitForm } from "@/components/admin/ai-limit-form";
-import { recentAdminLogs } from "@/lib/admin/log";
-import { requireAdminPage } from "@/lib/admin/page";
-import { aiStats, platformStats } from "@/lib/admin/service";
-import { formatDate, formatDateTime } from "@/lib/format-date";
+import { AdminNav } from "@/frontend/components/admin/admin-nav";
+import { AiLimitForm } from "@/frontend/components/admin/ai-limit-form";
+import { recentAdminLogs } from "@/backend/admin/log";
+import { requireAdminPage } from "@/backend/admin/page";
+import { aiStats, platformStats } from "@/backend/admin/service";
+import { formatDate, formatDateTime } from "@/backend/format-date";
 
 const usd = (value: number) => value.toFixed(value < 1 ? 4 : 2);
 

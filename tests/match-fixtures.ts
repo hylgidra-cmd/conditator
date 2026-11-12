@@ -7,11 +7,11 @@ import {
   type AiProvider,
   AiProviderError,
   type AiRawResponse,
-} from "@/lib/ai/provider";
-import type { CvData } from "@/lib/cv/schema";
-import { saveOwnCv } from "@/lib/cv/service";
-import { db } from "@/lib/db";
-import type { MatchOutcome } from "@/lib/match/service";
+} from "@/backend/ai/provider";
+import type { CvData } from "@/backend/cv/schema";
+import { saveOwnCv } from "@/backend/cv/service";
+import { db } from "@/backend/db";
+import type { MatchOutcome } from "@/backend/match/service";
 import { jsonRequest, sessionCookie } from "./helpers";
 
 // Saralash va nomzod testlari uchun umumiy yordamchilar.

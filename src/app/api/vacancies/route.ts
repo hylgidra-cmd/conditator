@@ -1,14 +1,14 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireCompany } from "@/lib/company/access";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
-import { pageSchema, vacancyInputSchema } from "@/lib/vacancy/schema";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireCompany } from "@/backend/company/access";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
+import { pageSchema, vacancyInputSchema } from "@/backend/vacancy/schema";
 import {
   createVacancy,
   listVacancies,
   vacancyView,
-} from "@/lib/vacancy/service";
+} from "@/backend/vacancy/service";
 
 /** Kompaniyaning talablar tarixi (sahifalangan). Tasdiqlanmagan kompaniya ham ko'radi. */
 export const GET = route(async (request: NextRequest) => {

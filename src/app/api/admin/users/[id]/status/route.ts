@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { userStatusSchema } from "@/lib/admin/schema";
-import { setUserStatus } from "@/lib/admin/service";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireRole } from "@/lib/auth/session";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { userStatusSchema } from "@/backend/admin/schema";
+import { setUserStatus } from "@/backend/admin/service";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireRole } from "@/backend/auth/session";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Bloklash / blokdan chiqarish. Harakat AdminLog ga yoziladi. */
 export const PATCH = route<{ params: Promise<{ id: string }> }>(

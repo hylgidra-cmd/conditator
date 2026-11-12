@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { Pagination } from "@/components/ui/pagination";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { Link } from "@/i18n/navigation";
-import { requireCompanyPage } from "@/lib/company/page";
-import { formatDate } from "@/lib/format-date";
-import { pageSchema } from "@/lib/vacancy/schema";
-import { listVacancies } from "@/lib/vacancy/service";
-import { decisionCounts } from "@/lib/match/decision";
+import { requireCompanyPage } from "@/backend/company/page";
+import { formatDate } from "@/backend/format-date";
+import { pageSchema } from "@/backend/vacancy/schema";
+import { listVacancies } from "@/backend/vacancy/service";
+import { decisionCounts } from "@/backend/match/decision";
 
 export default async function VacanciesPage({
   searchParams,

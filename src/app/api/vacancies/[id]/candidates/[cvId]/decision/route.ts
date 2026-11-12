@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireApprovedCompany } from "@/lib/company/access";
-import { parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
-import { decisionSchema, setDecision } from "@/lib/match/decision";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireApprovedCompany } from "@/backend/company/access";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
+import { decisionSchema, setDecision } from "@/backend/match/decision";
 
 type Context = { params: Promise<{ id: string; cvId: string }> };
 

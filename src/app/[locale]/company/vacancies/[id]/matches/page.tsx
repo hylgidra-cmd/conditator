@@ -1,16 +1,16 @@
 import type { Lang } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { DecisionBadge } from "@/components/match/decision-badge";
-import { MatchPanel } from "@/components/match/match-panel";
-import { FormAlert } from "@/components/ui/form";
+import { DecisionBadge } from "@/frontend/components/match/decision-badge";
+import { MatchPanel } from "@/frontend/components/match/match-panel";
+import { FormAlert } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
-import { companyAccess } from "@/lib/company/access";
-import { requireCompanyPage } from "@/lib/company/page";
-import { db } from "@/lib/db";
-import { listDecided } from "@/lib/match/decision";
-import { getMatchResults } from "@/lib/match/service";
-import { formatDate } from "@/lib/format-date";
+import { companyAccess } from "@/backend/company/access";
+import { requireCompanyPage } from "@/backend/company/page";
+import { db } from "@/backend/db";
+import { listDecided } from "@/backend/match/decision";
+import { getMatchResults } from "@/backend/match/service";
+import { formatDate } from "@/backend/format-date";
 
 export default async function MatchesPage({
   params,

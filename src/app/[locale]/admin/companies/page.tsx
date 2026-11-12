@@ -1,12 +1,12 @@
 import { getTranslations } from "next-intl/server";
-import { AdminNav } from "@/components/admin/admin-nav";
-import { CompanyAdminActions } from "@/components/admin/company-admin-actions";
-import { Pagination } from "@/components/ui/pagination";
+import { AdminNav } from "@/frontend/components/admin/admin-nav";
+import { CompanyAdminActions } from "@/frontend/components/admin/company-admin-actions";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { Link } from "@/i18n/navigation";
-import { requireAdminPage } from "@/lib/admin/page";
-import { companyListSchema, fromSearchParams } from "@/lib/admin/schema";
-import { listCompanies } from "@/lib/admin/service";
-import { formatDate, toDateInput } from "@/lib/format-date";
+import { requireAdminPage } from "@/backend/admin/page";
+import { companyListSchema, fromSearchParams } from "@/backend/admin/schema";
+import { listCompanies } from "@/backend/admin/service";
+import { formatDate, toDateInput } from "@/backend/format-date";
 
 const APPROVAL_TONE = {
   PENDING: "bg-amber-100 text-amber-800",

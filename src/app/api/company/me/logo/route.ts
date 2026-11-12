@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireCompany } from "@/lib/company/access";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireCompany } from "@/backend/company/access";
 import {
   LOGO_MAX_BYTES,
   readLogo,
   removeLogo,
   storeLogo,
-} from "@/lib/company/logo";
-import { publicCompany } from "@/lib/company/profile";
-import { db } from "@/lib/db";
-import { ApiError, readBodyLimited } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+} from "@/backend/company/logo";
+import { publicCompany } from "@/backend/company/profile";
+import { db } from "@/backend/db";
+import { ApiError, readBodyLimited } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /** Logo faqat shu endpoint orqali beriladi (fayllar public/ da emas). */
 export const GET = route(async (request) => {

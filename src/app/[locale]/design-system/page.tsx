@@ -3,17 +3,17 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import type { AvatarProps } from "@/components/ds/avatar";
-import { Avatar, AvatarGroup } from "@/components/ds/avatar";
-import { Badge } from "@/components/ds/badge";
-import { Button, IconButton } from "@/components/ds/button";
+import type { AvatarProps } from "@/frontend/components/ds/avatar";
+import { Avatar, AvatarGroup } from "@/frontend/components/ds/avatar";
+import { Badge } from "@/frontend/components/ds/badge";
+import { Button, IconButton } from "@/frontend/components/ds/button";
 import {
   Card,
   CategoryCard,
   StepItem,
   TestimonialCard,
-} from "@/components/ds/card";
-import { cn } from "@/components/ds/cn";
+} from "@/frontend/components/ds/card";
+import { cn } from "@/frontend/components/ds/cn";
 import {
   Chevrons,
   ConcentricArcs,
@@ -29,13 +29,13 @@ import {
   Square,
   SquiggleArrow,
   Triangle,
-} from "@/components/ds/decor";
+} from "@/frontend/components/ds/decor";
 import {
   CounterCard,
   NotificationCard,
   ProfileCard,
   StatSquareCard,
-} from "@/components/ds/floating-card";
+} from "@/frontend/components/ds/floating-card";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -51,7 +51,7 @@ import {
   SendIcon,
   SparkIcon,
   ICON_GROUPS,
-} from "@/components/icons";
+} from "@/frontend/components/icons";
 import {
   Checkbox,
   Field,
@@ -59,8 +59,8 @@ import {
   Select,
   Textarea,
   describedBy,
-} from "@/components/ds/input";
-import { Logo } from "@/components/ds/logo";
+} from "@/frontend/components/ds/input";
+import { Logo } from "@/frontend/components/ds/logo";
 import { routing } from "@/i18n/routing";
 
 type Props = { params: Promise<{ locale: string }> };

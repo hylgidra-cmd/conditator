@@ -1,9 +1,9 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { CvDocument } from "@/components/cv-document/cv-document";
+import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { Link, redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
-import { getCvDocumentLabels } from "@/lib/cv-document/labels";
-import { loadSavedCvDocument } from "@/lib/cv-document/load";
+import { currentUser } from "@/backend/auth/current-user";
+import { getCvDocumentLabels } from "@/backend/cv-document/labels";
+import { loadSavedCvDocument } from "@/backend/cv-document/load";
 
 export default async function StudentCvPreviewPage() {
   const user = await currentUser();

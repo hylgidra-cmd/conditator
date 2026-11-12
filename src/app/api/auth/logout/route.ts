@@ -3,8 +3,8 @@ import {
   clearSessionCookie,
   deleteSession,
   SESSION_COOKIE,
-} from "@/lib/auth/session";
-import { route } from "@/lib/http/route";
+} from "@/backend/auth/session";
+import { route } from "@/backend/http/route";
 
 export const POST = route(async (request) => {
   await deleteSession(request.cookies.get(SESSION_COOKIE)?.value);

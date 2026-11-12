@@ -1,17 +1,17 @@
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { CvDocument } from "@/components/cv-document/cv-document";
-import { DecisionButtons } from "@/components/match/decision-buttons";
-import { FormAlert } from "@/components/ui/form";
+import { CvDocument } from "@/frontend/components/cv-document/cv-document";
+import { DecisionButtons } from "@/frontend/components/match/decision-buttons";
+import { FormAlert } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { companyAccess } from "@/lib/company/access";
-import { requireCompanyPage } from "@/lib/company/page";
-import { getCvDocumentLabels } from "@/lib/cv-document/labels";
-import { loadVisibleCvDocument } from "@/lib/cv-document/load";
-import { db } from "@/lib/db";
-import { ApiError } from "@/lib/http/errors";
-import { getDecision } from "@/lib/match/decision";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { companyAccess } from "@/backend/company/access";
+import { requireCompanyPage } from "@/backend/company/page";
+import { getCvDocumentLabels } from "@/backend/cv-document/labels";
+import { loadVisibleCvDocument } from "@/backend/cv-document/load";
+import { db } from "@/backend/db";
+import { ApiError } from "@/backend/http/errors";
+import { getDecision } from "@/backend/match/decision";
 
 /**
  * Nomzod CV si (ism va aloqa bilan, PLAN qaror 6). Ruxsat API bilan bir xil:

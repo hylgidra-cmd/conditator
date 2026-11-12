@@ -1,6 +1,6 @@
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
+import { currentUser } from "@/backend/auth/current-user";
 
 // Vaqtinchalik kabinet: rolga qarab sahifalar keyingi qadamlarda qo'shiladi.
 export default async function AccountPage() {

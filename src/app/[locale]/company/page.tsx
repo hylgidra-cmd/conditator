@@ -1,11 +1,11 @@
 import { getTranslations } from "next-intl/server";
-import { CompanyLogo } from "@/components/company/company-logo";
-import { CompanyProfileForm } from "@/components/company/company-profile-form";
+import { CompanyLogo } from "@/frontend/components/company/company-logo";
+import { CompanyProfileForm } from "@/frontend/components/company/company-profile-form";
 import { Link } from "@/i18n/navigation";
-import { companyAccess } from "@/lib/company/access";
-import { requireCompanyPage } from "@/lib/company/page";
-import { publicCompany } from "@/lib/company/profile";
-import { formatDate } from "@/lib/format-date";
+import { companyAccess } from "@/backend/company/access";
+import { requireCompanyPage } from "@/backend/company/page";
+import { publicCompany } from "@/backend/company/profile";
+import { formatDate } from "@/backend/format-date";
 
 const TONE = {
   PENDING: "border-amber-200 bg-amber-50 text-amber-800",

@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
-import { DashboardShell } from "@/components/dashboard/shell";
+import { DashboardShell } from "@/frontend/components/dashboard/shell";
 import { ClientMessages } from "@/i18n/client-messages";
 import { routing } from "@/i18n/routing";
-import { isRole } from "@/lib/dashboard/mock";
+import { isRole } from "@/backend/dashboard/mock";
 
 type Props = {
   children: ReactNode;

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { loginSchema } from "@/lib/auth/schemas";
-import { login } from "@/lib/auth/service";
-import { createSession } from "@/lib/auth/session";
-import { parseJson } from "@/lib/http/errors";
-import { clientIp } from "@/lib/http/request";
-import { route } from "@/lib/http/route";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { loginSchema } from "@/backend/auth/schemas";
+import { login } from "@/backend/auth/service";
+import { createSession } from "@/backend/auth/session";
+import { parseJson } from "@/backend/http/errors";
+import { clientIp } from "@/backend/http/request";
+import { route } from "@/backend/http/route";
 
 export const POST = route(async (request) => {
   const ip = clientIp(request);

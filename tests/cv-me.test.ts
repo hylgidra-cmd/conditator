@@ -3,7 +3,7 @@ import { POST as register } from "@/app/api/auth/register/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { GET as getCv, PUT as putCv } from "@/app/api/cv/me/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
-import { db } from "@/lib/db";
+import { db } from "@/backend/db";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;

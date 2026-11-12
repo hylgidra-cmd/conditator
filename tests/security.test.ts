@@ -8,12 +8,12 @@ import { POST as reset } from "@/app/api/auth/reset/route";
 import { GET as getCv, PUT as putCv } from "@/app/api/cv/me/route";
 import { GET as getPdf } from "@/app/api/cv/me/pdf/route";
 import { PATCH as patchVisibility } from "@/app/api/cv/me/visibility/route";
-import { CODE_DAILY_MAX_FAILURES } from "@/lib/auth/email-code";
+import { CODE_DAILY_MAX_FAILURES } from "@/backend/auth/email-code";
 import { NextRequest, NextResponse } from "next/server";
 import { POST as uploadLogo } from "@/app/api/company/me/logo/route";
-import { createSession } from "@/lib/auth/session";
-import { db } from "@/lib/db";
-import { MAX_JSON_BYTES } from "@/lib/http/errors";
+import { createSession } from "@/backend/auth/session";
+import { db } from "@/backend/db";
+import { MAX_JSON_BYTES } from "@/backend/http/errors";
 import {
   getRequest,
   jsonRequest,

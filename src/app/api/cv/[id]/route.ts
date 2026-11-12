@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { requireApprovedCompany } from "@/lib/company/access";
-import { loadVisibleCvDocument } from "@/lib/cv-document/load";
-import { db } from "@/lib/db";
-import { ApiError } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { requireApprovedCompany } from "@/backend/company/access";
+import { loadVisibleCvDocument } from "@/backend/cv-document/load";
+import { db } from "@/backend/db";
+import { ApiError } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 /**
  * Kompaniya ochiq CV ni ko'radi (ism va aloqa bilan). Faqat tasdiqlangan kompaniya,

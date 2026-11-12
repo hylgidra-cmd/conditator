@@ -3,8 +3,8 @@ import { POST as register } from "@/app/api/auth/register/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { GET as list, POST as create } from "@/app/api/vacancies/route";
 import { GET as getOne, PUT as update } from "@/app/api/vacancies/[id]/route";
-import { db } from "@/lib/db";
-import { VACANCY_TEXT_MAX } from "@/lib/vacancy/schema";
+import { db } from "@/backend/db";
+import { VACANCY_TEXT_MAX } from "@/backend/vacancy/schema";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 
 const ctx = undefined as never;

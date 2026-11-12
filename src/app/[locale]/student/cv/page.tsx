@@ -4,12 +4,12 @@ import {
   type CvDraft,
   draftFromData,
   type WorkTypeValue,
-} from "@/components/cv/types";
-import { CvWorkspace } from "@/components/cv/cv-workspace";
+} from "@/frontend/components/cv/types";
+import { CvWorkspace } from "@/frontend/components/cv/cv-workspace";
 import { redirect } from "@/i18n/navigation";
-import { currentUser } from "@/lib/auth/current-user";
-import { cvDataSchema } from "@/lib/cv/schema";
-import { getOwnCv } from "@/lib/cv/service";
+import { currentUser } from "@/backend/auth/current-user";
+import { cvDataSchema } from "@/backend/cv/schema";
+import { getOwnCv } from "@/backend/cv/service";
 
 export default async function StudentCvPage() {
   const user = await currentUser();

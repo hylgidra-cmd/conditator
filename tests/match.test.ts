@@ -2,19 +2,19 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { POST as register } from "@/app/api/auth/register/route";
 import { POST as login } from "@/app/api/auth/login/route";
 import { GET as matches } from "@/app/api/vacancies/[id]/matches/route";
-import { setAiProviderForTests } from "@/lib/ai/provider";
-import { AI_EXTRA_ATTEMPTS } from "@/lib/ai/run";
-import type { CvData } from "@/lib/cv/schema";
-import { saveOwnCv } from "@/lib/cv/service";
-import { db } from "@/lib/db";
+import { setAiProviderForTests } from "@/backend/ai/provider";
+import { AI_EXTRA_ATTEMPTS } from "@/backend/ai/run";
+import type { CvData } from "@/backend/cv/schema";
+import { saveOwnCv } from "@/backend/cv/service";
+import { db } from "@/backend/db";
 import {
   filterCandidates,
   languagesMatch,
   locationPasses,
   MAX_CANDIDATES,
-} from "@/lib/match/candidates";
-import { canonicalLanguage } from "@/lib/match/normalize";
-import type { MatchOutcome } from "@/lib/match/service";
+} from "@/backend/match/candidates";
+import { canonicalLanguage } from "@/backend/match/normalize";
+import type { MatchOutcome } from "@/backend/match/service";
 import { getRequest, jsonRequest, sessionCookie } from "./helpers";
 import {
   companySession,

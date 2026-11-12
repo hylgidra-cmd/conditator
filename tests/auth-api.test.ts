@@ -5,8 +5,8 @@ import { POST as register } from "@/app/api/auth/register/route";
 import { POST as reset } from "@/app/api/auth/reset/route";
 import { POST as forgot } from "@/app/api/auth/forgot/route";
 import { GET as me } from "@/app/api/me/route";
-import { hashPassword } from "@/lib/auth/password";
-import { db } from "@/lib/db";
+import { hashPassword } from "@/backend/auth/password";
+import { db } from "@/backend/db";
 import {
   getRequest,
   jsonRequest,
@@ -263,7 +263,7 @@ describe("rol tekshiruvi (requireRole)", () => {
   });
 
   it("rol mos kelmasa 403, mos kelsa o'tadi", async () => {
-    const { requireRole } = await import("@/lib/auth/session");
+    const { requireRole } = await import("@/backend/auth/session");
     const cookie = await registeredAndLoggedIn("STUDENT");
 
     await expect(
@@ -286,7 +286,7 @@ describe("rol tekshiruvi (requireRole)", () => {
   });
 
   it("admin o'z rolida o'tadi", async () => {
-    const { requireRole } = await import("@/lib/auth/session");
+    const { requireRole } = await import("@/backend/auth/session");
     await db.user.create({
       data: {
         email: "admin@test.local",

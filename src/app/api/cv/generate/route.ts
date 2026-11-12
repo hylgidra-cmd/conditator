@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { generateCv } from "@/lib/ai/cv";
-import { AiError } from "@/lib/ai/run";
-import { LIMITS, rateLimit } from "@/lib/auth/rate-limit";
-import { CV_TEXT_MAX } from "@/lib/cv/schema";
-import { requireRole } from "@/lib/auth/session";
-import { ApiError, parseJson } from "@/lib/http/errors";
-import { route } from "@/lib/http/route";
+import { generateCv } from "@/backend/ai/cv";
+import { AiError } from "@/backend/ai/run";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { CV_TEXT_MAX } from "@/backend/cv/schema";
+import { requireRole } from "@/backend/auth/session";
+import { ApiError, parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
 const bodySchema = z.object({
   text: z

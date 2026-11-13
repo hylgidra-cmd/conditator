@@ -1,6 +1,6 @@
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
-import { ApplicationStatus, CandidateStageType, Role } from "@prisma/client";
+import { ApplicationStatus, CandidateStageType } from "@prisma/client";
 
 export async function applyToVacancy(params: {
   studentId: string;
@@ -56,40 +56,7 @@ export async function applyToVacancy(params: {
     },
   });
 
-  // Automatically initialize conversation with 1-message rule
-  const conversation = await db.conversation.upsert({
-    where: {
-      companyId_studentId_vacancyId: {
-        companyId: vacancy.companyId,
-        studentId: params.studentId,
-        vacancyId: params.vacancyId,
-      },
-    },
-    create: {
-      companyId: vacancy.companyId,
-      studentId: params.studentId,
-      vacancyId: params.vacancyId,
-      studentCvId: params.cvId,
-    },
-    update: {
-      studentCvId: params.cvId,
-    },
-  });
-
-  // Create initial chat message
-  await db.chatMessage.create({
-    data: {
-      conversationId: conversation.id,
-      senderId: params.studentId,
-      senderRole: Role.STUDENT,
-      text:
-        params.note ||
-        "Assalomu alaykum! Men ushbu vakansiyaga rezyumeimni yubordim.",
-      isSystem: false,
-    },
-  });
-
-  // Initialize stage as NEW
+  // Initialize stage as NEW (chat is opened later only after company reviews the CV)
   await db.candidateStage.upsert({
     where: {
       vacancyId_cvId: {

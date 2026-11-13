@@ -21,7 +21,7 @@ export default async function StudentApplicationsPage() {
 
   const t = await getTranslations("StudentApplications");
 
-  const [cvs, applications] = await Promise.all([
+  const [cvs, applications, conversations] = await Promise.all([
     getOwnCvs(user.id),
     db.vacancyApplication.findMany({
       where: { studentId: user.id },
@@ -37,7 +37,18 @@ export default async function StudentApplicationsPage() {
       },
       orderBy: { createdAt: "desc" },
     }),
+    db.conversation.findMany({
+      where: { studentId: user.id, vacancyId: { not: null } },
+      select: { id: true, vacancyId: true },
+    }),
   ]);
+  const convByVacancy = new Map(
+    conversations
+      .filter((c): c is { id: string; vacancyId: string } =>
+        Boolean(c.vacancyId),
+      )
+      .map((c) => [c.vacancyId, c.id]),
+  );
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-8 px-4 py-8">
@@ -187,12 +198,14 @@ export default async function StudentApplicationsPage() {
                   >
                     {t("openVacancy")}
                   </Link>
-                  <Link
-                    href="/chat"
-                    className="bg-brand text-brand-foreground rounded-xl px-4 py-2 text-xs font-bold shadow-xs transition-opacity hover:opacity-95"
-                  >
-                    {t("openChat")}
-                  </Link>
+                  {convByVacancy.get(app.vacancyId) ? (
+                    <Link
+                      href={`/chat?id=${convByVacancy.get(app.vacancyId)}`}
+                      className="bg-brand text-brand-foreground rounded-xl px-4 py-2 text-xs font-bold shadow-xs transition-opacity hover:opacity-95"
+                    >
+                      {t("openChat")}
+                    </Link>
+                  ) : null}
                 </div>
               </div>
             ))}

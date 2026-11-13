@@ -82,12 +82,9 @@ export function ApplyModal({
             Suhbatga o&apos;tish 💬
           </Link>
         ) : (
-          <Link
-            href="/chat"
-            className="bg-brand text-brand-foreground rounded-xl px-4 py-2 text-sm font-semibold transition-colors hover:opacity-95"
-          >
-            Chatlarim 💬
-          </Link>
+          <span className="text-muted text-xs font-medium">
+            Kompaniya CV ingizni ko&apos;rib chiqqach suhbat ochiladi
+          </span>
         )}
       </div>
     );

@@ -191,8 +191,8 @@ export function ChatRoom({
   return (
     <div className="border-border bg-surface grid min-h-[600px] grid-cols-1 overflow-hidden rounded-3xl border shadow-sm md:grid-cols-3">
       {/* Conversations list sidebar */}
-      <div className="border-border space-y-3 border-b bg-gray-50/50 p-4 md:border-r md:border-b-0">
-        <h3 className="px-2 text-base font-bold">Suhbatlar</h3>
+      <div className="border-border bg-background/60 space-y-3 border-b p-4 md:border-r md:border-b-0">
+        <h3 className="text-text px-2 text-base font-bold">Suhbatlar</h3>
         <div className="space-y-1">
           {conversations.map((c) => {
             const isSelected = c.id === activeId;
@@ -204,17 +204,17 @@ export function ChatRoom({
                 onClick={() => setActiveId(c.id)}
                 className={`w-full rounded-2xl p-3 text-left transition-colors ${
                   isSelected
-                    ? "border border-gray-200 bg-white shadow-sm"
-                    : "hover:bg-white/60"
+                    ? "border-border bg-surface border shadow-sm"
+                    : "hover:bg-surface/60"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <h4 className="truncate text-sm font-bold">
+                  <h4 className="text-text truncate text-sm font-bold">
                     {currentUserRole === "STUDENT"
                       ? (c.company.name ?? "Kompaniya")
                       : (c.studentName ?? "Nomzod")}
                   </h4>
-                  <span className="text-[10px] text-gray-400">
+                  <span className="text-muted text-[10px]">
                     {formatDateTime(new Date(c.updatedAt))}
                   </span>
                 </div>
@@ -237,9 +237,9 @@ export function ChatRoom({
       {/* Chat Thread */}
       <div className="flex min-h-[500px] flex-col md:col-span-2">
         {/* Chat header */}
-        <div className="border-border flex items-center justify-between border-b bg-white p-4">
+        <div className="border-border bg-surface flex items-center justify-between border-b p-4">
           <div>
-            <h3 className="text-base font-bold">
+            <h3 className="text-text text-base font-bold">
               {currentUserRole === "STUDENT"
                 ? (activeConv?.company.name ?? "Kompaniya")
                 : (activeConv?.studentName ?? "Nomzod")}
@@ -261,7 +261,7 @@ export function ChatRoom({
         </div>
 
         {/* Messages area */}
-        <div className="flex-1 space-y-3 overflow-y-auto bg-[#fafafa] p-4">
+        <div className="bg-background/40 flex-1 space-y-3 overflow-y-auto p-4">
           {messages.map((m) => {
             const isMe = m.senderId === currentUserId;
             return (

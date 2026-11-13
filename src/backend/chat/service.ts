@@ -163,6 +163,53 @@ export async function listUserConversations(userId: string, role: Role) {
   }));
 }
 
+export async function ensureConversationForCompany(
+  userId: string,
+  vacancyId: string,
+  cvId: string,
+): Promise<string | undefined> {
+  const company = await db.company.findFirst({
+    where: {
+      OR: [{ userId }, { members: { some: { userId } } }],
+    },
+    select: { id: true },
+  });
+  if (!company) return undefined;
+
+  const [vacancy, cv] = await Promise.all([
+    db.vacancy.findFirst({
+      where: { id: vacancyId, companyId: company.id },
+      select: { id: true },
+    }),
+    db.cv.findUnique({
+      where: { id: cvId },
+      select: { id: true, userId: true },
+    }),
+  ]);
+  if (!vacancy || !cv) return undefined;
+
+  const conversation = await db.conversation.upsert({
+    where: {
+      companyId_studentId_vacancyId: {
+        companyId: company.id,
+        studentId: cv.userId,
+        vacancyId: vacancy.id,
+      },
+    },
+    create: {
+      companyId: company.id,
+      studentId: cv.userId,
+      vacancyId: vacancy.id,
+      studentCvId: cv.id,
+    },
+    update: {
+      studentCvId: cv.id,
+    },
+  });
+
+  return conversation.id;
+}
+
 export async function createComplaint(params: {
   reporterId: string;
   reportedUserId: string;

@@ -1,7 +1,10 @@
 import { currentUser } from "@/backend/auth/current-user";
 import { redirect } from "@/i18n/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { listUserConversations } from "@/backend/chat/service";
+import {
+  ensureConversationForCompany,
+  listUserConversations,
+} from "@/backend/chat/service";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function ChatPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ id?: string; vacancyId?: string; cvId?: string }>;
 }) {
   const user = await currentUser();
   const locale = await getLocale();
@@ -19,7 +22,11 @@ export default async function ChatPage({
   }
 
   const t = await getTranslations("Chat");
-  const { id: selectedId } = await searchParams;
+  const { id, vacancyId, cvId } = await searchParams;
+  let selectedId = id;
+  if (!selectedId && user.role === "COMPANY" && vacancyId && cvId) {
+    selectedId = await ensureConversationForCompany(user.id, vacancyId, cvId);
+  }
   const rawConversations = await listUserConversations(user.id, user.role);
 
   const conversations = rawConversations.map((c) => ({

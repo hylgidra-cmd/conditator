@@ -564,7 +564,11 @@
     },
     "applicationsEmpty": "No applications received for this vacancy yet.",
     "appliedAt": "Applied: {date}",
-    "viewApplication": "View"
+    "viewApplication": "View",
+    "lockedBadge": "🔒 Locked (80%+)",
+    "unlockBanner": "Contact details and PDF for 80–100% top candidates are locked.",
+    "unlockBtn": "🔓 Unlock for 14,999 UZS (15 days)",
+    "unlockedBanner": "🔓 Top candidates (80–100%) are unlocked for this vacancy."
   },
   "Candidate": {
     "back": "← Candidates",

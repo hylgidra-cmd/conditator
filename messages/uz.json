@@ -564,7 +564,11 @@
     },
     "applicationsEmpty": "Ushbu vakansiyaga hozircha ariza kelib tushmadi.",
     "appliedAt": "Yuborildi: {date}",
-    "viewApplication": "Koʻrish"
+    "viewApplication": "Koʻrish",
+    "lockedBadge": "🔒 Qulflangan (80%+)",
+    "unlockBanner": "80–100% mos kelgan top nomzodlarning aloqa maʼlumotlari va PDF qulflangan.",
+    "unlockBtn": "🔓 14 999 UZS ga ochish (15 kun)",
+    "unlockedBanner": "🔓 Top nomzodlar (80–100%) ushbu vakansiya uchun ochilgan."
   },
   "Candidate": {
     "back": "← Nomzodlar",

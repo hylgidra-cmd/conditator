@@ -564,7 +564,11 @@
     },
     "applicationsEmpty": "Bul vakansiyaǵa házirshe arza kelip túspedi.",
     "appliedAt": "Jiberildi: {date}",
-    "viewApplication": "Kóriw"
+    "viewApplication": "Kóriw",
+    "lockedBadge": "🔒 Qulplanǵan (80%+)",
+    "unlockBanner": "80–100% sáykes kelgen top nomzodlardıń baylanıs maǵlıwmatları hám PDF qulplanǵan.",
+    "unlockBtn": "🔓 14 999 UZS qa ashıw (15 kún)",
+    "unlockedBanner": "🔓 Top nomzodlar (80–100%) bul vakansiya ushın ashılǵan."
   },
   "Candidate": {
     "back": "← Kandidatlar",

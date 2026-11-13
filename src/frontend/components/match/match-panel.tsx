@@ -30,6 +30,7 @@ export function MatchPanel({
   const errorText = useErrorText();
   const [outcome, setOutcome] = useState(initial);
   const [running, setRunning] = useState(false);
+  const [unlocking, setUnlocking] = useState(false);
   const [error, setError] = useState<string>();
 
   async function run() {
@@ -46,10 +47,32 @@ export function MatchPanel({
     else setError(result.error);
   }
 
+  async function unlockVacancy() {
+    if (unlocking) return;
+    setUnlocking(true);
+    setError(undefined);
+    const result = await postJson<{ paymentId: string; redirectUrl: string }>(
+      "/api/payments/checkout",
+      {
+        purpose: "VACANCY_UNLOCK",
+        provider: "TEST",
+        vacancyId,
+        returnUrl: window.location.href,
+      },
+    );
+    if (result.ok && result.data.redirectUrl) {
+      window.location.href = result.data.redirectUrl;
+      return;
+    }
+    setUnlocking(false);
+    if (!result.ok) setError(result.error);
+  }
+
   const { results, stats, notice, mode, pending } = outcome;
   const neverRun = mode === "ai" && results.length === 0 && pending > 0;
   const canRun = notice !== "NO_SUBSCRIPTION";
   const weak = mode === "ai" && results.some((item) => item.score < WEAK_SCORE);
+  const hasLocked = results.some((item) => item.isLocked);
 
   return (
     <div className="space-y-5">
@@ -117,6 +140,25 @@ export function MatchPanel({
             {mode === "ai" ? t("resultsAi") : t("resultsKeyword")}
           </h2>
           {weak ? <p className="text-muted text-sm">{t("weak")}</p> : null}
+          {hasLocked ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-amber-50/90 p-4">
+              <p className="text-sm font-medium text-amber-900">
+                {t("unlockBanner")}
+              </p>
+              <button
+                type="button"
+                onClick={unlockVacancy}
+                disabled={unlocking}
+                className="rounded-xl bg-[#F07A1A] px-4 py-2 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912] disabled:opacity-60"
+              >
+                {t("unlockBtn")}
+              </button>
+            </div>
+          ) : outcome.isVacancyUnlocked ? (
+            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm font-medium text-emerald-800">
+              {t("unlockedBanner")}
+            </div>
+          ) : null}
           <ol className="space-y-3">
             {results.map((item, index) => (
               <li
@@ -129,6 +171,11 @@ export function MatchPanel({
                       {t("candidate", { n: index + 1 })}
                     </h3>
                     <DecisionBadge decision={item.decision} />
+                    {item.isLocked ? (
+                      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                        {t("lockedBadge")}
+                      </span>
+                    ) : null}
                   </div>
                   <span
                     className={`rounded-full px-3 py-1 text-sm font-bold ${scoreTone(item.score)}`}
@@ -169,12 +216,14 @@ export function MatchPanel({
                   >
                     {t("openCv")}
                   </Link>
-                  <a
-                    href={`/api/cv/${item.cvId}/pdf`}
-                    className="text-brand hover:underline"
-                  >
-                    {t("downloadPdf")}
-                  </a>
+                  {!item.isLocked ? (
+                    <a
+                      href={`/api/cv/${item.cvId}/pdf?vacancyId=${vacancyId}`}
+                      className="text-brand hover:underline"
+                    >
+                      {t("downloadPdf")}
+                    </a>
+                  ) : null}
                 </div>
               </li>
             ))}

@@ -148,6 +148,8 @@ model User {
   notifications      Notification[]
   filedComplaints    Complaint[]          @relation("Reporter")
   reportedComplaints Complaint[]          @relation("ReportedUser")
+  supportThread      SupportThread?
+  supportMessages    SupportMessage[]
 
   @@index([role, status])
 }
@@ -558,4 +560,33 @@ model Setting {
   key       String   @id
   value     String
   updatedAt DateTime @updatedAt
+}
+
+// ---------- Qo'llab-quvvatlash xizmati (Admin bilan chat) ----------
+
+model SupportThread {
+  id        String           @id @default(cuid())
+  userId    String           @unique
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages SupportMessage[]
+
+  @@index([updatedAt])
+}
+
+model SupportMessage {
+  id         String    @id @default(cuid())
+  threadId   String
+  senderId   String
+  senderRole Role
+  text       String
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  thread SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  sender User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([threadId, createdAt])
 }

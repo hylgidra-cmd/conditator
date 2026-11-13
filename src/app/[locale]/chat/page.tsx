@@ -5,6 +5,7 @@ import {
   ensureConversationForCompany,
   listUserConversations,
 } from "@/backend/chat/service";
+import { listSupportThreadsForUser } from "@/backend/chat/support-service";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
 export const dynamic = "force-dynamic";
@@ -27,7 +28,12 @@ export default async function ChatPage({
   if (!selectedId && user.role === "COMPANY" && vacancyId && cvId) {
     selectedId = await ensureConversationForCompany(user.id, vacancyId, cvId);
   }
-  const rawConversations = await listUserConversations(user.id, user.role);
+  const [rawConversations, rawSupportThreads] = await Promise.all([
+    user.role === "ADMIN"
+      ? Promise.resolve([])
+      : listUserConversations(user.id, user.role),
+    listSupportThreadsForUser(user.id, user.role),
+  ]);
 
   const conversations = rawConversations.map((c) => ({
     id: c.id,
@@ -49,6 +55,25 @@ export default async function ChatPage({
     updatedAt: c.updatedAt.toISOString(),
   }));
 
+  const supportThreads = rawSupportThreads.map((st) => ({
+    id: st.id,
+    user: {
+      id: st.user.id,
+      email: st.user.email,
+      role: st.user.role,
+      companyName: st.user.company?.name ?? null,
+    },
+    messages: st.messages.map((m) => ({
+      id: m.id,
+      senderId: m.senderId,
+      senderRole: m.senderRole,
+      text: m.text,
+      createdAt: m.createdAt.toISOString(),
+      readAt: m.readAt?.toISOString() ?? null,
+    })),
+    updatedAt: st.updatedAt.toISOString(),
+  }));
+
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
       <div>
@@ -56,12 +81,15 @@ export default async function ChatPage({
         <p className="text-muted mt-1 text-sm">
           {user.role === "STUDENT"
             ? t("subtitleStudent")
-            : t("subtitleCompany")}
+            : user.role === "COMPANY"
+              ? t("subtitleCompany")
+              : t("subtitleAdmin")}
         </p>
       </div>
 
       <ChatRoom
         initialConversations={conversations}
+        initialSupportThreads={supportThreads}
         currentUserId={user.id}
         currentUserRole={user.role}
         selectedConversationId={selectedId}

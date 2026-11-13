@@ -566,7 +566,8 @@
       "dashboard": "Umumiy",
       "users": "Foydalanuvchilar",
       "companies": "Kompaniyalar",
-      "vacancies": "Vakansiyalar"
+      "vacancies": "Vakansiyalar",
+      "support": "Qoʻllab-quvvatlash"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -1305,7 +1306,8 @@
   "Chat": {
     "title": "Xabarlar",
     "subtitleStudent": "Ish beruvchilar bilan toʻgʻridan-toʻgʻri aloqa va ariza muhokamasi",
-    "subtitleCompany": "Nomzodlar bilan suhbatlar va ariza maʼlumotlari"
+    "subtitleCompany": "Nomzodlar bilan suhbatlar va ariza maʼlumotlari",
+    "subtitleAdmin": "Foydalanuvchilar va kompaniyalarning qoʻllab-quvvatlash xizmati murojaatlari"
   },
   "StudentApplications": {
     "title": "Mening CV larim va arizalarim",

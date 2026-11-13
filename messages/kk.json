@@ -566,7 +566,8 @@
       "dashboard": "Ulıwma",
       "users": "Paydalanıwshılar",
       "companies": "Kompaniyalar",
-      "vacancies": "Vakansiyalar"
+      "vacancies": "Vakansiyalar",
+      "support": "Qollap-quwatlaw"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -1305,7 +1306,8 @@
   "Chat": {
     "title": "Xabarlar",
     "subtitleStudent": "Jumıs beriwshiler menen tikkeley baylanıs hám arza talqılawı",
-    "subtitleCompany": "Kandidatlar menen sáwbetler hám arza maǵlıwmatları"
+    "subtitleCompany": "Kandidatlar menen sáwbetler hám arza maǵlıwmatları",
+    "subtitleAdmin": "Paydalanıwshılar hám kompaniyalardıń qollap-quwatlaw xızmeti murojaatları"
   },
   "StudentApplications": {
     "title": "Meniń CV larım hám arzalarım",

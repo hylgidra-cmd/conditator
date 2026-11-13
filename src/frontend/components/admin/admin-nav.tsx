@@ -6,6 +6,7 @@ const ITEMS = [
   { href: "/admin/users", key: "users" },
   { href: "/admin/companies", key: "companies" },
   { href: "/admin/vacancies", key: "vacancies" },
+  { href: "/chat", key: "support" },
 ] as const;
 
 export async function AdminNav({

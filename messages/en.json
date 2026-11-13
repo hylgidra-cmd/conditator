@@ -566,7 +566,8 @@
       "dashboard": "Overview",
       "users": "Users",
       "companies": "Companies",
-      "vacancies": "Vacancies"
+      "vacancies": "Vacancies",
+      "support": "Support"
     },
     "dashboard": {
       "title": "Admin panel",
@@ -1305,7 +1306,8 @@
   "Chat": {
     "title": "Messages",
     "subtitleStudent": "Direct communication with employers and application follow-up",
-    "subtitleCompany": "Candidate interviews and application details"
+    "subtitleCompany": "Candidate interviews and application details",
+    "subtitleAdmin": "Support requests from users and companies"
   },
   "StudentApplications": {
     "title": "My CVs & Applications",

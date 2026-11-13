@@ -17,6 +17,18 @@ type Message = {
   readAt?: string | null;
 };
 
+type SupportThreadSummary = {
+  id: string;
+  user: {
+    id: string;
+    email: string;
+    role: Role;
+    companyName: string | null;
+  };
+  messages: Message[];
+  updatedAt: string;
+};
+
 type ConversationSummary = {
   id: string;
   company: { id: string; name: string | null; logoPath: string | null };
@@ -29,6 +41,7 @@ type ConversationSummary = {
 
 type Props = {
   initialConversations: ConversationSummary[];
+  initialSupportThreads?: SupportThreadSummary[];
   currentUserId: string;
   currentUserRole: Role;
   selectedConversationId?: string;
@@ -36,13 +49,19 @@ type Props = {
 
 export function ChatRoom({
   initialConversations,
+  initialSupportThreads = [],
   currentUserId,
   currentUserRole,
   selectedConversationId,
 }: Props) {
   const [conversations, setConversations] = useState(initialConversations);
+  const [supportThreads, setSupportThreads] = useState(initialSupportThreads);
   const [activeId, setActiveId] = useState(
-    selectedConversationId || initialConversations[0]?.id || "",
+    selectedConversationId ||
+      initialConversations[0]?.id ||
+      (initialSupportThreads[0]
+        ? `support:${initialSupportThreads[0].id}`
+        : ""),
   );
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
@@ -56,39 +75,88 @@ export function ChatRoom({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const activeConv = conversations.find((c) => c.id === activeId);
+  const isSupportActive = activeId.startsWith("support:");
+  const activeSupportId = isSupportActive ? activeId.slice(8) : "";
+  const activeSupport = isSupportActive
+    ? supportThreads.find((st) => st.id === activeSupportId)
+    : undefined;
+  const activeConv = !isSupportActive
+    ? conversations.find((c) => c.id === activeId)
+    : undefined;
 
-  // Keep conversations list fresh (avoids stale Router Cache when navigating to /chat)
+  // Keep conversations and support threads fresh
   useEffect(() => {
     let isMounted = true;
 
-    async function refreshConversations() {
-      const res = await getJson<{ conversations: ConversationSummary[] }>(
-        "/api/chat/conversations",
-      );
-      if (res.ok && isMounted) {
-        setConversations(res.data.conversations);
-        setActiveId((prev) => prev || res.data.conversations[0]?.id || "");
+    async function refreshAll() {
+      const [convRes, supRes] = await Promise.all([
+        currentUserRole === "ADMIN"
+          ? Promise.resolve(null)
+          : getJson<{ conversations: ConversationSummary[] }>(
+              "/api/chat/conversations",
+            ),
+        getJson<{
+          threads: Array<{
+            id: string;
+            updatedAt: string;
+            user: {
+              id: string;
+              email: string;
+              role: Role;
+              company?: { name: string | null } | null;
+            };
+            messages: Message[];
+          }>;
+        }>("/api/support/threads"),
+      ]);
+
+      if (!isMounted) return;
+      if (convRes && convRes.ok) {
+        setConversations(convRes.data.conversations);
+      }
+      if (supRes.ok) {
+        const mapped: SupportThreadSummary[] = supRes.data.threads.map(
+          (st) => ({
+            id: st.id,
+            updatedAt: st.updatedAt,
+            user: {
+              id: st.user.id,
+              email: st.user.email,
+              role: st.user.role,
+              companyName: st.user.company?.name ?? null,
+            },
+            messages: st.messages,
+          }),
+        );
+        setSupportThreads(mapped);
+        setActiveId(
+          (prev) =>
+            prev ||
+            (convRes && convRes.ok ? convRes.data.conversations[0]?.id : "") ||
+            (mapped[0] ? `support:${mapped[0].id}` : ""),
+        );
       }
     }
 
-    refreshConversations();
-    const interval = setInterval(refreshConversations, 5000);
+    refreshAll();
+    const interval = setInterval(refreshAll, 5000);
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, []);
+  }, [currentUserRole]);
 
-  // Load messages whenever active conversation changes
+  // Load messages whenever active conversation/support thread changes
   useEffect(() => {
     if (!activeId) return;
     let isMounted = true;
 
+    const url = activeId.startsWith("support:")
+      ? `/api/support/threads/${activeId.slice(8)}/messages`
+      : `/api/chat/conversations/${activeId}/messages`;
+
     async function load() {
-      const res = await getJson<{ messages: Message[] }>(
-        `/api/chat/conversations/${activeId}/messages`,
-      );
+      const res = await getJson<{ messages: Message[] }>(url);
       if (res.ok && isMounted) {
         setMessages(res.data.messages);
       }
@@ -106,26 +174,29 @@ export function ChatRoom({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 1-message rule check:
-  // If user is STUDENT and the last message is also from a STUDENT, student cannot send!
+  // 1-message rule check (applies only to student vacancy chats, not support chat):
   const lastMessage = messages[messages.length - 1];
   const isOneMessageRuleBlocked =
+    !isSupportActive &&
     currentUserRole === "STUDENT" &&
     lastMessage &&
     lastMessage.senderRole === "STUDENT";
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!text.trim() || sending || isOneMessageRuleBlocked) return;
+    if (!text.trim() || sending || isOneMessageRuleBlocked || !activeId) return;
 
     setSending(true);
     setError(undefined);
 
+    const url = isSupportActive
+      ? `/api/support/threads/${activeSupportId}/messages`
+      : `/api/chat/conversations/${activeId}/messages`;
+
     try {
-      const res = await postJson<{ ok: boolean; message: Message }>(
-        `/api/chat/conversations/${activeId}/messages`,
-        { text: text.trim() },
-      );
+      const res = await postJson<{ ok: boolean; message: Message }>(url, {
+        text: text.trim(),
+      });
 
       if (res.ok) {
         setText("");
@@ -172,7 +243,7 @@ export function ChatRoom({
     }
   }
 
-  if (conversations.length === 0) {
+  if (conversations.length === 0 && supportThreads.length === 0) {
     return (
       <div className="border-border bg-surface rounded-3xl border p-12 text-center shadow-sm">
         <span className="text-4xl">💬</span>
@@ -182,7 +253,9 @@ export function ChatRoom({
         <p className="text-muted mx-auto mt-1 max-w-md text-sm">
           {currentUserRole === "STUDENT"
             ? "Vakansiyalarga ariza topshirganingizda ish beruvchilar bilan ushbu yerda muloqot qilishingiz mumkin."
-            : "Nomzodlar arizalari bo'yicha muloqotlar ushbu bo'limda saqlanadi."}
+            : currentUserRole === "COMPANY"
+              ? "Nomzodlar arizalari bo'yicha muloqotlar ushbu bo'limda saqlanadi."
+              : "Foydalanuvchilar va kompaniyalar murojaatlari ushbu yerda ko'rinadi."}
         </p>
       </div>
     );
@@ -193,7 +266,55 @@ export function ChatRoom({
       {/* Conversations list sidebar */}
       <div className="border-border bg-background/60 space-y-3 border-b p-4 md:border-r md:border-b-0">
         <h3 className="text-text px-2 text-base font-bold">Suhbatlar</h3>
-        <div className="space-y-1">
+        <div className="space-y-1.5">
+          {supportThreads.map((st) => {
+            const key = `support:${st.id}`;
+            const isSelected = activeId === key;
+            const lastMsg = st.messages[0];
+            const title =
+              currentUserRole === "ADMIN"
+                ? st.user.role === "COMPANY"
+                  ? st.user.companyName || st.user.email
+                  : st.user.email
+                : "Qo'llab-quvvatlash xizmati";
+            const badge =
+              currentUserRole === "ADMIN"
+                ? st.user.role === "COMPANY"
+                  ? "Kompaniya"
+                  : "Talaba"
+                : "Admin yordam";
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveId(key)}
+                className={`w-full rounded-2xl p-3 text-left transition-colors ${
+                  isSelected
+                    ? "border-brand/50 bg-surface border shadow-sm"
+                    : "hover:bg-surface/60"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-text truncate text-sm font-bold">
+                    {"🛟 "}
+                    {title}
+                  </h4>
+                  <span className="text-muted shrink-0 text-[10px]">
+                    {formatDateTime(new Date(st.updatedAt))}
+                  </span>
+                </div>
+                <p className="text-brand mt-0.5 truncate text-xs font-medium">
+                  {badge}
+                </p>
+                {lastMsg && (
+                  <p className="text-muted mt-1 truncate text-xs">
+                    {lastMsg.text}
+                  </p>
+                )}
+              </button>
+            );
+          })}
+
           {conversations.map((c) => {
             const isSelected = c.id === activeId;
             const lastMsg = c.messages[0];
@@ -240,24 +361,36 @@ export function ChatRoom({
         <div className="border-border bg-surface flex items-center justify-between border-b p-4">
           <div>
             <h3 className="text-text text-base font-bold">
-              {currentUserRole === "STUDENT"
-                ? (activeConv?.company.name ?? "Kompaniya")
-                : (activeConv?.studentName ?? "Nomzod")}
+              {isSupportActive
+                ? currentUserRole === "ADMIN"
+                  ? `🛟 ${activeSupport?.user.companyName || activeSupport?.user.email || "Foydalanuvchi"}`
+                  : "🛟 Qo'llab-quvvatlash xizmati"
+                : currentUserRole === "STUDENT"
+                  ? (activeConv?.company.name ?? "Kompaniya")
+                  : (activeConv?.studentName ?? "Nomzod")}
             </h3>
-            {activeConv?.vacancy && (
+            {isSupportActive ? (
+              <p className="text-muted text-xs font-medium">
+                {currentUserRole === "ADMIN"
+                  ? `${activeSupport?.user.role === "COMPANY" ? "Kompaniya" : "Talaba"} · ${activeSupport?.user.email ?? ""}`
+                  : "Admin bilan to'g'ridan-to'g'ri yordam chati"}
+              </p>
+            ) : activeConv?.vacancy ? (
               <p className="text-muted text-xs font-medium">
                 Vakansiya: {activeConv.vacancy.title}
               </p>
-            )}
+            ) : null}
           </div>
-          <button
-            type="button"
-            onClick={() => setShowReportModal(true)}
-            className="text-muted rounded px-2 py-1 text-xs font-semibold transition-colors hover:text-red-600"
-            title="Noo'rin xatti-harakat bo'yicha shikoyat yuborish"
-          >
-            ⚠️ Shikoyat
-          </button>
+          {!isSupportActive ? (
+            <button
+              type="button"
+              onClick={() => setShowReportModal(true)}
+              className="text-muted rounded px-2 py-1 text-xs font-semibold transition-colors hover:text-red-600"
+              title="Noo'rin xatti-harakat bo'yicha shikoyat yuborish"
+            >
+              ⚠️ Shikoyat
+            </button>
+          ) : null}
         </div>
 
         {/* Messages area */}

@@ -38,6 +38,7 @@ export async function SiteHeader() {
           ? [
               { href: "/vacancies", label: t("jobs") },
               { href: "/student/cv", label: t("myCv") },
+              { href: "/student/applications", label: t("myApplications") },
               { href: "/chat", label: t("chat") },
             ]
           : []),

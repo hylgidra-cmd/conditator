@@ -30,7 +30,8 @@
     "menuOpen": "Open menu",
     "menuClose": "Close menu",
     "logoName": "CANDIDATOR",
-    "logoTag": "AI"
+    "logoTag": "AI",
+    "myApplications": "Applications"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -363,6 +364,34 @@
       "languagesTitle": "Recommended languages:",
       "generateAboutMe": "✨ Generate with AI",
       "generatingAboutMe": "AI is generating…"
+    },
+    "complete": {
+      "title": "CV is ready and saved!",
+      "subtitle": "Now activate your CV, download the PDF, or apply to matching vacancies.",
+      "paymentSuccess": "Payment succeeded! Your CV is now activated.",
+      "backToEdit": "← Back to editor",
+      "downloadPdf": "Download PDF",
+      "fullPreview": "Full A4 preview",
+      "paymentTitle": "Activate CV — 5,000 UZS",
+      "paymentDesc": "Once paid, your CV becomes fully discoverable by companies.",
+      "paymentBadgePaid": "✓ Activated (Paid)",
+      "paymentBadgeUnpaid": "Unpaid",
+      "payWithClick": "Pay with Click",
+      "payWithPayme": "Pay with Payme",
+      "payWithTest": "Test payment (Sandbox)",
+      "paying": "Creating payment…",
+      "visibilityTitle": "Visible to companies",
+      "visibilityDesc": "When enabled, employers can discover your CV.",
+      "matchingTitle": "Matching vacancies for you",
+      "matchingEmpty": "No active vacancies found yet.",
+      "matchBadge": "{score}% match",
+      "applyBtn": "View & Apply →",
+      "browseAllVacancies": "Browse all vacancies",
+      "myApplicationsBtn": "My CVs & applications",
+      "createNewCv": "+ Create new CV",
+      "myCvsTitle": "My CVs",
+      "activeCvBadge": "Active",
+      "appsCount": "{count} apps"
     }
   },
   "CvDocument": {
@@ -1246,5 +1275,32 @@
     "title": "Messages",
     "subtitleStudent": "Direct communication with employers and application follow-up",
     "subtitleCompany": "Candidate interviews and application details"
+  },
+  "StudentApplications": {
+    "title": "My CVs & Applications",
+    "subtitle": "All your created CVs and the status of your job applications.",
+    "cvsSection": "My CVs",
+    "applicationsSection": "Submitted Applications",
+    "createNewCv": "+ Create new CV",
+    "noCvs": "You do not have any saved CVs yet.",
+    "noApplications": "You have not applied to any vacancies yet.",
+    "browseVacancies": "Browse vacancies",
+    "editCv": "Edit",
+    "downloadPdf": "PDF",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "appliedCount": "{count} applications",
+    "openVacancy": "View vacancy",
+    "openChat": "Open chat",
+    "cvUsed": "CV: {title}",
+    "statuses": {
+      "SUBMITTED": "Submitted",
+      "VIEWED": "Viewed",
+      "INTERESTED": "Interested",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected"
+    }
   }
 }

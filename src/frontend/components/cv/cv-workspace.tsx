@@ -17,32 +17,53 @@ import { CvStarterChoice } from "./cv-starter-choice";
 import { CvImportScreen } from "./cv-import-screen";
 import { CvSetupLoading } from "./cv-setup-loading";
 import { CvStepBuilder } from "./cv-step-builder";
+import { useRouter } from "@/i18n/navigation";
+import type { MatchingVacancyPreview } from "@/backend/cv/service";
+import { CvCompleteScreen } from "./cv-complete-screen";
 import {
   type CvDraft,
   dataFromDraft,
   draftFromData,
   type SavedCvMeta,
+  type StudentCvSummary,
 } from "./types";
 
 type SavedCvResponse = {
-  cv: { savedAt: string | null; isVisible: boolean; data: CvData };
+  cv: {
+    id: string;
+    savedAt: string | null;
+    isVisible: boolean;
+    isPaid: boolean;
+    data: CvData;
+  };
 };
 
-type WorkspaceMode = "choice" | "import" | "loading" | "builder" | "classic";
+type WorkspaceMode =
+  "choice" | "import" | "loading" | "builder" | "classic" | "complete";
 
 export function CvWorkspace({
   initialDraft,
   initialMeta,
   labelsMap,
+  allCvs = [],
+  matchingVacancies = [],
+  isNewCv = false,
+  paymentSuccess = false,
 }: {
   initialDraft: CvDraft;
   initialMeta: SavedCvMeta;
   labelsMap: Record<CvDocumentLanguage, CvDocumentLabels>;
+  allCvs?: StudentCvSummary[];
+  matchingVacancies?: MatchingVacancyPreview[];
+  isNewCv?: boolean;
+  paymentSuccess?: boolean;
 }) {
   const t = useTranslations("StudentCv");
+  const router = useRouter();
   const errorText = useErrorText();
   const [draft, setDraft] = useState(initialDraft);
   const [meta, setMeta] = useState(initialMeta);
+  const [createNew, setCreateNew] = useState(isNewCv);
   const [dirty, setDirty] = useState(false);
   const [handEdited, setHandEdited] = useState(Boolean(initialMeta.savedAt));
   const [saving, setSaving] = useState(false);
@@ -50,9 +71,15 @@ export function CvWorkspace({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [notice, setNotice] = useState<string>();
 
-  // Agar allaqachon saqlangan CV bo'lsa, builder ochiladi. Aks holda onboarding tanlash ekrani (1-rasm).
+  // Agar to'lovdan qaytgan bo'lsa — complete, agar allaqachon saqlangan CV bo'lsa — builder, aks holda tanlash ekrani.
   const [mode, setMode] = useState<WorkspaceMode>(
-    initialMeta.savedAt ? "builder" : "choice",
+    paymentSuccess
+      ? "complete"
+      : isNewCv
+        ? "choice"
+        : initialMeta.savedAt
+          ? "builder"
+          : "choice",
   );
 
   function change(next: CvDraft) {
@@ -66,6 +93,8 @@ export function CvWorkspace({
     setError(undefined);
     setFieldErrors({});
     const result = await requestJson<SavedCvResponse>("PUT", "/api/cv/me", {
+      cvId: createNew ? undefined : meta.id,
+      createNew,
       title: draft.title,
       templateId: draft.templateId,
       privacy: draft.privacy,
@@ -82,13 +111,18 @@ export function CvWorkspace({
       } else setError(result.error);
       return;
     }
+    setCreateNew(false);
     setMeta({
+      id: result.data.cv.id,
       savedAt: result.data.cv.savedAt,
       isVisible: result.data.cv.isVisible,
+      isPaid: result.data.cv.isPaid,
     });
     setDraft(draftFromData(result.data.cv.data, draft));
     setDirty(false);
     setNotice(t("savedNotice"));
+    setMode("complete");
+    router.refresh();
   }
 
   async function toggleVisibility(isVisible: boolean) {
@@ -96,7 +130,7 @@ export function CvWorkspace({
     const result = await requestJson<SavedCvResponse>(
       "PATCH",
       "/api/cv/me/visibility",
-      { isVisible },
+      { isVisible, cvId: meta.id },
     );
     if (result.ok) {
       setMeta((current) => ({
@@ -161,6 +195,25 @@ export function CvWorkspace({
     return <CvSetupLoading onDone={() => setMode("builder")} />;
   }
 
+  // 5-bosqich: Saqlangandan keyingi yakuniy oyna (To'lov, PDF, Mos vakansiyalar, Arizalar)
+  if (mode === "complete") {
+    const currentLabels =
+      labelsMap[draft.language as CvDocumentLanguage] ?? labelsMap.en;
+
+    return (
+      <CvCompleteScreen
+        draft={draft}
+        meta={meta}
+        labels={currentLabels}
+        matchingVacancies={matchingVacancies}
+        paymentSuccess={paymentSuccess}
+        onBackToEdit={() => setMode("builder")}
+        onToggleVisibility={toggleVisibility}
+        onCreateNew={() => router.push("/student/cv?new=1")}
+      />
+    );
+  }
+
   // 4-bosqich: Yangi zamonaviy bosqichma-bosqich tuzuvchi (Step Builder + Live A4 preview)
   if (mode === "builder") {
     const currentLabels =
@@ -168,6 +221,46 @@ export function CvWorkspace({
 
     return (
       <div className="space-y-4">
+        {/* Ko'p CV lar paneli (Multi-CV switcher) */}
+        {allCvs.length > 0 && (
+          <div className="border-border/80 bg-surface/80 flex flex-wrap items-center justify-between gap-2 rounded-2xl border px-4 py-2.5 shadow-xs">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-muted text-xs font-bold">
+                {t("complete.myCvsTitle")}:
+              </span>
+              {allCvs.map((item, idx) => {
+                const isCurrent = !createNew && item.id === meta.id;
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/student/cv?cvId=${item.id}`}
+                    className={`rounded-xl px-3 py-1 text-xs font-bold transition-colors ${
+                      isCurrent
+                        ? "bg-brand text-brand-foreground shadow-xs"
+                        : "border-border bg-surface text-foreground hover:border-brand border"
+                    }`}
+                  >
+                    {item.title || `CV #${idx + 1}`}
+                    {item.isPaid ? " ✓" : ""}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/student/cv?new=1"
+                className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 rounded-xl border px-3 py-1 text-xs font-bold transition-colors"
+              >
+                {t("complete.createNewCv")}
+              </Link>
+            </div>
+            <Link
+              href="/student/applications"
+              className="text-brand text-xs font-bold hover:underline"
+            >
+              {t("complete.myApplicationsBtn")} →
+            </Link>
+          </div>
+        )}
+
         {/* Yuqori boshqaruv paneli: rejimni o'zgartirish va holat */}
         <div className="border-border/80 bg-surface/80 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-3 shadow-sm backdrop-blur-sm">
           <div className="flex items-center gap-2">
@@ -189,12 +282,21 @@ export function CvWorkspace({
 
           <div className="flex items-center gap-3">
             {meta.savedAt && !dirty ? (
-              <Link
-                href="/student/cv/preview"
-                className="text-brand text-xs font-bold underline-offset-2 hover:underline"
-              >
-                {t("previewLink")}
-              </Link>
+              <>
+                <button
+                  type="button"
+                  onClick={() => setMode("complete")}
+                  className="rounded-xl bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 hover:bg-emerald-500/25 dark:text-emerald-400"
+                >
+                  ✓ {t("complete.paymentTitle").split("—")[0].trim()} / PDF
+                </button>
+                <Link
+                  href="/student/cv/preview"
+                  className="text-brand text-xs font-bold underline-offset-2 hover:underline"
+                >
+                  {t("previewLink")}
+                </Link>
+              </>
             ) : null}
             <span className="text-muted text-xs">
               {dirty

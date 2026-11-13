@@ -30,7 +30,8 @@
     "menuOpen": "Menyudı ashıw",
     "menuClose": "Menyudı jabıw",
     "logoName": "CANDIDATOR",
-    "logoTag": "AI"
+    "logoTag": "AI",
+    "myApplications": "Arzalarım"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -363,6 +364,34 @@
       "languagesTitle": "Usınıs etilgen tiller:",
       "generateAboutMe": "✨ AI arqalı jazdırıw",
       "generatingAboutMe": "AI jazbaqta…"
+    },
+    "complete": {
+      "title": "CV tayar hám saqlandı!",
+      "subtitle": "Endi CV dı aktivlestiriń, PDF júklep alıń yamasa sáykes vakansiyalarǵa jiberiń.",
+      "paymentSuccess": "Tólem tabıslı ótti! CV ıńız tolıq aktivlestirildi.",
+      "backToEdit": "← Ózgertiwge qaytıw",
+      "downloadPdf": "PDF júklep alıw",
+      "fullPreview": "Tolıq A4 kóriw",
+      "paymentTitle": "CV dı aktivlestiriw — 5 000 sum",
+      "paymentDesc": "Tólemnen keyin CV ıńız kompaniyalar izlewinde tolıq kórinedi hám barlıq múmkinshilikler ashıladı.",
+      "paymentBadgePaid": "✓ Aktivlestirilgen (Tólengen)",
+      "paymentBadgeUnpaid": "Tólenbegen",
+      "payWithClick": "Click arqalı tólew",
+      "payWithPayme": "Payme arqalı tólew",
+      "payWithTest": "Test tólem (Sandbox)",
+      "paying": "Tólem jaratılmaqta…",
+      "visibilityTitle": "Kompaniyalarǵa kóriniwi",
+      "visibilityDesc": "Ashıq bolsa, jumıs beriwshiler sizdiń CV ıńızdı taba aladı.",
+      "matchingTitle": "Sizge sáykes vakansiyalar",
+      "matchingEmpty": "Házirshe aktiv vakansiyalar tabılmadı.",
+      "matchBadge": "{score}% sáykes",
+      "applyBtn": "Kóriw hám CV jiberiw →",
+      "browseAllVacancies": "Barlıq vakansiyalardı kóriw",
+      "myApplicationsBtn": "Meniń arzalarım hám CV larım",
+      "createNewCv": "+ Jańa CV jaratıw",
+      "myCvsTitle": "Meniń CV larım",
+      "activeCvBadge": "Aktiv",
+      "appsCount": "{count} arza"
     }
   },
   "CvDocument": {
@@ -1246,5 +1275,32 @@
     "title": "Xabarlar",
     "subtitleStudent": "Jumıs beriwshiler menen tikkeley baylanıs hám arza talqılawı",
     "subtitleCompany": "Kandidatlar menen sáwbetler hám arza maǵlıwmatları"
+  },
+  "StudentApplications": {
+    "title": "Meniń CV larım hám arzalarım",
+    "subtitle": "Jaratqan barlıq CV larıńız hám vakansiyalarǵa jiberilgen arzalar halatı.",
+    "cvsSection": "Meniń CV larım",
+    "applicationsSection": "Jiberilgen arzalarım",
+    "createNewCv": "+ Jańa CV jaratıw",
+    "noCvs": "Sizde ele saqlanǵan CV joq.",
+    "noApplications": "Ele hesh bir vakansiyaǵa arza jibermediniz.",
+    "browseVacancies": "Vakansiyalardı kóriw",
+    "editCv": "Ózgertiw",
+    "downloadPdf": "PDF",
+    "paid": "Tólengen",
+    "unpaid": "Tólenbegen",
+    "visible": "Ashıq",
+    "hidden": "Jasırın",
+    "appliedCount": "{count} arza",
+    "openVacancy": "Vakansiyanı kóriw",
+    "openChat": "Chatqa ótiw",
+    "cvUsed": "CV: {title}",
+    "statuses": {
+      "SUBMITTED": "Jiberildi",
+      "VIEWED": "Kórildi",
+      "INTERESTED": "Qızıǵıwshılıq bar",
+      "ACCEPTED": "Qabıllandı",
+      "REJECTED": "Rad etildi"
+    }
   }
 }

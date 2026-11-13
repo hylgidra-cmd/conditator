@@ -32,6 +32,8 @@ export const WORK_TYPES = [
 ] as const;
 
 export const cvSaveSchema = z.object({
+  cvId: z.string().trim().max(100).optional(),
+  createNew: z.boolean().optional(),
   title: z.string().trim().max(100).optional(),
   templateId: z.string().trim().max(50).optional(),
   privacy: z
@@ -170,6 +172,7 @@ export type StudentCv = Pick<
   | "data"
   | "missingFields"
   | "isVisible"
+  | "isPaid"
   | "savedAt"
   | "workTypes"
   | "sourceText"
@@ -184,6 +187,7 @@ const STUDENT_CV_SELECT = {
   data: true,
   missingFields: true,
   isVisible: true,
+  isPaid: true,
   savedAt: true,
   workTypes: true,
   sourceText: true,
@@ -200,6 +204,101 @@ export function getOwnCv(
   });
 }
 
+export async function getOwnCvs(userId: string) {
+  return db.cv.findMany({
+    where: { userId },
+    orderBy: { updatedAt: "desc" },
+    select: {
+      id: true,
+      title: true,
+      templateId: true,
+      language: true,
+      isVisible: true,
+      isPaid: true,
+      savedAt: true,
+      updatedAt: true,
+      skills: true,
+      _count: {
+        select: { applications: true },
+      },
+    },
+  });
+}
+
+export type MatchingVacancyPreview = {
+  id: string;
+  title: string;
+  companyName: string;
+  workType: WorkType | null;
+  salaryFrom: number | null;
+  salaryTo: number | null;
+  currency: string;
+  skills: string[];
+  matchScore: number;
+};
+
+/**
+ * Talabaning CV ko'nikmalari va kasbiy unvoniga mos faol vakansiyalarni qaytaradi.
+ */
+export async function getMatchingVacanciesForCv(
+  cvData: CvData,
+  cvTitle?: string,
+  limit = 6,
+): Promise<MatchingVacancyPreview[]> {
+  const now = new Date();
+  const vacancies = await db.vacancy.findMany({
+    where: {
+      status: "ACTIVE",
+      OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
+    },
+    include: {
+      company: { select: { name: true } },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 40,
+  });
+
+  const cvSkills = new Set(cvData.skills.map((s) => s.trim().toLowerCase()));
+  const titleWords = (cvTitle ?? "")
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length >= 3);
+
+  const scored = vacancies.map((v) => {
+    const vSkills = v.skills.map((s) => s.trim().toLowerCase());
+    let skillHits = 0;
+    for (const vs of vSkills) {
+      if (
+        cvSkills.has(vs) ||
+        [...cvSkills].some((cs) => cs.includes(vs) || vs.includes(cs))
+      ) {
+        skillHits += 1;
+      }
+    }
+    const skillScore =
+      vSkills.length > 0 ? Math.round((skillHits / vSkills.length) * 75) : 35;
+
+    const vTitleLower = v.title.toLowerCase();
+    const titleHit = titleWords.some((w) => vTitleLower.includes(w)) ? 25 : 0;
+    const matchScore = Math.min(98, Math.max(20, skillScore + titleHit));
+
+    return {
+      id: v.id,
+      title: v.title,
+      companyName: v.company.name ?? "",
+      workType: v.workType,
+      salaryFrom: v.salaryFrom,
+      salaryTo: v.salaryTo,
+      currency: v.currency,
+      skills: v.skills.slice(0, 5),
+      matchScore,
+    };
+  });
+
+  scored.sort((a, b) => b.matchScore - a.matchScore);
+  return scored.slice(0, limit);
+}
+
 /**
  * "Saqlash": CV ni bazaga yozadi, savedAt ni yangilaydi (CV versiyasi o'zgaradi).
  * Ko'rinish (isVisible) bu yerda o'zgartirilmaydi: yangi CV standart bo'yicha yashirin.
@@ -209,6 +308,7 @@ export async function saveOwnCv(
   input: CvSaveInput,
   cvId?: string,
 ): Promise<StudentCv> {
+  const targetCvId = cvId ?? input.cvId;
   const data: CvData = input.data;
   const fields = {
     language: input.language as Lang,
@@ -226,11 +326,20 @@ export async function saveOwnCv(
     ...(input.privacy !== undefined ? { privacy: input.privacy } : {}),
   };
 
-  if (cvId) {
-    const existing = await db.cv.findFirst({ where: { id: cvId, userId } });
+  if (input.createNew) {
+    return db.cv.create({
+      data: { userId, isVisible: false, isPaid: false, ...fields },
+      select: STUDENT_CV_SELECT,
+    });
+  }
+
+  if (targetCvId) {
+    const existing = await db.cv.findFirst({
+      where: { id: targetCvId, userId },
+    });
     if (existing) {
       return db.cv.update({
-        where: { id: cvId },
+        where: { id: targetCvId },
         data: fields,
         select: STUDENT_CV_SELECT,
       });

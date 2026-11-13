@@ -47,7 +47,19 @@ export type CvDraft = {
 export type SavedCvMeta = {
   savedAt: string | null;
   isVisible: boolean;
+  isPaid?: boolean;
   id?: string;
+};
+
+export type StudentCvSummary = {
+  id: string;
+  title: string;
+  templateId: string;
+  language: string;
+  isVisible: boolean;
+  isPaid: boolean;
+  savedAt: string | null;
+  applicationsCount: number;
 };
 
 export function emptyCvData(email: string): CvData {

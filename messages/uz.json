@@ -30,7 +30,8 @@
     "menuOpen": "Menyuni ochish",
     "menuClose": "Menyuni yopish",
     "logoName": "CANDIDATOR",
-    "logoTag": "AI"
+    "logoTag": "AI",
+    "myApplications": "Arizalarim"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -363,6 +364,34 @@
       "languagesTitle": "Tavsiya etilgan tillar:",
       "generateAboutMe": "✨ AI orqali yozib berish",
       "generatingAboutMe": "AI yozmoqda…"
+    },
+    "complete": {
+      "title": "CV tayyor va saqlandi!",
+      "subtitle": "Endi CV ni faollashtiring, PDF yuklab oling yoki mos vakansiyalarga yuboring.",
+      "paymentSuccess": "To'lov muvaffaqiyatli amalga oshdi! CV ingiz faollashtirildi.",
+      "backToEdit": "← Tahrirlashga qaytish",
+      "downloadPdf": "PDF yuklab olish",
+      "fullPreview": "To'liq A4 ko'rish",
+      "paymentTitle": "CV ni faollashtirish — 5 000 so'm",
+      "paymentDesc": "To'lovdan so'ng CV ingiz kompaniyalar qidiruvida to'liq ko'rinadi va barcha imkoniyatlar ochiladi.",
+      "paymentBadgePaid": "✓ Faollashtirilgan (To'langan)",
+      "paymentBadgeUnpaid": "To'lanmagan",
+      "payWithClick": "Click orqali to'lash",
+      "payWithPayme": "Payme orqali to'lash",
+      "payWithTest": "Test to'lov (Sandbox)",
+      "paying": "To'lov yaratilmoqda…",
+      "visibilityTitle": "Kompaniyalarga ko'rinishi",
+      "visibilityDesc": "Ochiq bo'lsa, ish beruvchilar sizning CV ingizni topa oladi.",
+      "matchingTitle": "Sizga mos vakansiyalar",
+      "matchingEmpty": "Hozircha faol vakansiyalar topilmadi.",
+      "matchBadge": "{score}% mos",
+      "applyBtn": "Ko'rish va CV yuborish →",
+      "browseAllVacancies": "Barcha vakansiyalarni ko'rish",
+      "myApplicationsBtn": "Mening arizalarim va CV larim",
+      "createNewCv": "+ Yangi CV yaratish",
+      "myCvsTitle": "Mening CV larim",
+      "activeCvBadge": "Faol",
+      "appsCount": "{count} ariza"
     }
   },
   "CvDocument": {
@@ -1246,5 +1275,32 @@
     "title": "Xabarlar",
     "subtitleStudent": "Ish beruvchilar bilan toʻgʻridan-toʻgʻri aloqa va ariza muhokamasi",
     "subtitleCompany": "Nomzodlar bilan suhbatlar va ariza maʼlumotlari"
+  },
+  "StudentApplications": {
+    "title": "Mening CV larim va arizalarim",
+    "subtitle": "Yaratgan barcha CV laringiz va vakansiyalarga yuborilgan arizalar holati.",
+    "cvsSection": "Mening CV larim",
+    "applicationsSection": "Yuborilgan arizalarim",
+    "createNewCv": "+ Yangi CV yaratish",
+    "noCvs": "Sizda hali saqlangan CV yo'q.",
+    "noApplications": "Hali birorta vakansiyaga ariza yubormadingiz.",
+    "browseVacancies": "Vakansiyalarni ko'rish",
+    "editCv": "Tahrirlash",
+    "downloadPdf": "PDF",
+    "paid": "To'langan",
+    "unpaid": "To'lanmagan",
+    "visible": "Ochiq",
+    "hidden": "Yashirin",
+    "appliedCount": "{count} ariza",
+    "openVacancy": "Vakansiyani ko'rish",
+    "openChat": "Chatga o'tish",
+    "cvUsed": "CV: {title}",
+    "statuses": {
+      "SUBMITTED": "Yuborildi",
+      "VIEWED": "Ko'rildi",
+      "INTERESTED": "Qiziqish bor",
+      "ACCEPTED": "Qabul qilindi",
+      "REJECTED": "Rad etildi"
+    }
   }
 }

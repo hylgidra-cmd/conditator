@@ -30,7 +30,8 @@
     "menuOpen": "Открыть меню",
     "menuClose": "Закрыть меню",
     "logoName": "CANDIDATOR",
-    "logoTag": "AI"
+    "logoTag": "AI",
+    "myApplications": "Мои отклики"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -363,6 +364,34 @@
       "languagesTitle": "Рекомендуемые языки:",
       "generateAboutMe": "✨ Написать через ИИ",
       "generatingAboutMe": "ИИ составляет текст…"
+    },
+    "complete": {
+      "title": "Резюме готово и сохранено!",
+      "subtitle": "Теперь активируйте резюме, скачайте PDF или откликнитесь на подходящие вакансии.",
+      "paymentSuccess": "Оплата прошла успешно! Ваше резюме активировано.",
+      "backToEdit": "← Вернуться к редактированию",
+      "downloadPdf": "Скачать PDF",
+      "fullPreview": "Полный просмотр А4",
+      "paymentTitle": "Активация резюме — 5 000 сум",
+      "paymentDesc": "После оплаты ваше резюме станет доступно компаниям в поиске.",
+      "paymentBadgePaid": "✓ Активировано (Оплачено)",
+      "paymentBadgeUnpaid": "Не оплачено",
+      "payWithClick": "Оплатить через Click",
+      "payWithPayme": "Оплатить через Payme",
+      "payWithTest": "Тестовая оплата (Sandbox)",
+      "paying": "Создание платежа…",
+      "visibilityTitle": "Видимость для компаний",
+      "visibilityDesc": "Если включено, работодатели смогут найти ваше резюме.",
+      "matchingTitle": "Подходящие вакансии",
+      "matchingEmpty": "Активных вакансий пока не найдено.",
+      "matchBadge": "Совпадение {score}%",
+      "applyBtn": "Открыть и отправить CV →",
+      "browseAllVacancies": "Смотреть все вакансии",
+      "myApplicationsBtn": "Мои отклики и резюме",
+      "createNewCv": "+ Создать новое резюме",
+      "myCvsTitle": "Мои резюме",
+      "activeCvBadge": "Активно",
+      "appsCount": "{count} откликов"
     }
   },
   "CvDocument": {
@@ -1246,5 +1275,32 @@
     "title": "Сообщения",
     "subtitleStudent": "Прямая связь с работодателями и обсуждение откликов",
     "subtitleCompany": "Собеседования с кандидатами и информация об откликах"
+  },
+  "StudentApplications": {
+    "title": "Мои резюме и отклики",
+    "subtitle": "Все ваши созданные резюме и статусы отправленных откликов.",
+    "cvsSection": "Мои резюме",
+    "applicationsSection": "Отправленные отклики",
+    "createNewCv": "+ Создать новое резюме",
+    "noCvs": "У вас пока нет сохраненных резюме.",
+    "noApplications": "Вы ещё не откликались на вакансии.",
+    "browseVacancies": "Смотреть вакансии",
+    "editCv": "Редактировать",
+    "downloadPdf": "PDF",
+    "paid": "Оплачено",
+    "unpaid": "Не оплачено",
+    "visible": "Открыто",
+    "hidden": "Скрыто",
+    "appliedCount": "{count} откликов",
+    "openVacancy": "Открыть вакансию",
+    "openChat": "Перейти в чат",
+    "cvUsed": "Резюме: {title}",
+    "statuses": {
+      "SUBMITTED": "Отправлено",
+      "VIEWED": "Просмотрено",
+      "INTERESTED": "Есть интерес",
+      "ACCEPTED": "Принято",
+      "REJECTED": "Отклонено"
+    }
   }
 }

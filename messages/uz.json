@@ -551,7 +551,8 @@
     "nav": {
       "dashboard": "Umumiy",
       "users": "Foydalanuvchilar",
-      "companies": "Kompaniyalar"
+      "companies": "Kompaniyalar",
+      "vacancies": "Vakansiyalar"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -645,6 +646,22 @@
       "subExpired": "Obuna tugagan: {date}",
       "vacancies": "Talablar: {count}",
       "registered": "Roʻyxatdan oʻtgan: {date}"
+    },
+    "vacancies": {
+      "title": "Vakansiyalar va ish beruvchilar",
+      "subtitle": "Platformadagi barcha vakansiyalar, ularni kim joylagani va arizalar soni.",
+      "empty": "Hozircha birorta vakansiya joylanmagan.",
+      "company": "Kompaniya",
+      "poster": "Joylashtiruvchi",
+      "status": "Holati",
+      "applications": "Arizalar",
+      "created": "Sana",
+      "openVacancy": "Ko'rish",
+      "statuses": {
+        "ACTIVE": "Faol",
+        "CLOSED": "Yopilgan",
+        "CANCELLED": "Bekor qilingan"
+      }
     }
   },
   "Theme": {

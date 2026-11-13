@@ -551,7 +551,8 @@
     "nav": {
       "dashboard": "Ulıwma",
       "users": "Paydalanıwshılar",
-      "companies": "Kompaniyalar"
+      "companies": "Kompaniyalar",
+      "vacancies": "Vakansiyalar"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -645,6 +646,22 @@
       "subExpired": "Jazılıw tamamlanǵan: {date}",
       "vacancies": "Talaplar: {count}",
       "registered": "Dizimnen ótken: {date}"
+    },
+    "vacancies": {
+      "title": "Vakansiyalar hám jumıs beriwshiler",
+      "subtitle": "Platformadaǵı barlıq vakansiyalar, olardı kim jaylastırǵanı hám arzalar sanı.",
+      "empty": "Házirshe hesh qanday vakansiya jaylastırılmaǵan.",
+      "company": "Kompaniya",
+      "poster": "Jaylastırıwshı",
+      "status": "Halatı",
+      "applications": "Arzalar",
+      "created": "Sáne",
+      "openVacancy": "Kóriw",
+      "statuses": {
+        "ACTIVE": "Aktiv",
+        "CLOSED": "Jabılǵan",
+        "CANCELLED": "Biykar etilgen"
+      }
     }
   },
   "Theme": {

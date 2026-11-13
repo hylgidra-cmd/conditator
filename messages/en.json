@@ -551,7 +551,8 @@
     "nav": {
       "dashboard": "Overview",
       "users": "Users",
-      "companies": "Companies"
+      "companies": "Companies",
+      "vacancies": "Vacancies"
     },
     "dashboard": {
       "title": "Admin panel",
@@ -645,6 +646,22 @@
       "subExpired": "Subscription ended {date}",
       "vacancies": "Vacancies: {count}",
       "registered": "Registered: {date}"
+    },
+    "vacancies": {
+      "title": "Vacancies & Employers",
+      "subtitle": "All vacancies on the platform, who posted them, and application counts.",
+      "empty": "No vacancies have been posted yet.",
+      "company": "Company",
+      "poster": "Posted by",
+      "status": "Status",
+      "applications": "Applications",
+      "created": "Date",
+      "openVacancy": "View",
+      "statuses": {
+        "ACTIVE": "Active",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      }
     }
   },
   "Theme": {

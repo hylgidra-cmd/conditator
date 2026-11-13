@@ -1,6 +1,5 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
-import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { readFile, rm } from "node:fs/promises";
 import path from "node:path";
 import { ApiError } from "@/backend/http/errors";
 
@@ -44,19 +43,16 @@ export function detectImageType(bytes: Buffer) {
   return TYPES.find((type) => type.match(bytes)) ?? null;
 }
 
-/** Logoni tekshiradi va saqlaydi. Qaytgan qiymat bazaga yoziladigan fayl nomi. */
+/** Logoni tekshiradi va Base64 data URL ko'rinishida saqlaydi (Vercel serverless muhitida ham ishlaydi). */
 export async function storeLogo(
-  companyId: string,
+  _companyId: string,
   bytes: Buffer,
 ): Promise<string> {
   if (bytes.length > LOGO_MAX_BYTES) throw new ApiError(413, "FILE_TOO_LARGE");
   const type = detectImageType(bytes);
   if (!type) throw new ApiError(415, "FILE_TYPE_NOT_ALLOWED");
 
-  const name = `${companyId.toLowerCase()}-${randomUUID()}.${type.ext}`;
-  await mkdir(logoDir(), { recursive: true });
-  await writeFile(path.join(logoDir(), name), bytes, { flag: "wx" });
-  return name;
+  return `data:${type.mime};base64,${bytes.toString("base64")}`;
 }
 
 function resolveStored(name: string): string {
@@ -67,6 +63,15 @@ function resolveStored(name: string): string {
 export async function readLogo(
   name: string,
 ): Promise<{ bytes: Buffer; mime: string } | null> {
+  if (name.startsWith("data:")) {
+    const match =
+      /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/.exec(name);
+    if (!match) return null;
+    return {
+      mime: match[1],
+      bytes: Buffer.from(match[2], "base64"),
+    };
+  }
   try {
     const bytes = await readFile(resolveStored(name));
     const type = detectImageType(bytes);
@@ -77,6 +82,6 @@ export async function readLogo(
 }
 
 export async function removeLogo(name: string | null): Promise<void> {
-  if (!name) return;
+  if (!name || name.startsWith("data:")) return;
   await rm(resolveStored(name), { force: true });
 }

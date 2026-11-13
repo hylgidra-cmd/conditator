@@ -39,22 +39,25 @@ export function CompanyLogo({ initialHasLogo }: { initialHasLogo: boolean }) {
     }
   }
 
+  async function uploadFile(file: File) {
+    const body = new FormData();
+    body.append("logo", file);
+    await send("POST", body);
+    if (input.current) input.current.value = "";
+    setFileName(undefined);
+  }
+
   function onSubmit(event: FormEvent) {
     event.preventDefault();
     const file = input.current?.files?.[0];
     if (!file) return setError("FIELD_REQUIRED");
-    const body = new FormData();
-    body.append("logo", file);
-    void send("POST", body).then(() => {
-      if (input.current) input.current.value = "";
-      setFileName(undefined);
-    });
+    void uploadFile(file);
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">
       <div className="flex flex-wrap items-center gap-4">
-        <div className="border-border bg-background flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border">
+        <div className="border-border bg-background flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border">
           {hasLogo ? (
             // Logo ruxsat tekshiradigan API dan keladi, Next Image optimizatsiyasi kerak emas.
             // eslint-disable-next-line @next/next/no-img-element
@@ -78,43 +81,42 @@ export function CompanyLogo({ initialHasLogo }: { initialHasLogo: boolean }) {
             type="file"
             accept="image/png,image/jpeg,image/webp"
             className="peer sr-only"
-            onChange={(event) => setFileName(event.target.files?.[0]?.name)}
+            disabled={pending}
+            onChange={(event) => {
+              const file = event.target.files?.[0];
+              if (file) {
+                setFileName(file.name);
+                void uploadFile(file);
+              }
+            }}
           />
-          <div className="peer-focus-visible:ring-brand-soft flex flex-wrap items-center gap-3 rounded-lg peer-focus-visible:ring-2">
+          <div className="peer-focus-visible:ring-brand-soft flex flex-wrap items-center gap-2.5 rounded-lg peer-focus-visible:ring-2">
             <label
               htmlFor="logo"
-              className="border-border cursor-pointer rounded-lg border px-3 py-1.5 text-sm font-medium"
+              className={`border-border bg-surface hover:border-brand cursor-pointer rounded-lg border px-3.5 py-1.5 text-xs font-bold transition-colors ${pending ? "pointer-events-none opacity-60" : ""}`}
             >
-              {t("choose")}
+              {pending ? "..." : t("choose")}
             </label>
-            <span className="text-muted min-w-0 truncate text-sm">
-              {fileName ?? t("noFile")}
-            </span>
+            {hasLogo ? (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => send("DELETE")}
+                className="border-border text-muted rounded-lg border px-3 py-1.5 text-xs font-medium hover:text-red-500 disabled:opacity-60"
+              >
+                {t("remove")}
+              </button>
+            ) : (
+              <span className="text-muted min-w-0 truncate text-xs">
+                {fileName ?? t("noFile")}
+              </span>
+            )}
           </div>
           <p className="text-muted text-xs">{t("hint")}</p>
         </div>
       </div>
       <FormAlert>{errorText(error)}</FormAlert>
       {notice ? <FormAlert tone="success">{notice}</FormAlert> : null}
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold disabled:opacity-60"
-        >
-          {t("upload")}
-        </button>
-        {hasLogo ? (
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => send("DELETE")}
-            className="border-border rounded-lg border px-4 py-2 text-sm font-medium disabled:opacity-60"
-          >
-            {t("remove")}
-          </button>
-        ) : null}
-      </div>
     </form>
   );
 }

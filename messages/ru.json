@@ -551,7 +551,8 @@
     "nav": {
       "dashboard": "Обзор",
       "users": "Пользователи",
-      "companies": "Компании"
+      "companies": "Компании",
+      "vacancies": "Вакансии"
     },
     "dashboard": {
       "title": "Панель администратора",
@@ -645,6 +646,22 @@
       "subExpired": "Подписка закончилась {date}",
       "vacancies": "Вакансий: {count}",
       "registered": "Регистрация: {date}"
+    },
+    "vacancies": {
+      "title": "Вакансии и работодатели",
+      "subtitle": "Все вакансии на платформе, кто их разместил и количество откликов.",
+      "empty": "Пока не размещено ни одной вакансии.",
+      "company": "Компания",
+      "poster": "Разместил",
+      "status": "Статус",
+      "applications": "Отклики",
+      "created": "Дата",
+      "openVacancy": "Открыть",
+      "statuses": {
+        "ACTIVE": "Активна",
+        "CLOSED": "Закрыта",
+        "CANCELLED": "Отменена"
+      }
     }
   },
   "Theme": {

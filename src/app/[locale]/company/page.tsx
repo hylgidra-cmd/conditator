@@ -50,14 +50,15 @@ export default async function CompanyPage() {
         </p>
       </section>
 
-      <section className="border-border bg-surface space-y-4 rounded-2xl border p-5 shadow-sm">
+      <section className="border-border bg-surface space-y-5 rounded-2xl border p-5 shadow-sm">
         <h2 className="text-lg font-semibold">{t("profile.title")}</h2>
+        <div className="border-border/60 border-b pb-5">
+          <p className="text-muted mb-2 text-xs font-bold uppercase">
+            {t("logo.title")}
+          </p>
+          <CompanyLogo initialHasLogo={view.hasLogo} />
+        </div>
         <CompanyProfileForm initial={view} />
-      </section>
-
-      <section className="border-border bg-surface space-y-4 rounded-2xl border p-5 shadow-sm">
-        <h2 className="text-lg font-semibold">{t("logo.title")}</h2>
-        <CompanyLogo initialHasLogo={view.hasLogo} />
       </section>
     </div>
   );

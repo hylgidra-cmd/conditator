@@ -48,6 +48,22 @@ export default async function CompanyPage() {
               })
             : t("status.subscriptionInactive")}
         </p>
+        {company.approval === "APPROVED" ? (
+          <div className="flex flex-wrap gap-3 pt-1">
+            <Link
+              href="/company/vacancies/new"
+              className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold"
+            >
+              {t("postVacancyLink")}
+            </Link>
+            <Link
+              href="/company/vacancies"
+              className="border-border bg-surface rounded-lg border px-4 py-2 text-sm font-medium"
+            >
+              {t("vacanciesLink")}
+            </Link>
+          </div>
+        ) : null}
       </section>
 
       <section className="border-border bg-surface space-y-5 rounded-2xl border p-5 shadow-sm">
@@ -58,7 +74,10 @@ export default async function CompanyPage() {
           </p>
           <CompanyLogo initialHasLogo={view.hasLogo} />
         </div>
-        <CompanyProfileForm initial={view} />
+        <CompanyProfileForm
+          initial={view}
+          isApproved={company.approval === "APPROVED"}
+        />
       </section>
     </div>
   );

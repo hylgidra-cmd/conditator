@@ -450,7 +450,8 @@
       "uploaded": "Logo uploaded",
       "noFile": "No file selected"
     },
-    "vacanciesLink": "Vacancies"
+    "vacanciesLink": "Vacancies",
+    "postVacancyLink": "Post a vacancy"
   },
   "Vacancies": {
     "title": "Vacancies",

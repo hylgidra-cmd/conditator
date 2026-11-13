@@ -8,6 +8,7 @@ import {
   SubmitButton,
   useErrorText,
 } from "@/frontend/components/ui/form";
+import { Link } from "@/i18n/navigation";
 import { requestJson } from "@/backend/client/api";
 import { COMPANY_SIZES } from "@/backend/company/sizes";
 
@@ -21,8 +22,10 @@ export type CompanyProfileValues = {
 
 export function CompanyProfileForm({
   initial,
+  isApproved = false,
 }: {
   initial: CompanyProfileValues;
+  isApproved?: boolean;
 }) {
   const t = useTranslations("Company");
   const errorText = useErrorText();
@@ -105,7 +108,25 @@ export function CompanyProfileForm({
       {saved ? (
         <FormAlert tone="success">{t("profile.saved")}</FormAlert>
       ) : null}
-      <SubmitButton pending={pending}>{t("profile.save")}</SubmitButton>
+      <div className="flex flex-wrap items-center gap-3">
+        <SubmitButton pending={pending}>{t("profile.save")}</SubmitButton>
+        {isApproved ? (
+          <>
+            <Link
+              href="/company/vacancies/new"
+              className="border-brand text-brand hover:bg-brand/10 rounded-lg border px-4 py-2 text-sm font-semibold transition"
+            >
+              {t("postVacancyLink")}
+            </Link>
+            <Link
+              href="/company/vacancies"
+              className="border-border bg-surface hover:bg-surface/80 rounded-lg border px-4 py-2 text-sm font-medium transition"
+            >
+              {t("vacanciesLink")}
+            </Link>
+          </>
+        ) : null}
+      </div>
     </form>
   );
 }

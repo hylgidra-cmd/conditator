@@ -450,7 +450,8 @@
       "uploaded": "Логотип загружен",
       "noFile": "Файл не выбран"
     },
-    "vacanciesLink": "Вакансии"
+    "vacanciesLink": "Вакансии",
+    "postVacancyLink": "Разместить вакансию"
   },
   "Vacancies": {
     "title": "Вакансии",

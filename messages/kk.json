@@ -491,7 +491,20 @@
       "workTypeAny": "Parqı joq",
       "save": "Saqlaw",
       "cancel": "Biykarlaw",
-      "saved": "Talap saqlandı"
+      "saved": "Talap saqlandı",
+      "map": {
+        "pickOnMap": "Karta arqalı tańlaw",
+        "title": "Ornalasqan jerdi kartadan tańlań",
+        "searchPlaceholder": "Qala, kóshe yamasa mánzildi izleń...",
+        "searchBtn": "Izlew",
+        "myLocation": "Meniń ornım",
+        "hint": "Kartada qálegen noqattı basıń — mánzil avtomat túrde anıqlanadı.",
+        "loadingAddress": "Mánzil anıqlanbaqta...",
+        "selectedAddress": "Tańlanǵan mánzil",
+        "notSelected": "Kartadan noqat tańlań",
+        "confirm": "Tańlaw",
+        "close": "Jabıw"
+      }
     }
   },
   "Matches": {

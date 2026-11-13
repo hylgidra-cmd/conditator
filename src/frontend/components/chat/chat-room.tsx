@@ -22,6 +22,7 @@ type ConversationSummary = {
   company: { id: string; name: string | null; logoPath: string | null };
   vacancy?: { id: string; title: string } | null;
   studentCvId?: string | null;
+  studentName?: string | null;
   messages: Message[];
   updatedAt: string;
 };
@@ -39,7 +40,7 @@ export function ChatRoom({
   currentUserRole,
   selectedConversationId,
 }: Props) {
-  const [conversations] = useState(initialConversations);
+  const [conversations, setConversations] = useState(initialConversations);
   const [activeId, setActiveId] = useState(
     selectedConversationId || initialConversations[0]?.id || "",
   );
@@ -56,6 +57,28 @@ export function ChatRoom({
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const activeConv = conversations.find((c) => c.id === activeId);
+
+  // Keep conversations list fresh (avoids stale Router Cache when navigating to /chat)
+  useEffect(() => {
+    let isMounted = true;
+
+    async function refreshConversations() {
+      const res = await getJson<{ conversations: ConversationSummary[] }>(
+        "/api/chat/conversations",
+      );
+      if (res.ok && isMounted) {
+        setConversations(res.data.conversations);
+        setActiveId((prev) => prev || res.data.conversations[0]?.id || "");
+      }
+    }
+
+    refreshConversations();
+    const interval = setInterval(refreshConversations, 5000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Load messages whenever active conversation changes
   useEffect(() => {
@@ -189,7 +212,7 @@ export function ChatRoom({
                   <h4 className="truncate text-sm font-bold">
                     {currentUserRole === "STUDENT"
                       ? (c.company.name ?? "Kompaniya")
-                      : "Nomzod"}
+                      : (c.studentName ?? "Nomzod")}
                   </h4>
                   <span className="text-[10px] text-gray-400">
                     {formatDateTime(new Date(c.updatedAt))}
@@ -219,7 +242,7 @@ export function ChatRoom({
             <h3 className="text-base font-bold">
               {currentUserRole === "STUDENT"
                 ? (activeConv?.company.name ?? "Kompaniya")
-                : "Nomzod"}
+                : (activeConv?.studentName ?? "Nomzod")}
             </h3>
             {activeConv?.vacancy && (
               <p className="text-muted text-xs font-medium">

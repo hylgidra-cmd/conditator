@@ -4,6 +4,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { listUserConversations } from "@/backend/chat/service";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChatPage({
   searchParams,
 }: {
@@ -25,6 +27,7 @@ export default async function ChatPage({
     company: c.company,
     vacancy: c.vacancy,
     studentCvId: c.studentCvId,
+    studentName: c.studentName,
     messages: c.messages.map((m) => ({
       id: m.id,
       senderId: m.senderId,

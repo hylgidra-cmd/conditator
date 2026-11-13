@@ -6,6 +6,7 @@ import { Field, FormAlert, useErrorText } from "@/frontend/components/ui/form";
 import { useRouter } from "@/i18n/navigation";
 import { requestJson } from "@/backend/client/api";
 import { VACANCY_TEXT_MAX, VACANCY_WORK_TYPES } from "@/backend/vacancy/schema";
+import { LocationPickerModal } from "./location-picker-modal";
 
 export type VacancyFormValues = {
   title: string;
@@ -49,6 +50,7 @@ export function VacancyForm({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string>();
   const [fields, setFields] = useState<Record<string, string>>({});
+  const [mapOpen, setMapOpen] = useState(false);
   const count = Array.from(values.rawText).length;
 
   const set =
@@ -122,14 +124,31 @@ export function VacancyForm({
             onChange={set("title")}
             error={errorText(fields.title)}
           />
-          <Field
-            name="location"
-            label={t("location")}
-            value={values.location}
-            maxLength={100}
-            onChange={set("location")}
-            error={errorText(fields.location)}
-          />
+          <div className="space-y-1.5">
+            <Field
+              name="location"
+              label={t("location")}
+              value={values.location}
+              maxLength={100}
+              onChange={set("location")}
+              error={errorText(fields.location)}
+            />
+            <button
+              type="button"
+              onClick={() => setMapOpen(true)}
+              className="border-border bg-surface hover:border-brand hover:text-brand inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition"
+            >
+              {t("map.pickOnMap")}
+            </button>
+            <LocationPickerModal
+              open={mapOpen}
+              initialLocation={values.location}
+              onSelect={(address) =>
+                setValues((current) => ({ ...current, location: address }))
+              }
+              onClose={() => setMapOpen(false)}
+            />
+          </div>
           <Field
             name="skills"
             label={t("skills")}

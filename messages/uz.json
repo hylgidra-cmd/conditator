@@ -491,7 +491,20 @@
       "workTypeAny": "Farqi yoʻq",
       "save": "Saqlash",
       "cancel": "Bekor qilish",
-      "saved": "Talab saqlandi"
+      "saved": "Talab saqlandi",
+      "map": {
+        "pickOnMap": "Xaritadan tanlash",
+        "title": "Joylashuvni xaritadan tanlang",
+        "searchPlaceholder": "Shahar, koʻcha yoki manzilni qidiring...",
+        "searchBtn": "Qidirish",
+        "myLocation": "Mening joylashuvim",
+        "hint": "Xaritada istalgan nuqtani bosing — manzil avtomatik aniqlanadi.",
+        "loadingAddress": "Manzil aniqlanmoqda...",
+        "selectedAddress": "Tanlangan manzil",
+        "notSelected": "Xaritadan nuqta tanlang",
+        "confirm": "Tanlash",
+        "close": "Yopish"
+      }
     }
   },
   "Matches": {

@@ -91,7 +91,7 @@ export async function getConversationMessages(
 
 export async function listUserConversations(userId: string, role: Role) {
   if (role === Role.STUDENT) {
-    return db.conversation.findMany({
+    const rows = await db.conversation.findMany({
       where: { studentId: userId },
       include: {
         company: { select: { id: true, name: true, logoPath: true } },
@@ -103,12 +103,17 @@ export async function listUserConversations(userId: string, role: Role) {
       },
       orderBy: { updatedAt: "desc" },
     });
+    return rows.map((r) => ({ ...r, studentName: null as string | null }));
   }
 
-  const company = await db.company.findUnique({ where: { userId } });
+  const company = await db.company.findFirst({
+    where: {
+      OR: [{ userId }, { members: { some: { userId } } }],
+    },
+  });
   if (!company) return [];
 
-  return db.conversation.findMany({
+  const rows = await db.conversation.findMany({
     where: { companyId: company.id },
     include: {
       company: { select: { id: true, name: true, logoPath: true } },
@@ -120,6 +125,42 @@ export async function listUserConversations(userId: string, role: Role) {
     },
     orderBy: { updatedAt: "desc" },
   });
+
+  const studentIds = [...new Set(rows.map((r) => r.studentId))];
+  const cvIds = rows
+    .map((r) => r.studentCvId)
+    .filter((id): id is string => Boolean(id));
+
+  const [students, cvs] = await Promise.all([
+    studentIds.length > 0
+      ? db.user.findMany({
+          where: { id: { in: studentIds } },
+          select: { id: true, email: true },
+        })
+      : [],
+    cvIds.length > 0
+      ? db.cv.findMany({
+          where: { id: { in: cvIds } },
+          select: { id: true, title: true, data: true },
+        })
+      : [],
+  ]);
+
+  const studentEmailMap = new Map(students.map((s) => [s.id, s.email]));
+  const cvNameMap = new Map(
+    cvs.map((c) => {
+      const data = c.data as { fullName?: string } | null;
+      return [c.id, data?.fullName || c.title || null];
+    }),
+  );
+
+  return rows.map((r) => ({
+    ...r,
+    studentName:
+      (r.studentCvId ? cvNameMap.get(r.studentCvId) : null) ??
+      studentEmailMap.get(r.studentId) ??
+      null,
+  }));
 }
 
 export async function createComplaint(params: {

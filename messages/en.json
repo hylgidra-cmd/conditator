@@ -491,7 +491,20 @@
       "workTypeAny": "Any",
       "save": "Save",
       "cancel": "Cancel",
-      "saved": "Vacancy saved"
+      "saved": "Vacancy saved",
+      "map": {
+        "pickOnMap": "Pick on map",
+        "title": "Select location on map",
+        "searchPlaceholder": "Search city, street or address...",
+        "searchBtn": "Search",
+        "myLocation": "My location",
+        "hint": "Click anywhere on the map — the address will be detected automatically.",
+        "loadingAddress": "Detecting address...",
+        "selectedAddress": "Selected address",
+        "notSelected": "Click a point on the map",
+        "confirm": "Confirm",
+        "close": "Close"
+      }
     }
   },
   "Matches": {

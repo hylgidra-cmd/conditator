@@ -1,5 +1,6 @@
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
+import { getApplyPassStatus } from "@/backend/payment/service";
 import { ApplicationStatus, CandidateStageType } from "@prisma/client";
 
 export async function applyToVacancy(params: {
@@ -30,6 +31,11 @@ export async function applyToVacancy(params: {
 
   if (!cv || !cv.savedAt) {
     throw new ApiError(400, "INVALID_OR_UNSAVED_CV");
+  }
+
+  const passStatus = await getApplyPassStatus(params.studentId);
+  if (!passStatus.canApply) {
+    throw new ApiError(402, "APPLY_PASS_REQUIRED");
   }
 
   // Check if already applied

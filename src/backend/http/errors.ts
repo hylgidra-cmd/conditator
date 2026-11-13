@@ -33,6 +33,7 @@ export type ErrorCode =
   | "VACANCY_INACTIVE_OR_EXPIRED"
   | "INVALID_OR_UNSAVED_CV"
   | "ALREADY_APPLIED"
+  | "APPLY_PASS_REQUIRED"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

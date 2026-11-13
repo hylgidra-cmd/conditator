@@ -166,7 +166,8 @@
     "VACANCY_NOT_FOUND": "Vakansiya tabılmadı.",
     "VACANCY_INACTIVE_OR_EXPIRED": "Bul vakansiyanıń múddeti ótken yamasa jabılǵan.",
     "INVALID_OR_UNSAVED_CV": "Aldın CV-ıńızdı saqlań.",
-    "ALREADY_APPLIED": "Siz bul vakansiyaǵa aldın arza jibergensiz."
+    "ALREADY_APPLIED": "Siz bul vakansiyaǵa aldın arza jibergensiz.",
+    "APPLY_PASS_REQUIRED": "Háptelik CV tapsırıw ruxsatı (5 000 soʻm / 7 kún) kerek."
   },
   "Form": {
     "submitting": "Jiberilmekte…"

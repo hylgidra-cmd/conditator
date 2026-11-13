@@ -3,6 +3,7 @@ import { db } from "@/backend/db";
 import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/backend/format-date";
 import { currentUser } from "@/backend/auth/current-user";
+import { getApplyPassStatus } from "@/backend/payment/service";
 import { ApplyModal } from "@/frontend/components/vacancy/apply-modal";
 import { getTranslations } from "next-intl/server";
 
@@ -37,30 +38,50 @@ export default async function VacancyDetailPage({
   let studentCvs: { id: string; title: string; savedAt: string | null }[] = [];
   let existingApplication = null;
   let existingConversation = null;
+  let passStatus: {
+    canApply: boolean;
+    hasActivePass: boolean;
+    freeTrialAvailable: boolean;
+    applyPassUntil: string | null;
+  } = {
+    canApply: false,
+    hasActivePass: false,
+    freeTrialAvailable: false,
+    applyPassUntil: null,
+  };
 
   if (user && user.role === "STUDENT") {
-    const cvs = await db.cv.findMany({
-      where: { userId: user.id, savedAt: { not: null } },
-      select: { id: true, title: true, savedAt: true },
-      orderBy: { updatedAt: "desc" },
-    });
+    const [cvs, app, conv, pass] = await Promise.all([
+      db.cv.findMany({
+        where: { userId: user.id, savedAt: { not: null } },
+        select: { id: true, title: true, savedAt: true },
+        orderBy: { updatedAt: "desc" },
+      }),
+      db.vacancyApplication.findFirst({
+        where: { vacancyId: vacancy.id, studentId: user.id },
+      }),
+      db.conversation.findFirst({
+        where: {
+          vacancyId: vacancy.id,
+          studentId: user.id,
+          companyId: vacancy.companyId,
+        },
+      }),
+      getApplyPassStatus(user.id),
+    ]);
     studentCvs = cvs.map((c) => ({
       id: c.id,
       title: c.title,
       savedAt: c.savedAt?.toISOString() ?? null,
     }));
-
-    existingApplication = await db.vacancyApplication.findFirst({
-      where: { vacancyId: vacancy.id, studentId: user.id },
-    });
-
-    existingConversation = await db.conversation.findFirst({
-      where: {
-        vacancyId: vacancy.id,
-        studentId: user.id,
-        companyId: vacancy.companyId,
-      },
-    });
+    existingApplication = app;
+    existingConversation = conv;
+    passStatus = {
+      canApply: pass.canApply,
+      hasActivePass: pass.hasActivePass,
+      freeTrialAvailable: pass.freeTrialAvailable,
+      applyPassUntil: pass.applyPassUntil?.toISOString() ?? null,
+    };
   }
 
   return (
@@ -151,6 +172,10 @@ export default async function VacancyDetailPage({
               alreadyApplied={Boolean(existingApplication)}
               applicationStatus={existingApplication?.status}
               conversationId={existingConversation?.id}
+              canApply={passStatus.canApply}
+              hasActivePass={passStatus.hasActivePass}
+              freeTrialAvailable={passStatus.freeTrialAvailable}
+              applyPassUntil={passStatus.applyPassUntil}
             />
           </div>
         )}

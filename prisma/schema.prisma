@@ -106,6 +106,7 @@ enum ComplaintStatus {
 enum PaymentPurpose {
   CV_CREATION
   VACANCY_UNLOCK
+  WEEKLY_APPLY_PASS
 }
 
 enum PaymentProvider {
@@ -132,6 +133,7 @@ model User {
   emailVerifiedAt DateTime?
   locale          Lang       @default(kk)
   consentAt       DateTime? /// shaxsiy ma'lumotlarni qayta ishlashga rozilik
+  applyPassUntil  DateTime? /// haftalik CV topshirish ruxsati tugash vaqti
   createdAt       DateTime   @default(now())
   updatedAt       DateTime   @updatedAt
 

@@ -166,7 +166,8 @@
     "VACANCY_NOT_FOUND": "Vacancy not found.",
     "VACANCY_INACTIVE_OR_EXPIRED": "This vacancy has expired or is closed.",
     "INVALID_OR_UNSAVED_CV": "Please save your CV first.",
-    "ALREADY_APPLIED": "You have already applied to this vacancy."
+    "ALREADY_APPLIED": "You have already applied to this vacancy.",
+    "APPLY_PASS_REQUIRED": "Weekly application pass required (5,000 UZS / 7 days)."
   },
   "Form": {
     "submitting": "Sending…"

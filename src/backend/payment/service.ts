@@ -3,6 +3,8 @@ import { ApiError } from "@/backend/http/errors";
 import { PaymentPurpose, PaymentProvider, PaymentStatus } from "@prisma/client";
 
 export const CV_CREATION_PRICE_UZS = 5_000;
+export const WEEKLY_PASS_PRICE_UZS = 5_000;
+export const WEEKLY_PASS_DAYS = 7;
 export const VACANCY_UNLOCK_PRICE_UZS = 14_999;
 export const UNLOCK_DURATION_DAYS = 15;
 
@@ -17,9 +19,11 @@ export type CreatePaymentInput = {
 
 export async function createPaymentOrder(input: CreatePaymentInput) {
   const amount =
-    input.purpose === PaymentPurpose.CV_CREATION
-      ? CV_CREATION_PRICE_UZS
-      : VACANCY_UNLOCK_PRICE_UZS;
+    input.purpose === PaymentPurpose.VACANCY_UNLOCK
+      ? VACANCY_UNLOCK_PRICE_UZS
+      : input.purpose === PaymentPurpose.WEEKLY_APPLY_PASS
+        ? WEEKLY_PASS_PRICE_UZS
+        : CV_CREATION_PRICE_UZS;
 
   const payment = await db.payment.create({
     data: {
@@ -100,9 +104,50 @@ export async function completePayment(
         expiresAt,
       },
     });
+  } else if (payment.purpose === PaymentPurpose.WEEKLY_APPLY_PASS) {
+    const user = await db.user.findUnique({
+      where: { id: payment.userId },
+      select: { applyPassUntil: true },
+    });
+    const now = new Date();
+    const base =
+      user?.applyPassUntil && user.applyPassUntil > now
+        ? user.applyPassUntil
+        : now;
+    const nextUntil = new Date(
+      base.getTime() + WEEKLY_PASS_DAYS * 24 * 60 * 60 * 1000,
+    );
+    await db.user.update({
+      where: { id: payment.userId },
+      data: { applyPassUntil: nextUntil },
+    });
   }
 
   return updatedPayment;
+}
+
+/**
+ * Checks whether a student can apply to vacancies (1 free trial application, or active 7-day weekly pass).
+ */
+export async function getApplyPassStatus(userId: string) {
+  const [user, applicationCount] = await Promise.all([
+    db.user.findUnique({
+      where: { id: userId },
+      select: { applyPassUntil: true },
+    }),
+    db.vacancyApplication.count({ where: { studentId: userId } }),
+  ]);
+  const now = new Date();
+  const hasActivePass = Boolean(
+    user?.applyPassUntil && user.applyPassUntil > now,
+  );
+  const freeTrialAvailable = applicationCount === 0;
+  return {
+    canApply: hasActivePass || freeTrialAvailable,
+    hasActivePass,
+    freeTrialAvailable,
+    applyPassUntil: user?.applyPassUntil ?? null,
+  };
 }
 
 /**

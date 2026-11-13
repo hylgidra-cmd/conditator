@@ -11,6 +11,10 @@ type Props = {
   alreadyApplied: boolean;
   applicationStatus?: string | null;
   conversationId?: string | null;
+  canApply: boolean;
+  hasActivePass: boolean;
+  freeTrialAvailable: boolean;
+  applyPassUntil?: string | null;
 };
 
 export function ApplyModal({
@@ -19,14 +23,44 @@ export function ApplyModal({
   alreadyApplied,
   applicationStatus,
   conversationId,
+  canApply,
+  hasActivePass,
+  freeTrialAvailable,
+  applyPassUntil,
 }: Props) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCvId, setSelectedCvId] = useState(studentCvs[0]?.id || "");
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [paying, setPaying] = useState(false);
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState(alreadyApplied);
+
+  async function handleBuyPass() {
+    if (paying) return;
+    setPaying(true);
+    setError(undefined);
+    try {
+      const res = await postJson<{ paymentId: string; redirectUrl: string }>(
+        "/api/payments/checkout",
+        {
+          purpose: "WEEKLY_APPLY_PASS",
+          provider: "TEST",
+          returnUrl: window.location.href,
+        },
+      );
+      if (res.ok && res.data.redirectUrl) {
+        window.location.href = res.data.redirectUrl;
+        return;
+      }
+      setError("To'lovni boshlashda xatolik yuz berdi");
+    } catch {
+      setError("To'lovni boshlashda xatolik yuz berdi");
+    } finally {
+      setPaying(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -109,15 +143,54 @@ export function ApplyModal({
     );
   }
 
+  if (!canApply) {
+    return (
+      <div className="rounded-2xl border border-amber-300 bg-amber-50/90 p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="space-y-1">
+            <h4 className="font-bold text-amber-950">
+              🔒 Haftalik CV topshirish ruxsati kerak
+            </h4>
+            <p className="text-xs text-amber-900">
+              1 ta bepul sinov arizadan foydalanib bo&apos;ldingiz. Istalgancha
+              vakansiyaga 7 kun davomida CV yuborish uchun haftalik ruxsatni
+              faollashtiring (5 000 so&apos;m).
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleBuyPass}
+            disabled={paying}
+            className="rounded-xl bg-[#F07A1A] px-5 py-2.5 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912] disabled:opacity-60"
+          >
+            {paying ? "Yuklanmoqda…" : "🔓 7 kunga ochish — 5 000 so'm"}
+          </button>
+        </div>
+        {error && (
+          <p className="mt-2 text-xs font-medium text-red-600">{error}</p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setIsOpen(true)}
-        className="bg-brand text-brand-foreground w-full rounded-2xl py-3.5 text-base font-bold shadow-md transition-all hover:opacity-95 hover:shadow-lg sm:w-auto sm:px-8"
-      >
-        Ariza yuborish (Rezyumeni jo&apos;natish) 🚀
-      </button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="bg-brand text-brand-foreground w-full rounded-2xl py-3.5 text-base font-bold shadow-md transition-all hover:opacity-95 hover:shadow-lg sm:w-auto sm:px-8"
+        >
+          Ariza yuborish (Rezyumeni jo&apos;natish) 🚀
+        </button>
+        <span className="text-muted text-xs font-medium">
+          {hasActivePass && applyPassUntil
+            ? `✅ Haftalik ruxsat faol: ${new Date(applyPassUntil).toLocaleDateString()} gacha`
+            : freeTrialAvailable
+              ? "🎁 1-ariza bepul (sinov)"
+              : ""}
+        </span>
+      </div>
 
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

@@ -166,7 +166,8 @@
     "VACANCY_NOT_FOUND": "Vakansiya topilmadi.",
     "VACANCY_INACTIVE_OR_EXPIRED": "Ushbu vakansiya muddati oʻtgan yoki yopilgan.",
     "INVALID_OR_UNSAVED_CV": "Avval rezyumeyingizni saqlang.",
-    "ALREADY_APPLIED": "Siz ushbu vakansiyaga allaqachon ariza yuborgansiz."
+    "ALREADY_APPLIED": "Siz ushbu vakansiyaga allaqachon ariza yuborgansiz.",
+    "APPLY_PASS_REQUIRED": "Haftalik CV topshirish ruxsati (5 000 soʻm / 7 kun) kerak."
   },
   "Form": {
     "submitting": "Yuborilmoqda…"

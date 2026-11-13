@@ -63,6 +63,9 @@ export function ChatRoom({
         ? `support:${initialSupportThreads[0].id}`
         : ""),
   );
+  const [mobileShowThread, setMobileShowThread] = useState(
+    Boolean(selectedConversationId),
+  );
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -262,11 +265,15 @@ export function ChatRoom({
   }
 
   return (
-    <div className="border-border bg-surface grid min-h-[600px] grid-cols-1 overflow-hidden rounded-3xl border shadow-sm md:grid-cols-3">
+    <div className="border-border bg-surface grid h-[calc(100dvh-11rem)] max-h-[780px] min-h-[520px] grid-cols-1 overflow-hidden rounded-3xl border shadow-sm md:grid-cols-3">
       {/* Conversations list sidebar */}
-      <div className="border-border bg-background/60 space-y-3 border-b p-4 md:border-r md:border-b-0">
-        <h3 className="text-text px-2 text-base font-bold">Suhbatlar</h3>
-        <div className="space-y-1.5">
+      <div
+        className={`${mobileShowThread ? "hidden md:flex" : "flex"} border-border flex-col space-y-3 overflow-y-auto border-b bg-slate-50/90 p-4 md:border-r md:border-b-0 dark:bg-slate-900/80`}
+      >
+        <h3 className="px-2 text-base font-bold text-slate-900 dark:text-white">
+          Suhbatlar
+        </h3>
+        <div className="space-y-2">
           {supportThreads.map((st) => {
             const key = `support:${st.id}`;
             const isSelected = activeId === key;
@@ -287,27 +294,30 @@ export function ChatRoom({
               <button
                 key={key}
                 type="button"
-                onClick={() => setActiveId(key)}
+                onClick={() => {
+                  setActiveId(key);
+                  setMobileShowThread(true);
+                }}
                 className={`w-full rounded-2xl p-3 text-left transition-colors ${
                   isSelected
-                    ? "border-brand/50 bg-surface border shadow-sm"
-                    : "hover:bg-surface/60"
+                    ? "border border-[#F07A1A]/60 bg-white shadow-sm dark:bg-slate-800"
+                    : "hover:bg-white/80 dark:hover:bg-slate-800/60"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-text truncate text-sm font-bold">
+                  <h4 className="truncate text-sm font-bold text-slate-900 dark:text-white">
                     {"🛟 "}
                     {title}
                   </h4>
-                  <span className="text-muted shrink-0 text-[10px]">
+                  <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
                     {formatDateTime(new Date(st.updatedAt))}
                   </span>
                 </div>
-                <p className="text-brand mt-0.5 truncate text-xs font-medium">
+                <p className="mt-0.5 truncate text-xs font-semibold text-[#F07A1A]">
                   {badge}
                 </p>
                 {lastMsg && (
-                  <p className="text-muted mt-1 truncate text-xs">
+                  <p className="mt-1 truncate text-xs text-slate-600 dark:text-slate-300">
                     {lastMsg.text}
                   </p>
                 )}
@@ -322,30 +332,33 @@ export function ChatRoom({
               <button
                 key={c.id}
                 type="button"
-                onClick={() => setActiveId(c.id)}
+                onClick={() => {
+                  setActiveId(c.id);
+                  setMobileShowThread(true);
+                }}
                 className={`w-full rounded-2xl p-3 text-left transition-colors ${
                   isSelected
-                    ? "border-border bg-surface border shadow-sm"
-                    : "hover:bg-surface/60"
+                    ? "border border-[#F07A1A]/60 bg-white shadow-sm dark:bg-slate-800"
+                    : "hover:bg-white/80 dark:hover:bg-slate-800/60"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <h4 className="text-text truncate text-sm font-bold">
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="truncate text-sm font-bold text-slate-900 dark:text-white">
                     {currentUserRole === "STUDENT"
                       ? (c.company.name ?? "Kompaniya")
                       : (c.studentName ?? "Nomzod")}
                   </h4>
-                  <span className="text-muted text-[10px]">
+                  <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
                     {formatDateTime(new Date(c.updatedAt))}
                   </span>
                 </div>
                 {c.vacancy && (
-                  <p className="text-brand mt-0.5 truncate text-xs font-medium">
+                  <p className="mt-0.5 truncate text-xs font-semibold text-[#F07A1A]">
                     {c.vacancy.title}
                   </p>
                 )}
                 {lastMsg && (
-                  <p className="text-muted mt-1 truncate text-xs">
+                  <p className="mt-1 truncate text-xs text-slate-600 dark:text-slate-300">
                     {lastMsg.text}
                   </p>
                 )}
@@ -356,36 +369,47 @@ export function ChatRoom({
       </div>
 
       {/* Chat Thread */}
-      <div className="flex min-h-[500px] flex-col md:col-span-2">
+      <div
+        className={`${mobileShowThread ? "flex" : "hidden md:flex"} min-h-0 flex-col bg-white md:col-span-2 dark:bg-slate-950`}
+      >
         {/* Chat header */}
-        <div className="border-border bg-surface flex items-center justify-between border-b p-4">
-          <div>
-            <h3 className="text-text text-base font-bold">
-              {isSupportActive
-                ? currentUserRole === "ADMIN"
-                  ? `🛟 ${activeSupport?.user.companyName || activeSupport?.user.email || "Foydalanuvchi"}`
-                  : "🛟 Qo'llab-quvvatlash xizmati"
-                : currentUserRole === "STUDENT"
-                  ? (activeConv?.company.name ?? "Kompaniya")
-                  : (activeConv?.studentName ?? "Nomzod")}
-            </h3>
-            {isSupportActive ? (
-              <p className="text-muted text-xs font-medium">
-                {currentUserRole === "ADMIN"
-                  ? `${activeSupport?.user.role === "COMPANY" ? "Kompaniya" : "Talaba"} · ${activeSupport?.user.email ?? ""}`
-                  : "Admin bilan to'g'ridan-to'g'ri yordam chati"}
-              </p>
-            ) : activeConv?.vacancy ? (
-              <p className="text-muted text-xs font-medium">
-                Vakansiya: {activeConv.vacancy.title}
-              </p>
-            ) : null}
+        <div className="border-border flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-slate-900">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <button
+              type="button"
+              onClick={() => setMobileShowThread(false)}
+              className="shrink-0 rounded-xl border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 md:hidden dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+            >
+              {"←"}
+            </button>
+            <div className="min-w-0">
+              <h3 className="truncate text-base font-bold text-slate-900 dark:text-white">
+                {isSupportActive
+                  ? currentUserRole === "ADMIN"
+                    ? `🛟 ${activeSupport?.user.companyName || activeSupport?.user.email || "Foydalanuvchi"}`
+                    : "🛟 Qo'llab-quvvatlash xizmati"
+                  : currentUserRole === "STUDENT"
+                    ? (activeConv?.company.name ?? "Kompaniya")
+                    : (activeConv?.studentName ?? "Nomzod")}
+              </h3>
+              {isSupportActive ? (
+                <p className="truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+                  {currentUserRole === "ADMIN"
+                    ? `${activeSupport?.user.role === "COMPANY" ? "Kompaniya" : "Talaba"} · ${activeSupport?.user.email ?? ""}`
+                    : "Admin bilan to'g'ridan-to'g'ri yordam chati"}
+                </p>
+              ) : activeConv?.vacancy ? (
+                <p className="truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+                  Vakansiya: {activeConv.vacancy.title}
+                </p>
+              ) : null}
+            </div>
           </div>
           {!isSupportActive ? (
             <button
               type="button"
               onClick={() => setShowReportModal(true)}
-              className="text-muted rounded px-2 py-1 text-xs font-semibold transition-colors hover:text-red-600"
+              className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-300 dark:hover:bg-red-950/40"
               title="Noo'rin xatti-harakat bo'yicha shikoyat yuborish"
             >
               ⚠️ Shikoyat
@@ -394,7 +418,7 @@ export function ChatRoom({
         </div>
 
         {/* Messages area */}
-        <div className="bg-background/40 flex-1 space-y-3 overflow-y-auto p-4">
+        <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50/70 p-4 dark:bg-slate-950">
           {messages.map((m) => {
             const isMe = m.senderId === currentUserId;
             return (
@@ -403,10 +427,10 @@ export function ChatRoom({
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${
+                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm sm:max-w-[75%] ${
                     isMe
-                      ? "rounded-br-none bg-[#1A1A1A] text-white"
-                      : "rounded-bl-none border border-gray-200 bg-white text-gray-900"
+                      ? "rounded-br-none bg-[#F07A1A] text-white"
+                      : "rounded-bl-none border border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
                   }`}
                 >
                   <p className="leading-relaxed whitespace-pre-line">
@@ -414,7 +438,9 @@ export function ChatRoom({
                   </p>
                   <div
                     className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                      isMe ? "text-gray-300" : "text-gray-400"
+                      isMe
+                        ? "text-white/80"
+                        : "text-slate-400 dark:text-slate-400"
                     }`}
                   >
                     <span>{formatDateTime(new Date(m.createdAt))}</span>
@@ -429,7 +455,7 @@ export function ChatRoom({
 
         {/* 1-message rule banner for student */}
         {isOneMessageRuleBlocked && (
-          <div className="border-t border-amber-200 bg-amber-50 p-3 text-center text-xs font-medium text-amber-900">
+          <div className="border-t border-amber-200 bg-amber-50 p-3 text-center text-xs font-medium text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
             ⏳ Siz ariza va birinchi xabaringizni yubordingiz. Spamdan himoya
             qoidasiga ko&apos;ra, kompaniya javob berishini kuting.
           </div>
@@ -438,7 +464,7 @@ export function ChatRoom({
         {/* Input area */}
         <form
           onSubmit={handleSend}
-          className="border-border border-t bg-white p-3"
+          className="border-border border-t bg-white p-3 dark:bg-slate-900"
         >
           {error && (
             <p className="mb-2 text-xs font-medium text-red-600">{error}</p>
@@ -454,12 +480,12 @@ export function ChatRoom({
                   ? "Kompaniya javob berishini kuting..."
                   : "Xabar yozing..."
               }
-              className="border-border focus:border-brand flex-1 rounded-xl border px-4 py-2.5 text-sm outline-none focus:ring-2 disabled:bg-gray-100 disabled:opacity-70"
+              className="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#F07A1A] focus:ring-2 focus:ring-[#F07A1A]/20 disabled:bg-slate-100 disabled:opacity-70 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400 dark:disabled:bg-slate-800"
             />
             <button
               type="submit"
               disabled={sending || !text.trim() || isOneMessageRuleBlocked}
-              className="bg-brand text-brand-foreground rounded-xl px-5 py-2.5 text-sm font-bold shadow transition-colors hover:opacity-95 disabled:opacity-50"
+              className="shrink-0 rounded-xl bg-[#F07A1A] px-5 py-2.5 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912] disabled:opacity-50"
             >
               Yuborish
             </button>

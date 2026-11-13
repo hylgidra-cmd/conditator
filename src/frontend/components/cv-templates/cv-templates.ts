@@ -234,6 +234,7 @@ export interface RawCvTemplateData {
   skills?: Array<string | { name: string; level?: unknown }>;
   languages?: Array<string | { name: string; level?: unknown }>;
   hobbies?: Array<string | { name?: string }>;
+  obyektivka?: import("@/backend/cv/schema").ObyektivkaData;
 }
 
 function norm(d: RawCvTemplateData | undefined) {
@@ -277,6 +278,7 @@ function norm(d: RawCvTemplateData | undefined) {
     hobbies: arr<string | { name?: string }>(d.hobbies).map((h) =>
       typeof h === "string" ? h : h.name || "",
     ),
+    obyektivka: d.obyektivka,
   };
 }
 
@@ -573,6 +575,8 @@ function ctx(
             "</div>"
           : `<p class="inl">${d.hobbies.map(esc).join(" · ")}</p>`,
     ct: (m: string) => contacts(d, m),
+    photoUrl: d.photo,
+    raw: d,
   };
 }
 
@@ -876,6 +880,109 @@ T["minimal-5"] = (c, L = c.L) => `
   ${sec(L.hobbies, c.hb())}
 </div>`;
 
+// Obyektivka — Maǵlıwmatnama (2 sahifali rasmiy shablon)
+T["obyektivka"] = (c) => {
+  const ob: Partial<import("@/backend/cv/schema").ObyektivkaData> =
+    c.raw.obyektivka || {};
+  const firstEdu = arr<TemplateEducationItem>(c.raw.education)[0];
+  const eduText =
+    ob.oqiganJoyi ||
+    (firstEdu
+      ? [firstEdu.school || firstEdu.institution, firstEdu.endYear]
+          .filter(Boolean)
+          .join(", ")
+      : "");
+  const skillsText = arr<string | { name: string }>(c.raw.skills)
+    .map((s) => (typeof s === "string" ? s : s.name))
+    .join(", ");
+  const langsText = arr<string | { name: string; level?: unknown }>(
+    c.raw.languages,
+  )
+    .map((l) =>
+      typeof l === "string"
+        ? l
+        : `${l.name}${l.level ? ` (${String(l.level)})` : ""}`,
+    )
+    .join(", ");
+  const expText =
+    ob.mehnatFaoliyati ||
+    arr<TemplateExperienceItem>(c.raw.experience)
+      .map((e) => {
+        const dt = [
+          e.startDate || e.from,
+          e.endDate || e.to || "házirge shekem",
+        ]
+          .filter(Boolean)
+          .join(" – ");
+        return `${dt ? `${dt} — ` : ""}${e.company || e.organization || ""}${e.position ? `, ${e.position}` : ""}`;
+      })
+      .join("\n");
+  const qarindoshlar = Array.isArray(ob.qarindoshlar) ? ob.qarindoshlar : [];
+  const rowCount = Math.max(4, qarindoshlar.length);
+  const rowsHtml = Array.from({ length: rowCount }, (_, i) => {
+    const q = qarindoshlar[i] || {
+      qarindoshligi: "",
+      fio: "",
+      tugilgan: "",
+      ish: "",
+      manzil: "",
+    };
+    return `<tr><td>${esc(q.qarindoshligi)}</td><td>${esc(q.fio)}</td><td>${esc(q.tugilgan)}</td><td>${esc(q.ish)}</td><td>${esc(q.manzil)}</td></tr>`;
+  }).join("");
+  const fioTitle = c.raw.fullName || "";
+  const oilaTitle = fioTitle
+    ? `${esc(fioTitle)} niń jaqın tuwısqanları haqqında maǵlıwmat`
+    : "Jaqın tuwısqanları haqqında maǵlıwmat";
+
+  return `
+<div class="cv cv-ob">
+  <div class="ob-head">
+    <div class="ob-title-wrap">
+      <div class="ob-h1">Maǵlıwmatnama.</div>
+      ${fioTitle ? `<div class="ob-h1">${esc(fioTitle)}</div>` : ""}
+      ${ob.lavozim || c.raw.position ? `<div class="ob-sub">${esc(ob.lavozim || c.raw.position)}</div>` : ""}
+    </div>
+    <div class="ob-photo">${c.photoUrl ? `<img src="${esc(c.photoUrl)}" alt="" />` : ""}</div>
+  </div>
+  <div class="ob-grid2">
+    <div><div class="ob-lbl">Tuwılǵan jılı:</div><div class="ob-val">${esc(ob.tugilganSana || "")}</div></div>
+    <div><div class="ob-lbl">Tuwılǵan jeri:</div><div class="ob-val">${esc(ob.tugilganJoy || c.raw.address || "")}</div></div>
+    <div><div class="ob-lbl">Milleti:</div><div class="ob-val">${esc(ob.millati || "")}</div></div>
+    <div><div class="ob-lbl">Partiyalılıǵı:</div><div class="ob-val">${esc(ob.partiya || "")}</div></div>
+    <div><div class="ob-lbl">Maǵlıwmatı:</div><div class="ob-val">${esc(firstEdu?.degree || "")}</div></div>
+    <div><div class="ob-lbl">Tamamlaǵan:</div><div class="ob-val">${esc(eduText)}</div></div>
+    <div class="ob-span2"><div class="ob-lbl">Bilimlendiriw boyınsha qánigeligi:</div><div class="ob-val">${esc(ob.mutaxassislik || firstEdu?.field || "")}</div></div>
+    <div><div class="ob-lbl">Ilimiy dárejesi:</div><div class="ob-val">${esc(ob.ilmiyDaraja || "")}</div></div>
+    <div><div class="ob-lbl">Ilimiy ataǵı:</div><div class="ob-val">${esc(ob.ilmiyUnvon || "")}</div></div>
+    <div><div class="ob-lbl">Qaysı shet tillerin biledi (dárejesi):</div><div class="ob-val">${esc(langsText)}</div></div>
+    <div><div class="ob-lbl">Áskeriy (arnawlı) dárejesi:</div><div class="ob-val">${esc(ob.harbiyUnvon || "")}</div></div>
+  </div>
+  <div class="ob-block"><div class="ob-lbl">Kónlikpeleri hám basqa uqıplılıǵı:</div><div class="ob-val">${esc(skillsText)}</div></div>
+  <div class="ob-block"><div class="ob-lbl">Mámleketlik sıylıqlar menen sıylıqlanǵan ba (qanday):</div><div class="ob-val">${esc(ob.mukofotlar || "")}</div></div>
+  <div class="ob-block"><div class="ob-lbl">Xalıq deputatları, respublika, wálayat, qala hám rayon Keńesi deputatı yamasa basqa saylanatuǵin organlardıń aǵzası (tolıq kórsetiliwi kerek):</div><div class="ob-val">${esc(ob.deputatlik || "")}</div></div>
+  <div class="ob-grid2">
+    <div><div class="ob-lbl">Uy telefonı:</div><div class="ob-val">${esc(ob.uyTelefoni || "")}</div></div>
+    <div><div class="ob-lbl">Telefon nomeri:</div><div class="ob-val">${esc(c.raw.phone || "")}</div></div>
+  </div>
+  <div class="ob-block"><div class="ob-lbl">Elektron pochta mánzili:</div><div class="ob-val">${esc(c.raw.email || "")}</div></div>
+  <div class="ob-h2">Miynet iskerligi</div>
+  <div class="ob-exp">${rich(expText)}</div>
+  <div class="ob-h2 ob-break">${oilaTitle}</div>
+  <table class="ob-tbl">
+    <thead>
+      <tr>
+        <th>Tuwısqanlıq</th>
+        <th>Familiyası, atı hám ákesiniń atı</th>
+        <th>Tuwılǵan jılı hám ornı</th>
+        <th>Jumıs ornı hám lawazımı</th>
+        <th>Turar jayı</th>
+      </tr>
+    </thead>
+    <tbody>${rowsHtml}</tbody>
+  </table>
+</div>`;
+};
+
 /* ------------------------------------------------------------------ */
 /*  CSS                                                                */
 /* ------------------------------------------------------------------ */
@@ -1150,6 +1257,25 @@ export const CV_TEMPLATES_CSS = `
 .cv-n5 .it-x{font-size:12px;margin-top:2px}
 .cv-n5 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:28px}
 
+.cv-ob{padding:44px 42px 36px 64px;font-family:'Times New Roman',Times,serif;color:#111;font-size:13px;line-height:1.38}
+.cv-ob .ob-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:10px}
+.cv-ob .ob-title-wrap{flex:1;text-align:center;padding-top:8px}
+.cv-ob .ob-h1{font-size:17px;font-weight:700;line-height:1.25}
+.cv-ob .ob-sub{font-size:13px;margin-top:4px}
+.cv-ob .ob-photo{width:112px;height:142px;border:1px solid #555;flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#fff}
+.cv-ob .ob-photo img{width:100%;height:100%;object-fit:cover}
+.cv-ob .ob-grid2{display:grid;grid-template-columns:40% 60%;gap:8px 14px;margin-bottom:8px}
+.cv-ob .ob-span2{grid-column:1 / -1}
+.cv-ob .ob-block{margin-bottom:8px}
+.cv-ob .ob-lbl{font-weight:700}
+.cv-ob .ob-val{min-height:16px;white-space:pre-line}
+.cv-ob .ob-h2{font-size:16px;font-weight:700;text-align:center;margin:14px 0 8px}
+.cv-ob .ob-exp{margin-bottom:12px;white-space:pre-line}
+.cv-ob .ob-break{margin-top:24px;padding-top:16px;border-top:1px dashed #ccc;break-before:page}
+.cv-ob .ob-tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+.cv-ob .ob-tbl th,.cv-ob .ob-tbl td{border:1px solid #555;padding:5px 6px;vertical-align:top;min-height:28px;height:28px}
+.cv-ob .ob-tbl th{font-weight:700;text-align:center}
+
 @media print{
   @page{size:A4;margin:0}
   .cv{box-shadow:none!important;margin:0!important;transform:none!important;break-after:page}
@@ -1178,7 +1304,24 @@ export const CV_TEMPLATE_NAMES: Record<string, string> = {
   "minimal-3": "Mono",
   "minimal-4": "Swiss",
   "minimal-5": "Compact",
+  obyektivka: "Obyektivka",
 };
+
+export const PHOTO_TEMPLATE_IDS = new Set([
+  "modern-1",
+  "modern-2",
+  "modern-3",
+  "modern-4",
+  "modern-5",
+  "classic-2",
+  "classic-3",
+  "classic-5",
+  "obyektivka",
+]);
+
+export function isPhotoTemplate(id?: string | null): boolean {
+  return PHOTO_TEMPLATE_IDS.has(normalizeTemplateId(id));
+}
 
 export const CV_TEMPLATE_DESCRIPTIONS: Record<
   string,
@@ -1274,6 +1417,12 @@ export const CV_TEMPLATE_DESCRIPTIONS: Record<
     ru: "Компактный дизайн для гарантированного умещения в 1 страницу",
     en: "Compact one-page condensed layout",
   },
+  obyektivka: {
+    uz: "Rasmiy Maʼlumotnoma (Obyektivka) va qarindoshlar jadvali (.docx ham mavjud)",
+    kk: "Rásmiy Maǵlıwmatnama (Obyektivka) hám tuwısqanlar kestesi (.docx bar)",
+    ru: "Официальная справка-объективка с таблицей родственников (.docx)",
+    en: "Official Obyektivka (Maǵlıwmatnama) form with relatives table (.docx)",
+  },
 };
 
 /** Normalize legacy "modern" | "classic" | "minimal" to specific default templates */
@@ -1290,6 +1439,7 @@ export function getCategoryForTemplate(
   id?: string | null,
 ): "modern" | "classic" | "minimal" {
   const normId = normalizeTemplateId(id);
+  if (normId === "obyektivka") return "classic";
   const cat = normId.split("-")[0];
   if (cat === "classic" || cat === "minimal") return cat;
   return "modern";
@@ -1299,11 +1449,17 @@ export function listTemplates(
   category?: "modern" | "classic" | "minimal",
 ): CvTemplateItem[] {
   return Object.keys(T)
-    .filter((id) => !category || id.startsWith(category + "-"))
+    .filter((id) => {
+      if (!category) return true;
+      if (id === "obyektivka") return category === "classic";
+      return id.startsWith(category + "-");
+    })
     .map((id) => ({
       id,
       category:
-        (id.split("-")[0] as "modern" | "classic" | "minimal") || "modern",
+        id === "obyektivka"
+          ? "classic"
+          : (id.split("-")[0] as "modern" | "classic" | "minimal") || "modern",
       name: CV_TEMPLATE_NAMES[id] || id,
     }));
 }

@@ -15,10 +15,12 @@ import {
   CV_TEMPLATE_CATEGORIES,
   CV_TEMPLATE_NAMES,
   CV_TEMPLATE_DESCRIPTIONS,
+  isPhotoTemplate,
   listTemplates,
   getCategoryForTemplate,
   normalizeTemplateId,
 } from "@/frontend/components/cv-templates/cv-templates";
+import { PhotoCropperModal } from "./photo-cropper-modal";
 
 const POPULAR_LANGUAGES = [
   "Qaraqalpaq tili",
@@ -353,10 +355,41 @@ export function CvStepBuilder({
   const [customHobbyInput, setCustomHobbyInput] = useState("");
   const [zoomScale, setZoomScale] = useState(0.58);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
+  const [cropperSrc, setCropperSrc] = useState<string | null>(null);
   const activeTemplateId = normalizeTemplateId(draft.templateId);
   const [selectedCategory, setSelectedCategory] = useState<
     "modern" | "classic" | "minimal"
   >(getCategoryForTemplate(activeTemplateId));
+
+  function handlePhotoFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        setCropperSrc(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
+
+  function updateObyektivka(
+    patch: Partial<NonNullable<typeof draft.data.obyektivka>>,
+  ) {
+    const current = draft.data.obyektivka ?? { qarindoshlar: [] };
+    onChange({
+      ...draft,
+      data: {
+        ...draft.data,
+        obyektivka: {
+          ...current,
+          ...patch,
+          qarindoshlar: patch.qarindoshlar ?? current.qarindoshlar ?? [],
+        },
+      },
+    });
+  }
 
   const suggestedSkills =
     customSkills ?? getSuggestedSkillsForTitle(draft.title);
@@ -814,12 +847,12 @@ export function CvStepBuilder({
                   />
                 </div>
 
-                {/* Profile Photo URL */}
+                {/* Profile Photo URL or Upload + Cropper */}
                 <div className="border-border/40 space-y-1.5 border-t pt-2">
                   <label className="text-foreground/80 text-xs font-bold">
                     {t("photoOptional")}
                   </label>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-wrap items-center gap-2.5 sm:flex-nowrap">
                     <div className="border-border bg-muted/30 text-muted flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full border text-xs font-bold">
                       {data.photo ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -832,6 +865,15 @@ export function CvStepBuilder({
                         firstName[0] || "?"
                       )}
                     </div>
+                    <label className="border-brand/40 bg-brand/5 text-brand hover:bg-brand/10 shrink-0 cursor-pointer rounded-xl border px-3 py-2 text-xs font-bold transition-colors">
+                      {"📷 Rasm yuklash"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoFileSelect}
+                        className="hidden"
+                      />
+                    </label>
                     <input
                       type="url"
                       value={data.photo ?? ""}
@@ -842,7 +884,7 @@ export function CvStepBuilder({
                         })
                       }
                       placeholder={t("photoUrlPlaceholder")}
-                      className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-xs outline-none focus:ring-2"
+                      className="border-border bg-surface focus:ring-brand/40 min-w-0 flex-1 rounded-xl border px-3 py-2 text-xs outline-none focus:ring-2"
                     />
                     {data.photo && (
                       <button
@@ -861,12 +903,17 @@ export function CvStepBuilder({
                   </div>
                 </div>
 
-                {/* Social Networks & Links */}
+                {/* Social Networks & Links (Optional) */}
                 <div className="border-border/40 space-y-3 border-t pt-2">
-                  <label className="text-foreground text-xs font-bold">
-                    {t("socialLinksTitle")}
-                  </label>
-                  <div className="grid grid-cols-2 gap-2.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-foreground text-xs font-bold">
+                      {t("socialLinksTitle")}
+                    </label>
+                    <span className="text-muted text-[11px]">
+                      {"(Ixtiyoriy)"}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
                     <input
                       type="text"
                       value={data.contact.telegram ?? ""}
@@ -1847,6 +1894,323 @@ export function CvStepBuilder({
                   </div>
                 </div>
 
+                {/* Photo prompt when a photo template is selected */}
+                {isPhotoTemplate(activeTemplateId) && (
+                  <div className="border-brand/30 bg-brand/5 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-3.5">
+                    <div className="space-y-0.5">
+                      <p className="text-foreground text-xs font-bold">
+                        {data.photo
+                          ? "📷 Profilingiz rasmi shablonga biriktirildi"
+                          : "📷 Ushbu shablon uchun rasm qo'shing"}
+                      </p>
+                      <p className="text-muted text-[11px]">
+                        {
+                          "Telegram / Instagram kabi rasmni surib va kattalashtirib moslashingiz mumkin."
+                        }
+                      </p>
+                    </div>
+                    <label className="bg-brand text-brand-foreground shrink-0 cursor-pointer rounded-xl px-3.5 py-2 text-xs font-bold shadow-xs hover:opacity-90">
+                      {data.photo ? "Rasmni almashtirish" : "Rasm yuklash"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handlePhotoFileSelect}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {/* Conditional Obyektivka (Maǵlıwmatnama) fields & Relatives Table */}
+                {activeTemplateId === "obyektivka" && (
+                  <div className="border-border bg-muted/15 space-y-4 rounded-2xl border p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <h4 className="text-foreground text-sm font-bold">
+                          {"Maǵlıwmatnama (Obyektivka) qo'shimcha ma'lumotlari"}
+                        </h4>
+                        <p className="text-muted text-[11px]">
+                          {
+                            "Faqat Obyektivka shabloni tanlanganda to'ldiriladi."
+                          }
+                        </p>
+                      </div>
+                      <a
+                        href="/api/cv/me/docx"
+                        download="obyektivka.docx"
+                        className="rounded-xl border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                      >
+                        {"📄 Word (.docx) yuklash"}
+                      </a>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                      <input
+                        type="text"
+                        value={data.obyektivka?.lavozim ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ lavozim: e.target.value })
+                        }
+                        placeholder="Lavozim / Házirgi jumısı"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none sm:col-span-2"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.tugilganSana ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ tugilganSana: e.target.value })
+                        }
+                        placeholder="Tuwılǵan jılı (masalan: 15.05.2001)"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.tugilganJoy ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ tugilganJoy: e.target.value })
+                        }
+                        placeholder="Tuwılǵan jeri"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.millati ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ millati: e.target.value })
+                        }
+                        placeholder="Milleti"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.partiya ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ partiya: e.target.value })
+                        }
+                        placeholder="Partiyalılıǵı (masalan: joq)"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.oqiganJoyi ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ oqiganJoyi: e.target.value })
+                        }
+                        placeholder="Tamamlaǵan oqıw ornı hám jılı"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.mutaxassislik ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ mutaxassislik: e.target.value })
+                        }
+                        placeholder="Bilimlendiriw boyınsha qánigeligi"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.ilmiyDaraja ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ ilmiyDaraja: e.target.value })
+                        }
+                        placeholder="Ilimiy dárejesi"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.ilmiyUnvon ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ ilmiyUnvon: e.target.value })
+                        }
+                        placeholder="Ilimiy ataǵı"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.harbiyUnvon ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ harbiyUnvon: e.target.value })
+                        }
+                        placeholder="Áskeriy (arnawlı) dárejesi"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.uyTelefoni ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ uyTelefoni: e.target.value })
+                        }
+                        placeholder="Uy telefonı"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.mukofotlar ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ mukofotlar: e.target.value })
+                        }
+                        placeholder="Mámleketlik sıylıqlar menen sıylıqlanǵan ba"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none sm:col-span-2"
+                      />
+                      <input
+                        type="text"
+                        value={data.obyektivka?.deputatlik ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ deputatlik: e.target.value })
+                        }
+                        placeholder="Xalıq deputatları yamasa saylanatuǵın organ aǵzası"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none sm:col-span-2"
+                      />
+                      <textarea
+                        rows={3}
+                        value={data.obyektivka?.mehnatFaoliyati ?? ""}
+                        onChange={(e) =>
+                          updateObyektivka({ mehnatFaoliyati: e.target.value })
+                        }
+                        placeholder="Miynet iskerligi (har qatorda jıllar hám jumıs ornı)"
+                        className="border-border bg-surface rounded-xl border px-3 py-2 text-xs outline-none sm:col-span-2"
+                      />
+                    </div>
+
+                    {/* Relatives Table */}
+                    <div className="space-y-2 pt-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-foreground text-xs font-bold">
+                          {"Jaqın tuwısqanları haqqında maǵlıwmat"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateObyektivka({
+                              qarindoshlar: [
+                                ...(data.obyektivka?.qarindoshlar ?? []),
+                                {
+                                  qarindoshligi: "",
+                                  fio: "",
+                                  tugilgan: "",
+                                  ish: "",
+                                  manzil: "",
+                                },
+                              ],
+                            })
+                          }
+                          className="text-brand text-xs font-bold hover:underline"
+                        >
+                          {"+ Qator qo'shish"}
+                        </button>
+                      </div>
+                      {(data.obyektivka?.qarindoshlar ?? []).map((rel, idx) => (
+                        <div
+                          key={idx}
+                          className="border-border bg-surface space-y-2 rounded-xl border p-2.5"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted text-[11px] font-bold">
+                              {`#${idx + 1} Tuwısqan`}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list.splice(idx, 1);
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              className="text-xs text-red-500 hover:underline"
+                            >
+                              {"O'chirish"}
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            <input
+                              type="text"
+                              value={rel.qarindoshligi}
+                              onChange={(e) => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list[idx] = {
+                                  ...list[idx],
+                                  qarindoshligi: e.target.value,
+                                };
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              placeholder="Tuwısqanlıq (Ákesi, Anası...)"
+                              className="border-border rounded-lg border px-2.5 py-1.5 text-xs outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={rel.fio}
+                              onChange={(e) => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list[idx] = {
+                                  ...list[idx],
+                                  fio: e.target.value,
+                                };
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              placeholder="Familiyası, atı hám ákesiniń atı"
+                              className="border-border rounded-lg border px-2.5 py-1.5 text-xs outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={rel.tugilgan}
+                              onChange={(e) => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list[idx] = {
+                                  ...list[idx],
+                                  tugilgan: e.target.value,
+                                };
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              placeholder="Tuwılǵan jılı hám ornı"
+                              className="border-border rounded-lg border px-2.5 py-1.5 text-xs outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={rel.ish}
+                              onChange={(e) => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list[idx] = {
+                                  ...list[idx],
+                                  ish: e.target.value,
+                                };
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              placeholder="Jumıs ornı hám lawazımı"
+                              className="border-border rounded-lg border px-2.5 py-1.5 text-xs outline-none"
+                            />
+                            <input
+                              type="text"
+                              value={rel.manzil}
+                              onChange={(e) => {
+                                const list = [
+                                  ...(data.obyektivka?.qarindoshlar ?? []),
+                                ];
+                                list[idx] = {
+                                  ...list[idx],
+                                  manzil: e.target.value,
+                                };
+                                updateObyektivka({ qarindoshlar: list });
+                              }}
+                              placeholder="Turar jayı"
+                              className="border-border rounded-lg border px-2.5 py-1.5 text-xs outline-none sm:col-span-2"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Privacy Settings */}
                 <div className="border-border/40 space-y-3 border-t pt-3">
                   <label className="text-foreground text-xs font-bold">
@@ -1899,6 +2263,47 @@ export function CvStepBuilder({
                     onChange={(e) => onToggleVisibility(e.target.checked)}
                     className="text-brand focus:ring-brand h-5 w-5 rounded"
                   />
+                </div>
+
+                {/* Mobile-only Final Scaled Preview (shown at the end on phones, desktop keeps right column) */}
+                <div className="border-border bg-muted/20 space-y-2 rounded-2xl border p-3 lg:hidden">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted text-xs font-bold uppercase">
+                      {t("livePreview")}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setFullscreenOpen(true)}
+                      className="text-brand text-xs font-bold hover:underline"
+                    >
+                      {"⛶ Kattalashtirish"}
+                    </button>
+                  </div>
+                  <div className="border-border bg-surface w-full overflow-hidden rounded-xl border">
+                    <div
+                      className="flex justify-center"
+                      style={{ height: "475px" }}
+                    >
+                      <div
+                        style={{
+                          width: "794px",
+                          minWidth: "794px",
+                          transform: "scale(0.41)",
+                          transformOrigin: "top center",
+                        }}
+                      >
+                        <CvDocument
+                          cv={{
+                            data,
+                            language: draft.language as CvDocumentLanguage,
+                            workTypes: draft.workTypes as WorkType[],
+                            templateId: draft.templateId,
+                          }}
+                          labels={labels}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -2062,6 +2467,21 @@ export function CvStepBuilder({
             </div>
           </div>
         </div>
+      )}
+
+      {cropperSrc && (
+        <PhotoCropperModal
+          imageSrc={cropperSrc}
+          aspect={activeTemplateId === "obyektivka" ? "portrait" : "square"}
+          onCancel={() => setCropperSrc(null)}
+          onConfirm={(croppedDataUrl) => {
+            onChange({
+              ...draft,
+              data: { ...data, photo: croppedDataUrl },
+            });
+            setCropperSrc(null);
+          }}
+        />
       )}
     </div>
   );

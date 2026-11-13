@@ -59,5 +59,6 @@ export function adaptCvDocumentToTemplateData(
       level: l.level || "",
     })),
     hobbies: data.hobbies || [],
+    obyektivka: data.obyektivka,
   };
 }

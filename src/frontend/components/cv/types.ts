@@ -21,6 +21,7 @@ export type CvTemplateId =
   | "minimal-3"
   | "minimal-4"
   | "minimal-5"
+  | "obyektivka"
   | (string & {});
 
 export type CvPrivacyState = {

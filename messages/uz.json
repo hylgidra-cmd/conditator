@@ -451,7 +451,23 @@
       "noFile": "Fayl tanlanmagan"
     },
     "vacanciesLink": "Vakansiyalar",
-    "postVacancyLink": "Yangi vakansiya qoʻshish"
+    "postVacancyLink": "Yangi vakansiya qoʻshish",
+    "billingLink": "Tariflar va toʻlovlar",
+    "billing": {
+      "title": "Tariflar va toʻlovlar",
+      "back": "Kompaniya kabinetiga qaytish",
+      "subActive": "AI saralash obunasi faol ({date} gacha)",
+      "subInactive": "AI saralash obunasi faol emas",
+      "unlockTitle": "Top nomzodlarni ochish (80–100% moslik)",
+      "unlockDesc": "14 999 UZS — 15 kun davomida barcha yuqori moslikdagi nomzodlarning aloqa maʼlumotlarini ochadi.",
+      "historyTitle": "Toʻlovlar tarixi",
+      "empty": "Hozircha toʻlovlar yoʻq.",
+      "purpose": "Maqsad",
+      "provider": "Tizim",
+      "amount": "Summa",
+      "status": "Holat",
+      "date": "Sana"
+    }
   },
   "Vacancies": {
     "title": "Talablar",
@@ -465,7 +481,9 @@
       "freeTextOnly": "Erkin matn",
       "experience": "{years, plural, =0 {tajriba shart emas} other {# yil tajriba}}",
       "candidates": "Nomzodlar",
-      "decisions": "Tanlandi: {selected} · Mos emas: {rejected}"
+      "decisions": "Tanlandi: {selected} · Mos emas: {rejected}",
+      "applicationsCount": "Arizalar: {count}",
+      "viewApplications": "Arizalarni koʻrish"
     },
     "pagination": {
       "prev": "Oldingi",
@@ -567,7 +585,9 @@
       "users": "Foydalanuvchilar",
       "companies": "Kompaniyalar",
       "vacancies": "Vakansiyalar",
-      "support": "Qoʻllab-quvvatlash"
+      "support": "Qoʻllab-quvvatlash",
+      "complaints": "Shikoyatlar",
+      "payments": "Toʻlovlar"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -677,6 +697,31 @@
         "CLOSED": "Yopilgan",
         "CANCELLED": "Bekor qilingan"
       }
+    },
+    "complaints": {
+      "title": "Shikoyatlar",
+      "empty": "Hozircha shikoyatlar yoʻq.",
+      "reporter": "Yuboruvchi",
+      "reported": "Shikoyat qilingan",
+      "reason": "Sabab",
+      "status": "Holat",
+      "date": "Sana",
+      "action": "Amal",
+      "resolve": "Hal qilindi",
+      "dismiss": "Rad etish"
+    },
+    "payments": {
+      "title": "Toʻlovlar va daromad",
+      "totalRevenue": "Jami daromad (UZS)",
+      "completedCount": "Muvaffaqiyatli toʻlovlar",
+      "pendingCount": "Kutilmoqda",
+      "empty": "Hozircha toʻlovlar yoʻq.",
+      "user": "Foydalanuvchi",
+      "purpose": "Maqsad",
+      "provider": "Tizim",
+      "amount": "Summa",
+      "status": "Holat",
+      "date": "Sana"
     }
   },
   "Theme": {
@@ -1279,7 +1324,11 @@
       "PART_TIME": "Yarim stavka",
       "REMOTE": "Masofaviy",
       "INTERNSHIP": "Amaliyot"
-    }
+    },
+    "locationPlaceholder": "Shahar yoki hudud...",
+    "minSalaryPlaceholder": "Min. maosh (UZS)",
+    "recommendedTitle": "Sizga mos vakansiyalar",
+    "recommendedSubtitle": "CV koʻnikmalaringiz asosida tanlangan"
   },
   "VacancyDetail": {
     "back": "← Barcha vakansiyalarga qaytish",

@@ -451,7 +451,23 @@
       "noFile": "Fayl tańlanbaǵan"
     },
     "vacanciesLink": "Vakansiyalar",
-    "postVacancyLink": "Jańa vakansiya qosıw"
+    "postVacancyLink": "Jańa vakansiya qosıw",
+    "billingLink": "Tarifler hám tólemler",
+    "billing": {
+      "title": "Tarifler hám tólemler",
+      "back": "Kompaniya kabinetine qaytıw",
+      "subActive": "AI saralaw jazılıwı aktiv ({date} shekem)",
+      "subInactive": "AI saralaw jazılıwı aktiv emes",
+      "unlockTitle": "Top nomzodlardı ashıw (80–100% sáykeslik)",
+      "unlockDesc": "14 999 UZS — 15 kún dawamında barlıq joqarı sáykesliktegi nomzodlardıń baylanıs maǵlıwmatların ashadı.",
+      "historyTitle": "Tólemler tariyxı",
+      "empty": "Házirshe tólemler joq.",
+      "purpose": "Maqset",
+      "provider": "Sistema",
+      "amount": "Summa",
+      "status": "Jaǵday",
+      "date": "Sáne"
+    }
   },
   "Vacancies": {
     "title": "Talaplar",
@@ -465,7 +481,9 @@
       "freeTextOnly": "Erkin tekst",
       "experience": "{years, plural, =0 {tájiriybe shárt emes} other {# jıl tájiriybe}}",
       "candidates": "Kandidatlar",
-      "decisions": "Tańlandı: {selected} · Sáykes emes: {rejected}"
+      "decisions": "Tańlandı: {selected} · Sáykes emes: {rejected}",
+      "applicationsCount": "Arzalar: {count}",
+      "viewApplications": "Arzalardı kóriw"
     },
     "pagination": {
       "prev": "Aldıńǵı",
@@ -567,7 +585,9 @@
       "users": "Paydalanıwshılar",
       "companies": "Kompaniyalar",
       "vacancies": "Vakansiyalar",
-      "support": "Qollap-quwatlaw"
+      "support": "Qollap-quwatlaw",
+      "complaints": "Shaǵımlar",
+      "payments": "Tólemler"
     },
     "dashboard": {
       "title": "Admin paneli",
@@ -677,6 +697,31 @@
         "CLOSED": "Jabılǵan",
         "CANCELLED": "Biykar etilgen"
       }
+    },
+    "complaints": {
+      "title": "Shaǵımlar",
+      "empty": "Házirshe shaǵımlar joq.",
+      "reporter": "Jiberiwshi",
+      "reported": "Shaǵım etilgen",
+      "reason": "Sebep",
+      "status": "Jaǵday",
+      "date": "Sáne",
+      "action": "Ámel",
+      "resolve": "Sheshildi",
+      "dismiss": "Biykarlaw"
+    },
+    "payments": {
+      "title": "Tólemler hám daramat",
+      "totalRevenue": "Jámi tabıs (UZS)",
+      "completedCount": "Tabıslı tólemler",
+      "pendingCount": "Kútilmekte",
+      "empty": "Házirshe tólemler joq.",
+      "user": "Paydalanıwshı",
+      "purpose": "Maqset",
+      "provider": "Sistema",
+      "amount": "Summa",
+      "status": "Jaǵday",
+      "date": "Sáne"
     }
   },
   "Theme": {
@@ -1279,7 +1324,11 @@
       "PART_TIME": "Yarım stavka",
       "REMOTE": "Qashıqtan",
       "INTERNSHIP": "Ámeliyat"
-    }
+    },
+    "locationPlaceholder": "Qala yamasa aymaq...",
+    "minSalaryPlaceholder": "Min. aylıq (UZS)",
+    "recommendedTitle": "Sizge sáykes vakansiyalar",
+    "recommendedSubtitle": "CV kónlikpelerińiz tiykarında tańlanǵan"
   },
   "VacancyDetail": {
     "back": "← Barlıq vakansiyalarǵa qaytıw",

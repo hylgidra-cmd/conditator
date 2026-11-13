@@ -5,6 +5,7 @@ import { requireCompanyPage } from "@/backend/company/page";
 import { formatDate } from "@/backend/format-date";
 import { pageSchema } from "@/backend/vacancy/schema";
 import { listVacancies } from "@/backend/vacancy/service";
+import { db } from "@/backend/db";
 import { decisionCounts } from "@/backend/match/decision";
 
 export default async function VacanciesPage({
@@ -17,7 +18,18 @@ export default async function VacanciesPage({
   const tWork = await getTranslations("StudentCv.workTypes");
   const page = pageSchema.parse((await searchParams).page);
   const { items, pageCount } = await listVacancies(company.id, page);
-  const counts = await decisionCounts(items.map((item) => item.id));
+  const ids = items.map((item) => item.id);
+  const [counts, appRows] = await Promise.all([
+    decisionCounts(ids),
+    ids.length > 0
+      ? db.vacancyApplication.groupBy({
+          by: ["vacancyId"],
+          where: { vacancyId: { in: ids } },
+          _count: { _all: true },
+        })
+      : [],
+  ]);
+  const appCounts = new Map(appRows.map((r) => [r.vacancyId, r._count._all]));
 
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
@@ -84,7 +96,15 @@ export default async function VacanciesPage({
                     {vacancy.rawText}
                   </p>
                 ) : null}
-                <div className="flex flex-wrap gap-3 pt-1 text-sm font-medium">
+                <div className="flex flex-wrap items-center gap-3 pt-1 text-sm font-medium">
+                  <Link
+                    href={`/company/vacancies/${vacancy.id}/matches?tab=applications`}
+                    className="bg-brand-soft text-brand rounded-lg px-2.5 py-1 text-xs font-semibold hover:underline"
+                  >
+                    {t("list.applicationsCount", {
+                      count: appCounts.get(vacancy.id) ?? 0,
+                    })}
+                  </Link>
                   <Link
                     href={`/company/vacancies/${vacancy.id}/matches`}
                     className="text-brand hover:underline"

@@ -23,12 +23,20 @@ export default async function CompanyPage() {
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <Link
-          href="/company/vacancies"
-          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold"
-        >
-          {t("vacanciesLink")}
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/company/billing"
+            className="border-border bg-surface rounded-lg border px-4 py-2 text-sm font-medium"
+          >
+            {t("billingLink")}
+          </Link>
+          <Link
+            href="/company/vacancies"
+            className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold"
+          >
+            {t("vacanciesLink")}
+          </Link>
+        </div>
       </div>
 
       <section className="border-border bg-surface space-y-3 rounded-2xl border p-5 shadow-sm">

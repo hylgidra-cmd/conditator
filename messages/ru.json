@@ -451,7 +451,23 @@
       "noFile": "Файл не выбран"
     },
     "vacanciesLink": "Вакансии",
-    "postVacancyLink": "Разместить вакансию"
+    "postVacancyLink": "Разместить вакансию",
+    "billingLink": "Тарифы и платежи",
+    "billing": {
+      "title": "Тарифы и платежи",
+      "back": "Вернуться в кабинет компании",
+      "subActive": "Подписка AI-подбора активна (до {date})",
+      "subInactive": "Подписка AI-подбора не активна",
+      "unlockTitle": "Открыть топ-кандидатов (совпадение 80–100%)",
+      "unlockDesc": "14 999 UZS — открывает контакты всех лучших кандидатов по вакансии на 15 дней.",
+      "historyTitle": "История платежей",
+      "empty": "Платежей пока нет.",
+      "purpose": "Назначение",
+      "provider": "Система",
+      "amount": "Сумма",
+      "status": "Статус",
+      "date": "Дата"
+    }
   },
   "Vacancies": {
     "title": "Вакансии",
@@ -465,7 +481,9 @@
       "freeTextOnly": "Свободный текст",
       "experience": "{years, plural, =0 {без опыта} one {опыт от # года} other {опыт от # лет}}",
       "candidates": "Кандидаты",
-      "decisions": "Выбрано: {selected} · Не подходят: {rejected}"
+      "decisions": "Выбрано: {selected} · Не подходят: {rejected}",
+      "applicationsCount": "Отклики: {count}",
+      "viewApplications": "Смотреть отклики"
     },
     "pagination": {
       "prev": "Назад",
@@ -567,7 +585,9 @@
       "users": "Пользователи",
       "companies": "Компании",
       "vacancies": "Вакансии",
-      "support": "Поддержка"
+      "support": "Поддержка",
+      "complaints": "Жалобы",
+      "payments": "Платежи"
     },
     "dashboard": {
       "title": "Панель администратора",
@@ -677,6 +697,31 @@
         "CLOSED": "Закрыта",
         "CANCELLED": "Отменена"
       }
+    },
+    "complaints": {
+      "title": "Жалобы",
+      "empty": "Жалоб пока нет.",
+      "reporter": "Отправитель",
+      "reported": "На кого",
+      "reason": "Причина",
+      "status": "Статус",
+      "date": "Дата",
+      "action": "Действие",
+      "resolve": "Решено",
+      "dismiss": "Отклонить"
+    },
+    "payments": {
+      "title": "Платежи и доход",
+      "totalRevenue": "Общий доход (UZS)",
+      "completedCount": "Успешные платежи",
+      "pendingCount": "В ожидании",
+      "empty": "Платежей пока нет.",
+      "user": "Пользователь",
+      "purpose": "Назначение",
+      "provider": "Система",
+      "amount": "Сумма",
+      "status": "Статус",
+      "date": "Дата"
     }
   },
   "Theme": {
@@ -1279,7 +1324,11 @@
       "PART_TIME": "Частичная занятость",
       "REMOTE": "Удаленная работа",
       "INTERNSHIP": "Стажировка"
-    }
+    },
+    "locationPlaceholder": "Город или регион...",
+    "minSalaryPlaceholder": "Мин. зарплата (UZS)",
+    "recommendedTitle": "Подходящие вам вакансии",
+    "recommendedSubtitle": "Подобрано по вашим навыкам из резюме"
   },
   "VacancyDetail": {
     "back": "← Назад ко всем вакансиям",

@@ -4,6 +4,7 @@ import { cn, FOCUS_RING } from "@/frontend/components/ds/cn";
 import { Logo } from "@/frontend/components/ds/logo";
 import { Link } from "@/i18n/navigation";
 import { currentUser } from "@/backend/auth/current-user";
+import { getUnreadMessageCount } from "@/backend/chat/unread";
 import { LogoutButton } from "./auth/logout-button";
 import { LocaleSwitcher } from "./locale-switcher";
 import { MobileMenu } from "./mobile-menu";
@@ -23,6 +24,9 @@ export async function SiteHeader() {
   const t = await getTranslations("Header");
   const tTheme = await getTranslations("Theme");
   const user = await currentUser();
+  const unreadCount = user
+    ? await getUnreadMessageCount(user.id, user.role)
+    : 0;
 
   // Bosh sahifa boʻlimlariga havolalar.
   const sections = [
@@ -84,8 +88,17 @@ export async function SiteHeader() {
           className="ml-14 hidden items-center gap-10 lg:flex"
         >
           {(user ? roleLinks : sections).map((item) => (
-            <Link key={item.href} href={item.href} className={NAV_LINK}>
-              {item.label}
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(NAV_LINK, "inline-flex items-center gap-1.5")}
+            >
+              <span>{item.label}</span>
+              {item.href === "/chat" && unreadCount > 0 ? (
+                <span className="bg-brand text-brand-foreground inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] leading-none font-bold">
+                  {unreadCount}
+                </span>
+              ) : null}
             </Link>
           ))}
         </nav>

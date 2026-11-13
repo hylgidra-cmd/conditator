@@ -451,7 +451,23 @@
       "noFile": "No file selected"
     },
     "vacanciesLink": "Vacancies",
-    "postVacancyLink": "Post a vacancy"
+    "postVacancyLink": "Post a vacancy",
+    "billingLink": "Billing & Plans",
+    "billing": {
+      "title": "Billing & Plans",
+      "back": "Back to company profile",
+      "subActive": "AI matching subscription active (until {date})",
+      "subInactive": "AI matching subscription inactive",
+      "unlockTitle": "Unlock top candidates (80–100% match)",
+      "unlockDesc": "14,999 UZS — unlocks contact details of all top-matched candidates for 15 days.",
+      "historyTitle": "Payment history",
+      "empty": "No payments yet.",
+      "purpose": "Purpose",
+      "provider": "Provider",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
+    }
   },
   "Vacancies": {
     "title": "Vacancies",
@@ -465,7 +481,9 @@
       "freeTextOnly": "Free text",
       "experience": "{years, plural, =0 {no experience required} one {# year of experience} other {# years of experience}}",
       "candidates": "Candidates",
-      "decisions": "Selected: {selected} · Not a fit: {rejected}"
+      "decisions": "Selected: {selected} · Not a fit: {rejected}",
+      "applicationsCount": "Applications: {count}",
+      "viewApplications": "View applications"
     },
     "pagination": {
       "prev": "Previous",
@@ -567,7 +585,9 @@
       "users": "Users",
       "companies": "Companies",
       "vacancies": "Vacancies",
-      "support": "Support"
+      "support": "Support",
+      "complaints": "Complaints",
+      "payments": "Payments"
     },
     "dashboard": {
       "title": "Admin panel",
@@ -677,6 +697,31 @@
         "CLOSED": "Closed",
         "CANCELLED": "Cancelled"
       }
+    },
+    "complaints": {
+      "title": "Complaints",
+      "empty": "No complaints yet.",
+      "reporter": "Reporter",
+      "reported": "Reported user",
+      "reason": "Reason",
+      "status": "Status",
+      "date": "Date",
+      "action": "Action",
+      "resolve": "Resolve",
+      "dismiss": "Dismiss"
+    },
+    "payments": {
+      "title": "Payments & Revenue",
+      "totalRevenue": "Total revenue (UZS)",
+      "completedCount": "Completed",
+      "pendingCount": "Pending",
+      "empty": "No payments yet.",
+      "user": "User",
+      "purpose": "Purpose",
+      "provider": "Provider",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date"
     }
   },
   "Theme": {
@@ -1279,7 +1324,11 @@
       "PART_TIME": "Part-time",
       "REMOTE": "Remote",
       "INTERNSHIP": "Internship"
-    }
+    },
+    "locationPlaceholder": "City or region...",
+    "minSalaryPlaceholder": "Min. salary (UZS)",
+    "recommendedTitle": "Recommended for you",
+    "recommendedSubtitle": "Matched based on your CV skills"
   },
   "VacancyDetail": {
     "back": "← Back to all vacancies",

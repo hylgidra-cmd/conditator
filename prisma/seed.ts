@@ -464,9 +464,11 @@ async function seedDemoStudents() {
 async function main() {
   await seedSettings();
   await seedAdmin();
-  await seedDemoUsers();
-  await seedDemoCompaniesAndVacancies();
-  await seedDemoStudents();
+  if (process.env.SEED_DEMO === "true") {
+    await seedDemoUsers();
+    await seedDemoCompaniesAndVacancies();
+    await seedDemoStudents();
+  }
 }
 
 main()

@@ -323,7 +323,7 @@ export function HeroTerminal({
             <BuildingIcon size={20} />
           </span>
           <h3 className="text-lg leading-snug font-black text-white">
-            {labels.mode1} & {labels.mode3}
+            {`${labels.mode1} · ${labels.mode3}`}
           </h3>
           <p className="text-xs leading-relaxed text-emerald-50/90">
             {labels.previewStatus}

@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { LandingStats } from "@/backend/landing-stats";
-import { ButtonLink } from "@/frontend/components/ds/button";
 import { cn } from "@/frontend/components/ds/cn";
 import { AnimatedNumber, Reveal } from "@/frontend/components/ds/motion";
 import {
+  ArrowRightIcon,
   BriefcaseIcon,
   CheckIcon,
   FileTextIcon,
@@ -14,6 +14,7 @@ import {
   SparkIcon,
   UserIcon,
 } from "@/frontend/components/icons";
+import { Link } from "@/i18n/navigation";
 
 type Mode = "student" | "company";
 
@@ -58,345 +59,398 @@ export function PlatformShowcase({ stats }: { stats: LandingStats }) {
     { value: stats.approvedCompanies, label: t("liveCompanies") },
   ];
 
-  // 4 orbital node positions around the circle (Top, Right, Bottom, Left)
-  const orbitPositions = [
-    "top-2 left-1/2 -translate-x-1/2",
-    "top-1/2 right-2 -translate-y-1/2",
-    "bottom-2 left-1/2 -translate-x-1/2",
-    "top-1/2 left-2 -translate-y-1/2",
+  // 4 diagonal positions on the outer ring (45°, 135°, 225°, 315°) — never overlaps the center!
+  const diagonalNodes = [
+    "top-[6%] left-[6%]",
+    "top-[6%] right-[6%]",
+    "bottom-[6%] right-[6%]",
+    "bottom-[6%] left-[6%]",
   ] as const;
 
   const activeStepItem = steps[activeStep];
   const ActiveIcon = activeStepItem.Icon;
-  const ringCircumference = 2 * Math.PI * 128;
+  const ringCircumference = 2 * Math.PI * 136;
   const ringOffset = ringCircumference * (1 - (activeStep + 1) / 4);
 
   return (
     <section
       id="showcase"
       aria-labelledby="showcase-title"
-      className="bg-peach font-ui section-y relative overflow-hidden"
+      className="bg-canvas font-ui section-y relative overflow-hidden"
     >
-      {/* Ambient emerald glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-1/2 left-1/2 -z-0 size-[44rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-500/12 blur-3xl"
-      />
-
-      <div className="page-x relative z-10">
-        {/* Section Header + Role Switcher */}
+      <div className="page-x">
         <Reveal>
-          <div className="flex flex-col items-center text-center">
-            <span className="border-primary/35 bg-card text-primary-text shadow-soft inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-extrabold tracking-wide">
-              <SparkIcon size={14} />
-              {t("badge")}
-            </span>
-            <h2
-              id="showcase-title"
-              className="text-h2 text-text mt-4 max-w-2xl font-black text-balance"
-            >
-              {t("title")}
-            </h2>
-            <p className="text-subtle text-lead mt-3 max-w-xl">
-              {t("subtitle")}
-            </p>
-
-            {/* Interactive Role Switcher Pill */}
+          {/* Monumental Dark Forest Obsidian Planetarium Stage */}
+          <div className="relative isolate overflow-hidden rounded-[2.5rem] border border-emerald-500/30 bg-gradient-to-br from-[#03110D] via-[#061C16] to-[#08271F] p-6 text-white shadow-[0_32px_90px_-20px_rgb(3,17,13,0.7)] sm:p-10 lg:p-14">
+            {/* Ambient Aurora & Grid */}
             <div
-              role="tablist"
-              aria-label={t("badge")}
-              className="border-line bg-card shadow-float mt-7 inline-flex rounded-full border p-1.5"
-            >
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === "student"}
-                onClick={() => {
-                  setMode("student");
-                  setActiveStep(0);
-                }}
-                className={cn(
-                  "cursor-pointer rounded-full px-6 py-2.5 text-xs font-extrabold transition-all duration-200 sm:text-sm",
-                  mode === "student"
-                    ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-[0_8px_20px_-4px_rgb(5,150,105,0.55)]"
-                    : "text-subtle hover:text-text",
-                )}
+              aria-hidden
+              className="bg-cyber-grid pointer-events-none absolute inset-0 -z-20 opacity-30"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-32 left-1/4 -z-10 size-96 rounded-full bg-emerald-500/20 blur-3xl"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-24 -bottom-24 -z-10 size-96 rounded-full bg-teal-400/15 blur-3xl"
+            />
+
+            {/* Top Header + Role Switcher */}
+            <div className="flex flex-col items-start justify-between gap-6 border-b border-white/10 pb-8 lg:flex-row lg:items-end">
+              <div className="max-w-2xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/35 bg-emerald-500/15 px-4 py-1.5 text-xs font-extrabold tracking-wide text-emerald-300">
+                  <SparkIcon size={14} />
+                  {t("badge")}
+                </span>
+                <h2
+                  id="showcase-title"
+                  className="text-h2 mt-4 font-black text-white text-balance"
+                >
+                  {t("title")}
+                </h2>
+                <p className="mt-2.5 text-sm leading-relaxed text-emerald-100/75 sm:text-base">
+                  {t("subtitle")}
+                </p>
+              </div>
+
+              <div
+                role="tablist"
+                aria-label={t("badge")}
+                className="inline-flex rounded-full border border-white/15 bg-white/6 p-1.5 backdrop-blur-xl"
               >
-                {t("tabStudent")}
-              </button>
-              <button
-                type="button"
-                role="tab"
-                aria-selected={mode === "company"}
-                onClick={() => {
-                  setMode("company");
-                  setActiveStep(0);
-                }}
-                className={cn(
-                  "cursor-pointer rounded-full px-6 py-2.5 text-xs font-extrabold transition-all duration-200 sm:text-sm",
-                  mode === "company"
-                    ? "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-[0_8px_20px_-4px_rgb(5,150,105,0.55)]"
-                    : "text-subtle hover:text-text",
-                )}
-              >
-                {t("tabCompany")}
-              </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === "student"}
+                  onClick={() => {
+                    setMode("student");
+                    setActiveStep(0);
+                  }}
+                  className={cn(
+                    "cursor-pointer rounded-full px-5 py-2.5 text-xs font-extrabold transition-all duration-200 sm:text-sm",
+                    mode === "student"
+                      ? "bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-slate-950 shadow-[0_8px_24px_-4px_rgb(16,185,129,0.65)]"
+                      : "text-emerald-100/75 hover:text-white",
+                  )}
+                >
+                  {t("tabStudent")}
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === "company"}
+                  onClick={() => {
+                    setMode("company");
+                    setActiveStep(0);
+                  }}
+                  className={cn(
+                    "cursor-pointer rounded-full px-5 py-2.5 text-xs font-extrabold transition-all duration-200 sm:text-sm",
+                    mode === "company"
+                      ? "bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 text-slate-950 shadow-[0_8px_24px_-4px_rgb(16,185,129,0.65)]"
+                      : "text-emerald-100/75 hover:text-white",
+                  )}
+                >
+                  {t("tabCompany")}
+                </button>
+              </div>
+            </div>
+
+            {/* Main 2-Column Planetarium Orbital Radar + Interactive Bento Deck */}
+            <div className="mt-10 grid items-center gap-10 lg:grid-cols-12">
+              {/* LEFT (6 cols): True 360° Revolving Radar & Orbital Sphere */}
+              <div className="flex items-center justify-center lg:col-span-6">
+                <div className="relative flex aspect-square w-full max-w-[23rem] items-center justify-center sm:max-w-[26rem]">
+                  {/* 1. Rotating Conic Radar Sweep Beam */}
+                  <div
+                    aria-hidden
+                    style={{
+                      background:
+                        "conic-gradient(from 0deg, transparent 68%, rgba(16, 185, 129, 0.28) 96%, rgba(52, 211, 153, 0.55) 100%)",
+                      animationDuration: "8s",
+                    }}
+                    className="ds-orbit-slow pointer-events-none absolute inset-4 rounded-full"
+                  />
+
+                  {/* 2. Outer Revolving Ring with Glowing Beacons */}
+                  <div
+                    aria-hidden
+                    className="ds-orbit-slow pointer-events-none absolute inset-4 rounded-full border border-dashed border-emerald-400/35"
+                  >
+                    <span className="absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rounded-full bg-emerald-400 shadow-[0_0_16px_#34d399]" />
+                    <span className="absolute -bottom-1.5 left-1/2 size-3 -translate-x-1/2 rounded-full bg-teal-300 shadow-[0_0_16px_#2dd4bf]" />
+                  </div>
+
+                  {/* 3. Counter-Rotating Middle Orbit with 4 Language Satellites */}
+                  <div
+                    aria-hidden
+                    style={{
+                      animationDirection: "reverse",
+                      animationDuration: "22s",
+                    }}
+                    className="ds-orbit-slow pointer-events-none absolute inset-14 rounded-full border border-teal-400/25"
+                  >
+                    {langs.map((l, i) => {
+                      const pos = [
+                        "-top-3 left-1/2 -translate-x-1/2",
+                        "top-1/2 -right-3 -translate-y-1/2",
+                        "-bottom-3 left-1/2 -translate-x-1/2",
+                        "top-1/2 -left-3 -translate-y-1/2",
+                      ][i];
+                      return (
+                        <span
+                          key={l.code}
+                          className={cn(
+                            "absolute rounded-full border border-emerald-400/40 bg-[#041410] px-2 py-0.5 text-[9px] font-black text-emerald-300 shadow-md",
+                            pos,
+                          )}
+                        >
+                          {l.code}
+                        </span>
+                      );
+                    })}
+                  </div>
+
+                  {/* 4. SVG Circular Progress Ring */}
+                  <svg
+                    aria-hidden
+                    viewBox="0 0 320 320"
+                    className="pointer-events-none absolute inset-0 size-full -rotate-90"
+                  >
+                    <circle
+                      cx="160"
+                      cy="160"
+                      r="136"
+                      fill="none"
+                      stroke="rgba(255,255,255,0.08)"
+                      strokeWidth="2"
+                    />
+                    <circle
+                      cx="160"
+                      cy="160"
+                      r="136"
+                      fill="none"
+                      stroke="url(#planetarium-ring-grad)"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                      strokeDasharray={ringCircumference}
+                      strokeDashoffset={ringOffset}
+                      className="transition-all duration-700 ease-out"
+                    />
+                    <defs>
+                      <linearGradient
+                        id="planetarium-ring-grad"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
+                        <stop offset="0%" stopColor="#34d399" />
+                        <stop offset="50%" stopColor="#2dd4bf" />
+                        <stop offset="100%" stopColor="#fbbf24" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+
+                  {/* 5. Central Pulsing AI Core Sphere */}
+                  <div className="relative z-10 flex size-44 flex-col items-center justify-center rounded-full border border-emerald-400/45 bg-gradient-to-b from-[#07261E] to-[#03120E] p-5 text-center shadow-[0_0_70px_-10px_rgb(16,185,129,0.7)] sm:size-48">
+                    <div
+                      aria-hidden
+                      className="ds-pulse-ring pointer-events-none absolute -inset-3 rounded-full border border-emerald-400/35"
+                    />
+                    <span className="inline-flex size-12 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-400 text-slate-950 shadow-[0_8px_20px_rgba(16,185,129,0.5)]">
+                      <ActiveIcon size={24} />
+                    </span>
+                    <span className="mt-2.5 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[10px] font-black tracking-widest text-emerald-300">
+                      {`${activeStepItem.num} / 04`}
+                    </span>
+                    <p
+                      key={`${mode}-${activeStep}`}
+                      className="ds-slide-in mt-1.5 line-clamp-2 text-xs leading-snug font-extrabold text-white sm:text-sm"
+                    >
+                      {activeStepItem.label}
+                    </p>
+                  </div>
+
+                  {/* 6. Four Diagonal Orbital Nodes (Never collide with center!) */}
+                  {steps.map(({ num, label, Icon }, idx) => {
+                    const isActive = idx === activeStep;
+                    const isDone = idx < activeStep;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setActiveStep(idx)}
+                        aria-label={label}
+                        className={cn(
+                          "group absolute z-20 flex cursor-pointer items-center gap-2 rounded-2xl border px-3 py-2 text-left backdrop-blur-xl transition-all duration-300",
+                          diagonalNodes[idx],
+                          isActive
+                            ? "scale-105 border-emerald-300 bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-[0_0_30px_rgba(16,185,129,0.7)]"
+                            : isDone
+                              ? "border-emerald-400/40 bg-[#07261E]/90 text-emerald-200"
+                              : "border-white/15 bg-[#041410]/90 text-white/85 hover:border-emerald-400/50",
+                        )}
+                      >
+                        <span
+                          className={cn(
+                            "inline-flex size-7 shrink-0 items-center justify-center rounded-xl text-xs font-black",
+                            isActive
+                              ? "bg-slate-950/15 text-slate-950"
+                              : isDone
+                                ? "bg-emerald-500/20 text-emerald-300"
+                                : "bg-white/10 text-emerald-300",
+                          )}
+                        >
+                          {isDone ? <CheckIcon size={13} /> : <Icon size={13} />}
+                        </span>
+                        <span className="text-xs font-black tabular-nums">
+                          {num}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* RIGHT (6 cols): Synchronized 2x2 Step Matrix + Languages + Privacy */}
+              <div className="space-y-5 lg:col-span-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-black text-white sm:text-2xl">
+                      {mode === "student"
+                        ? t("studentPipelineTitle")
+                        : t("companyPipelineTitle")}
+                    </h3>
+                    <p className="mt-1 text-xs leading-relaxed text-emerald-100/75 sm:text-sm">
+                      {mode === "student"
+                        ? t("studentPipelineDesc")
+                        : t("companyPipelineDesc")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 2x2 Interactive Step Cards */}
+                <div className="grid gap-3.5 sm:grid-cols-2">
+                  {steps.map(({ num, label, Icon }, idx) => {
+                    const isActive = idx === activeStep;
+                    const isDone = idx < activeStep;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setActiveStep(idx)}
+                        className={cn(
+                          "flex cursor-pointer flex-col justify-between rounded-2xl border p-4 text-left transition-all duration-300",
+                          isActive
+                            ? "border-emerald-400 bg-gradient-to-br from-emerald-500/25 via-emerald-500/15 to-teal-500/10 shadow-[0_12px_30px_-8px_rgba(16,185,129,0.4)] -translate-y-0.5"
+                            : isDone
+                              ? "border-emerald-500/30 bg-white/8"
+                              : "border-white/10 bg-white/5 hover:border-white/25 hover:bg-white/8",
+                        )}
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span
+                            className={cn(
+                              "inline-flex size-10 items-center justify-center rounded-xl transition-colors",
+                              isActive
+                                ? "bg-gradient-to-br from-emerald-400 to-teal-400 text-slate-950 shadow-md"
+                                : isDone
+                                  ? "bg-emerald-500/20 text-emerald-300"
+                                  : "bg-white/10 text-emerald-200/75",
+                            )}
+                          >
+                            {isDone ? (
+                              <CheckIcon size={18} />
+                            ) : (
+                              <Icon size={18} />
+                            )}
+                          </span>
+                          <span
+                            className={cn(
+                              "rounded-full px-2.5 py-0.5 text-xs font-black tabular-nums",
+                              isActive
+                                ? "bg-emerald-400 text-slate-950"
+                                : "bg-white/8 text-emerald-200/70",
+                            )}
+                          >
+                            {num}
+                          </span>
+                        </div>
+                        <p className="mt-3.5 text-sm font-extrabold text-white">
+                          {label}
+                        </p>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Bottom Bento Strip: 4 Languages + Privacy Shield + CTA */}
+                <div className="grid gap-3.5 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/12 bg-white/6 p-4 backdrop-blur-md">
+                    <p className="text-xs font-extrabold text-emerald-300">
+                      {t("langTitle")}
+                    </p>
+                    <div className="mt-2.5 flex flex-wrap gap-1.5">
+                      {langs.map((item) => (
+                        <span
+                          key={item.code}
+                          className="inline-flex items-center gap-1.5 rounded-xl border border-white/10 bg-white/8 px-2.5 py-1 text-[11px] font-bold text-white"
+                        >
+                          <span className="text-emerald-300 font-black">
+                            {item.code}
+                          </span>
+                          <span>{item.label}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col justify-between rounded-2xl border border-emerald-400/30 bg-emerald-500/12 p-4">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-extrabold text-white">
+                        {t("privacyTitle")}
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/20 px-2 py-0.5 text-[10px] font-black text-emerald-300">
+                        <CheckIcon size={11} />
+                        {t("privacyBadge")}
+                      </span>
+                    </div>
+                    <p className="mt-1.5 line-clamp-2 text-[11px] leading-relaxed text-emerald-100/80">
+                      {t("privacyDesc")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Live Metrics + Action Bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/12 bg-white/6 px-5 py-3.5">
+                  <div className="flex items-center gap-6">
+                    {metrics.map((m) => (
+                      <div key={m.label}>
+                        <p className="text-lg font-black text-emerald-300 tabular-nums">
+                          <AnimatedNumber value={m.value} />
+                        </p>
+                        <p className="text-[10px] font-semibold text-emerald-100/70">
+                          {m.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <Link
+                    href={mode === "student" ? "/register" : "/company/students"}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 px-5 py-2.5 text-xs font-black text-slate-950 shadow-md transition-transform hover:-translate-y-0.5 sm:text-sm"
+                  >
+                    <span>
+                      {mode === "student" ? t("ctaStudent") : t("ctaCompany")}
+                    </span>
+                    <ArrowRightIcon size={15} />
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </Reveal>
-
-        {/* Main Interactive Orbital Radar Stage */}
-        <div className="mt-12 grid items-center gap-8 lg:grid-cols-12">
-          {/* Left Panel (4 cols): Active Step Detail + CTA */}
-          <Reveal delay={75} className="lg:col-span-4">
-            <div className="border-line bg-card shadow-float space-y-6 rounded-3xl border p-6 sm:p-8">
-              <div className="inline-flex items-center gap-2 rounded-full bg-emerald-500/12 px-3.5 py-1 text-xs font-extrabold text-emerald-700 dark:text-emerald-300">
-                <span className="size-2 rounded-full bg-emerald-500" />
-                <span>{`${activeStepItem.num} / 04`}</span>
-              </div>
-
-              <div>
-                <h3 className="text-text text-xl font-black sm:text-2xl">
-                  {mode === "student"
-                    ? t("studentPipelineTitle")
-                    : t("companyPipelineTitle")}
-                </h3>
-                <p className="text-subtle mt-2 text-sm leading-relaxed">
-                  {mode === "student"
-                    ? t("studentPipelineDesc")
-                    : t("companyPipelineDesc")}
-                </p>
-              </div>
-
-              {/* Step selector list synchronized with the circle */}
-              <div className="space-y-2">
-                {steps.map(({ num, label, Icon }, idx) => {
-                  const isActive = idx === activeStep;
-                  const isDone = idx < activeStep;
-                  return (
-                    <button
-                      key={num}
-                      type="button"
-                      onClick={() => setActiveStep(idx)}
-                      className={cn(
-                        "flex w-full cursor-pointer items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-300",
-                        isActive
-                          ? "border-emerald-500 bg-gradient-to-r from-emerald-600/12 to-teal-500/8 shadow-xs"
-                          : "border-line bg-card-cool/60 hover:border-primary/40",
-                      )}
-                    >
-                      <div className="flex items-center gap-3">
-                        <span
-                          className={cn(
-                            "inline-flex size-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition-colors",
-                            isActive
-                              ? "bg-emerald-600 text-white"
-                              : isDone
-                                ? "bg-success-soft text-success"
-                                : "bg-card text-subtle",
-                          )}
-                        >
-                          {isDone ? <CheckIcon size={14} /> : <Icon size={14} />}
-                        </span>
-                        <span className="text-text text-xs font-extrabold sm:text-sm">
-                          {label}
-                        </span>
-                      </div>
-                      <span className="text-primary-text text-xs font-black tabular-nums">
-                        {num}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <ButtonLink
-                href={mode === "student" ? "/register" : "/company/students"}
-                size="md"
-                arrow
-                className="w-full"
-              >
-                {mode === "student" ? t("ctaStudent") : t("ctaCompany")}
-              </ButtonLink>
-            </div>
-          </Reveal>
-
-          {/* Center Panel (4 cols): Circular / Orbital Radar Animation */}
-          <Reveal delay={150} className="lg:col-span-4">
-            <div className="relative mx-auto flex aspect-square w-full max-w-[25rem] items-center justify-center">
-              {/* Outer spinning dashed orbit */}
-              <div
-                aria-hidden
-                className="ds-orbit-slow border-primary/30 pointer-events-none absolute inset-3 rounded-full border-2 border-dashed"
-              />
-              {/* Second counter-rotating orbit ring */}
-              <div
-                aria-hidden
-                style={{ animationDirection: "reverse", animationDuration: "20s" }}
-                className="ds-orbit-slow pointer-events-none absolute inset-12 rounded-full border border-teal-500/35"
-              >
-                <span className="absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]" />
-                <span className="absolute -bottom-1.5 left-1/2 size-2.5 -translate-x-1/2 rounded-full bg-teal-400 shadow-[0_0_10px_#2dd4bf]" />
-              </div>
-
-              {/* SVG Progress Ring */}
-              <svg
-                aria-hidden
-                viewBox="0 0 300 300"
-                className="pointer-events-none absolute inset-0 size-full -rotate-90"
-              >
-                <circle
-                  cx="150"
-                  cy="150"
-                  r="128"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  className="text-primary/15"
-                />
-                <circle
-                  cx="150"
-                  cy="150"
-                  r="128"
-                  fill="none"
-                  stroke="url(#orbital-emerald-grad)"
-                  strokeWidth="5"
-                  strokeLinecap="round"
-                  strokeDasharray={ringCircumference}
-                  strokeDashoffset={ringOffset}
-                  className="transition-all duration-700 ease-out"
-                />
-                <defs>
-                  <linearGradient
-                    id="orbital-emerald-grad"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="100%"
-                  >
-                    <stop offset="0%" stopColor="#10b981" />
-                    <stop offset="50%" stopColor="#14b8a6" />
-                    <stop offset="100%" stopColor="#fbbf24" />
-                  </linearGradient>
-                </defs>
-              </svg>
-
-              {/* Central Pulsing AI Core */}
-              <div className="relative z-10 flex size-40 flex-col items-center justify-center rounded-full border border-emerald-400/35 bg-[#061A14] p-4 text-center text-white shadow-[0_0_50px_-10px_rgb(16,185,129,0.55)]">
-                <div
-                  aria-hidden
-                  className="ds-pulse-ring pointer-events-none absolute -inset-3 rounded-full border border-emerald-400/30"
-                />
-                <span className="inline-flex size-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-400 text-slate-950 shadow-md">
-                  <ActiveIcon size={22} />
-                </span>
-                <span className="mt-2 text-[11px] font-black tracking-wider text-emerald-300 uppercase">
-                  {activeStepItem.num}
-                </span>
-                <p
-                  key={`${mode}-${activeStep}`}
-                  className="ds-slide-in mt-0.5 line-clamp-2 text-xs leading-tight font-bold text-white"
-                >
-                  {activeStepItem.label}
-                </p>
-              </div>
-
-              {/* 4 Orbiting Step Nodes */}
-              {steps.map(({ num, label, Icon }, idx) => {
-                const isActive = idx === activeStep;
-                const isDone = idx < activeStep;
-                return (
-                  <button
-                    key={num}
-                    type="button"
-                    onClick={() => setActiveStep(idx)}
-                    aria-label={label}
-                    className={cn(
-                      "absolute z-20 flex cursor-pointer items-center gap-2 rounded-full border px-3.5 py-2 text-xs font-extrabold shadow-lg backdrop-blur-xl transition-all duration-300",
-                      orbitPositions[idx],
-                      isActive
-                        ? "scale-110 border-emerald-400 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-[0_10px_25px_-5px_rgb(5,150,105,0.65)]"
-                        : isDone
-                          ? "border-emerald-500/40 bg-card text-primary-text"
-                          : "border-line bg-card/95 text-text hover:border-primary/50",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "inline-flex size-6 items-center justify-center rounded-full text-[10px] font-black",
-                        isActive
-                          ? "bg-white/20 text-white"
-                          : isDone
-                            ? "bg-success-soft text-success"
-                            : "bg-primary-soft text-primary-text",
-                      )}
-                    >
-                      {isDone ? <CheckIcon size={12} /> : <Icon size={12} />}
-                    </span>
-                    <span className="max-w-[7.5rem] truncate">{label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </Reveal>
-
-          {/* Right Panel (4 cols): 4-Language Matrix + Privacy Shield + Live Metrics */}
-          <div className="flex flex-col gap-4 lg:col-span-4">
-            <Reveal delay={225}>
-              <div className="border-line bg-card shadow-float rounded-3xl border p-6">
-                <h3 className="text-text text-lg font-black">
-                  {t("langTitle")}
-                </h3>
-                <p className="text-subtle mt-1 text-xs leading-relaxed sm:text-sm">
-                  {t("langDesc")}
-                </p>
-                <div className="mt-4 grid grid-cols-2 gap-2.5">
-                  {langs.map((item) => (
-                    <div
-                      key={item.code}
-                      className="border-line bg-card-cool flex items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 text-xs font-bold"
-                    >
-                      <span className="rounded-lg bg-gradient-to-r from-emerald-600 to-teal-500 px-2 py-1 text-[10px] font-black text-white">
-                        {item.code}
-                      </span>
-                      <span className="text-text truncate">{item.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={300}>
-              <div className="rounded-3xl border border-emerald-500/30 bg-[#061A14] p-6 text-white shadow-xl">
-                <div className="flex items-center justify-between gap-2">
-                  <h3 className="text-base font-black text-white sm:text-lg">
-                    {t("privacyTitle")}
-                  </h3>
-                  <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/35 bg-emerald-500/20 px-3 py-1 text-[11px] font-extrabold text-emerald-300">
-                    <CheckIcon size={12} />
-                    {t("privacyBadge")}
-                  </span>
-                </div>
-                <p className="mt-2 text-xs leading-relaxed text-emerald-100/80 sm:text-sm">
-                  {t("privacyDesc")}
-                </p>
-
-                <dl className="mt-5 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center">
-                  {metrics.map((m) => (
-                    <div key={m.label}>
-                      <dd className="text-lg font-black text-emerald-300 tabular-nums sm:text-xl">
-                        <AnimatedNumber value={m.value} />
-                      </dd>
-                      <dt className="truncate text-[10px] font-semibold text-emerald-100/70">
-                        {m.label}
-                      </dt>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-            </Reveal>
-          </div>
-        </div>
       </div>
     </section>
   );

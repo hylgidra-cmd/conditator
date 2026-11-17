@@ -113,7 +113,9 @@ async function fetchLandingStats(): Promise<LandingStats> {
           salaryTo: true,
           currency: true,
           skills: true,
-          company: { select: { id: true, name: true, logoPath: true } },
+          company: {
+            select: { id: true, name: true, industry: true, logoPath: true },
+          },
         },
       }),
     ]);
@@ -141,7 +143,16 @@ async function fetchLandingStats(): Promise<LandingStats> {
       visibleCvs,
       approvedCompanies,
       approvedCompanyList: companyRows
-        .filter((c): c is { id: string; name: string; industry: string | null; logoPath: string | null } => Boolean(c.name?.trim()))
+        .filter(
+          (
+            c,
+          ): c is {
+            id: string;
+            name: string;
+            industry: string | null;
+            logoPath: string | null;
+          } => Boolean(c.name?.trim()),
+        )
         .map((c) => ({
           id: c.id,
           name: c.name.trim(),
@@ -153,7 +164,8 @@ async function fetchLandingStats(): Promise<LandingStats> {
         id: v.id,
         title: v.title,
         companyId: v.company.id,
-        companyName: v.company.name?.trim() || "—",
+        companyName:
+          v.company.name?.trim() || v.company.industry?.trim() || "CANDIDATOR",
         hasLogo: Boolean(v.company.logoPath),
         location: v.location,
         workType: v.workType,
@@ -172,6 +184,6 @@ async function fetchLandingStats(): Promise<LandingStats> {
 /** Bosh sahifa uchun bazadan real statistika (60 soniya keshlanadi). */
 export const getLandingStats = unstable_cache(
   fetchLandingStats,
-  ["landing-stats-v3"],
+  ["landing-stats-v4"],
   { revalidate: 60 },
 );

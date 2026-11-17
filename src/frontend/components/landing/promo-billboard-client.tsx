@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import type { FeaturedVacancy } from "@/backend/landing-stats";
 import { cn } from "@/frontend/components/ds/cn";
 import {
-  ArrowLeftIcon,
   ArrowRightIcon,
-  BriefcaseIcon,
   BuildingIcon,
   CodeWindowIcon,
   HandshakeIcon,
@@ -76,387 +74,290 @@ export function PromoBillboardClient({
     };
   };
 }) {
-  const [activeSlide, setActiveSlide] = useState(0);
+  const [spotlightMode, setSpotlightMode] = useState<0 | 1>(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (paused) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % 4);
-    }, 4800);
+      setSpotlightMode((prev) => (prev === 0 ? 1 : 0));
+    }, 4500);
     return () => window.clearInterval(timer);
   }, [paused]);
 
-  const prevSlide = () => setActiveSlide((s) => (s + 3) % 4);
-  const nextSlide = () => setActiveSlide((s) => (s + 1) % 4);
-
-  const vacancyGridClass =
-    vacancies.length <= 1
-      ? "grid gap-4 max-w-xl"
-      : vacancies.length === 2
-        ? "grid gap-4 sm:grid-cols-2"
-        : "grid gap-4 sm:grid-cols-2 lg:grid-cols-3";
+  const marqueeItems = [...industries, ...industries];
 
   return (
     <div
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="space-y-5"
+      className="space-y-6"
     >
-      {/* Interactive Auto-Rotating Controls */}
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:flex-wrap">
-          {labels.slideTabs.map((tabLabel, idx) => {
-            const active = activeSlide === idx;
-            return (
-              <button
-                key={tabLabel}
-                type="button"
-                onClick={() => setActiveSlide(idx)}
-                className={cn(
-                  "flex cursor-pointer items-center gap-2 rounded-2xl border px-4 py-2.5 text-xs font-extrabold transition-all active:scale-[0.98] sm:text-sm",
-                  active
-                    ? "border-emerald-600 bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-[0_10px_24px_-6px_rgb(5,150,105,0.55)]"
-                    : "border-line bg-card text-subtle hover:border-primary/50 hover:text-text",
-                )}
-              >
-                <span
-                  className={cn(
-                    "inline-flex size-5 items-center justify-center rounded-full text-[10px] font-black tabular-nums",
-                    active
-                      ? "bg-white/20 text-white"
-                      : "bg-primary-soft text-primary-text",
-                  )}
-                >
-                  {idx + 1}
-                </span>
-                <span className="truncate">{tabLabel}</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* 1. Infinite Auto-Scrolling Career & Industry Marquee */}
+      <div className="border-line bg-card/85 shadow-soft relative overflow-hidden rounded-3xl border py-5 backdrop-blur-xl">
+        <div
+          aria-hidden
+          className="from-card pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r to-transparent sm:w-28"
+        />
+        <div
+          aria-hidden
+          className="from-card pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l to-transparent sm:w-28"
+        />
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={prevSlide}
-            aria-label={labels.slideTabs[(activeSlide + 3) % 4]}
-            className="border-line bg-card text-text hover:border-primary inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border shadow-2xs transition-all active:scale-95"
-          >
-            <ArrowLeftIcon size={16} />
-          </button>
-          <button
-            type="button"
-            onClick={nextSlide}
-            aria-label={labels.slideTabs[(activeSlide + 1) % 4]}
-            className="border-line bg-card text-text hover:border-primary inline-flex size-10 cursor-pointer items-center justify-center rounded-xl border shadow-2xs transition-all active:scale-95"
-          >
-            <ArrowRightIcon size={16} />
-          </button>
-        </div>
-      </div>
-
-      {/* Main Dynamic Billboard Stage */}
-      <div className="border-line bg-card shadow-float relative overflow-hidden rounded-3xl border p-6 sm:p-10">
-        {/* Progress indicator bar */}
-        <div className="mb-8 grid grid-cols-4 gap-2">
-          {[0, 1, 2, 3].map((idx) => (
-            <button
-              key={idx}
-              type="button"
-              aria-label={labels.slideTabs[idx]}
-              onClick={() => setActiveSlide(idx)}
-              className="bg-line h-1.5 cursor-pointer overflow-hidden rounded-full"
+        <div className="ds-wave ds-wave-slow flex w-[200%] gap-4 px-4 hover:[animation-play-state:paused]">
+          {marqueeItems.map((ind, idx) => (
+            <Link
+              key={`${ind.title}-${idx}`}
+              href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
+              className="border-line bg-card-cool hover:border-primary group flex min-w-[17rem] flex-1 items-center gap-3.5 rounded-2xl border p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:min-w-[19rem]"
             >
               <span
                 className={cn(
-                  "block h-full rounded-full transition-all duration-500",
-                  activeSlide === idx
-                    ? "w-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-400"
-                    : idx < activeSlide
-                      ? "w-full bg-emerald-500/45"
-                      : "w-0",
+                  "inline-flex size-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md transition-transform group-hover:scale-105",
+                  ind.tone,
                 )}
+              >
+                <IndustryIcon iconKey={ind.iconKey} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-text group-hover:text-primary-text truncate text-sm font-black transition-colors">
+                  {ind.title}
+                </p>
+                <p className="text-subtle mt-0.5 truncate text-xs">
+                  {ind.subtitle}
+                </p>
+              </div>
+              <ArrowRightIcon
+                size={15}
+                className="text-subtle group-hover:text-primary-text shrink-0 transition-transform group-hover:translate-x-0.5"
               />
-            </button>
+            </Link>
           ))}
         </div>
+      </div>
 
-        {/* SLIDE 0: Company & Employer Advertising Billboard */}
-        {activeSlide === 0 && (
+      {/* 2. Asymmetric Split Bento Stage: Dark Obsidian Promo Hub + Live Vacancies Deck */}
+      <div className="grid gap-6 lg:grid-cols-12">
+        {/* LEFT (5 cols): Deep Forest Obsidian Interactive Promo & AI Studio Hub */}
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-[2rem] border border-emerald-500/30 bg-gradient-to-br from-[#041410] via-[#07221B] to-[#0A2E25] p-6 text-white shadow-[0_28px_65px_-16px_rgb(4,20,16,0.55)] sm:p-8 lg:col-span-5">
+          {/* Animated orbital halo inside dark card */}
           <div
-            key="slide-0"
-            className="ds-slide-in grid items-center gap-8 lg:grid-cols-[1.2fr_0.8fr]"
-          >
-            <div className="space-y-5">
-              <span className="border-primary/35 bg-primary-soft text-primary-text inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-extrabold">
-                <BuildingIcon size={14} />
-                {labels.slide1.badge}
-              </span>
-              <h3 className="text-h2 text-gradient-blue font-black text-balance">
-                {labels.slide1.title}
-              </h3>
-              <p className="text-subtle max-w-2xl text-sm leading-relaxed sm:text-base">
-                {labels.slide1.desc}
-              </p>
-              <div className="flex flex-wrap gap-3 pt-2">
-                <Link
-                  href="/register?role=COMPANY"
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-extrabold text-white shadow-[0_10px_28px_-8px_rgb(5,150,105,0.6)] transition-all hover:brightness-105 active:scale-[0.98]"
-                >
-                  <span>{labels.slide1.cta}</span>
-                  <ArrowRightIcon size={16} />
-                </Link>
-                <Link
-                  href="/company/students"
-                  className="border-line bg-card-cool text-text hover:border-primary inline-flex items-center gap-2 rounded-2xl border px-5 py-3.5 text-sm font-bold transition-colors"
-                >
-                  {labels.slide1.alt}
-                </Link>
-              </div>
+            aria-hidden
+            className="ds-orbit-slow pointer-events-none absolute -top-24 -right-24 size-72 rounded-full border border-dashed border-emerald-400/25"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-20 -left-20 size-64 rounded-full bg-emerald-500/20 blur-3xl"
+          />
+
+          {/* Top Mode Switcher Pill */}
+          <div className="relative z-10 flex items-center justify-between gap-2">
+            <div className="inline-flex rounded-full border border-white/12 bg-white/8 p-1 backdrop-blur-md">
+              <button
+                type="button"
+                onClick={() => setSpotlightMode(0)}
+                className={cn(
+                  "cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-extrabold transition-all",
+                  spotlightMode === 0
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-sm"
+                    : "text-emerald-100/75 hover:text-white",
+                )}
+              >
+                {labels.slideTabs[0]}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSpotlightMode(1)}
+                className={cn(
+                  "cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-extrabold transition-all",
+                  spotlightMode === 1
+                    ? "bg-gradient-to-r from-emerald-500 to-teal-400 text-slate-950 shadow-sm"
+                    : "text-emerald-100/75 hover:text-white",
+                )}
+              >
+                {labels.slideTabs[2]}
+              </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-3.5">
+            <span className="inline-flex size-10 items-center justify-center rounded-2xl border border-emerald-400/30 bg-emerald-500/15 text-emerald-300">
+              {spotlightMode === 0 ? (
+                <BuildingIcon size={18} />
+              ) : (
+                <ResumeIcon size={18} />
+              )}
+            </span>
+          </div>
+
+          {/* Dynamic Spotlight Content */}
+          {spotlightMode === 0 ? (
+            <div key="promo-employer" className="ds-slide-in relative z-10 my-7 space-y-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/35 bg-amber-400/15 px-3 py-1 text-[11px] font-extrabold text-amber-300">
+                <SparkIcon size={13} />
+                {labels.slide1.badge}
+              </span>
+              <h3 className="text-2xl leading-tight font-black tracking-tight text-white text-balance sm:text-3xl">
+                {labels.slide1.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-emerald-100/80">
+                {labels.slide1.desc}
+              </p>
+            </div>
+          ) : (
+            <div key="promo-cv" className="ds-slide-in relative z-10 my-7 space-y-4">
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/35 bg-emerald-500/20 px-3 py-1 text-[11px] font-extrabold text-emerald-300">
+                <ResumeIcon size={13} />
+                {labels.slide3.badge}
+              </span>
+              <h3 className="text-2xl leading-tight font-black tracking-tight text-white text-balance sm:text-3xl">
+                {labels.slide3.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-emerald-100/80">
+                {labels.slide3.desc}
+              </p>
+            </div>
+          )}
+
+          {/* Bottom Action Bar */}
+          <div className="relative z-10 flex flex-wrap gap-3">
+            <Link
+              href={spotlightMode === 0 ? "/register?role=COMPANY" : "/student/cv"}
+              className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-400 px-5 py-3 text-xs font-black text-slate-950 shadow-[0_10px_25px_-6px_rgb(16,185,129,0.6)] transition-all hover:-translate-y-0.5 sm:text-sm"
+            >
+              <span>
+                {spotlightMode === 0 ? labels.slide1.cta : labels.slide3.cta}
+              </span>
+              <ArrowRightIcon size={15} />
+            </Link>
+            <Link
+              href={spotlightMode === 0 ? "/company/students" : "/vacancies"}
+              className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/8 px-4 py-3 text-xs font-bold text-white backdrop-blur-md transition-colors hover:bg-white/15 sm:text-sm"
+            >
+              {spotlightMode === 0 ? labels.slide1.alt : labels.slide3.viewAll}
+            </Link>
+          </div>
+        </div>
+
+        {/* RIGHT (7 cols): Live Active Vacancies Showcase Deck */}
+        <div className="border-line bg-card shadow-float flex flex-col justify-between rounded-[2rem] border p-6 sm:p-8 lg:col-span-7">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <span className="border-primary/35 bg-primary-soft text-primary-text inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-extrabold">
+                <span className="ds-pulse-ring size-2 rounded-full bg-emerald-500" />
+                {labels.slide4.badge}
+              </span>
+              <h3 className="text-text mt-3 text-xl font-black tracking-tight sm:text-2xl">
+                {labels.slide4.title}
+              </h3>
+              <p className="text-subtle mt-1 text-xs sm:text-sm">
+                {labels.slide4.desc}
+              </p>
+            </div>
+
+            <Link
+              href="/vacancies"
+              className="border-line bg-card-cool text-primary-text hover:border-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-extrabold transition-all hover:-translate-y-0.5"
+            >
+              <span>{labels.slide4.viewAll}</span>
+              <ArrowRightIcon size={14} />
+            </Link>
+          </div>
+
+          {vacancies.length === 0 ? (
+            <div className="border-line bg-card-cool my-6 rounded-2xl border p-8 text-center">
+              <p className="text-subtle text-sm">{labels.slide4.empty}</p>
+            </div>
+          ) : (
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              {vacancies.slice(0, 4).map((job) => {
+                const salaryText =
+                  job.salaryFrom || job.salaryTo
+                    ? `${job.salaryFrom ? job.salaryFrom.toLocaleString("en-US") : ""}${job.salaryTo ? ` – ${job.salaryTo.toLocaleString("en-US")}` : ""} ${job.currency}`
+                    : labels.slide4.negotiable;
+
+                const workTypeLabel = job.workType
+                  ? (workTypes[job.workType] ?? job.workType)
+                  : null;
+                const initial = job.companyName.slice(0, 1).toUpperCase();
+
+                return (
+                  <Link
+                    key={job.id}
+                    href={`/vacancies/${job.id}`}
+                    className="border-line bg-card-cool/85 hover:border-primary group relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  >
+                    <div>
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex min-w-0 items-center gap-2.5">
+                          {job.hasLogo ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={`/api/companies/${job.companyId}/logo`}
+                              alt={job.companyName}
+                              className="size-9 shrink-0 rounded-xl bg-white object-contain p-1 ring-1 ring-black/5"
+                            />
+                          ) : (
+                            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 text-xs font-black text-white shadow-xs">
+                              {initial}
+                            </span>
+                          )}
+                          <span className="text-text truncate text-xs font-extrabold">
+                            {job.companyName}
+                          </span>
+                        </div>
+
+                        {workTypeLabel ? (
+                          <span className="border-primary/25 bg-primary-soft text-primary-text shrink-0 rounded-full border px-2.5 py-0.5 text-[10px] font-extrabold">
+                            {workTypeLabel}
+                          </span>
+                        ) : null}
+                      </div>
+
+                      <h4 className="text-text group-hover:text-primary-text mt-3.5 line-clamp-2 text-base font-black transition-colors">
+                        {job.title}
+                      </h4>
+
+                      {job.location ? (
+                        <p className="text-subtle mt-1.5 flex items-center gap-1.5 text-xs font-semibold">
+                          <MapPinIcon size={13} className="text-primary-text" />
+                          {job.location}
+                        </p>
+                      ) : null}
+                    </div>
+
+                    <div className="border-line/80 mt-5 flex items-center justify-between gap-2 border-t pt-3.5">
+                      <span className="text-text text-xs font-black sm:text-sm">
+                        {salaryText}
+                      </span>
+                      <span className="bg-primary text-on-primary inline-flex items-center gap-1 rounded-xl px-3 py-1.5 text-[11px] font-extrabold transition-transform group-hover:translate-x-0.5">
+                        <span>{labels.slide4.applyBtn}</span>
+                        <ArrowRightIcon size={12} />
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Quick Category Pills Bar */}
+          <div className="border-line/70 mt-6 flex flex-wrap items-center justify-between gap-2 border-t pt-4">
+            <span className="text-subtle text-xs font-bold">
+              {`${labels.slide2.badge}:`}
+            </span>
+            <div className="flex flex-wrap gap-1.5">
               {industries.slice(0, 4).map((ind) => (
                 <Link
                   key={ind.title}
                   href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
-                  className="border-line bg-card-cool hover:border-primary group rounded-2xl border p-4 transition-all hover:-translate-y-0.5 hover:shadow-md"
+                  className="border-line bg-card hover:border-primary hover:text-primary-text rounded-full border px-3 py-1 text-[11px] font-bold transition-colors"
                 >
-                  <span
-                    className={cn(
-                      "inline-flex size-11 items-center justify-center rounded-xl text-white shadow-sm",
-                      ind.tone,
-                    )}
-                  >
-                    <IndustryIcon iconKey={ind.iconKey} />
-                  </span>
-                  <p className="text-text group-hover:text-primary-text mt-3 text-xs font-extrabold sm:text-sm">
-                    {ind.title}
-                  </p>
-                  <p className="text-subtle mt-0.5 line-clamp-1 text-[11px]">
-                    {ind.subtitle}
-                  </p>
+                  {ind.title}
                 </Link>
               ))}
             </div>
           </div>
-        )}
-
-        {/* SLIDE 1: Universal Professions Directory */}
-        {activeSlide === 1 && (
-          <div key="slide-1" className="ds-slide-in space-y-6">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <span className="border-teal-500/35 bg-teal-500/12 text-teal-700 dark:text-teal-300 inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-extrabold">
-                  <BriefcaseIcon size={14} />
-                  {labels.slide2.badge}
-                </span>
-                <h3 className="text-h2 text-text mt-3 font-black text-balance">
-                  {labels.slide2.title}
-                </h3>
-                <p className="text-subtle mt-1.5 max-w-2xl text-sm">
-                  {labels.slide2.desc}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {industries.map((ind) => (
-                <Link
-                  key={ind.title}
-                  href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
-                  className="border-line bg-card-cool hover:border-primary group flex items-start gap-4 rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                >
-                  <span
-                    className={cn(
-                      "inline-flex size-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md",
-                      ind.tone,
-                    )}
-                  >
-                    <IndustryIcon iconKey={ind.iconKey} />
-                  </span>
-                  <div className="min-w-0">
-                    <h4 className="text-text group-hover:text-primary-text text-sm font-extrabold transition-colors sm:text-base">
-                      {ind.title}
-                    </h4>
-                    <p className="text-subtle mt-1 text-xs leading-snug">
-                      {ind.subtitle}
-                    </p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* SLIDE 2: AI CV Builder Promotion */}
-        {activeSlide === 2 && (
-          <div
-            key="slide-2"
-            className="ds-slide-in grid items-center gap-8 lg:grid-cols-[1.2fr_0.8fr]"
-          >
-            <div className="space-y-5">
-              <span className="border-emerald-500/35 bg-success-soft text-success inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-extrabold">
-                <ResumeIcon size={14} />
-                {labels.slide3.badge}
-              </span>
-              <h3 className="text-h2 text-gradient-blue font-black text-balance">
-                {labels.slide3.title}
-              </h3>
-              <p className="text-subtle max-w-2xl text-sm leading-relaxed sm:text-base">
-                {labels.slide3.desc}
-              </p>
-              <div className="flex flex-wrap gap-3 pt-2">
-                <Link
-                  href="/student/cv"
-                  className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-3.5 text-sm font-extrabold text-white shadow-[0_10px_28px_-8px_rgb(5,150,105,0.6)] transition-all hover:brightness-105 active:scale-[0.98]"
-                >
-                  <span>{labels.slide3.cta}</span>
-                  <ArrowRightIcon size={16} />
-                </Link>
-                <Link
-                  href="/vacancies"
-                  className="border-line bg-card-cool text-text hover:border-primary inline-flex items-center gap-2 rounded-2xl border px-5 py-3.5 text-sm font-bold transition-colors"
-                >
-                  {labels.slide3.viewAll}
-                </Link>
-              </div>
-            </div>
-
-            <div className="rounded-3xl bg-[#061A14] p-5 text-white shadow-xl">
-              <div className="space-y-3">
-                {industries.slice(0, 3).map((ind) => (
-                  <Link
-                    key={ind.title}
-                    href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
-                    className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/6 px-4 py-3.5 transition-all hover:border-emerald-400/50 hover:bg-white/12"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={cn(
-                          "inline-flex size-9 items-center justify-center rounded-xl text-white",
-                          ind.tone,
-                        )}
-                      >
-                        <IndustryIcon iconKey={ind.iconKey} />
-                      </span>
-                      <div className="min-w-0">
-                        <span className="block truncate text-xs font-extrabold text-white sm:text-sm">
-                          {ind.title}
-                        </span>
-                        <span className="block truncate text-[11px] text-emerald-200/75">
-                          {ind.subtitle}
-                        </span>
-                      </div>
-                    </div>
-                    <ArrowRightIcon
-                      size={15}
-                      className="shrink-0 text-emerald-300 transition-transform group-hover:translate-x-0.5"
-                    />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* SLIDE 3: Live Database Active Vacancies */}
-        {activeSlide === 3 && (
-          <div key="slide-3" className="ds-slide-in space-y-6">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <span className="border-primary/35 bg-primary-soft text-primary-text inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-extrabold">
-                  <SparkIcon size={14} />
-                  {labels.slide4.badge}
-                </span>
-                <h3 className="text-h2 text-text mt-3 font-black text-balance">
-                  {labels.slide4.title}
-                </h3>
-                <p className="text-subtle mt-1.5 text-sm">
-                  {labels.slide4.desc}
-                </p>
-              </div>
-              <Link
-                href="/vacancies"
-                className="border-line bg-card-cool text-primary-text hover:border-primary inline-flex items-center gap-2 rounded-full border px-4 py-2 text-xs font-extrabold transition-colors"
-              >
-                <span>{labels.slide4.viewAll}</span>
-                <ArrowRightIcon size={14} />
-              </Link>
-            </div>
-
-            {vacancies.length === 0 ? (
-              <div className="border-line bg-card-cool rounded-2xl border p-8 text-center">
-                <p className="text-subtle text-sm">{labels.slide4.empty}</p>
-                <Link
-                  href="/vacancies"
-                  className="bg-primary-soft text-primary-text hover:bg-primary/20 mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-colors"
-                >
-                  <span>{labels.slide4.viewAll}</span>
-                  <ArrowRightIcon size={14} />
-                </Link>
-              </div>
-            ) : (
-              <div className={vacancyGridClass}>
-                {vacancies.map((job) => {
-                  const salaryText =
-                    job.salaryFrom || job.salaryTo
-                      ? `${job.salaryFrom ? job.salaryFrom.toLocaleString("en-US") : ""}${job.salaryTo ? ` – ${job.salaryTo.toLocaleString("en-US")}` : ""} ${job.currency}`
-                      : labels.slide4.negotiable;
-
-                  const workTypeLabel = job.workType
-                    ? (workTypes[job.workType] ?? job.workType)
-                    : null;
-
-                  return (
-                    <Link
-                      key={job.id}
-                      href={`/vacancies/${job.id}`}
-                      className="border-line bg-card-cool hover:border-primary group flex flex-col justify-between rounded-2xl border p-5 transition-all hover:-translate-y-0.5 hover:shadow-md"
-                    >
-                      <div>
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="bg-primary-soft text-primary-text border-primary/25 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold">
-                            <BriefcaseIcon size={12} />
-                            {job.companyName}
-                          </span>
-                          {workTypeLabel ? (
-                            <span className="border-line bg-card text-subtle rounded-full border px-2.5 py-0.5 text-[11px] font-semibold">
-                              {workTypeLabel}
-                            </span>
-                          ) : null}
-                        </div>
-
-                        <h4 className="text-text group-hover:text-primary-text mt-3.5 line-clamp-2 text-base font-extrabold transition-colors">
-                          {job.title}
-                        </h4>
-
-                        {job.location ? (
-                          <p className="text-subtle mt-1.5 flex items-center gap-1.5 text-xs font-medium">
-                            <MapPinIcon size={13} className="text-primary-text" />
-                            {job.location}
-                          </p>
-                        ) : null}
-                      </div>
-
-                      <div className="border-line/80 mt-5 flex items-center justify-between gap-2 border-t pt-3.5">
-                        <span className="text-text text-xs font-extrabold sm:text-sm">
-                          {salaryText}
-                        </span>
-                        <span className="text-primary-text inline-flex items-center gap-1 text-xs font-bold">
-                          <span>{labels.slide4.applyBtn}</span>
-                          <ArrowRightIcon size={13} />
-                        </span>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

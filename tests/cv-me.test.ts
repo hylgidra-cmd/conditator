@@ -113,6 +113,7 @@ describe("CV ni saqlash", () => {
   it("qayta saqlash ochiq CV ni yashirmaydi va savedAt ni yangilaydi", async () => {
     const cookie = await loggedIn("STUDENT");
     const first = (await (await put(cvBody(), cookie)).json()).cv;
+    await db.cv.update({ where: { id: first.id }, data: { isPaid: true } });
     expect((await patch({ isVisible: true }, cookie)).status).toBe(200);
 
     const second = (await (await put(cvBody({ goal: "Yangi" }), cookie)).json())
@@ -157,9 +158,12 @@ describe("ochiq/yashirin", () => {
     expect((await res.json()).error).toBe("CV_NOT_SAVED");
   });
 
-  it("saqlangandan keyin ochiladi va yopiladi", async () => {
+  it("to'lanmagan CV ni ochib bo'lmaydi, to'langandan keyin ochiladi va yopiladi", async () => {
     const cookie = await loggedIn("STUDENT");
     await put(cvBody(), cookie);
+    const unpaid = await patch({ isVisible: true }, cookie);
+    expect(unpaid.status).toBe(402);
+    await db.cv.updateMany({ data: { isPaid: true } });
     const opened = await patch({ isVisible: true }, cookie);
     expect((await opened.json()).cv.isVisible).toBe(true);
     const closed = await patch({ isVisible: false }, cookie);

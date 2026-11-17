@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Header");
+  return { title: t("myCv") };
+}
 import {
   emptyCvData,
   type CvDraft,
@@ -47,9 +53,7 @@ export default async function StudentCvPage({
     ["kk", "uz", "ru", "en"].includes(locale) ? locale : "uz"
   ) as CvDocumentLanguage;
   const draftLang: CvDocumentLanguage =
-    (cv?.language && cv.language !== "en"
-      ? (cv.language as CvDocumentLanguage)
-      : routeLang) || routeLang;
+    (cv?.language as CvDocumentLanguage | undefined) || routeLang;
 
   const draft: CvDraft = draftFromData(data, {
     title: cv?.title ?? "",

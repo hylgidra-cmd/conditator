@@ -4,6 +4,30 @@ import { Role, ComplaintStatus } from "@prisma/client";
 
 export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5 MB
 
+async function assertConversationParticipant(
+  conversation: { studentId: string; companyId: string },
+  userId: string,
+) {
+  if (conversation.studentId === userId) return;
+  const companyMember = await db.company.findFirst({
+    where: {
+      id: conversation.companyId,
+      OR: [{ userId }, { members: { some: { userId } } }],
+    },
+    select: { id: true },
+  });
+  if (!companyMember) {
+    throw new ApiError(403, "FORBIDDEN");
+  }
+}
+
+function isSafeFileUrl(url: string): boolean {
+  return (
+    url.startsWith("https://") ||
+    (url.startsWith("/") && !url.startsWith("//"))
+  );
+}
+
 export async function sendMessage(params: {
   conversationId: string;
   senderId: string;
@@ -27,12 +51,18 @@ export async function sendMessage(params: {
     throw new ApiError(404, "CONVERSATION_NOT_FOUND");
   }
 
+  await assertConversationParticipant(conversation, params.senderId);
+
   // Check 1-message rule for students
   if (params.senderRole === Role.STUDENT) {
     const lastMsg = conversation.messages[0];
     if (lastMsg && lastMsg.senderRole === Role.STUDENT) {
       throw new ApiError(403, "ONE_MESSAGE_RULE_AWAIT_REPLY");
     }
+  }
+
+  if (params.fileUrl && !isSafeFileUrl(params.fileUrl)) {
+    throw new ApiError(400, "VALIDATION");
   }
 
   if (params.fileSize && params.fileSize > MAX_ATTACHMENT_BYTES) {
@@ -71,6 +101,8 @@ export async function getConversationMessages(
     throw new ApiError(404, "CONVERSATION_NOT_FOUND");
   }
 
+  await assertConversationParticipant(conversation, userId);
+
   const messages = await db.chatMessage.findMany({
     where: { conversationId },
     orderBy: { createdAt: "asc" },
@@ -94,7 +126,7 @@ export async function listUserConversations(userId: string, role: Role) {
     const rows = await db.conversation.findMany({
       where: { studentId: userId },
       include: {
-        company: { select: { id: true, name: true, logoPath: true } },
+        company: { select: { id: true, userId: true, name: true, logoPath: true } },
         vacancy: { select: { id: true, title: true } },
         messages: {
           orderBy: { createdAt: "desc" },
@@ -116,7 +148,7 @@ export async function listUserConversations(userId: string, role: Role) {
   const rows = await db.conversation.findMany({
     where: { companyId: company.id },
     include: {
-      company: { select: { id: true, name: true, logoPath: true } },
+      company: { select: { id: true, userId: true, name: true, logoPath: true } },
       vacancy: { select: { id: true, title: true } },
       messages: {
         orderBy: { createdAt: "desc" },
@@ -126,40 +158,32 @@ export async function listUserConversations(userId: string, role: Role) {
     orderBy: { updatedAt: "desc" },
   });
 
-  const studentIds = [...new Set(rows.map((r) => r.studentId))];
   const cvIds = rows
     .map((r) => r.studentCvId)
     .filter((id): id is string => Boolean(id));
 
-  const [students, cvs] = await Promise.all([
-    studentIds.length > 0
-      ? db.user.findMany({
-          where: { id: { in: studentIds } },
-          select: { id: true, email: true },
-        })
-      : [],
+  const cvs =
     cvIds.length > 0
-      ? db.cv.findMany({
+      ? await db.cv.findMany({
           where: { id: { in: cvIds } },
-          select: { id: true, title: true, data: true },
+          select: { id: true, title: true, data: true, privacy: true },
         })
-      : [],
-  ]);
+      : [];
 
-  const studentEmailMap = new Map(students.map((s) => [s.id, s.email]));
   const cvNameMap = new Map(
     cvs.map((c) => {
       const data = c.data as { fullName?: string } | null;
-      return [c.id, data?.fullName || c.title || null];
+      const privacy = c.privacy as { hideName?: boolean } | null;
+      const name = privacy?.hideName
+        ? c.title || "Nomzod"
+        : data?.fullName || c.title || "Nomzod";
+      return [c.id, name];
     }),
   );
 
   return rows.map((r) => ({
     ...r,
-    studentName:
-      (r.studentCvId ? cvNameMap.get(r.studentCvId) : null) ??
-      studentEmailMap.get(r.studentId) ??
-      null,
+    studentName: (r.studentCvId ? cvNameMap.get(r.studentCvId) : null) ?? "Nomzod",
   }));
 }
 
@@ -217,10 +241,28 @@ export async function createComplaint(params: {
   reason: string;
   details?: string;
 }) {
+  let resolvedReportedUserId = params.reportedUserId;
+  if (params.conversationId) {
+    const conv = await db.conversation.findUnique({
+      where: { id: params.conversationId },
+      select: {
+        studentId: true,
+        companyId: true,
+        company: { select: { userId: true } },
+      },
+    });
+    if (!conv) {
+      throw new ApiError(404, "CONVERSATION_NOT_FOUND");
+    }
+    await assertConversationParticipant(conv, params.reporterId);
+    resolvedReportedUserId =
+      conv.studentId === params.reporterId ? conv.company.userId : conv.studentId;
+  }
+
   return db.complaint.create({
     data: {
       reporterId: params.reporterId,
-      reportedUserId: params.reportedUserId,
+      reportedUserId: resolvedReportedUserId,
       conversationId: params.conversationId,
       reason: params.reason,
       details: params.details,

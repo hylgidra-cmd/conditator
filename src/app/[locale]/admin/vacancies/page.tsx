@@ -6,9 +6,9 @@ import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
 
 const STATUS_BADGE: Record<string, string> = {
-  ACTIVE: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
-  CLOSED: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-  CANCELLED: "bg-red-500/15 text-red-600 dark:text-red-400",
+  ACTIVE: "bg-success-soft text-success border border-emerald-500/30",
+  CLOSED: "bg-primary-soft text-primary-text border border-primary/30",
+  CANCELLED: "bg-danger-soft text-danger border border-red-500/30",
 };
 
 export default async function AdminVacanciesPage() {
@@ -35,68 +35,80 @@ export default async function AdminVacanciesPage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <div>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        <p className="text-muted mt-1 text-sm">{t("subtitle")}</p>
+    <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <div className="relative z-10">
+          <h1 className="text-h2 text-text font-extrabold tracking-tight">
+            {t("title")}
+          </h1>
+          <p className="text-subtle mt-1 text-sm">{t("subtitle")}</p>
+        </div>
+        <div className="relative z-10">
+          <AdminNav active="vacancies" />
+        </div>
       </div>
-      <AdminNav active="vacancies" />
 
       {vacancies.length === 0 ? (
-        <div className="border-border bg-surface rounded-2xl border p-8 text-center">
-          <p className="text-muted text-sm">{t("empty")}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+          <p className="text-subtle text-sm">{t("empty")}</p>
         </div>
       ) : (
-        <div className="border-border bg-surface overflow-x-auto rounded-2xl border shadow-sm">
+        <div className="border-line bg-card/90 shadow-soft overflow-x-auto rounded-3xl border backdrop-blur-md">
           <table className="w-full text-left text-sm">
-            <thead className="border-border bg-muted/20 border-b text-xs uppercase">
+            <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
               <tr>
-                <th className="px-4 py-3 font-bold">{t("title")}</th>
-                <th className="px-4 py-3 font-bold">{t("company")}</th>
-                <th className="px-4 py-3 font-bold">{t("poster")}</th>
-                <th className="px-4 py-3 font-bold">{t("status")}</th>
-                <th className="px-4 py-3 font-bold">{t("applications")}</th>
-                <th className="px-4 py-3 font-bold">{t("created")}</th>
-                <th className="px-4 py-3 font-bold"></th>
+                <th className="px-4 py-3.5 font-bold">{t("title")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("company")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("poster")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("status")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("applications")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("created")}</th>
+                <th className="px-4 py-3.5 font-bold"></th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y">
+            <tbody className="divide-line divide-y">
               {vacancies.map((v) => (
-                <tr key={v.id} className="hover:bg-muted/10 transition-colors">
-                  <td className="px-4 py-3 font-semibold">{v.title}</td>
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{v.company.name || "—"}</div>
-                    <div className="text-muted text-xs">
+                <tr key={v.id} className="hover:bg-canvas/50 transition-colors">
+                  <td className="text-text px-4 py-3.5 font-bold">{v.title}</td>
+                  <td className="px-4 py-3.5">
+                    <div className="text-text font-semibold">
+                      {v.company.name || "—"}
+                    </div>
+                    <div className="text-subtle text-xs">
                       {v.company.approval}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="text-xs font-medium">
+                  <td className="px-4 py-3.5">
+                    <div className="text-text text-xs font-medium">
                       {v.company.contactPerson || "—"}
                     </div>
-                    <div className="text-muted text-xs">
+                    <div className="text-subtle text-xs">
                       {v.company.user.email}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold ${
-                        STATUS_BADGE[v.status] ?? "bg-muted/20"
+                        STATUS_BADGE[v.status] ?? "bg-card-cool text-subtle"
                       }`}
                     >
                       {t(`statuses.${v.status}` as "statuses.ACTIVE")}
                     </span>
                   </td>
-                  <td className="px-4 py-3 font-bold tabular-nums">
+                  <td className="text-primary-text px-4 py-3.5 font-extrabold tabular-nums">
                     {v._count.applications}
                   </td>
-                  <td className="text-muted px-4 py-3 text-xs whitespace-nowrap">
+                  <td className="text-subtle px-4 py-3.5 text-xs whitespace-nowrap">
                     {formatDate(v.createdAt)}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3.5 text-right">
                     <Link
                       href={`/vacancies/${v.id}`}
-                      className="text-brand text-xs font-bold hover:underline"
+                      className="text-primary-text text-xs font-bold hover:underline"
                     >
                       {t("openVacancy")}
                     </Link>

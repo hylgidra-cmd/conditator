@@ -9,9 +9,9 @@ import { listCompanies } from "@/backend/admin/service";
 import { formatDate, toDateInput } from "@/backend/format-date";
 
 const APPROVAL_TONE = {
-  PENDING: "bg-amber-100 text-amber-800",
-  APPROVED: "bg-green-100 text-green-800",
-  REJECTED: "bg-red-100 text-red-800",
+  PENDING: "border border-primary/30 bg-primary-soft text-primary-text",
+  APPROVED: "border border-emerald-500/30 bg-success-soft text-success",
+  REJECTED: "border border-red-500/30 bg-danger-soft text-danger",
 } as const;
 
 export default async function AdminCompaniesPage({
@@ -28,16 +28,26 @@ export default async function AdminCompaniesPage({
   const defaultDate = toDateInput(new Date(now.getTime() + 30 * 86_400_000));
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
-      <AdminNav active="companies" />
+    <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+          {t("title")}
+        </h1>
+        <div className="relative z-10">
+          <AdminNav active="companies" />
+        </div>
+      </div>
 
       <form
         method="get"
-        className="border-border bg-surface flex flex-wrap items-end gap-2 rounded-2xl border p-4"
+        className="border-line bg-card/90 shadow-soft flex flex-wrap items-end gap-3 rounded-3xl border p-5 backdrop-blur-md"
       >
-        <div className="min-w-48 flex-1 space-y-1">
-          <label htmlFor="q" className="block text-sm font-medium">
+        <div className="min-w-48 flex-1 space-y-1.5">
+          <label htmlFor="q" className="text-text block text-xs font-bold">
             {tUsers("search")}
           </label>
           <input
@@ -46,18 +56,21 @@ export default async function AdminCompaniesPage({
             type="search"
             defaultValue={query.q ?? ""}
             placeholder={t("searchPlaceholder")}
-            className="border-border bg-surface w-full rounded-lg border px-3 py-2 text-sm"
+            className="border-line bg-canvas text-text focus:border-primary w-full rounded-xl border px-3.5 py-2 text-sm transition-colors outline-none"
           />
         </div>
-        <div className="space-y-1">
-          <label htmlFor="approval" className="block text-sm font-medium">
+        <div className="space-y-1.5">
+          <label
+            htmlFor="approval"
+            className="text-text block text-xs font-bold"
+          >
             {t("approval")}
           </label>
           <select
             id="approval"
             name="approval"
             defaultValue={query.approval ?? ""}
-            className="border-border bg-surface rounded-lg border px-3 py-2 text-sm"
+            className="border-line bg-canvas text-text focus:border-primary rounded-xl border px-3 py-2 text-sm transition-colors outline-none"
           >
             <option value="">{tUsers("any")}</option>
             {(["PENDING", "APPROVED", "REJECTED"] as const).map((value) => (
@@ -69,23 +82,27 @@ export default async function AdminCompaniesPage({
         </div>
         <button
           type="submit"
-          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold"
+          className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-sm font-bold transition-colors"
         >
           {tUsers("filter")}
         </button>
         <Link
           href="/admin/companies"
-          className="text-brand px-2 py-2 text-sm font-medium hover:underline"
+          className="text-primary-text px-2 py-2 text-sm font-bold hover:underline"
         >
           {tUsers("reset")}
         </Link>
       </form>
 
-      <p className="text-muted text-sm">{tUsers("total", { count: total })}</p>
+      <p className="text-subtle text-sm font-medium">
+        {tUsers("total", { count: total })}
+      </p>
       {items.length === 0 ? (
-        <p className="text-muted">{tUsers("empty")}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+          <p className="text-subtle text-sm">{tUsers("empty")}</p>
+        </div>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-4">
           {items.map((company) => {
             const until = company.subscriptionUntil
               ? new Date(company.subscriptionUntil)
@@ -99,27 +116,27 @@ export default async function AdminCompaniesPage({
             return (
               <li
                 key={company.id}
-                className="border-border bg-surface space-y-3 rounded-2xl border p-4 shadow-sm"
+                className="border-line bg-card/90 shadow-soft hover:border-primary/40 space-y-3 rounded-3xl border p-6 backdrop-blur-md transition-colors"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h2 className="font-semibold break-words">
+                    <h2 className="text-text font-extrabold break-words">
                       {company.name ?? tUsers("noCompanyName")}
                     </h2>
-                    <p className="text-muted text-sm break-all">
+                    <p className="text-subtle text-sm break-all">
                       {company.email}
                     </p>
                   </div>
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${APPROVAL_TONE[company.approval]}`}
+                    className={`rounded-full px-3 py-1 text-xs font-bold ${APPROVAL_TONE[company.approval]}`}
                   >
                     {tUsers(`approvals.${company.approval}`)}
                   </span>
                 </div>
                 {details.length > 0 ? (
-                  <p className="text-sm">{details.join(" · ")}</p>
+                  <p className="text-text text-sm">{details.join(" · ")}</p>
                 ) : null}
-                <p className="text-muted text-sm">
+                <p className="text-subtle text-sm">
                   {[
                     t("vacancies", { count: company.vacancies }),
                     t("registered", { date: formatDate(company.createdAt) }),
@@ -130,7 +147,7 @@ export default async function AdminCompaniesPage({
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
-                <p className="text-sm font-medium">
+                <p className="text-text text-sm font-semibold">
                   {!until
                     ? t("subNone")
                     : until > now

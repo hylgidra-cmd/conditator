@@ -3,6 +3,11 @@
 import { useEffect, useState, useRef } from "react";
 import { getJson, postJson } from "@/backend/client/api";
 import { formatDateTime } from "@/backend/format-date";
+import {
+  MessageIcon,
+  SearchIcon,
+  SendIcon,
+} from "@/frontend/components/icons";
 import type { Role } from "@prisma/client";
 
 type Message = {
@@ -31,7 +36,13 @@ type SupportThreadSummary = {
 
 type ConversationSummary = {
   id: string;
-  company: { id: string; name: string | null; logoPath: string | null };
+  studentId?: string;
+  company: {
+    id: string;
+    userId?: string;
+    name: string | null;
+    logoPath: string | null;
+  };
   vacancy?: { id: string; title: string } | null;
   studentCvId?: string | null;
   studentName?: string | null;
@@ -45,6 +56,7 @@ type Props = {
   currentUserId: string;
   currentUserRole: Role;
   selectedConversationId?: string;
+  supportOnly?: boolean;
 };
 
 export function ChatRoom({
@@ -53,9 +65,11 @@ export function ChatRoom({
   currentUserId,
   currentUserRole,
   selectedConversationId,
+  supportOnly = false,
 }: Props) {
   const [conversations, setConversations] = useState(initialConversations);
   const [supportThreads, setSupportThreads] = useState(initialSupportThreads);
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeId, setActiveId] = useState(
     selectedConversationId ||
       initialConversations[0]?.id ||
@@ -64,7 +78,7 @@ export function ChatRoom({
         : ""),
   );
   const [mobileShowThread, setMobileShowThread] = useState(
-    Boolean(selectedConversationId),
+    Boolean(selectedConversationId || supportOnly),
   );
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
@@ -75,8 +89,25 @@ export function ChatRoom({
   const [reportDetails, setReportDetails] = useState("");
   const [reporting, setReporting] = useState(false);
   const [reportSent, setReportSent] = useState(false);
+  const [reportError, setReportError] = useState<string>();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredSupport = normalizedQuery
+    ? supportThreads.filter((st) =>
+        `${st.user.companyName ?? ""} ${st.user.email}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+      )
+    : supportThreads;
+  const filteredConversations = normalizedQuery
+    ? conversations.filter((c) =>
+        `${c.company.name ?? ""} ${c.studentName ?? ""} ${c.vacancy?.title ?? ""}`
+          .toLowerCase()
+          .includes(normalizedQuery),
+      )
+    : conversations;
 
   const isSupportActive = activeId.startsWith("support:");
   const activeSupportId = isSupportActive ? activeId.slice(8) : "";
@@ -93,7 +124,7 @@ export function ChatRoom({
 
     async function refreshAll() {
       const [convRes, supRes] = await Promise.all([
-        currentUserRole === "ADMIN"
+        currentUserRole === "ADMIN" || supportOnly
           ? Promise.resolve(null)
           : getJson<{ conversations: ConversationSummary[] }>(
               "/api/chat/conversations",
@@ -147,7 +178,7 @@ export function ChatRoom({
       isMounted = false;
       clearInterval(interval);
     };
-  }, [currentUserRole]);
+  }, [currentUserRole, supportOnly]);
 
   // Load messages whenever active conversation/support thread changes
   useEffect(() => {
@@ -220,18 +251,23 @@ export function ChatRoom({
     if (!reportReason.trim()) return;
 
     setReporting(true);
+    setReportError(undefined);
     try {
       const otherUserId =
         currentUserRole === "STUDENT"
-          ? activeConv?.company.id || ""
-          : currentUserId;
+          ? activeConv?.company.userId || activeConv?.company.id || ""
+          : activeConv?.studentId || "";
 
-      await postJson("/api/chat/complaints", {
+      const res = await postJson("/api/chat/complaints", {
         reportedUserId: otherUserId,
         conversationId: activeId,
         reason: reportReason,
         details: reportDetails,
       });
+      if (!res.ok) {
+        setReportError(res.error || "Shikoyatni yuborib bo'lmadi");
+        return;
+      }
       setReportSent(true);
       setTimeout(() => {
         setShowReportModal(false);
@@ -239,8 +275,8 @@ export function ChatRoom({
         setReportReason("");
         setReportDetails("");
       }, 1500);
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setReportError("Xatolik yuz berdi");
     } finally {
       setReporting(false);
     }
@@ -248,12 +284,14 @@ export function ChatRoom({
 
   if (conversations.length === 0 && supportThreads.length === 0) {
     return (
-      <div className="border-border bg-surface rounded-3xl border p-12 text-center shadow-sm">
-        <span className="text-4xl">💬</span>
-        <h3 className="mt-3 text-xl font-bold">
+      <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-xl">
+        <div className="bg-primary-soft text-primary-text mx-auto flex h-14 w-14 items-center justify-center rounded-2xl">
+          <MessageIcon size={24} />
+        </div>
+        <h3 className="text-text mt-4 text-xl font-bold">
           Hozircha suhbatlar mavjud emas
         </h3>
-        <p className="text-muted mx-auto mt-1 max-w-md text-sm">
+        <p className="text-subtle mx-auto mt-1.5 max-w-md text-sm">
           {currentUserRole === "STUDENT"
             ? "Vakansiyalarga ariza topshirganingizda ish beruvchilar bilan ushbu yerda muloqot qilishingiz mumkin."
             : currentUserRole === "COMPANY"
@@ -265,16 +303,37 @@ export function ChatRoom({
   }
 
   return (
-    <div className="border-border bg-surface grid h-[calc(100dvh-11rem)] max-h-[780px] min-h-[520px] grid-cols-1 overflow-hidden rounded-3xl border shadow-sm md:grid-cols-3">
+    <div className="border-line bg-card/90 shadow-float font-ui grid h-[calc(100dvh-11rem)] max-h-[780px] min-h-[540px] grid-cols-1 overflow-hidden rounded-3xl border backdrop-blur-xl md:grid-cols-3">
       {/* Conversations list sidebar */}
       <div
-        className={`${mobileShowThread ? "hidden md:flex" : "flex"} border-border flex-col space-y-3 overflow-y-auto border-b bg-slate-50/90 p-4 md:border-r md:border-b-0 dark:bg-slate-900/80`}
+        className={`${mobileShowThread ? "hidden md:flex" : "flex"} border-line bg-card-cool/60 flex-col space-y-3 overflow-y-auto border-b p-4 md:border-r md:border-b-0`}
       >
-        <h3 className="px-2 text-base font-bold text-slate-900 dark:text-white">
-          Suhbatlar
-        </h3>
+        <div className="flex items-center justify-between px-1">
+          <h3 className="text-text flex items-center gap-2 text-base font-extrabold">
+            <MessageIcon size={18} className="text-primary-text" />
+            Suhbatlar
+          </h3>
+          <span className="bg-primary-soft text-primary-text rounded-full px-2.5 py-0.5 text-xs font-bold tabular-nums">
+            {supportThreads.length + conversations.length}
+          </span>
+        </div>
+
+        <div className="relative">
+          <SearchIcon
+            size={14}
+            className="text-subtle pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+          />
+          <input
+            type="search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Qidirish..."
+            className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-xl border py-2 pr-3 pl-8 text-xs outline-none transition-colors"
+          />
+        </div>
+
         <div className="space-y-2">
-          {supportThreads.map((st) => {
+          {filteredSupport.map((st) => {
             const key = `support:${st.id}`;
             const isSelected = activeId === key;
             const lastMsg = st.messages[0];
@@ -298,26 +357,25 @@ export function ChatRoom({
                   setActiveId(key);
                   setMobileShowThread(true);
                 }}
-                className={`w-full rounded-2xl p-3 text-left transition-colors ${
+                className={`w-full rounded-2xl border p-3 text-left transition-all duration-200 ${
                   isSelected
-                    ? "border border-[#F07A1A]/60 bg-white shadow-sm dark:bg-slate-800"
-                    : "hover:bg-white/80 dark:hover:bg-slate-800/60"
+                    ? "border-primary/60 bg-card shadow-soft"
+                    : "hover:bg-card/80 border-transparent"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="truncate text-sm font-bold text-slate-900 dark:text-white">
-                    {"🛟 "}
+                  <h4 className="text-text truncate text-sm font-bold">
                     {title}
                   </h4>
-                  <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
+                  <span className="text-subtle shrink-0 text-[10px]">
                     {formatDateTime(new Date(st.updatedAt))}
                   </span>
                 </div>
-                <p className="mt-0.5 truncate text-xs font-semibold text-[#F07A1A]">
+                <p className="text-primary-text mt-0.5 truncate text-xs font-semibold">
                   {badge}
                 </p>
                 {lastMsg && (
-                  <p className="mt-1 truncate text-xs text-slate-600 dark:text-slate-300">
+                  <p className="text-subtle mt-1 truncate text-xs">
                     {lastMsg.text}
                   </p>
                 )}
@@ -325,7 +383,7 @@ export function ChatRoom({
             );
           })}
 
-          {conversations.map((c) => {
+          {filteredConversations.map((c) => {
             const isSelected = c.id === activeId;
             const lastMsg = c.messages[0];
             return (
@@ -336,29 +394,29 @@ export function ChatRoom({
                   setActiveId(c.id);
                   setMobileShowThread(true);
                 }}
-                className={`w-full rounded-2xl p-3 text-left transition-colors ${
+                className={`w-full rounded-2xl border p-3 text-left transition-all duration-200 ${
                   isSelected
-                    ? "border border-[#F07A1A]/60 bg-white shadow-sm dark:bg-slate-800"
-                    : "hover:bg-white/80 dark:hover:bg-slate-800/60"
+                    ? "border-primary/60 bg-card shadow-soft"
+                    : "hover:bg-card/80 border-transparent"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="truncate text-sm font-bold text-slate-900 dark:text-white">
+                  <h4 className="text-text truncate text-sm font-bold">
                     {currentUserRole === "STUDENT"
                       ? (c.company.name ?? "Kompaniya")
                       : (c.studentName ?? "Nomzod")}
                   </h4>
-                  <span className="shrink-0 text-[10px] text-slate-500 dark:text-slate-400">
+                  <span className="text-subtle shrink-0 text-[10px]">
                     {formatDateTime(new Date(c.updatedAt))}
                   </span>
                 </div>
                 {c.vacancy && (
-                  <p className="mt-0.5 truncate text-xs font-semibold text-[#F07A1A]">
+                  <p className="text-primary-text mt-0.5 truncate text-xs font-semibold">
                     {c.vacancy.title}
                   </p>
                 )}
                 {lastMsg && (
-                  <p className="mt-1 truncate text-xs text-slate-600 dark:text-slate-300">
+                  <p className="text-subtle mt-1 truncate text-xs">
                     {lastMsg.text}
                   </p>
                 )}
@@ -370,36 +428,36 @@ export function ChatRoom({
 
       {/* Chat Thread */}
       <div
-        className={`${mobileShowThread ? "flex" : "hidden md:flex"} min-h-0 flex-col bg-white md:col-span-2 dark:bg-slate-950`}
+        className={`${mobileShowThread ? "flex" : "hidden md:flex"} bg-canvas/70 min-h-0 flex-col md:col-span-2`}
       >
         {/* Chat header */}
-        <div className="border-border flex items-center justify-between gap-2 border-b bg-white px-4 py-3 dark:bg-slate-900">
+        <div className="border-line bg-card/85 flex items-center justify-between gap-2 border-b px-5 py-3.5 backdrop-blur-md">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
               onClick={() => setMobileShowThread(false)}
-              className="shrink-0 rounded-xl border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 md:hidden dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+              className="border-line text-text hover:bg-card-cool shrink-0 rounded-xl border px-2.5 py-1.5 text-xs font-semibold md:hidden"
             >
               {"←"}
             </button>
             <div className="min-w-0">
-              <h3 className="truncate text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-text truncate text-base font-extrabold">
                 {isSupportActive
                   ? currentUserRole === "ADMIN"
-                    ? `🛟 ${activeSupport?.user.companyName || activeSupport?.user.email || "Foydalanuvchi"}`
-                    : "🛟 Qo'llab-quvvatlash xizmati"
+                    ? `${activeSupport?.user.companyName || activeSupport?.user.email || "Foydalanuvchi"}`
+                    : "Qo'llab-quvvatlash xizmati"
                   : currentUserRole === "STUDENT"
                     ? (activeConv?.company.name ?? "Kompaniya")
                     : (activeConv?.studentName ?? "Nomzod")}
               </h3>
               {isSupportActive ? (
-                <p className="truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+                <p className="text-subtle truncate text-xs font-medium">
                   {currentUserRole === "ADMIN"
                     ? `${activeSupport?.user.role === "COMPANY" ? "Kompaniya" : "Talaba"} · ${activeSupport?.user.email ?? ""}`
                     : "Admin bilan to'g'ridan-to'g'ri yordam chati"}
                 </p>
               ) : activeConv?.vacancy ? (
-                <p className="truncate text-xs font-medium text-slate-500 dark:text-slate-400">
+                <p className="text-subtle truncate text-xs font-medium">
                   Vakansiya: {activeConv.vacancy.title}
                 </p>
               ) : null}
@@ -409,16 +467,21 @@ export function ChatRoom({
             <button
               type="button"
               onClick={() => setShowReportModal(true)}
-              className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-slate-300 dark:hover:bg-red-950/40"
+              className="text-subtle hover:bg-danger-soft hover:text-danger shrink-0 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors"
               title="Noo'rin xatti-harakat bo'yicha shikoyat yuborish"
             >
-              ⚠️ Shikoyat
+              Shikoyat
             </button>
           ) : null}
         </div>
 
         {/* Messages area */}
-        <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50/70 p-4 dark:bg-slate-950">
+        <div className="flex-1 space-y-3 overflow-y-auto p-4 sm:p-5">
+          {messages.length === 0 ? (
+            <div className="text-subtle flex h-full items-center justify-center text-center text-sm">
+              Savolingiz yoki murojaatingizni quyida yozib yuboring.
+            </div>
+          ) : null}
           {messages.map((m) => {
             const isMe = m.senderId === currentUserId;
             return (
@@ -427,10 +490,10 @@ export function ChatRoom({
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-sm sm:max-w-[75%] ${
+                  className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-sm shadow-soft sm:max-w-[75%] ${
                     isMe
-                      ? "rounded-br-none bg-[#F07A1A] text-white"
-                      : "rounded-bl-none border border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100"
+                      ? "bg-primary text-on-primary rounded-br-none"
+                      : "border-line bg-card text-text rounded-bl-none border"
                   }`}
                 >
                   <p className="leading-relaxed whitespace-pre-line">
@@ -438,9 +501,7 @@ export function ChatRoom({
                   </p>
                   <div
                     className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
-                      isMe
-                        ? "text-white/80"
-                        : "text-slate-400 dark:text-slate-400"
+                      isMe ? "text-on-primary/75" : "text-subtle"
                     }`}
                   >
                     <span>{formatDateTime(new Date(m.createdAt))}</span>
@@ -455,8 +516,8 @@ export function ChatRoom({
 
         {/* 1-message rule banner for student */}
         {isOneMessageRuleBlocked && (
-          <div className="border-t border-amber-200 bg-amber-50 p-3 text-center text-xs font-medium text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-200">
-            ⏳ Siz ariza va birinchi xabaringizni yubordingiz. Spamdan himoya
+          <div className="border-line bg-warning-soft text-warning border-t p-3 text-center text-xs font-semibold">
+            Siz ariza va birinchi xabaringizni yubordingiz. Spamdan himoya
             qoidasiga ko&apos;ra, kompaniya javob berishini kuting.
           </div>
         )}
@@ -464,12 +525,12 @@ export function ChatRoom({
         {/* Input area */}
         <form
           onSubmit={handleSend}
-          className="border-border border-t bg-white p-3 dark:bg-slate-900"
+          className="border-line bg-card/85 border-t p-3.5 backdrop-blur-md"
         >
           {error && (
-            <p className="mb-2 text-xs font-medium text-red-600">{error}</p>
+            <p className="text-danger mb-2 text-xs font-semibold">{error}</p>
           )}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <input
               type="text"
               value={text}
@@ -480,13 +541,14 @@ export function ChatRoom({
                   ? "Kompaniya javob berishini kuting..."
                   : "Xabar yozing..."
               }
-              className="flex-1 rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-[#F07A1A] focus:ring-2 focus:ring-[#F07A1A]/20 disabled:bg-slate-100 disabled:opacity-70 dark:border-slate-700 dark:bg-slate-800 dark:text-white dark:placeholder:text-slate-400 dark:disabled:bg-slate-800"
+              className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary flex-1 rounded-2xl border px-4 py-2.5 text-sm outline-none transition-colors disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={sending || !text.trim() || isOneMessageRuleBlocked}
-              className="shrink-0 rounded-xl bg-[#F07A1A] px-5 py-2.5 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912] disabled:opacity-50"
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover inline-flex shrink-0 items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-50"
             >
+              <SendIcon size={15} />
               Yuborish
             </button>
           </div>
@@ -495,12 +557,17 @@ export function ChatRoom({
 
       {/* Complaint Modal */}
       {showReportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-surface border-border w-full max-w-md space-y-4 rounded-3xl border p-6 shadow-2xl">
+        <div
+          className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowReportModal(false);
+          }}
+        >
+          <div className="ds-modal-panel border-line bg-card text-text shadow-float w-full max-w-md space-y-4 rounded-3xl border p-6">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-lg font-bold">Shikoyat qilish</h3>
-                <p className="text-muted mt-1 text-xs">
+                <p className="text-subtle mt-1 text-xs">
                   Noo&apos;rin xabarlar yoki firibgarlik holati bo&apos;yicha
                   administratorga shikoyat yuboring.
                 </p>
@@ -508,28 +575,33 @@ export function ChatRoom({
               <button
                 type="button"
                 onClick={() => setShowReportModal(false)}
-                className="text-muted hover:text-foreground text-xl"
+                className="text-subtle hover:text-text text-xl"
               >
-                ✕
+                {"✕"}
               </button>
             </div>
 
             {reportSent ? (
-              <div className="rounded-xl bg-green-50 p-4 text-center text-sm font-bold text-green-800">
-                ✅ Shikoyatingiz qabul qilindi. Administratorlar ko&apos;rib
+              <div className="bg-success-soft text-success rounded-xl p-4 text-center text-sm font-bold">
+                Shikoyatingiz qabul qilindi. Administratorlar ko&apos;rib
                 chiqadi.
               </div>
             ) : (
               <form onSubmit={handleReportSubmit} className="space-y-3">
+                {reportError && (
+                  <p className="text-danger text-xs font-semibold">
+                    {reportError}
+                  </p>
+                )}
                 <div>
-                  <label className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                  <label className="text-subtle text-xs font-semibold tracking-wider uppercase">
                     Sabab:
                   </label>
                   <select
                     value={reportReason}
                     onChange={(e) => setReportReason(e.target.value)}
                     required
-                    className="border-border bg-surface w-full rounded-xl border p-2.5 text-sm font-medium outline-none"
+                    className="border-line bg-canvas text-text focus:border-primary mt-1 w-full rounded-xl border p-2.5 text-sm font-medium outline-none"
                   >
                     <option value="">Sababni tanlang</option>
                     <option value="SPAM">Spam yoki reklama</option>
@@ -542,7 +614,7 @@ export function ChatRoom({
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+                  <label className="text-subtle text-xs font-semibold tracking-wider uppercase">
                     Batafsil izoh:
                   </label>
                   <textarea
@@ -550,7 +622,7 @@ export function ChatRoom({
                     value={reportDetails}
                     onChange={(e) => setReportDetails(e.target.value)}
                     placeholder="Vaziyat haqida qisqacha ma'lumot..."
-                    className="border-border bg-surface w-full rounded-xl border p-2.5 text-sm outline-none"
+                    className="border-line bg-canvas text-text focus:border-primary mt-1 w-full rounded-xl border p-2.5 text-sm outline-none"
                   />
                 </div>
 
@@ -558,14 +630,14 @@ export function ChatRoom({
                   <button
                     type="button"
                     onClick={() => setShowReportModal(false)}
-                    className="rounded-xl px-4 py-2 text-xs font-medium text-gray-600 hover:bg-gray-100"
+                    className="text-subtle hover:bg-card-cool hover:text-text rounded-xl px-4 py-2 text-xs font-medium transition-colors"
                   >
                     Bekor qilish
                   </button>
                   <button
                     type="submit"
                     disabled={reporting || !reportReason}
-                    className="rounded-xl bg-red-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-red-700 disabled:opacity-50"
+                    className="bg-danger text-on-primary hover:bg-danger/90 rounded-xl px-5 py-2 text-xs font-bold shadow disabled:opacity-50"
                   >
                     {reporting ? "Yuborilmoqda..." : "Shikoyat yuborish"}
                   </button>

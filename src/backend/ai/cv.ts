@@ -168,7 +168,6 @@ export async function generateAboutMe(input: {
 
   const prompt = [
     `Kasbi / Yo'nalishi: "${profession}"`,
-    input.fullName ? `Ismi: "${input.fullName}"` : "",
     skillsStr ? `Ko'nikmalari: ${skillsStr}` : "",
     eduStr ? `Ta'limi: ${eduStr}` : "",
     expStr

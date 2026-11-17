@@ -33,6 +33,10 @@ export async function applyToVacancy(params: {
     throw new ApiError(400, "INVALID_OR_UNSAVED_CV");
   }
 
+  if (!cv.isPaid) {
+    throw new ApiError(402, "CV_PAYMENT_REQUIRED");
+  }
+
   const passStatus = await getApplyPassStatus(params.studentId);
   if (!passStatus.canApply) {
     throw new ApiError(402, "APPLY_PASS_REQUIRED");
@@ -89,6 +93,14 @@ export async function updateCandidateStage(params: {
   stage: CandidateStageType;
   note?: string;
 }) {
+  const vacancy = await db.vacancy.findFirst({
+    where: { id: params.vacancyId, companyId: params.companyId },
+    select: { id: true },
+  });
+  if (!vacancy) {
+    throw new ApiError(404, "VACANCY_NOT_FOUND");
+  }
+
   const stage = await db.candidateStage.upsert({
     where: {
       vacancyId_cvId: {

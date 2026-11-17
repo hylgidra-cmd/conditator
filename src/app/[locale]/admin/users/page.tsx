@@ -8,7 +8,8 @@ import { fromSearchParams, userListSchema } from "@/backend/admin/schema";
 import { listUsers } from "@/backend/admin/service";
 import { formatDate } from "@/backend/format-date";
 
-const SELECT = "border-border bg-surface rounded-lg border px-3 py-2 text-sm";
+const SELECT =
+  "border-line bg-canvas text-text focus:border-primary rounded-xl border px-3 py-2 text-sm outline-none transition-colors";
 
 export default async function AdminUsersPage({
   searchParams,
@@ -22,17 +23,27 @@ export default async function AdminUsersPage({
   const { items, total, pageCount } = await listUsers(query);
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
-      <AdminNav active="users" />
+    <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+          {t("title")}
+        </h1>
+        <div className="relative z-10">
+          <AdminNav active="users" />
+        </div>
+      </div>
 
       {/* Oddiy GET forma: filtrlar URL da, ro'yxat serverda sahifalanadi. */}
       <form
         method="get"
-        className="border-border bg-surface flex flex-wrap items-end gap-2 rounded-2xl border p-4"
+        className="border-line bg-card/90 shadow-soft flex flex-wrap items-end gap-3 rounded-3xl border p-5 backdrop-blur-md"
       >
-        <div className="min-w-48 flex-1 space-y-1">
-          <label htmlFor="q" className="block text-sm font-medium">
+        <div className="min-w-48 flex-1 space-y-1.5">
+          <label htmlFor="q" className="text-text block text-xs font-bold">
             {t("search")}
           </label>
           <input
@@ -41,11 +52,11 @@ export default async function AdminUsersPage({
             type="search"
             defaultValue={query.q ?? ""}
             placeholder={t("searchPlaceholder")}
-            className="border-border bg-surface w-full rounded-lg border px-3 py-2 text-sm"
+            className="border-line bg-canvas text-text focus:border-primary w-full rounded-xl border px-3.5 py-2 text-sm transition-colors outline-none"
           />
         </div>
-        <div className="space-y-1">
-          <label htmlFor="role" className="block text-sm font-medium">
+        <div className="space-y-1.5">
+          <label htmlFor="role" className="text-text block text-xs font-bold">
             {t("role")}
           </label>
           <select
@@ -62,8 +73,8 @@ export default async function AdminUsersPage({
             ))}
           </select>
         </div>
-        <div className="space-y-1">
-          <label htmlFor="status" className="block text-sm font-medium">
+        <div className="space-y-1.5">
+          <label htmlFor="status" className="text-text block text-xs font-bold">
             {t("status")}
           </label>
           <select
@@ -79,37 +90,41 @@ export default async function AdminUsersPage({
         </div>
         <button
           type="submit"
-          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 text-sm font-semibold"
+          className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-sm font-bold transition-colors"
         >
           {t("filter")}
         </button>
         <Link
           href="/admin/users"
-          className="text-brand px-2 py-2 text-sm font-medium hover:underline"
+          className="text-primary-text px-2 py-2 text-sm font-bold hover:underline"
         >
           {t("reset")}
         </Link>
       </form>
 
-      <p className="text-muted text-sm">{t("total", { count: total })}</p>
+      <p className="text-subtle text-sm font-medium">
+        {t("total", { count: total })}
+      </p>
       {items.length === 0 ? (
-        <p className="text-muted">{t("empty")}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+          <p className="text-subtle text-sm">{t("empty")}</p>
+        </div>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {items.map((user) => (
             <li
               key={user.id}
-              className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 shadow-sm"
+              className="border-line bg-card/90 shadow-soft hover:border-primary/40 flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-5 backdrop-blur-md transition-colors"
             >
               <div className="min-w-0 space-y-1">
-                <p className="font-semibold break-all">{user.email}</p>
-                <p className="text-muted flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                <p className="text-text font-bold break-all">{user.email}</p>
+                <p className="text-subtle flex flex-wrap gap-x-3 gap-y-1 text-sm">
                   <span>{tRoles(user.role)}</span>
                   <span
                     className={
                       user.status === "BLOCKED"
-                        ? "font-semibold text-red-700"
-                        : ""
+                        ? "text-danger font-bold"
+                        : "text-success font-semibold"
                     }
                   >
                     {t(`statuses.${user.status}`)}

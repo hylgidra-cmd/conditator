@@ -15,9 +15,7 @@ type Props = { toDark: string; toLight: string; className?: string };
 function currentTheme(): Theme {
   const set = document.documentElement.dataset.theme;
   if (set === "light" || set === "dark") return set;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  return "dark";
 }
 
 /** Yorugʻ/tungi rejimni almashtiradi; tanlov localStorage va cookie da saqlanadi (`applyTheme`). */

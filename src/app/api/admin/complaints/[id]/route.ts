@@ -1,21 +1,23 @@
-import { NextResponse } from "next/server";
-import { requireRole } from "@/backend/auth/session";
-import { db } from "@/backend/db";
-import { resolveComplaint } from "@/backend/chat/service";
-import { errorResponse } from "@/backend/http/errors";
 import { ComplaintStatus } from "@prisma/client";
-import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { requireRole } from "@/backend/auth/session";
+import { resolveComplaint } from "@/backend/chat/service";
+import { db } from "@/backend/db";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> },
-) {
-  try {
+const resolveSchema = z.object({
+  status: z.enum(["RESOLVED", "DISMISSED"]).default("RESOLVED"),
+});
+
+export const PATCH = route<{ params: Promise<{ id: string }> }>(
+  async (request, context) => {
     const admin = await requireRole(request, "ADMIN");
     const { id } = await context.params;
-    const body = (await request.json()) as { status?: string };
+    const body = await parseJson(request, resolveSchema);
     const status =
-      body.status === ComplaintStatus.DISMISSED
+      body.status === "DISMISSED"
         ? ComplaintStatus.DISMISSED
         : ComplaintStatus.RESOLVED;
 
@@ -31,7 +33,5 @@ export async function PATCH(
     });
 
     return NextResponse.json({ ok: true, complaint: updated });
-  } catch (err) {
-    return errorResponse(err, request);
-  }
-}
+  },
+);

@@ -71,7 +71,7 @@ export const cvSaveSchema = z.object({
       linkedin: text(150).optional(),
       website: text(150).optional(),
     }),
-    photo: text(500).optional(),
+    photo: text(500_000).optional(),
     goal: text(1000),
     location: text(100),
     education: list(
@@ -249,6 +249,7 @@ export async function getMatchingVacanciesForCv(
   const vacancies = await db.vacancy.findMany({
     where: {
       status: "ACTIVE",
+      company: { approval: "APPROVED" },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
     include: {
@@ -360,7 +361,7 @@ export async function saveOwnCv(
   }
 
   return db.cv.create({
-    data: { userId, isVisible: false, ...fields },
+    data: { userId, isVisible: false, isPaid: false, ...fields },
     select: STUDENT_CV_SELECT,
   });
 }
@@ -373,10 +374,13 @@ export async function setOwnCvVisibility(
   const cv = await db.cv.findFirst({
     where: cvId ? { id: cvId, userId } : { userId },
     orderBy: { updatedAt: "desc" },
-    select: { id: true, savedAt: true },
+    select: { id: true, savedAt: true, isPaid: true },
   });
-  // Saqlanmagan CV ni ochiq qilib bo'lmaydi.
+  // Saqlanmagan yoki to'lanmagan CV ni ochiq qilib bo'lmaydi.
   if (!cv?.savedAt) throw new ApiError(409, "CV_NOT_SAVED");
+  if (isVisible && !cv.isPaid) {
+    throw new ApiError(402, "CV_PAYMENT_REQUIRED");
+  }
   return db.cv.update({
     where: { id: cv.id },
     data: { isVisible },

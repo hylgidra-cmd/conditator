@@ -82,13 +82,13 @@ const SWATCHES = [
   { key: "ink", token: "--ds-ink", cls: "bg-ink" },
   { key: "night", token: "--ds-night", cls: "bg-night" },
   { key: "bg", token: "--ds-bg", cls: "bg-canvas" },
-  { key: "peach", token: "--ds-peach-bg", cls: "bg-peach" },
+  { key: "peach", token: "--ds-tinted-bg", cls: "bg-peach" },
   { key: "surface", token: "--ds-surface", cls: "bg-card" },
   { key: "surfaceCool", token: "--ds-surface-cool", cls: "bg-card-cool" },
   { key: "textColor", token: "--ds-text", cls: "bg-text" },
   { key: "muted", token: "--ds-muted", cls: "bg-subtle" },
   { key: "line", token: "--ds-line", cls: "bg-line" },
-  { key: "violet", token: "--ds-violet", cls: "bg-violet" },
+  { key: "violet", token: "--ds-cyan", cls: "bg-violet" },
   { key: "success", token: "--ds-success", cls: "bg-success" },
   { key: "warning", token: "--ds-warning", cls: "bg-warning" },
   { key: "danger", token: "--ds-danger", cls: "bg-danger" },
@@ -96,34 +96,33 @@ const SWATCHES = [
 
 // Yorugʻ / tungi qiymatlar (globals.css bilan bir xil). Namuna jadvali uchun.
 const HEX: Record<(typeof SWATCHES)[number]["key"], [string, string]> = {
-  primary: ["#FF7A3D", "#FF7A3D"],
-  primaryText: ["#B4420E", "#FF7A3D"],
-  primarySoft: ["#FFE8DA", "#3A2216"],
-  ink: ["#14232A", "#F2F4F5"],
-  night: ["#14232A", "#080B0D"],
-  bg: ["#FFFFFF", "#0E1215"],
-  peach: ["#FFF4EC", "#1C1612"],
-  surface: ["#FFFFFF", "#171C20"],
-  surfaceCool: ["#F4F6FA", "#1B2228"],
-  textColor: ["#14232A", "#F2F4F5"],
-  muted: ["#5F6B74", "#9AA5AD"],
-  line: ["#EBE5DF", "#273038"],
-  violet: ["#7C5CFF", "#8F74FF"],
-  success: ["#13733A", "#6EE7A0"],
-  warning: ["#935A06", "#FCD34D"],
-  danger: ["#C2262B", "#FCA5A5"],
+  primary: ["#4F46E5", "#6366F1"],
+  primaryText: ["#4338CA", "#818CF8"],
+  primarySoft: ["#E0E7FF", "#1E1B4B"],
+  ink: ["#090D16", "#F8FAFC"],
+  night: ["#090D16", "#05070F"],
+  bg: ["#F8FAFF", "#060811"],
+  peach: ["#EEF2FF", "#0A0E1C"],
+  surface: ["#FFFFFF", "#0D1222"],
+  surfaceCool: ["#F1F5FD", "#11182C"],
+  textColor: ["#090D16", "#F8FAFC"],
+  muted: ["#516079", "#94A3B8"],
+  line: ["#DFE6F4", "#1E2942"],
+  violet: ["#06B6D4", "#22D3EE"],
+  success: ["#059669", "#34D399"],
+  warning: ["#D97706", "#FBBF24"],
+  danger: ["#DC2626", "#F87171"],
 };
 
 const SPACING = [1, 2, 3, 4, 6, 8, 12, 16, 20, 30] as const;
 
-// TODO: real maʼlumot — vakansiyalar soni bazadan olinadi.
 const CATEGORIES = [
-  { key: "marketing", icon: <MegaphoneIcon size={22} />, count: 58 },
-  { key: "design", icon: <UiUxIcon size={22} />, count: 120, active: true },
-  { key: "pm", icon: <FolderIcon size={22} />, count: 87 },
-  { key: "business", icon: <HandshakeIcon size={22} />, count: 23 },
-  { key: "graphic", icon: <PaletteIcon size={22} />, count: 65 },
-  { key: "web", icon: <CodeWindowIcon size={22} />, count: 100 },
+  { key: "marketing", icon: <MegaphoneIcon size={22} />, count: 0 },
+  { key: "design", icon: <UiUxIcon size={22} />, count: 0, active: true },
+  { key: "pm", icon: <FolderIcon size={22} />, count: 0 },
+  { key: "business", icon: <HandshakeIcon size={22} />, count: 0 },
+  { key: "graphic", icon: <PaletteIcon size={22} />, count: 0 },
+  { key: "web", icon: <CodeWindowIcon size={22} />, count: 0 },
 ] as const;
 
 // Bosh harflar namunasi: haqiqiy odamlar emas.

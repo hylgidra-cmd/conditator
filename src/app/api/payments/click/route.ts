@@ -1,4 +1,6 @@
+import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
+import { db } from "@/backend/db";
 import { completePayment } from "@/backend/payment/service";
 
 /**
@@ -8,11 +10,52 @@ import { completePayment } from "@/backend/payment/service";
  */
 export async function POST(req: Request) {
   try {
+    const secretKey = process.env.CLICK_SECRET_KEY;
+    if (!secretKey) {
+      return NextResponse.json(
+        { error: -8, error_note: "Click payment is not configured" },
+        { status: 503 },
+      );
+    }
+
     const formData = await req.formData();
-    const clickTransId = formData.get("click_trans_id")?.toString();
-    const merchantTransId = formData.get("merchant_trans_id")?.toString();
-    const action = formData.get("action")?.toString();
+    const clickTransId = formData.get("click_trans_id")?.toString() ?? "";
+    const serviceId = formData.get("service_id")?.toString() ?? "";
+    const merchantTransId = formData.get("merchant_trans_id")?.toString() ?? "";
+    const merchantPrepareId =
+      formData.get("merchant_prepare_id")?.toString() ?? "";
+    const amount = formData.get("amount")?.toString() ?? "";
+    const action = formData.get("action")?.toString() ?? "";
+    const signTime = formData.get("sign_time")?.toString() ?? "";
+    const signString = formData.get("sign_string")?.toString() ?? "";
     const error = formData.get("error")?.toString();
+
+    if (!merchantTransId || !clickTransId || !signString) {
+      return NextResponse.json({
+        error: -8,
+        error_note: "Missing required Click parameters",
+      });
+    }
+
+    const expectedRaw =
+      clickTransId +
+      serviceId +
+      secretKey +
+      merchantTransId +
+      (action === "1" ? merchantPrepareId : "") +
+      amount +
+      action +
+      signTime;
+    const expectedHash = createHash("md5").update(expectedRaw).digest("hex");
+
+    const a = Buffer.from(expectedHash.toLowerCase());
+    const b = Buffer.from(signString.toLowerCase());
+    if (a.length !== b.length || !timingSafeEqual(a, b)) {
+      return NextResponse.json({
+        error: -1,
+        error_note: "Invalid sign_string",
+      });
+    }
 
     if (error && error !== "0") {
       return NextResponse.json({
@@ -21,10 +64,20 @@ export async function POST(req: Request) {
       });
     }
 
-    if (!merchantTransId) {
+    const payment = await db.payment.findUnique({
+      where: { id: merchantTransId },
+    });
+    if (!payment) {
       return NextResponse.json({
         error: -5,
-        error_note: "Missing merchant_trans_id",
+        error_note: "Order not found",
+      });
+    }
+
+    if (Number(amount) !== payment.amount) {
+      return NextResponse.json({
+        error: -2,
+        error_note: "Incorrect parameter amount",
       });
     }
 
@@ -55,11 +108,11 @@ export async function POST(req: Request) {
       error: -3,
       error_note: "Action not found",
     });
-  } catch (err: unknown) {
-    const error = err as { message?: string };
+  } catch (err) {
+    console.error("Click webhook error:", err);
     return NextResponse.json({
       error: -9,
-      error_note: error?.message || "Internal error",
+      error_note: "Internal error",
     });
   }
 }

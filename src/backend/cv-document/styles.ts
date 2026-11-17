@@ -7,7 +7,7 @@ export const CV_DOCUMENT_CSS = `
   --cv-ink: #111827;
   --cv-muted: #4b5563;
   --cv-line: #d1d5db;
-  --cv-accent: #F07A1A;
+  --cv-accent: #2563EB;
   font-family: "Noto Sans Variable", "Noto Sans", sans-serif;
   color: var(--cv-ink);
   background: #fff;

@@ -8,15 +8,11 @@ import { getUnreadMessageCount } from "@/backend/chat/unread";
 import { LogoutButton } from "./auth/logout-button";
 import { LocaleSwitcher } from "./locale-switcher";
 import { MobileMenu } from "./mobile-menu";
+import { ActivePageBadge, NavLinks } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
-const NAV_LINK = cn(
-  "font-ui text-text hover:text-primary-text rounded-btn py-1.5 text-[0.9375rem] font-medium whitespace-nowrap transition-colors",
-  FOCUS_RING,
-);
-
 const THEME_BUTTON = cn(
-  "bg-peach text-text hover:bg-primary-soft inline-flex size-10 shrink-0 items-center justify-center rounded-full transition-colors",
+  "bg-card-cool border-line text-text hover:bg-primary-soft hover:border-primary/40 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors",
   FOCUS_RING,
 );
 
@@ -28,14 +24,13 @@ export async function SiteHeader() {
     ? await getUnreadMessageCount(user.id, user.role)
     : 0;
 
-  // Bosh sahifa boʻlimlariga havolalar.
   const sections = [
     { href: "/", label: t("home") },
     { href: "/vacancies", label: t("jobs") },
+    { href: "/#showcase", label: t("howItWorks") },
     { href: "/#companies", label: t("companies") },
   ];
 
-  // Kirgan foydalanuvchi uchun rol boʻyicha havolalar (mavjud kabinet sahifalari).
   const roleLinks = user
     ? [
         ...(user.role === "STUDENT"
@@ -48,6 +43,7 @@ export async function SiteHeader() {
           : []),
         ...(user.role === "COMPANY"
           ? [
+              { href: "/company/students", label: t("students") },
               { href: "/company/vacancies", label: t("vacancies") },
               { href: "/chat", label: t("chat") },
               { href: "/company", label: t("company") },
@@ -56,7 +52,7 @@ export async function SiteHeader() {
         ...(user.role === "ADMIN"
           ? [
               { href: "/admin", label: t("admin") },
-              { href: "/chat", label: t("chat") },
+              { href: "/admin/support", label: t("support") },
             ]
           : []),
         { href: "/account", label: t("account") },
@@ -71,39 +67,29 @@ export async function SiteHeader() {
     />
   );
 
-  // PDF dagidek shaffof va qotirilmagan: bosh sahifada hero foni header ostidan boshlanadi.
   return (
-    <header className="font-ui relative z-40">
-      <div className="page-x relative flex h-16 items-center gap-3 lg:h-20">
+    <header className="font-ui sticky top-0 z-40 px-3 pt-3 sm:px-6">
+      <div className="border-line bg-card/90 shadow-float mx-auto relative flex h-16 max-w-[86rem] items-center gap-3 rounded-2xl border px-4 backdrop-blur-xl transition-all sm:px-6">
         <Link
           href="/"
           aria-label={t("homeAria")}
           className={cn("rounded-btn shrink-0", FOCUS_RING)}
         >
-          <Logo name={t("logoName")} />
+          <Logo name={t("logoName")} tag={t("logoTag")} />
         </Link>
+        <ActivePageBadge items={user ? roleLinks : sections} />
 
         <nav
           aria-label={t("mainNav")}
-          className="ml-14 hidden items-center gap-10 lg:flex"
+          className="border-line bg-card-cool/80 mx-auto hidden items-center gap-1 rounded-full border p-1 lg:flex"
         >
-          {(user ? roleLinks : sections).map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(NAV_LINK, "inline-flex items-center gap-1.5")}
-            >
-              <span>{item.label}</span>
-              {item.href === "/chat" && unreadCount > 0 ? (
-                <span className="bg-brand text-brand-foreground inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[11px] leading-none font-bold">
-                  {unreadCount}
-                </span>
-              ) : null}
-            </Link>
-          ))}
+          <NavLinks
+            items={user ? roleLinks : sections}
+            unreadCount={unreadCount}
+          />
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5 sm:gap-2">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 lg:ml-0">
           <LocaleSwitcher />
           <span className="hidden sm:block">{themeToggle}</span>
           {user ? (
@@ -113,12 +99,20 @@ export async function SiteHeader() {
               />
             </span>
           ) : (
-            <Link
-              href="/login"
-              className={buttonClass({ variant: "dark", size: "sm" })}
-            >
-              {t("login")}
-            </Link>
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link
+                href="/login"
+                className={buttonClass({ variant: "outline", size: "sm" })}
+              >
+                {t("login")}
+              </Link>
+              <Link
+                href="/register"
+                className={buttonClass({ variant: "primary", size: "sm" })}
+              >
+                {t("register")}
+              </Link>
+            </div>
           )}
           <MobileMenu
             items={user ? roleLinks : sections}

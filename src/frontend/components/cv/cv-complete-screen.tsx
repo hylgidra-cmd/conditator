@@ -41,7 +41,9 @@ export function CvCompleteScreen({
   const [togglingVis, setTogglingVis] = useState(false);
 
   const data = dataFromDraft(draft);
-  const pdfUrl = meta.id ? `/api/cv/${meta.id}/pdf` : "/api/cv/me/pdf";
+  const pdfUrl = meta.id
+    ? `/api/cv/me/pdf?cvId=${encodeURIComponent(meta.id)}`
+    : "/api/cv/me/pdf";
 
   async function handleCheckout(provider: "CLICK" | "PAYME" | "TEST") {
     if (!meta.id) return;
@@ -137,7 +139,7 @@ export function CvCompleteScreen({
                   {t("paymentBadgePaid")}
                 </span>
               ) : (
-                <span className="rounded-full bg-amber-500/15 px-3 py-1 text-xs font-bold text-amber-600 dark:text-amber-400">
+                <span className="bg-primary-soft text-primary-text rounded-full px-3 py-1 text-xs font-bold">
                   {t("paymentBadgeUnpaid")}
                 </span>
               )}
@@ -195,9 +197,9 @@ export function CvCompleteScreen({
               <input
                 type="checkbox"
                 checked={meta.isVisible}
-                disabled={togglingVis}
+                disabled={togglingVis || !meta.isPaid}
                 onChange={(e) => handleVisibility(e.target.checked)}
-                className="text-brand focus:ring-brand h-5 w-5 cursor-pointer rounded"
+                className="text-brand focus:ring-brand h-5 w-5 cursor-pointer rounded disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 

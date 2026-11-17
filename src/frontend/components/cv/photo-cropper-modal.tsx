@@ -95,22 +95,22 @@ export function PhotoCropperModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
-      <div className="w-full max-w-sm space-y-4 rounded-3xl bg-white p-5 shadow-2xl dark:bg-slate-900">
+    <div className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md">
+      <div className="ds-modal-panel border-line bg-card text-text shadow-float w-full max-w-sm space-y-4 rounded-3xl border p-5">
         <div className="flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">
+          <h3 className="text-text text-base font-bold">
             Rasmni moslash
           </h3>
           <button
             type="button"
             onClick={onCancel}
-            className="text-sm font-semibold text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white"
+            className="text-subtle hover:text-text text-sm font-semibold"
           >
-            ✕
+            {"✕"}
           </button>
         </div>
 
-        <p className="text-xs text-slate-500 dark:text-slate-400">
+        <p className="text-subtle text-xs">
           Rasmni barmoq yoki sichqoncha bilan suring va yaqinlashtiring.
         </p>
 
@@ -121,7 +121,7 @@ export function PhotoCropperModal({
             onPointerUp={onPointerUp}
             onPointerCancel={onPointerUp}
             style={{ width: frameW, height: frameH }}
-            className="relative cursor-grab touch-none overflow-hidden rounded-2xl border-2 border-[#F07A1A] bg-slate-950 active:cursor-grabbing"
+            className="border-primary relative cursor-grab touch-none overflow-hidden rounded-2xl border-2 bg-slate-950 active:cursor-grabbing"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -154,7 +154,7 @@ export function PhotoCropperModal({
             step={0.05}
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
-            className="w-full accent-[#F07A1A]"
+            className="accent-primary w-full"
           />
         </div>
 
@@ -169,7 +169,7 @@ export function PhotoCropperModal({
           <button
             type="button"
             onClick={handleSave}
-            className="rounded-xl bg-[#F07A1A] px-5 py-2 text-sm font-bold text-white shadow hover:bg-[#d86912]"
+            className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-5 py-2 text-sm font-bold"
           >
             Saqlash
           </button>

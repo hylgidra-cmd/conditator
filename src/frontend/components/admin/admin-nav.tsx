@@ -8,7 +8,7 @@ const ITEMS = [
   { href: "/admin/vacancies", key: "vacancies" },
   { href: "/admin/complaints", key: "complaints" },
   { href: "/admin/payments", key: "payments" },
-  { href: "/chat", key: "support" },
+  { href: "/admin/support", key: "support" },
 ] as const;
 
 export async function AdminNav({
@@ -18,16 +18,16 @@ export async function AdminNav({
 }) {
   const t = await getTranslations("Admin.nav");
   return (
-    <nav className="flex flex-wrap gap-2">
+    <nav className="border-line bg-card/75 inline-flex flex-wrap gap-1.5 rounded-2xl border p-1.5 backdrop-blur-md">
       {ITEMS.map((item) => (
         <Link
           key={item.key}
           href={item.href}
           aria-current={item.key === active ? "page" : undefined}
-          className={`rounded-lg px-3 py-1.5 text-sm font-medium ${
+          className={`rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
             item.key === active
-              ? "bg-brand text-brand-foreground"
-              : "border-border bg-surface border"
+              ? "bg-primary text-on-primary shadow-primary"
+              : "text-subtle hover:bg-card-cool hover:text-text"
           }`}
         >
           {t(item.key)}

@@ -77,6 +77,8 @@ export function sanitizeCvData(
   const shouldHidePhone = isLocked || privacy.hidePhone;
   const shouldHideEmail = isLocked || privacy.hideEmail;
   const shouldHideAddress = isLocked || privacy.hideAddress;
+  const shouldHidePhoto = isLocked || privacy.hidePhoto;
+  const shouldHideSocials = isLocked || shouldHidePhone || shouldHideEmail;
 
   return {
     ...data,
@@ -85,7 +87,12 @@ export function sanitizeCvData(
         ? "Nomzod (qulflangan)"
         : maskName(data.fullName)
       : data.fullName,
+    photo: shouldHidePhoto ? null : data.photo,
     location: shouldHideAddress ? "Yashirin hudud" : data.location,
+    telegram: shouldHideSocials ? null : data.telegram,
+    github: shouldHideSocials ? null : data.github,
+    linkedin: shouldHideSocials ? null : data.linkedin,
+    website: shouldHideSocials ? null : data.website,
     contact: {
       email: shouldHideEmail
         ? isLocked
@@ -97,6 +104,21 @@ export function sanitizeCvData(
           ? "+998 ** *** ** **"
           : maskContact(data.contact.phone)
         : data.contact.phone,
+      telegram: shouldHideSocials ? null : data.contact.telegram,
+      github: shouldHideSocials ? null : data.contact.github,
+      linkedin: shouldHideSocials ? null : data.contact.linkedin,
+      website: shouldHideSocials ? null : data.contact.website,
     },
+    obyektivka: data.obyektivka
+      ? {
+          ...data.obyektivka,
+          tugilganJoy: shouldHideAddress ? null : data.obyektivka.tugilganJoy,
+          uyTelefoni: shouldHidePhone ? null : data.obyektivka.uyTelefoni,
+          qarindoshlar:
+            isLocked || shouldHideName || shouldHideAddress
+              ? []
+              : data.obyektivka.qarindoshlar,
+        }
+      : undefined,
   };
 }

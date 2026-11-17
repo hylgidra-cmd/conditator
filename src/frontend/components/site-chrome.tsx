@@ -8,13 +8,18 @@ function useIsDashboard() {
   return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
 }
 
-/** Sayt header/footer i: dashboard oʻz sidebar va topbar iga ega, u yerda yashiriladi. */
+/** Sayt header/footer i. */
 export function SiteChrome({ children }: { children: ReactNode }) {
   return useIsDashboard() ? null : children;
 }
 
-/** Sayt <main> i. Dashboard oʻz <main> ini chizadi (ikkita main boʻlmasligi uchun). */
+/** Sayt <main> i: sahifa kirish animatsiyasi bilan. */
 export function SiteMain({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   if (useIsDashboard()) return children;
-  return <main className="flex-1">{children}</main>;
+  return (
+    <main key={pathname} className="ds-page-enter flex-1">
+      {children}
+    </main>
+  );
 }

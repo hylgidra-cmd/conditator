@@ -27,8 +27,8 @@ export function generateStaticParams() {
 export const viewport: Viewport = {
   colorScheme: "light dark",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1215" },
+    { media: "(prefers-color-scheme: light)", color: "#f2f6f4" },
+    { media: "(prefers-color-scheme: dark)", color: "#050e0b" },
   ],
 };
 
@@ -38,15 +38,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale: hasLocale(routing.locales, locale) ? locale : routing.defaultLocale,
     namespace: "Metadata",
   });
-  return { title: t("title"), description: t("description") };
+  return {
+    title: {
+      default: t("title"),
+      template: "%s — Candidator",
+    },
+    description: t("description"),
+  };
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
-  // Qo'lda tanlangan rejim serverda qo'yiladi (miltillashsiz); bo'lmasa tizim sozlamasi ishlaydi.
-  const theme = parseTheme((await cookies()).get(THEME_COOKIE)?.value);
+  // Standart rejim Neo-Editorial Emerald ("light"); foydalanuvchi oʻzgartirsa cookie/localStorage ishlaydi.
+  const theme =
+    parseTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "light";
 
   return (
     // suppressHydrationWarning: <head> dagi skript data-theme ni React dan oldin oʻzgartirishi mumkin.

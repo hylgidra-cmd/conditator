@@ -1,41 +1,71 @@
 import { cn } from "./cn";
 
 /**
- * Candidator yangi vektor SVG logo belgisi:
- * Qora (yoki oq) "C" harfi (#1A1A1A), ichida to'q sariq galstuk (#F07A1A).
+ * Candidator Neo-Editorial Emerald logotipi:
+ * Zumrad-Feruza (Emerald → Teal) squircle nishoni ichida "C" va galstuk ramzi.
  */
 export function LogoMark({
   className,
-  tone = "default",
 }: {
   className?: string;
   tone?: "default" | "night";
 }) {
-  const cColor = tone === "night" ? "#FFFFFF" : "#1A1A1A";
-  const tieColor = "#F07A1A";
-
   return (
     <svg
       aria-hidden
       viewBox="0 0 100 100"
-      className={cn("h-8 w-8 shrink-0", className)}
+      className={cn("h-9 w-9 shrink-0", className)}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* "C" harfi — tekis, geometrik qora/oq aylana arkasi */}
-      <path
-        d="M 75 23 A 38 38 0 1 0 75 77 L 65 67 A 24 24 0 1 1 65 33 Z"
-        fill={cColor}
+      <defs>
+        <linearGradient
+          id="candidator-emerald-bg"
+          x1="0"
+          y1="0"
+          x2="100"
+          y2="100"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#062C22" />
+          <stop offset="55%" stopColor="#047857" />
+          <stop offset="100%" stopColor="#0D9488" />
+        </linearGradient>
+        <linearGradient
+          id="candidator-tie-grad"
+          x1="40"
+          y1="28"
+          x2="58"
+          y2="82"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#6EE7B7" />
+          <stop offset="55%" stopColor="#34D399" />
+          <stop offset="100%" stopColor="#FBBF24" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="4"
+        y="4"
+        width="92"
+        height="92"
+        rx="26"
+        fill="url(#candidator-emerald-bg)"
       />
-      {/* Galstuk tuguni (yuqori qism) */}
+      {/* "C" harfi */}
       <path
-        d="M 43 32 Q 43 31 44 31 L 52 31 Q 53 31 53 32 L 52 40 Q 52 41 51 41 L 45 41 Q 44 41 44 40 Z"
-        fill={tieColor}
+        d="M 73 27 A 33 33 0 1 0 73 73 L 64 64 A 21 21 0 1 1 64 36 Z"
+        fill="#FFFFFF"
+      />
+      {/* Galstuk tuguni */}
+      <path
+        d="M 44 33 Q 44 32 45 32 L 53 32 Q 54 32 54 33 L 53 41 Q 53 42 52 42 L 46 42 Q 45 42 45 41 Z"
+        fill="url(#candidator-tie-grad)"
       />
       {/* Galstuk asosiy qismi */}
       <path
-        d="M 44.5 42.5 L 51.5 42.5 L 56 71 L 48 83 L 40 71 Z"
-        fill={tieColor}
+        d="M 45.5 43.5 L 52.5 43.5 L 57 69 L 49 80 L 41 69 Z"
+        fill="url(#candidator-tie-grad)"
       />
     </svg>
   );
@@ -43,33 +73,32 @@ export function LogoMark({
 
 /**
  * Candidator to'liq logotipi:
- * Logo belgisi + "CANDIDATOR" matni.
+ * Zumrad nishon + "CANDIDATOR" + "AI" yorlig'i.
  */
 export function Logo({
   name = "CANDIDATOR",
-  tag,
+  tag = "AI",
   className,
   tone = "default",
 }: {
   name?: string;
   tag?: string;
   className?: string;
-  /** `night`: to'q fonda (footer). */
   tone?: "default" | "night";
 }) {
   return (
     <span className={cn("font-ui inline-flex items-center gap-2.5", className)}>
-      <LogoMark tone={tone} className="h-7 w-7" />
+      <LogoMark tone={tone} className="h-8 w-8 sm:h-9 sm:w-9" />
       <span
         className={cn(
-          "text-xl font-black tracking-tight",
-          tone === "night" ? "text-white" : "text-[#1A1A1A] dark:text-white",
+          "text-lg font-black tracking-tight sm:text-xl",
+          tone === "night" ? "text-white" : "text-foreground",
         )}
       >
         {name}
       </span>
       {tag ? (
-        <span className="-ml-0.5 self-start rounded bg-[#F07A1A] px-1 py-px text-[0.625rem] leading-tight font-extrabold tracking-wide text-white">
+        <span className="rounded-md bg-gradient-to-r from-emerald-600 to-teal-500 px-1.5 py-0.5 text-[10px] leading-none font-extrabold tracking-wider text-white shadow-xs">
           {tag}
         </span>
       ) : null}

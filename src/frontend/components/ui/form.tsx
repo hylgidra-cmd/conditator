@@ -32,20 +32,23 @@ export function Field({
 }: FieldProps) {
   const inputId = id ?? input.name;
   return (
-    <div className="space-y-1">
-      <label htmlFor={inputId} className="block text-sm font-medium">
+    <div className="space-y-1.5">
+      <label
+        htmlFor={inputId}
+        className="text-text block text-sm font-semibold"
+      >
         {label}
       </label>
       <input
         id={inputId}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${inputId}-error` : undefined}
-        className={`border-border bg-surface focus:border-brand focus:ring-brand-soft w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 ${className ?? ""}`}
+        className={`border-line bg-canvas/80 text-text focus:border-primary focus:ring-primary/25 w-full rounded-xl border px-3.5 py-2.5 text-sm transition-colors outline-none focus:ring-2 ${className ?? ""}`}
         {...input}
       />
-      {hint && !error ? <p className="text-muted text-xs">{hint}</p> : null}
+      {hint && !error ? <p className="text-subtle text-xs">{hint}</p> : null}
       {error ? (
-        <p id={`${inputId}-error`} className="text-sm text-red-600">
+        <p id={`${inputId}-error`} className="text-danger text-sm font-medium">
           {error}
         </p>
       ) : null}
@@ -63,12 +66,12 @@ export function FormAlert({
   if (!children) return null;
   const styles =
     tone === "error"
-      ? "border-red-200 bg-red-50 text-red-700"
-      : "border-emerald-200 bg-emerald-50 text-emerald-700";
+      ? "border-red-500/30 bg-danger-soft text-danger"
+      : "border-emerald-500/30 bg-success-soft text-success";
   return (
     <div
       role={tone === "error" ? "alert" : "status"}
-      className={`rounded-lg border px-3 py-2 text-sm ${styles}`}
+      className={`rounded-xl border px-4 py-3 text-sm font-medium ${styles}`}
     >
       {children}
     </div>
@@ -87,7 +90,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="bg-brand text-brand-foreground w-full rounded-lg px-4 py-2 font-semibold transition hover:opacity-90 disabled:opacity-60"
+      className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover w-full rounded-2xl px-4 py-3 text-sm font-bold transition-all active:scale-[0.99] disabled:opacity-60"
     >
       {pending ? t("submitting") : children}
     </button>

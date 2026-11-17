@@ -15,7 +15,6 @@ import { CvEditor } from "./cv-editor";
 import { CvGenerator } from "./cv-generator";
 import { CvStarterChoice } from "./cv-starter-choice";
 import { CvImportScreen } from "./cv-import-screen";
-import { CvSetupLoading } from "./cv-setup-loading";
 import { CvStepBuilder } from "./cv-step-builder";
 import { useRouter } from "@/i18n/navigation";
 import type { MatchingVacancyPreview } from "@/backend/cv/service";
@@ -151,7 +150,7 @@ export function CvWorkspace({
           if (choice === "import") {
             setMode("import");
           } else {
-            setMode("loading");
+            setMode("builder");
           }
         }}
         onEditExisting={() => setMode("builder")}
@@ -184,15 +183,10 @@ export function CvWorkspace({
             ),
           );
           setHandEdited(false);
-          setMode("loading");
+          setMode("builder");
         }}
       />
     );
-  }
-
-  // 3-bosqich: Yuklanish / Sozlash animatsiyasi
-  if (mode === "loading") {
-    return <CvSetupLoading onDone={() => setMode("builder")} />;
   }
 
   // 5-bosqich: Saqlangandan keyingi yakuniy oyna (To'lov, PDF, Mos vakansiyalar, Arizalar)

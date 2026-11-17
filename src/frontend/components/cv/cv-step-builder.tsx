@@ -768,7 +768,7 @@ export function CvStepBuilder({
                       type="text"
                       value={firstName}
                       onChange={(e) => updateName(e.target.value, lastName)}
-                      placeholder="Elsa"
+                      placeholder={t("firstName")}
                       className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
@@ -780,7 +780,7 @@ export function CvStepBuilder({
                       type="text"
                       value={lastName}
                       onChange={(e) => updateName(firstName, e.target.value)}
-                      placeholder="Manet"
+                      placeholder={t("lastName")}
                       className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>
@@ -811,7 +811,7 @@ export function CvStepBuilder({
                       type="email"
                       value={data.contact.email ?? ""}
                       onChange={(e) => updateContact({ email: e.target.value })}
-                      placeholder="elsa.manet@gmail.com"
+                      placeholder="name@example.com"
                       className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2"
                     />
                   </div>

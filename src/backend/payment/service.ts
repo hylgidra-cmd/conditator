@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { PaymentPurpose, PaymentProvider, PaymentStatus } from "@prisma/client";
@@ -35,7 +36,7 @@ export async function createPaymentOrder(input: CreatePaymentInput) {
       purpose: input.purpose,
       provider: input.provider,
       status: PaymentStatus.PENDING,
-      externalId: `CAND-${Date.now()}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`,
+      externalId: `CAND-${Date.now()}-${randomBytes(4).toString("hex").toUpperCase()}`,
     },
   });
 
@@ -46,6 +47,7 @@ export async function createPaymentOrder(input: CreatePaymentInput) {
  * Marks payment as completed and fulfills the benefit:
  * - If CV_CREATION: marks Cv.isPaid = true
  * - If VACANCY_UNLOCK: creates or updates VacancyUnlock with 15 days validity
+ * - If WEEKLY_APPLY_PASS: extends User.applyPassUntil by 7 days
  */
 export async function completePayment(
   paymentId: string,
@@ -63,89 +65,97 @@ export async function completePayment(
     return payment;
   }
 
-  const updatedPayment = await db.payment.update({
-    where: { id: paymentId },
-    data: {
-      status: PaymentStatus.COMPLETED,
-      externalId: externalTransactionId ?? payment.externalId,
-    },
-  });
-
-  if (payment.purpose === PaymentPurpose.CV_CREATION && payment.cvId) {
-    await db.cv.update({
-      where: { id: payment.cvId },
-      data: { isPaid: true },
+  return db.$transaction(async (tx) => {
+    // Atomik o'tish: parallel webhook kelganda imtiyoz ikki marta qo'shilmasligi uchun.
+    const claimed = await tx.payment.updateMany({
+      where: { id: paymentId, status: PaymentStatus.PENDING },
+      data: {
+        status: PaymentStatus.COMPLETED,
+        externalId: externalTransactionId ?? payment.externalId,
+      },
     });
-  } else if (
-    payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&
-    payment.vacancyId &&
-    payment.companyId
-  ) {
-    const expiresAt = new Date(
-      Date.now() + UNLOCK_DURATION_DAYS * 24 * 60 * 60 * 1000,
-    );
-    await db.vacancyUnlock.upsert({
-      where: {
-        vacancyId_companyId: {
+
+    if (claimed.count === 0) {
+      const current = await tx.payment.findUnique({ where: { id: paymentId } });
+      return current ?? payment;
+    }
+
+    const updatedPayment = await tx.payment.findUniqueOrThrow({
+      where: { id: paymentId },
+    });
+
+    if (payment.purpose === PaymentPurpose.CV_CREATION && payment.cvId) {
+      await tx.cv.update({
+        where: { id: payment.cvId },
+        data: { isPaid: true },
+      });
+    } else if (
+      payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&
+      payment.vacancyId &&
+      payment.companyId
+    ) {
+      const expiresAt = new Date(
+        Date.now() + UNLOCK_DURATION_DAYS * 24 * 60 * 60 * 1000,
+      );
+      await tx.vacancyUnlock.upsert({
+        where: {
+          vacancyId_companyId: {
+            vacancyId: payment.vacancyId,
+            companyId: payment.companyId,
+          },
+        },
+        create: {
           vacancyId: payment.vacancyId,
           companyId: payment.companyId,
+          paymentId: payment.id,
+          paidAt: new Date(),
+          expiresAt,
         },
-      },
-      create: {
-        vacancyId: payment.vacancyId,
-        companyId: payment.companyId,
-        paymentId: payment.id,
-        paidAt: new Date(),
-        expiresAt,
-      },
-      update: {
-        paymentId: payment.id,
-        paidAt: new Date(),
-        expiresAt,
-      },
-    });
-  } else if (payment.purpose === PaymentPurpose.WEEKLY_APPLY_PASS) {
-    const user = await db.user.findUnique({
-      where: { id: payment.userId },
-      select: { applyPassUntil: true },
-    });
-    const now = new Date();
-    const base =
-      user?.applyPassUntil && user.applyPassUntil > now
-        ? user.applyPassUntil
-        : now;
-    const nextUntil = new Date(
-      base.getTime() + WEEKLY_PASS_DAYS * 24 * 60 * 60 * 1000,
-    );
-    await db.user.update({
-      where: { id: payment.userId },
-      data: { applyPassUntil: nextUntil },
-    });
-  }
+        update: {
+          paymentId: payment.id,
+          paidAt: new Date(),
+          expiresAt,
+        },
+      });
+    } else if (payment.purpose === PaymentPurpose.WEEKLY_APPLY_PASS) {
+      const user = await tx.user.findUnique({
+        where: { id: payment.userId },
+        select: { applyPassUntil: true },
+      });
+      const now = new Date();
+      const base =
+        user?.applyPassUntil && user.applyPassUntil > now
+          ? user.applyPassUntil
+          : now;
+      const nextUntil = new Date(
+        base.getTime() + WEEKLY_PASS_DAYS * 24 * 60 * 60 * 1000,
+      );
+      await tx.user.update({
+        where: { id: payment.userId },
+        data: { applyPassUntil: nextUntil },
+      });
+    }
 
-  return updatedPayment;
+    return updatedPayment;
+  });
 }
 
 /**
- * Checks whether a student can apply to vacancies (1 free trial application, or active 7-day weekly pass).
+ * Checks whether a student can apply to vacancies (requires active 7-day prepaid pass, 5 000 UZS).
  */
 export async function getApplyPassStatus(userId: string) {
-  const [user, applicationCount] = await Promise.all([
-    db.user.findUnique({
-      where: { id: userId },
-      select: { applyPassUntil: true },
-    }),
-    db.vacancyApplication.count({ where: { studentId: userId } }),
-  ]);
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { applyPassUntil: true },
+  });
   const now = new Date();
   const hasActivePass = Boolean(
     user?.applyPassUntil && user.applyPassUntil > now,
   );
-  const freeTrialAvailable = applicationCount === 0;
   return {
-    canApply: hasActivePass || freeTrialAvailable,
+    canApply: hasActivePass,
     hasActivePass,
-    freeTrialAvailable,
+    freeTrialAvailable: false,
     applyPassUntil: user?.applyPassUntil ?? null,
   };
 }
@@ -168,6 +178,51 @@ export async function isVacancyUnlocked(
 
   if (!unlock) return false;
   return unlock.expiresAt > new Date();
+}
+
+/**
+ * Checks whether a CV is locked (80-100% match without an active VacancyUnlock) for a company.
+ * If vacancyId is omitted or has no match for this CV, checks if any active 80+ match for this company's vacancies is still locked.
+ */
+export async function isCvLockedForCompany(
+  cvId: string,
+  companyId: string,
+  vacancyId?: string | null,
+): Promise<boolean> {
+  if (vacancyId) {
+    const [match, unlocked] = await Promise.all([
+      db.match.findFirst({
+        where: { vacancyId, cvId, vacancy: { companyId } },
+        select: { score: true },
+      }),
+      isVacancyUnlocked(companyId, vacancyId),
+    ]);
+    if (match) {
+      return match.score >= 80 && !unlocked;
+    }
+  }
+
+  const lockedMatches = await db.match.findMany({
+    where: {
+      cvId,
+      score: { gte: 80 },
+      vacancy: { companyId },
+    },
+    select: { vacancyId: true },
+  });
+  if (lockedMatches.length === 0) return false;
+
+  const now = new Date();
+  const unlocks = await db.vacancyUnlock.findMany({
+    where: {
+      companyId,
+      vacancyId: { in: lockedMatches.map((m) => m.vacancyId) },
+      expiresAt: { gt: now },
+    },
+    select: { vacancyId: true },
+  });
+  const unlockedSet = new Set(unlocks.map((u) => u.vacancyId));
+  return lockedMatches.some((m) => !unlockedSet.has(m.vacancyId));
 }
 
 /**

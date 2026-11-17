@@ -2,10 +2,10 @@
  * Rejim (yorugʻ/tungi). Tanlov ikki joyda saqlanadi:
  * - localStorage (`THEME_STORAGE_KEY`): asosiy manba, <head> dagi skript birinchi chizishdan oldin oʻqiydi;
  * - cookie (`THEME_COOKIE`): server HTML ga data-theme ni oldindan qoʻyadi (localStorage bloklangan boʻlsa ham miltillamaydi).
- * Qiymat yoʻq boʻlsa tizim sozlamasi (prefers-color-scheme) CSS orqali ishlaydi.
+ * Standart rejim — yorugʻ ("light") Neo-Editorial Emerald dizayn tizimi.
  */
-export const THEME_COOKIE = "theme";
-export const THEME_STORAGE_KEY = "candidator-theme";
+export const THEME_COOKIE = "candidator_theme_v3";
+export const THEME_STORAGE_KEY = "candidator-theme-v3";
 
 export type Theme = "light" | "dark";
 

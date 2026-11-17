@@ -102,6 +102,7 @@ async function visibleCv(email = "talaba@test.local") {
     ),
     ctx,
   );
+  await db.cv.updateMany({ data: { isPaid: true } });
   await patchVisibility(
     jsonRequest(
       "/api/cv/me/visibility",

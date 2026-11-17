@@ -36,13 +36,24 @@ export function LoginForm({
     setPending(true);
     setError(undefined);
     setFields({});
-    const result = await postJson("/api/auth/login", {
-      email,
-      password: form.get("password"),
-    });
+    const result = await postJson<{ ok: boolean; role?: string }>(
+      "/api/auth/login",
+      {
+        email,
+        password: form.get("password"),
+      },
+    );
     setPending(false);
     if (result.ok) {
-      router.replace("/account");
+      const target =
+        result.data.role === "STUDENT"
+          ? "/student/cv"
+          : result.data.role === "COMPANY"
+            ? "/company"
+            : result.data.role === "ADMIN"
+              ? "/admin"
+              : "/account";
+      router.replace(target);
       router.refresh();
       return;
     }

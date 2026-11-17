@@ -1,8 +1,25 @@
+import { PaymentProvider } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { currentUser } from "@/backend/auth/current-user";
+import { db } from "@/backend/db";
 import { completePayment } from "@/backend/payment/service";
 
+function safeReturnPath(raw: string | null, fallback: string): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return fallback;
+  return raw;
+}
+
 export async function GET(req: Request) {
+  if (
+    process.env.NODE_ENV === "production" &&
+    process.env.ALLOW_TEST_PAYMENTS !== "true"
+  ) {
+    return NextResponse.json(
+      { error: "TEST_PAYMENTS_DISABLED" },
+      { status: 403 },
+    );
+  }
+
   const user = await currentUser();
   if (!user) {
     return NextResponse.redirect(new URL("/login", req.url));
@@ -10,11 +27,22 @@ export async function GET(req: Request) {
 
   const { searchParams } = new URL(req.url);
   const paymentId = searchParams.get("paymentId");
-  const returnUrl =
-    searchParams.get("returnUrl") || `/${user.locale}/dashboard`;
+  const returnPath = safeReturnPath(
+    searchParams.get("returnUrl"),
+    `/${user.locale}/dashboard`,
+  );
 
   if (!paymentId) {
-    return NextResponse.redirect(new URL(returnUrl, req.url));
+    return NextResponse.redirect(new URL(returnPath, req.url));
+  }
+
+  const payment = await db.payment.findUnique({ where: { id: paymentId } });
+  if (
+    !payment ||
+    payment.userId !== user.id ||
+    payment.provider !== PaymentProvider.TEST
+  ) {
+    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 
   try {
@@ -23,7 +51,7 @@ export async function GET(req: Request) {
     console.error("Test payment completion error:", err);
   }
 
-  const redirectTarget = new URL(returnUrl, req.url);
+  const redirectTarget = new URL(returnPath, req.url);
   redirectTarget.searchParams.set("payment", "success");
   return NextResponse.redirect(redirectTarget);
 }

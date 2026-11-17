@@ -21,43 +21,69 @@ export default async function AdminComplaintsPage() {
   });
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-bold">{t("complaints.title")}</h1>
-        <AdminNav active="complaints" />
+    <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+          {t("complaints.title")}
+        </h1>
+        <div className="relative z-10">
+          <AdminNav active="complaints" />
+        </div>
       </div>
 
       {complaints.length === 0 ? (
-        <p className="text-muted text-sm">{t("complaints.empty")}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+          <p className="text-subtle text-sm">{t("complaints.empty")}</p>
+        </div>
       ) : (
-        <div className="border-border bg-surface overflow-x-auto rounded-2xl border shadow-sm">
+        <div className="border-line bg-card/90 shadow-soft overflow-x-auto rounded-3xl border backdrop-blur-md">
           <table className="w-full text-left text-sm">
-            <thead className="border-border border-b text-xs uppercase">
+            <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
               <tr>
-                <th className="px-4 py-3">{t("complaints.reporter")}</th>
-                <th className="px-4 py-3">{t("complaints.reported")}</th>
-                <th className="px-4 py-3">{t("complaints.reason")}</th>
-                <th className="px-4 py-3">{t("complaints.status")}</th>
-                <th className="px-4 py-3">{t("complaints.date")}</th>
-                <th className="px-4 py-3">{t("complaints.action")}</th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.reporter")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.reported")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.reason")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.status")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.date")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("complaints.action")}
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y">
+            <tbody className="divide-line divide-y">
               {complaints.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-4 py-3">{c.reporter.email}</td>
-                  <td className="px-4 py-3">{c.reportedUser.email}</td>
-                  <td className="px-4 py-3">
-                    <p className="font-medium">{c.reason}</p>
+                <tr key={c.id} className="hover:bg-canvas/50 transition-colors">
+                  <td className="text-text px-4 py-3.5">{c.reporter.email}</td>
+                  <td className="text-text px-4 py-3.5">
+                    {c.reportedUser.email}
+                  </td>
+                  <td className="px-4 py-3.5">
+                    <p className="text-text font-bold">{c.reason}</p>
                     {c.details ? (
-                      <p className="text-muted text-xs">{c.details}</p>
+                      <p className="text-subtle text-xs">{c.details}</p>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3 font-medium">{c.status}</td>
-                  <td className="text-muted px-4 py-3 text-xs">
+                  <td className="text-primary-text px-4 py-3.5 font-bold">
+                    {c.status}
+                  </td>
+                  <td className="text-subtle px-4 py-3.5 text-xs">
                     {formatDateTime(c.createdAt)}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3.5">
                     <ComplaintResolveButtons id={c.id} status={c.status} />
                   </td>
                 </tr>

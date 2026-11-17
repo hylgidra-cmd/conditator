@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Header");
+  return { title: t("admin") };
+}
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { AiLimitForm } from "@/frontend/components/admin/ai-limit-form";
 import { recentAdminLogs } from "@/backend/admin/log";
@@ -28,76 +34,100 @@ export default async function AdminDashboardPage() {
   ] as const;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">{t("title")}</h1>
-      <AdminNav active="dashboard" />
+    <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+          {t("title")}
+        </h1>
+        <div className="relative z-10">
+          <AdminNav active="dashboard" />
+        </div>
+      </div>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-semibold">{t("statsTitle")}</h2>
-        <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <h2 className="text-text text-lg font-extrabold">{t("statsTitle")}</h2>
+        <dl className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
           {tiles.map(([key, value]) => (
             <div
               key={key}
-              className="border-border bg-surface rounded-2xl border p-4 shadow-sm"
+              className="border-line bg-card/90 shadow-soft hover:border-primary/40 rounded-3xl border p-5 backdrop-blur-md transition-colors"
             >
-              <dt className="text-muted text-sm">{t(`stats.${key}`)}</dt>
-              <dd className="mt-1 text-2xl font-bold tabular-nums">{value}</dd>
+              <dt className="text-subtle text-xs font-semibold">
+                {t(`stats.${key}`)}
+              </dt>
+              <dd className="text-primary-text mt-1.5 text-2xl font-extrabold tabular-nums">
+                {value}
+              </dd>
             </div>
           ))}
         </dl>
       </section>
 
-      <section className="border-border bg-surface space-y-4 rounded-2xl border p-5 shadow-sm">
+      <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
         <div>
-          <h2 className="text-lg font-semibold">{t("ai.title")}</h2>
-          <p className="text-muted text-sm">
+          <h2 className="text-text text-lg font-extrabold">{t("ai.title")}</h2>
+          <p className="text-subtle text-xs">
             {t("ai.since", { date: formatDate(ai.monthStart) })}
           </p>
         </div>
-        <dl className="grid gap-3 sm:grid-cols-3">
-          <div>
-            <dt className="text-muted text-sm">{t("ai.requests")}</dt>
-            <dd className="text-xl font-bold tabular-nums">{ai.requests}</dd>
+        <dl className="grid gap-3.5 sm:grid-cols-3">
+          <div className="border-line bg-canvas/70 rounded-2xl border p-4">
+            <dt className="text-subtle text-xs font-semibold">
+              {t("ai.requests")}
+            </dt>
+            <dd className="text-text mt-1 text-xl font-extrabold tabular-nums">
+              {ai.requests}
+            </dd>
           </div>
-          <div>
-            <dt className="text-muted text-sm">{t("ai.spent")}</dt>
-            <dd className="text-xl font-bold tabular-nums">
+          <div className="border-line bg-canvas/70 rounded-2xl border p-4">
+            <dt className="text-subtle text-xs font-semibold">
+              {t("ai.spent")}
+            </dt>
+            <dd className="text-text mt-1 text-xl font-extrabold tabular-nums">
               {t("ai.spentValue", {
                 spent: usd(ai.spentUsd),
                 limit: usd(ai.limitUsd),
               })}
             </dd>
           </div>
-          <div>
-            <dt className="text-muted text-sm">{t("ai.state")}</dt>
+          <div className="border-line bg-canvas/70 rounded-2xl border p-4">
+            <dt className="text-subtle text-xs font-semibold">
+              {t("ai.state")}
+            </dt>
             <dd
-              className={`font-semibold ${ai.limitReached ? "text-red-700" : "text-green-700"}`}
+              className={`mt-1 text-sm font-bold ${ai.limitReached ? "text-danger" : "text-success"}`}
             >
               {ai.limitReached ? t("ai.limitReached") : t("ai.limitOk")}
             </dd>
           </div>
         </dl>
-        <ul className="space-y-1 text-sm">
+        <ul className="text-text space-y-1.5 text-sm">
           {(["CV_GEN", "MATCH"] as const).map((task) => (
             <li key={task} className="flex flex-wrap gap-x-2">
-              <span className="font-medium">{t(`ai.tasks.${task}`)}</span>
-              {t("ai.taskLine", {
-                ok: ai.tasks[task].ok,
-                failed: ai.tasks[task].failed,
-                cost: usd(ai.tasks[task].costUsd),
-              })}
+              <span className="font-bold">{t(`ai.tasks.${task}`)}</span>
+              <span className="text-subtle">
+                {t("ai.taskLine", {
+                  ok: ai.tasks[task].ok,
+                  failed: ai.tasks[task].failed,
+                  cost: usd(ai.tasks[task].costUsd),
+                })}
+              </span>
             </li>
           ))}
         </ul>
         <AiLimitForm initial={ai.limitUsd} />
       </section>
 
-      <section className="space-y-3">
-        <h2 className="text-lg font-semibold">{t("logs.title")}</h2>
+      <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
+        <h2 className="text-text text-lg font-extrabold">{t("logs.title")}</h2>
         {logs.length === 0 ? (
-          <p className="text-muted text-sm">{t("logs.empty")}</p>
+          <p className="text-subtle text-sm">{t("logs.empty")}</p>
         ) : (
-          <ul className="border-border bg-surface divide-border divide-y rounded-2xl border text-sm">
+          <ul className="border-line bg-canvas/60 divide-line divide-y rounded-2xl border text-sm">
             {logs.map((log) => {
               const target = String(
                 log.details.name ?? log.details.email ?? log.targetId,
@@ -105,9 +135,9 @@ export default async function AdminDashboardPage() {
               return (
                 <li
                   key={log.id}
-                  className="flex flex-wrap justify-between gap-2 px-4 py-2"
+                  className="hover:bg-card/60 flex flex-wrap justify-between gap-2 px-4 py-3 transition-colors"
                 >
-                  <span className="min-w-0 break-words">
+                  <span className="text-text min-w-0 break-words">
                     {t(`logs.actions.${log.action}`, {
                       target,
                       to:
@@ -116,7 +146,7 @@ export default async function AdminDashboardPage() {
                           : String(log.details.to ?? ""),
                     })}
                   </span>
-                  <span className="text-muted text-xs">
+                  <span className="text-subtle text-xs">
                     {formatDateTime(log.createdAt)}
                     {log.admin ? ` · ${log.admin}` : ""}
                   </span>

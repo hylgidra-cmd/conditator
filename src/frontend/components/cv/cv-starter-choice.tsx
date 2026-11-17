@@ -18,10 +18,10 @@ export function CvStarterChoice({
   return (
     <div className="mx-auto max-w-2xl px-4 py-8 text-center">
       <div className="mb-10 space-y-2">
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <h1 className="text-gradient-blue text-3xl font-extrabold tracking-tight sm:text-4xl">
           {t("choiceTitle")}
         </h1>
-        <p className="text-muted text-base">{t("choiceDesc")}</p>
+        <p className="text-subtle text-base">{t("choiceDesc")}</p>
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
@@ -29,14 +29,14 @@ export function CvStarterChoice({
         <button
           type="button"
           onClick={() => onSelectChoice("import")}
-          className="group border-brand/40 bg-surface hover:border-brand focus:ring-brand/20 relative flex flex-col items-center justify-center rounded-3xl border-2 p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl focus:ring-4 focus:outline-none"
+          className="group border-primary/40 bg-card shadow-float hover:border-primary focus:ring-primary/25 relative flex flex-col items-center justify-center rounded-3xl border p-8 text-center backdrop-blur-xl transition-all hover:-translate-y-1 focus:ring-4 focus:outline-none"
         >
           {/* Recommended Pill Badge */}
-          <div className="bg-brand text-brand-foreground absolute -top-3.5 rounded-full px-3.5 py-1 text-xs font-bold shadow">
+          <div className="absolute -top-3.5 rounded-full bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-3.5 py-1 text-xs font-bold text-white shadow-[0_6px_18px_-4px_rgb(5,150,105,0.6)]">
             {t("importBadge")}
           </div>
 
-          <div className="bg-brand/10 text-brand mb-5 flex h-20 w-20 items-center justify-center rounded-2xl transition-transform group-hover:scale-110">
+          <div className="bg-primary-soft text-primary-text border-primary/30 mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border transition-transform group-hover:scale-110">
             <svg
               className="h-10 w-10"
               fill="none"
@@ -52,10 +52,10 @@ export function CvStarterChoice({
             </svg>
           </div>
 
-          <h3 className="group-hover:text-brand text-xl font-bold tracking-tight transition-colors">
+          <h3 className="text-text group-hover:text-primary-text text-xl font-bold tracking-tight transition-colors">
             {t("importTitle")}
           </h3>
-          <p className="text-muted mt-2 text-sm leading-relaxed">
+          <p className="text-subtle mt-2 text-sm leading-relaxed">
             {t("importDesc")}
           </p>
         </button>
@@ -64,9 +64,9 @@ export function CvStarterChoice({
         <button
           type="button"
           onClick={() => onSelectChoice("scratch")}
-          className="group border-border bg-surface hover:border-brand focus:ring-brand/20 relative flex flex-col items-center justify-center rounded-3xl border-2 p-8 text-center shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl focus:ring-4 focus:outline-none"
+          className="group border-line bg-card shadow-soft hover:border-teal-500/60 focus:ring-teal-500/25 relative flex flex-col items-center justify-center rounded-3xl border p-8 text-center backdrop-blur-xl transition-all hover:-translate-y-1 focus:ring-4 focus:outline-none"
         >
-          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 transition-transform group-hover:scale-110">
+          <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-2xl border border-teal-500/30 bg-teal-500/15 text-teal-700 transition-transform group-hover:scale-110 dark:text-teal-300">
             <svg
               className="h-10 w-10"
               fill="none"
@@ -82,10 +82,10 @@ export function CvStarterChoice({
             </svg>
           </div>
 
-          <h3 className="group-hover:text-brand text-xl font-bold tracking-tight transition-colors">
+          <h3 className="text-text group-hover:text-primary-text text-xl font-bold tracking-tight transition-colors">
             {t("scratchTitle")}
           </h3>
-          <p className="text-muted mt-2 text-sm leading-relaxed">
+          <p className="text-subtle mt-2 text-sm leading-relaxed">
             {t("scratchDesc")}
           </p>
         </button>
@@ -93,11 +93,11 @@ export function CvStarterChoice({
 
       {/* Edit existing resume link if already created */}
       {hasExistingCv && onEditExisting && (
-        <div className="border-border/60 mt-10 border-t pt-6">
+        <div className="border-line/70 mt-10 border-t pt-6">
           <button
             type="button"
             onClick={onEditExisting}
-            className="text-brand text-sm font-semibold hover:underline"
+            className="text-primary-text text-sm font-bold hover:underline"
           >
             {t("editExisting")}
           </button>

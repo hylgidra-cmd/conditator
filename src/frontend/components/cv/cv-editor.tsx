@@ -574,7 +574,7 @@ function Section({
 
 function FillInBadge({ label }: { label: string }) {
   return (
-    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+    <span className="bg-primary-soft text-primary-text rounded-full px-2 py-0.5 text-xs font-medium">
       {label}
     </span>
   );
@@ -633,7 +633,7 @@ function TextField(props: {
     id: props.id,
     value: props.value,
     "aria-invalid": props.error ? true : undefined,
-    className: `${INPUT} ${props.missing ? "border-amber-300 bg-amber-50" : ""}`,
+    className: `${INPUT} ${props.missing ? "border-primary/60 bg-primary-soft/50" : ""}`,
   };
   return (
     <div className="space-y-1">

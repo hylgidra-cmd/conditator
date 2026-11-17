@@ -75,8 +75,11 @@ export function CandidateActions({
     }
   }
 
+  const [payError, setPayError] = useState<string>();
+
   async function handleUnlockCheckout(provider: "CLICK" | "PAYME" | "TEST") {
     setPaying(true);
+    setPayError(undefined);
     try {
       const res = await postJson<{ paymentId: string; redirectUrl: string }>(
         "/api/payments/checkout",
@@ -85,14 +88,18 @@ export function CandidateActions({
           provider,
           vacancyId,
           cvId,
-          returnUrl: window.location.href,
+          returnUrl: `${window.location.pathname}${window.location.search}`,
         },
       );
       if (res.ok && res.data.redirectUrl) {
         window.location.href = res.data.redirectUrl;
+        return;
       }
+      setPayError(res.ok ? "Xatolik yuz berdi" : res.error);
+      setPaying(false);
     } catch (err) {
       console.error(err);
+      setPayError("Xatolik yuz berdi");
       setPaying(false);
     }
   }
@@ -101,16 +108,16 @@ export function CandidateActions({
     <div className="space-y-4">
       {/* 80-100% Locked Banner */}
       {isLocked && (
-        <div className="rounded-2xl border border-amber-300 bg-amber-50/80 p-4 shadow-sm backdrop-blur">
+        <div className="border-primary/30 bg-primary-soft/80 rounded-2xl border p-4 shadow-sm backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <span className="text-xl">🔒</span>
-                <h4 className="font-bold text-amber-950">
+                <h4 className="text-text font-bold">
                   80–100% Mos nomzod kontaktlari qulflangan
                 </h4>
               </div>
-              <p className="text-sm text-amber-900">
+              <p className="text-subtle text-sm">
                 Ushbu vakansiya bo&apos;yicha barcha yuqori mos nomzodlarning
                 to&apos;liq kontaktlarini 15 kunga oching.
               </p>
@@ -118,7 +125,7 @@ export function CandidateActions({
             <button
               type="button"
               onClick={() => setShowUnlockModal(true)}
-              className="rounded-xl bg-[#F07A1A] px-5 py-2.5 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912]"
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-5 py-2.5 text-sm font-bold transition-colors"
             >
               Kontaktlarni ochish — 14 999 so&apos;m
             </button>
@@ -157,8 +164,8 @@ export function CandidateActions({
             disabled={togglingLike}
             className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-semibold transition-colors ${
               liked
-                ? "border-red-300 bg-red-50 text-red-600"
-                : "border-border bg-surface text-gray-700 hover:bg-gray-50"
+                ? "border-red-500/30 bg-danger-soft text-danger"
+                : "border-line bg-card text-text hover:bg-card-cool"
             }`}
             title="Nomzodga like bosish uning reytingiga +1 bonus qo'shadi"
           >
@@ -173,7 +180,7 @@ export function CandidateActions({
           {conversationId ? (
             <Link
               href={`/chat?id=${conversationId}`}
-              className="border-brand bg-brand-soft text-brand hover:bg-brand/10 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
+              className="border-primary/40 bg-primary-soft text-primary-text hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
             >
               <span>💬</span>
               <span>Yozishish</span>
@@ -181,7 +188,7 @@ export function CandidateActions({
           ) : (
             <Link
               href={`/chat?vacancyId=${vacancyId}&cvId=${cvId}`}
-              className="border-brand bg-brand-soft text-brand hover:bg-brand/10 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
+              className="border-primary/40 bg-primary-soft text-primary-text hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
             >
               <span>💬</span>
               <span>Chat boshlash</span>
@@ -192,12 +199,19 @@ export function CandidateActions({
 
       {/* Unlock Checkout Modal */}
       {showUnlockModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="bg-surface border-border w-full max-w-md space-y-4 rounded-2xl border p-6 shadow-2xl">
+        <div
+          className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowUnlockModal(false);
+          }}
+        >
+          <div className="ds-modal-panel bg-card border-line shadow-float w-full max-w-md space-y-4 rounded-3xl border p-6">
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-lg font-bold">Nomzodlarni ochish</h3>
-                <p className="text-muted mt-1 text-sm">
+                <h3 className="text-text text-lg font-bold">
+                  Nomzodlarni ochish
+                </h3>
+                <p className="text-subtle mt-1 text-sm">
                   14 999 so&apos;m evaziga ushbu vakansiya bo&apos;yicha 15
                   kunga barcha 80-100% mos nomzodlarning telefon va emaillari
                   ochiladi.
@@ -206,14 +220,18 @@ export function CandidateActions({
               <button
                 type="button"
                 onClick={() => setShowUnlockModal(false)}
-                className="text-muted hover:text-foreground text-xl"
+                className="text-subtle hover:text-text text-xl"
               >
-                ✕
+                {"✕"}
               </button>
             </div>
 
+            {payError ? (
+              <p className="text-danger text-xs font-semibold">{payError}</p>
+            ) : null}
+
             <div className="space-y-2 pt-2">
-              <p className="text-xs font-semibold tracking-wider text-gray-500 uppercase">
+              <p className="text-subtle text-xs font-semibold tracking-wider uppercase">
                 To&apos;lov tizimini tanlang:
               </p>
               <div className="grid grid-cols-2 gap-3">
@@ -221,26 +239,26 @@ export function CandidateActions({
                   type="button"
                   disabled={paying}
                   onClick={() => handleUnlockCheckout("CLICK")}
-                  className="border-border hover:border-brand flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors hover:bg-blue-50"
+                  className="border-line bg-canvas hover:border-primary hover:bg-primary-soft/50 flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors"
                 >
-                  <span className="font-bold text-blue-600">CLICK</span>
-                  <span className="text-muted text-xs">14 999 UZS</span>
+                  <span className="text-primary-text font-bold">CLICK</span>
+                  <span className="text-subtle text-xs">14 999 UZS</span>
                 </button>
                 <button
                   type="button"
                   disabled={paying}
                   onClick={() => handleUnlockCheckout("PAYME")}
-                  className="border-border hover:border-brand flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors hover:bg-teal-50"
+                  className="border-line bg-canvas hover:border-primary hover:bg-primary-soft/50 flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors"
                 >
-                  <span className="font-bold text-teal-600">PAYME</span>
-                  <span className="text-muted text-xs">14 999 UZS</span>
+                  <span className="text-violet font-bold">PAYME</span>
+                  <span className="text-subtle text-xs">14 999 UZS</span>
                 </button>
               </div>
               <button
                 type="button"
                 disabled={paying}
                 onClick={() => handleUnlockCheckout("TEST")}
-                className="mt-2 w-full rounded-xl bg-gray-100 py-2.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-200"
+                className="border-line bg-card-cool text-text hover:border-primary mt-2 w-full rounded-xl border py-2.5 text-xs font-medium transition-colors"
               >
                 🧪 Sinov / Sandbox to&apos;lov (Tezkor tasdiqlash)
               </button>

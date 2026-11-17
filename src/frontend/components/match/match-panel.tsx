@@ -47,7 +47,7 @@ export function MatchPanel({
     else setError(result.error);
   }
 
-  async function unlockVacancy() {
+  async function unlockVacancy(provider: "CLICK" | "PAYME" | "TEST" = "TEST") {
     if (unlocking) return;
     setUnlocking(true);
     setError(undefined);
@@ -55,9 +55,9 @@ export function MatchPanel({
       "/api/payments/checkout",
       {
         purpose: "VACANCY_UNLOCK",
-        provider: "TEST",
+        provider,
         vacancyId,
-        returnUrl: window.location.href,
+        returnUrl: `${window.location.pathname}${window.location.search}`,
       },
     );
     if (result.ok && result.data.redirectUrl) {
@@ -108,7 +108,7 @@ export function MatchPanel({
       {notice ? (
         <div
           role="status"
-          className="rounded-2xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900"
+          className="border-primary/30 bg-primary-soft text-primary-text rounded-2xl border p-4 text-sm font-medium"
         >
           {t(`notice.${notice}`)}
         </div>
@@ -141,21 +141,39 @@ export function MatchPanel({
           </h2>
           {weak ? <p className="text-muted text-sm">{t("weak")}</p> : null}
           {hasLocked ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-amber-50/90 p-4">
-              <p className="text-sm font-medium text-amber-900">
+            <div className="border-primary/30 bg-primary-soft/80 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 backdrop-blur-md">
+              <p className="text-text text-sm font-medium">
                 {t("unlockBanner")}
               </p>
-              <button
-                type="button"
-                onClick={unlockVacancy}
-                disabled={unlocking}
-                className="rounded-xl bg-[#F07A1A] px-4 py-2 text-sm font-bold text-white shadow transition-colors hover:bg-[#d86912] disabled:opacity-60"
-              >
-                {t("unlockBtn")}
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => unlockVacancy("CLICK")}
+                  disabled={unlocking}
+                  className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-bold transition-colors disabled:opacity-60"
+                >
+                  {"CLICK"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => unlockVacancy("PAYME")}
+                  disabled={unlocking}
+                  className="bg-violet text-on-primary rounded-xl px-4 py-2 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-60"
+                >
+                  {"PAYME"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => unlockVacancy("TEST")}
+                  disabled={unlocking}
+                  className="border-line bg-card text-text hover:border-primary rounded-xl border px-4 py-2 text-xs font-bold transition-colors disabled:opacity-60"
+                >
+                  {t("unlockBtn")}
+                </button>
+              </div>
             </div>
           ) : outcome.isVacancyUnlocked ? (
-            <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 px-4 py-3 text-sm font-medium text-emerald-800">
+            <div className="border-emerald-500/30 bg-success-soft text-success rounded-2xl border px-4 py-3 text-sm font-medium">
               {t("unlockedBanner")}
             </div>
           ) : null}
@@ -172,7 +190,7 @@ export function MatchPanel({
                     </h3>
                     <DecisionBadge decision={item.decision} />
                     {item.isLocked ? (
-                      <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-800">
+                      <span className="bg-primary-soft text-primary-text rounded-full px-2.5 py-0.5 text-xs font-semibold">
                         {t("lockedBadge")}
                       </span>
                     ) : null}

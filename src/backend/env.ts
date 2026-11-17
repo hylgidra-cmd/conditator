@@ -59,9 +59,14 @@ export function emailFrom(): string | undefined {
 /** Parol tiklash xatini yuborish mumkinmi: AUTH_SECRET, jo'natuvchi va Resend yoki SMTP sozlangan. */
 export function emailConfigured(): boolean {
   const env = serverEnv();
-  const transport = Boolean(
-    env.RESEND_API_KEY || (env.SMTP_HOST && env.SMTP_PORT),
+  const isLocalSmtp =
+    env.SMTP_HOST === "localhost" || env.SMTP_HOST === "127.0.0.1";
+  const smtpReady = Boolean(
+    env.SMTP_HOST &&
+      env.SMTP_PORT &&
+      !(env.APP_URL.startsWith("https://") && isLocalSmtp),
   );
+  const transport = Boolean(env.RESEND_API_KEY || smtpReady);
   return Boolean(env.AUTH_SECRET && emailFrom() && transport);
 }
 

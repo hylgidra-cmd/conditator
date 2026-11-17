@@ -37,13 +37,18 @@ export async function createSession(
 }
 
 export function clearSessionCookie(response: NextResponse): void {
+  const secure = process.env.NODE_ENV === "production";
   response.cookies.set(SESSION_COOKIE, "", {
     httpOnly: true,
+    sameSite: "lax",
+    secure,
     path: "/",
     maxAge: 0,
   });
   response.cookies.set(LEGACY_SESSION_COOKIE, "", {
     httpOnly: true,
+    sameSite: "lax",
+    secure,
     path: "/",
     maxAge: 0,
   });
@@ -52,6 +57,18 @@ export function clearSessionCookie(response: NextResponse): void {
 export async function deleteSession(token: string | undefined): Promise<void> {
   if (!token) return;
   await db.session.deleteMany({ where: { tokenHash: hashToken(token) } });
+}
+
+export async function deleteOtherSessions(
+  userId: string,
+  currentToken: string | undefined,
+): Promise<void> {
+  await db.session.deleteMany({
+    where: {
+      userId,
+      ...(currentToken ? { tokenHash: { not: hashToken(currentToken) } } : {}),
+    },
+  });
 }
 
 /** Token bo'yicha faol foydalanuvchi. Muddati o'tgan sessiya va bloklangan foydalanuvchi uchun null. */

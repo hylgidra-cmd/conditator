@@ -13,7 +13,11 @@ import { postJson } from "@/backend/client/api";
 
 const ROLES = ["STUDENT", "COMPANY"] as const;
 
-export function RegisterForm() {
+export function RegisterForm({
+  defaultRole = "STUDENT",
+}: {
+  defaultRole?: (typeof ROLES)[number];
+} = {}) {
   const t = useTranslations("Auth.register");
   const errorText = useErrorText();
   const locale = useLocale();
@@ -86,7 +90,7 @@ export function RegisterForm() {
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium">{t("role")}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
-          {ROLES.map((role, index) => (
+          {ROLES.map((role) => (
             <label
               key={role}
               className="border-border has-[:checked]:border-brand has-[:checked]:bg-brand-soft flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm"
@@ -95,7 +99,7 @@ export function RegisterForm() {
                 type="radio"
                 name="role"
                 value={role}
-                defaultChecked={index === 0}
+                defaultChecked={role === defaultRole}
               />
               {role === "STUDENT" ? t("roleStudent") : t("roleCompany")}
             </label>

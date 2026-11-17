@@ -14,7 +14,8 @@ export const runtime = "nodejs";
 /** Talabaning o'z saqlangan CV si PDF ko'rinishida (server tomonda, Chromium). */
 export const GET = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
-  const cv = await loadSavedCvDocument(user.id);
+  const cvId = request.nextUrl.searchParams.get("cvId") || undefined;
+  const cv = await loadSavedCvDocument(user.id, cvId);
   if (!cv) throw new ApiError(409, "CV_NOT_SAVED");
   rateLimit(`cv-pdf:${user.id}`, LIMITS.cvPdf);
 

@@ -30,60 +30,96 @@ export default async function AdminPaymentsPage() {
   const totalRevenue = completedAgg._sum.amount ?? 0;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
-      <div className="space-y-3">
-        <h1 className="text-2xl font-bold">{t("payments.title")}</h1>
-        <AdminNav active="payments" />
+    <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
+        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+          {t("payments.title")}
+        </h1>
+        <div className="relative z-10">
+          <AdminNav active="payments" />
+        </div>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-3">
-        <div className="border-border bg-surface rounded-2xl border p-4 shadow-sm">
-          <p className="text-muted text-xs">{t("payments.totalRevenue")}</p>
-          <p className="mt-1 text-2xl font-bold">
+      <section className="grid gap-4 sm:grid-cols-3">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
+          <p className="text-subtle text-xs font-semibold">
+            {t("payments.totalRevenue")}
+          </p>
+          <p className="text-primary-text mt-1.5 text-2xl font-extrabold tabular-nums">
             {totalRevenue.toLocaleString("en-US")}
           </p>
         </div>
-        <div className="border-border bg-surface rounded-2xl border p-4 shadow-sm">
-          <p className="text-muted text-xs">{t("payments.completedCount")}</p>
-          <p className="mt-1 text-2xl font-bold">{completedAgg._count._all}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
+          <p className="text-subtle text-xs font-semibold">
+            {t("payments.completedCount")}
+          </p>
+          <p className="text-success mt-1.5 text-2xl font-extrabold tabular-nums">
+            {completedAgg._count._all}
+          </p>
         </div>
-        <div className="border-border bg-surface rounded-2xl border p-4 shadow-sm">
-          <p className="text-muted text-xs">{t("payments.pendingCount")}</p>
-          <p className="mt-1 text-2xl font-bold">{pendingCount}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
+          <p className="text-subtle text-xs font-semibold">
+            {t("payments.pendingCount")}
+          </p>
+          <p className="text-text mt-1.5 text-2xl font-extrabold tabular-nums">
+            {pendingCount}
+          </p>
         </div>
       </section>
 
       {payments.length === 0 ? (
-        <p className="text-muted text-sm">{t("payments.empty")}</p>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+          <p className="text-subtle text-sm">{t("payments.empty")}</p>
+        </div>
       ) : (
-        <div className="border-border bg-surface overflow-x-auto rounded-2xl border shadow-sm">
+        <div className="border-line bg-card/90 shadow-soft overflow-x-auto rounded-3xl border backdrop-blur-md">
           <table className="w-full text-left text-sm">
-            <thead className="border-border border-b text-xs uppercase">
+            <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
               <tr>
-                <th className="px-4 py-3">{t("payments.user")}</th>
-                <th className="px-4 py-3">{t("payments.purpose")}</th>
-                <th className="px-4 py-3">{t("payments.provider")}</th>
-                <th className="px-4 py-3">{t("payments.amount")}</th>
-                <th className="px-4 py-3">{t("payments.status")}</th>
-                <th className="px-4 py-3">{t("payments.date")}</th>
+                <th className="px-4 py-3.5 font-bold">{t("payments.user")}</th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("payments.purpose")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("payments.provider")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("payments.amount")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">
+                  {t("payments.status")}
+                </th>
+                <th className="px-4 py-3.5 font-bold">{t("payments.date")}</th>
               </tr>
             </thead>
-            <tbody className="divide-border divide-y">
+            <tbody className="divide-line divide-y">
               {payments.map((p) => (
-                <tr key={p.id}>
-                  <td className="px-4 py-3">
-                    <p className="font-medium">
+                <tr key={p.id} className="hover:bg-canvas/50 transition-colors">
+                  <td className="px-4 py-3.5">
+                    <p className="text-text font-bold">
                       {p.company?.name ?? p.user.email}
                     </p>
-                    <p className="text-muted text-xs">{p.user.email}</p>
+                    <p className="text-subtle text-xs">{p.user.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-xs font-medium">{p.purpose}</td>
-                  <td className="px-4 py-3 text-xs">{p.provider}</td>
-                  <td className="px-4 py-3 font-semibold">
+                  <td className="text-text px-4 py-3.5 text-xs font-semibold">
+                    {p.purpose}
+                  </td>
+                  <td className="text-subtle px-4 py-3.5 text-xs">
+                    {p.provider}
+                  </td>
+                  <td className="text-text px-4 py-3.5 font-bold tabular-nums">
                     {p.amount.toLocaleString("en-US")}
                   </td>
-                  <td className="px-4 py-3 text-xs font-medium">{p.status}</td>
-                  <td className="text-muted px-4 py-3 text-xs">
+                  <td className="px-4 py-3.5 text-xs font-bold">
+                    <span className="border-line bg-canvas text-primary-text rounded-full border px-2.5 py-0.5">
+                      {p.status}
+                    </span>
+                  </td>
+                  <td className="text-subtle px-4 py-3.5 text-xs">
                     {formatDateTime(p.createdAt)}
                   </td>
                 </tr>

@@ -1,24 +1,11 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@/backend/auth/current-user";
+import { requireApprovedCompany } from "@/backend/company/access";
+import { route } from "@/backend/http/route";
 import { toggleCandidateLike } from "@/backend/vacancy/application-service";
-import { errorResponse } from "@/backend/http/errors";
-import { db } from "@/backend/db";
 
-export async function POST(
-  req: Request,
-  context: { params: Promise<{ cvId: string }> },
-) {
-  const user = await currentUser();
-  if (!user || user.role !== "COMPANY") {
-    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
-  }
-
-  const company = await db.company.findUnique({ where: { userId: user.id } });
-  if (!company) {
-    return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
-  }
-
-  try {
+export const POST = route<{ params: Promise<{ cvId: string }> }>(
+  async (request, context) => {
+    const { company } = await requireApprovedCompany(request);
     const { cvId } = await context.params;
     const result = await toggleCandidateLike({
       companyId: company.id,
@@ -26,7 +13,5 @@ export async function POST(
     });
 
     return NextResponse.json(result);
-  } catch (err) {
-    return errorResponse(err, req);
-  }
-}
+  },
+);

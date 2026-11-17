@@ -1,32 +1,33 @@
-import { NextResponse } from "next/server";
-import { currentUser } from "@/backend/auth/current-user";
-import { generateAboutMe } from "@/backend/ai/cv";
-import { errorResponse } from "@/backend/http/errors";
 import { Lang } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { generateAboutMe } from "@/backend/ai/cv";
+import { requireRole } from "@/backend/auth/session";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
-export async function POST(req: Request) {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
+const aboutMeRequestSchema = z.object({
+  skills: z.array(z.string().trim().max(80)).max(30).default([]),
+  education: z.array(z.string().trim().max(200)).max(15).default([]),
+  experience: z.array(z.string().trim().max(200)).max(15).default([]),
+  language: z.nativeEnum(Lang).optional(),
+  jobTitle: z.string().trim().max(120).optional(),
+});
 
-  try {
-    const body = await req.json();
-    const { skills, education, experience, language, jobTitle, fullName } =
-      body;
+export const POST = route(async (request) => {
+  const user = await requireRole(request);
+  rateLimit(`ai-about:${user.id}`, LIMITS.cvGenerate);
+  const body = await parseJson(request, aboutMeRequestSchema);
 
-    const aboutMe = await generateAboutMe({
-      userId: user.id,
-      language: (language as Lang) || (user.locale as Lang) || "uz",
-      jobTitle: typeof jobTitle === "string" ? jobTitle : undefined,
-      fullName: typeof fullName === "string" ? fullName : undefined,
-      skills: Array.isArray(skills) ? skills : [],
-      education: Array.isArray(education) ? education : [],
-      experience: Array.isArray(experience) ? experience : [],
-    });
+  const aboutMe = await generateAboutMe({
+    userId: user.id,
+    language: body.language || (user.locale as Lang) || "uz",
+    jobTitle: body.jobTitle,
+    skills: body.skills,
+    education: body.education,
+    experience: body.experience,
+  });
 
-    return NextResponse.json({ ok: true, aboutMe });
-  } catch (err) {
-    return errorResponse(err, req);
-  }
-}
+  return NextResponse.json({ ok: true, aboutMe });
+});

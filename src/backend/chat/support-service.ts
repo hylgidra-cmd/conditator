@@ -27,6 +27,9 @@ export async function ensureSupportThread(userId: string) {
 export async function listSupportThreadsForUser(userId: string, role: Role) {
   if (role === Role.ADMIN) {
     return db.supportThread.findMany({
+      where: {
+        messages: { some: {} },
+      },
       include: {
         user: {
           select: {

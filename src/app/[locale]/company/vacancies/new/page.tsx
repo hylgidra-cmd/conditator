@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Reveal } from "@/frontend/components/ds/motion";
 import {
   EMPTY_VACANCY,
   VacancyForm,
@@ -22,15 +23,27 @@ export default async function NewVacancyPage({
     : null;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <h1 className="text-2xl font-bold">
-        {source ? t("copyTitle") : t("newTitle")}
-      </h1>
-      <div className="border-border bg-surface rounded-2xl border p-5 shadow-sm">
-        <VacancyForm
-          initial={source ? formValuesFrom(vacancyView(source)) : EMPTY_VACANCY}
-        />
-      </div>
+    <div className="page-x font-ui max-w-3xl space-y-6 py-8 sm:py-12">
+      <Reveal>
+        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+          <div
+            aria-hidden
+            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+          />
+          <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
+            {source ? t("copyTitle") : t("newTitle")}
+          </h1>
+        </div>
+      </Reveal>
+      <Reveal delay={75}>
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-6 backdrop-blur-md">
+          <VacancyForm
+            initial={
+              source ? formValuesFrom(vacancyView(source)) : EMPTY_VACANCY
+            }
+          />
+        </div>
+      </Reveal>
     </div>
   );
 }

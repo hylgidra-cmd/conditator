@@ -19,6 +19,7 @@ import * as login from "@/app/api/auth/login/route";
 import * as logout from "@/app/api/auth/logout/route";
 import * as register from "@/app/api/auth/register/route";
 import * as reset from "@/app/api/auth/reset/route";
+import * as publicCompanyLogo from "@/app/api/companies/[id]/logo/route";
 import * as companyLogo from "@/app/api/company/me/logo/route";
 import * as companyMe from "@/app/api/company/me/route";
 import * as cvByIdPdf from "@/app/api/cv/[id]/pdf/route";
@@ -234,6 +235,15 @@ export const ROWS: Row[] = [
     companyMe.PUT as Handler,
     COMPANY,
     json("PUT", "/api/company/me", {}),
+  ),
+  row(
+    "GET",
+    "/api/companies/:id/logo",
+    "companies/[id]/logo",
+    publicCompanyLogo.GET as Handler,
+    PUBLIC,
+    get(`/api/companies/${X}/logo`),
+    { id: X },
   ),
   row(
     "GET",

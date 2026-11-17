@@ -1,6 +1,12 @@
+import type { Metadata } from "next";
 import { currentUser } from "@/backend/auth/current-user";
 import { redirect } from "@/i18n/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Header");
+  return { title: t("chat") };
+}
 import {
   ensureConversationForCompany,
   listUserConversations,
@@ -37,6 +43,7 @@ export default async function ChatPage({
 
   const conversations = rawConversations.map((c) => ({
     id: c.id,
+    studentId: c.studentId,
     company: c.company,
     vacancy: c.vacancy,
     studentCvId: c.studentCvId,

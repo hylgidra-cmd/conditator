@@ -1,21 +1,20 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@/backend/auth/current-user";
+import { z } from "zod";
+import { requireRole } from "@/backend/auth/session";
+import { parseJson } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 import { applyToVacancy } from "@/backend/vacancy/application-service";
-import { errorResponse } from "@/backend/http/errors";
 
-export async function POST(
-  req: Request,
-  context: { params: Promise<{ id: string }> },
-) {
-  const user = await currentUser();
-  if (!user || user.role !== "STUDENT") {
-    return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
-  }
+const applySchema = z.object({
+  cvId: z.string().min(1).max(64),
+  note: z.string().trim().max(1500).optional(),
+});
 
-  try {
+export const POST = route<{ params: Promise<{ id: string }> }>(
+  async (request, context) => {
+    const user = await requireRole(request, "STUDENT");
     const { id: vacancyId } = await context.params;
-    const body = await req.json();
-    const { cvId, note } = body;
+    const { cvId, note } = await parseJson(request, applySchema);
 
     const application = await applyToVacancy({
       studentId: user.id,
@@ -25,7 +24,5 @@ export async function POST(
     });
 
     return NextResponse.json({ ok: true, application });
-  } catch (err) {
-    return errorResponse(err, req);
-  }
-}
+  },
+);

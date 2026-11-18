@@ -34,7 +34,8 @@ const manualSubmitSchema = z.object({
 const PURPOSE_LABELS: Record<PaymentPurpose, string> = {
   CV_CREATION: "CV yaratish va faollashtirish",
   WEEKLY_APPLY_PASS: "7 kunlik ariza yuborish ruxsatnomasi",
-  VACANCY_UNLOCK: "80-100% mos nomzodlar kontaktlarini ochish (15 kun)",
+  VACANCY_UNLOCK:
+    "Kompaniya Obunasi (Abuna) — Mukammal (80–100%) CV larni ochish (15 kun)",
 };
 
 export const POST = route(async (request) => {
@@ -77,12 +78,14 @@ export const POST = route(async (request) => {
   }
 
   if (input.purpose === PaymentPurpose.VACANCY_UNLOCK || input.vacancyId) {
-    if (!companyId || !input.vacancyId) throw new ApiError(403, "FORBIDDEN");
-    const vacancy = await db.vacancy.findFirst({
-      where: { id: input.vacancyId, companyId },
-      select: { id: true },
-    });
-    if (!vacancy) throw new ApiError(404, "VACANCY_NOT_FOUND");
+    if (!companyId) throw new ApiError(403, "FORBIDDEN");
+    if (input.vacancyId) {
+      const vacancy = await db.vacancy.findFirst({
+        where: { id: input.vacancyId, companyId },
+        select: { id: true },
+      });
+      if (!vacancy) throw new ApiError(404, "VACANCY_NOT_FOUND");
+    }
   }
 
   const amount =

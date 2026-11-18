@@ -105,6 +105,8 @@ export const cvDataSchema = aiCvDraftSchema.extend({
     website: z.string().nullable().optional(),
   }),
   obyektivka: obyektivkaDataSchema.optional(),
+  aiQualityScore: z.number().int().min(0).max(100).nullable().optional(),
+  aiQualityReason: z.string().nullable().optional(),
 });
 
 export type CvData = z.infer<typeof cvDataSchema>;

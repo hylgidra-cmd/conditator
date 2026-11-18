@@ -1,31 +1,39 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { requireCompanyPage } from "@/backend/company/page";
+import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
+import { evaluateCvQuality } from "@/backend/cv/quality";
+import { cvDataSchema } from "@/backend/cv/schema";
+import { db } from "@/backend/db";
+import { formatDate } from "@/backend/format-date";
+import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
+import { StudentsSubscriptionBar } from "@/frontend/components/company/students-subscription-bar";
+import { Reveal } from "@/frontend/components/ds/motion";
+import {
+  PlusIcon,
+  SearchIcon,
+  SparkIcon,
+  UsersIcon,
+} from "@/frontend/components/icons";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("CompanyStudents");
   return { title: t("title") };
 }
-import { requireCompanyPage } from "@/backend/company/page";
-import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
-import { cvDataSchema } from "@/backend/cv/schema";
-import { db } from "@/backend/db";
-import { formatDate } from "@/backend/format-date";
-import { Reveal } from "@/frontend/components/ds/motion";
-import { PlusIcon, SearchIcon, UsersIcon } from "@/frontend/components/icons";
-import { Link } from "@/i18n/navigation";
 
 const REVEAL_DELAYS = [0, 75, 150, 225] as const;
 
 export default async function CompanyStudentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; tier?: string }>;
 }) {
   const { company } = await requireCompanyPage();
   const t = await getTranslations("Company");
   const tStudents = await getTranslations("CompanyStudents");
   const tWork = await getTranslations("StudentCv.workTypes");
-  const { q } = await searchParams;
+  const { q, tier = "all" } = await searchParams;
   const query = q?.trim().toLowerCase() ?? "";
 
   if (company.approval !== "APPROVED") {
@@ -50,7 +58,7 @@ export default async function CompanyStudentsPage({
   }
 
   const now = new Date();
-  const [cvs, lockedMatches, unlocks] = await Promise.all([
+  const [cvs, companyMatches, hasActiveAbuna] = await Promise.all([
     db.cv.findMany({
       where: {
         isVisible: true,
@@ -73,34 +81,46 @@ export default async function CompanyStudentsPage({
     }),
     db.match.findMany({
       where: {
-        score: { gte: 80 },
         vacancy: { companyId: company.id },
       },
-      select: { cvId: true, vacancyId: true },
+      select: { cvId: true, score: true, reason: true },
+      orderBy: { score: "desc" },
     }),
-    db.vacancyUnlock.findMany({
-      where: { companyId: company.id, expiresAt: { gt: now } },
-      select: { vacancyId: true },
-    }),
+    isCompanySubscribedOrUnlocked(company.id),
   ]);
 
-  const unlockedVacancyIds = new Set(unlocks.map((u) => u.vacancyId));
-  const lockedCvIds = new Set(
-    lockedMatches
-      .filter((m) => !unlockedVacancyIds.has(m.vacancyId))
-      .map((m) => m.cvId),
-  );
+  const bestMatchByCv = new Map<string, { score: number; reason: string }>();
+  for (const m of companyMatches) {
+    if (!bestMatchByCv.has(m.cvId)) {
+      bestMatchByCv.set(m.cvId, { score: m.score, reason: m.reason });
+    }
+  }
 
-  const items = cvs
+  const evaluatedItems = cvs
     .map((cv) => {
       const parsed = cvDataSchema.safeParse(cv.data);
-      const isLocked = lockedCvIds.has(cv.id);
+      const matchInfo = bestMatchByCv.get(cv.id);
+      const quality = parsed.success
+        ? evaluateCvQuality(parsed.data, {
+            title: cv.title,
+            aiMatchScore: matchInfo?.score ?? null,
+            aiReason: matchInfo?.reason ?? null,
+          })
+        : {
+            score: 40,
+            isMukammal: false,
+            tier: "BOSHLANGICH" as const,
+            aiSummary: "AI tahlili: Boshlang'ich CV",
+          };
+
+      const isLocked = quality.isMukammal && !hasActiveAbuna;
       const safe = parsed.success
         ? sanitizeCvData(parsed.data, {
             privacy: parsePrivacy(cv.privacy),
             isLocked,
           })
         : null;
+
       return {
         id: cv.id,
         title: cv.title,
@@ -108,12 +128,17 @@ export default async function CompanyStudentsPage({
         about: safe?.goal || "",
         location:
           safe?.location ??
-          (parsePrivacy(cv.privacy).hideAddress ? "Yashirin hudud" : cv.location),
+          (parsePrivacy(cv.privacy).hideAddress
+            ? "Yashirin hudud"
+            : cv.location),
         workType: cv.workTypes[0] ?? null,
         skills: cv.skills,
         languages: cv.languages,
         savedAt: cv.savedAt,
         isLocked,
+        score: quality.score,
+        isMukammal: quality.isMukammal,
+        aiSummary: quality.aiSummary,
       };
     })
     .filter((item) => {
@@ -123,16 +148,37 @@ export default async function CompanyStudentsPage({
         item.title,
         item.location,
         item.about,
+        item.aiSummary,
         ...item.skills,
       ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
       return haystack.includes(query);
-    });
+    })
+    .sort((a, b) => b.score - a.score);
+
+  const mukammalCount = evaluatedItems.filter((i) => i.isMukammal).length;
+  const openCount = evaluatedItems.filter((i) => !i.isMukammal).length;
+
+  const items = evaluatedItems.filter((item) => {
+    if (tier === "mukammal") return item.isMukammal;
+    if (tier === "open") return !item.isMukammal;
+    return true;
+  });
+
+  const subUntilLabel =
+    company.subscriptionUntil && company.subscriptionUntil > now
+      ? formatDate(company.subscriptionUntil)
+      : null;
+
+  const tabAllLabel = `Barchasi (${evaluatedItems.length})`;
+  const tabMukammalLabel = `🌟 Mukammal CV lar 80–100% (${mukammalCount})`;
+  const tabOpenLabel = `📄 Pastroq / Ochiq CV lar <80% (${openCount})`;
+  const openDetailsLabel = "CV ni o'qish";
 
   return (
-    <div className="page-x font-ui space-y-8 py-8 sm:py-12">
+    <div className="page-x font-ui space-y-6 py-8 sm:py-12">
       <Reveal>
         <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
           <div
@@ -158,6 +204,9 @@ export default async function CompanyStudentsPage({
           </div>
 
           <form method="get" className="relative z-10 mt-6 flex gap-2.5">
+            {tier !== "all" ? (
+              <input type="hidden" name="tier" value={tier} />
+            ) : null}
             <div className="relative flex-1">
               <SearchIcon
                 size={16}
@@ -179,7 +228,50 @@ export default async function CompanyStudentsPage({
               {tStudents("searchButton")}
             </button>
           </form>
+
+          {/* Filter Tabs: All / Mukammal (80-100%) / Open (<80%) */}
+          <div className="relative z-10 mt-5 flex flex-wrap gap-2">
+            <Link
+              href={`/company/students${q ? `?q=${encodeURIComponent(q)}` : ""}`}
+              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
+                tier === "all"
+                  ? "bg-primary text-on-primary shadow-primary"
+                  : "border-line bg-canvas text-text hover:border-primary border"
+              }`}
+            >
+              {tabAllLabel}
+            </Link>
+            <Link
+              href={`/company/students?tier=mukammal${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
+                tier === "mukammal"
+                  ? "bg-primary text-on-primary shadow-primary"
+                  : "border-line bg-canvas text-text hover:border-primary border"
+              }`}
+            >
+              {tabMukammalLabel}
+            </Link>
+            <Link
+              href={`/company/students?tier=open${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
+                tier === "open"
+                  ? "bg-primary text-on-primary shadow-primary"
+                  : "border-line bg-canvas text-text hover:border-primary border"
+              }`}
+            >
+              {tabOpenLabel}
+            </Link>
+          </div>
         </div>
+      </Reveal>
+
+      <Reveal delay={75}>
+        <StudentsSubscriptionBar
+          hasActiveAbuna={hasActiveAbuna}
+          subscriptionUntilLabel={subUntilLabel}
+          mukammalCount={mukammalCount}
+          openCount={openCount}
+        />
       </Reveal>
 
       {items.length === 0 ? (
@@ -196,27 +288,56 @@ export default async function CompanyStudentsPage({
           {items.map((item, idx) => {
             const extraSkillsLabel =
               item.skills.length > 6 ? `+${item.skills.length - 6}` : null;
+            const aiBadgeLabel = item.isMukammal
+              ? `🌟 Mukammal CV (${item.score}%)`
+              : `📄 ${item.score}%`;
+            const lockStatusText = item.isLocked
+              ? "🔒 Abuna bilan ko'riladi"
+              : item.isMukammal
+                ? "🔓 Abuna orqali ochiq"
+                : tStudents("openCv");
             return (
               <li key={item.id}>
                 <Reveal delay={REVEAL_DELAYS[idx % 4]} className="h-full">
-                  <div className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/45 flex h-full flex-col justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1">
+                  <div
+                    className={`bg-card/90 shadow-soft hover:shadow-float flex h-full flex-col justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 ${
+                      item.isMukammal
+                        ? "border-primary/45 hover:border-primary"
+                        : "border-line hover:border-primary/40"
+                    }`}
+                  >
                     <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h2 className="text-text text-base font-extrabold">
-                            {item.fullName}
-                          </h2>
-                          {item.title ? (
-                            <p className="text-primary-text mt-0.5 text-xs font-bold">
-                              {item.title}
-                            </p>
-                          ) : null}
-                        </div>
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold ${
+                            item.isMukammal
+                              ? "bg-primary text-on-primary shadow-primary"
+                              : "border-line bg-canvas text-text border"
+                          }`}
+                        >
+                          <SparkIcon size={12} />
+                          {aiBadgeLabel}
+                        </span>
                         {item.savedAt ? (
                           <span className="text-subtle shrink-0 text-xs font-medium">
                             {formatDate(item.savedAt)}
                           </span>
                         ) : null}
+                      </div>
+
+                      <div>
+                        <h2 className="text-text text-base font-extrabold">
+                          {item.fullName}
+                        </h2>
+                        {item.title ? (
+                          <p className="text-primary-text mt-0.5 text-xs font-bold">
+                            {item.title}
+                          </p>
+                        ) : null}
+                      </div>
+
+                      <div className="border-primary/20 bg-primary-soft/45 text-text rounded-2xl border px-3 py-2 text-xs leading-relaxed">
+                        {item.aiSummary}
                       </div>
 
                       {item.about ? (
@@ -254,24 +375,33 @@ export default async function CompanyStudentsPage({
                       ) : null}
                     </div>
 
-                    <div className="border-line/70 flex items-center justify-between border-t pt-3 text-xs">
-                      {item.isLocked ? (
-                        <span className="text-warning font-bold">
-                          {tStudents("locked")}
-                        </span>
-                      ) : (
-                        <span className="text-success font-bold">
-                          {tStudents("openCv")}
-                        </span>
-                      )}
-                      <a
-                        href={`/api/cv/${item.id}/pdf`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-3.5 py-1.5 font-bold transition-colors"
+                    <div className="border-line/70 flex flex-wrap items-center justify-between gap-2 border-t pt-3 text-xs">
+                      <span
+                        className={
+                          item.isLocked
+                            ? "text-warning font-extrabold"
+                            : "text-success font-extrabold"
+                        }
                       >
-                        {tStudents("viewPdf")}
-                      </a>
+                        {lockStatusText}
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <Link
+                          href={`/company/students/${item.id}`}
+                          className="border-line bg-canvas text-text hover:border-primary rounded-xl border px-3 py-1.5 font-bold transition-colors"
+                        >
+                          {openDetailsLabel}
+                        </Link>
+                        <a
+                          href={`/api/cv/${item.id}/pdf`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-3.5 py-1.5 font-bold transition-colors"
+                        >
+                          {tStudents("viewPdf")}
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </Reveal>

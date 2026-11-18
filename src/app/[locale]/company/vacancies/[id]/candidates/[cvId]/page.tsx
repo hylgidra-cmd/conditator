@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { CandidateActions } from "@/frontend/components/company/candidate-actions";
+import { SparkIcon } from "@/frontend/components/icons";
 import { DecisionButtons } from "@/frontend/components/match/decision-buttons";
 import { FormAlert } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
@@ -10,10 +11,12 @@ import { companyAccess } from "@/backend/company/access";
 import { requireCompanyPage } from "@/backend/company/page";
 import { getCvDocumentLabels } from "@/backend/cv-document/labels";
 import { loadVisibleCvDocument } from "@/backend/cv-document/load";
+import { evaluateCvQuality } from "@/backend/cv/quality";
+import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { getDecision } from "@/backend/match/decision";
-import { isVacancyUnlocked } from "@/backend/payment/service";
+import { isCvLockedForCompany } from "@/backend/payment/service";
 
 /**
  * Nomzod CV si (ism va aloqa bilan). Ruxsat API bilan bir xil:
@@ -55,9 +58,18 @@ export default async function CandidatePage({
     );
   }
 
-  const [isUnlocked, match, stageRecord, likesCount, hasLiked, conv] =
+  const [isLocked, rawCv, match, stageRecord, likesCount, hasLiked, conv] =
     await Promise.all([
-      isVacancyUnlocked(company.id, vacancy.id),
+      isCvLockedForCompany(cvId, company.id, vacancy.id),
+      db.cv.findFirst({
+        where: {
+          id: cvId,
+          isVisible: true,
+          savedAt: { not: null },
+          user: { status: "ACTIVE" },
+        },
+        select: { title: true, data: true },
+      }),
       db.match.findUnique({
         where: {
           vacancyId_cvId: {
@@ -92,7 +104,15 @@ export default async function CandidatePage({
       }),
     ]);
 
-  const isLocked = Boolean(match && match.score >= 80 && !isUnlocked);
+  const parsedRaw = rawCv ? cvDataSchema.safeParse(rawCv.data) : null;
+  const quality =
+    parsedRaw && parsedRaw.success
+      ? evaluateCvQuality(parsedRaw.data, {
+          title: rawCv?.title,
+          aiMatchScore: match?.score ?? null,
+          aiReason: match?.reason ?? null,
+        })
+      : null;
 
   const cv = await loadVisibleCvDocument(cvId, { isLocked });
   if (!cv) notFound();
@@ -115,9 +135,29 @@ export default async function CandidatePage({
     getDecision(vacancy.id, cv.id),
   ]);
 
+  const qualityBadgeLabel = quality
+    ? quality.isMukammal
+      ? `🌟 Mukammal CV (${quality.score}%)`
+      : `📄 Ochiq CV (${quality.score}%)`
+    : null;
+
   return (
     <div className="mx-auto max-w-4xl space-y-5 px-4 py-8">
-      {back}
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        {back}
+        {qualityBadgeLabel ? (
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-extrabold ${
+              quality?.isMukammal
+                ? "bg-primary text-on-primary shadow-primary"
+                : "border-line bg-canvas text-text border"
+            }`}
+          >
+            <SparkIcon size={13} />
+            {qualityBadgeLabel}
+          </span>
+        ) : null}
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold break-words">
@@ -128,12 +168,18 @@ export default async function CandidatePage({
           </p>
         </div>
         <a
-          href={`/api/cv/${cv.id}/pdf`}
+          href={`/api/cv/${cv.id}/pdf?vacancyId=${vacancy.id}`}
           className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold shadow hover:opacity-95"
         >
           {t("download")}
         </a>
       </div>
+
+      {quality ? (
+        <div className="border-primary/25 bg-primary-soft/60 text-text rounded-2xl border p-3.5 text-xs font-medium leading-relaxed">
+          {quality.aiSummary}
+        </div>
+      ) : null}
 
       {/* HeadHunter Candidate Actions: Stages, Like bonus, Chat & Unlock */}
       <CandidateActions

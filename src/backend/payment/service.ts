@@ -1,4 +1,6 @@
 import { randomBytes } from "node:crypto";
+import { evaluateCvQuality } from "@/backend/cv/quality";
+import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { PaymentPurpose, PaymentProvider, PaymentStatus } from "@prisma/client";
@@ -50,7 +52,7 @@ export async function createPaymentOrder(input: CreatePaymentInput) {
 /**
  * Marks payment as completed and fulfills the benefit:
  * - If CV_CREATION: marks Cv.isPaid = true
- * - If VACANCY_UNLOCK: creates or updates VacancyUnlock with 15 days validity
+ * - If VACANCY_UNLOCK: extends Company.subscriptionUntil by 15 days (and VacancyUnlock if vacancyId is set)
  * - If WEEKLY_APPLY_PASS: extends User.applyPassUntil by 7 days
  */
 export async function completePayment(
@@ -95,32 +97,48 @@ export async function completePayment(
       });
     } else if (
       payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&
-      payment.vacancyId &&
       payment.companyId
     ) {
+      const company = await tx.company.findUnique({
+        where: { id: payment.companyId },
+        select: { subscriptionUntil: true },
+      });
+      const now = new Date();
+      const baseDate =
+        company?.subscriptionUntil && company.subscriptionUntil > now
+          ? company.subscriptionUntil
+          : now;
       const expiresAt = new Date(
-        Date.now() + UNLOCK_DURATION_DAYS * 24 * 60 * 60 * 1000,
+        baseDate.getTime() + UNLOCK_DURATION_DAYS * 24 * 60 * 60 * 1000,
       );
-      await tx.vacancyUnlock.upsert({
-        where: {
-          vacancyId_companyId: {
+
+      await tx.company.update({
+        where: { id: payment.companyId },
+        data: { subscriptionUntil: expiresAt },
+      });
+
+      if (payment.vacancyId) {
+        await tx.vacancyUnlock.upsert({
+          where: {
+            vacancyId_companyId: {
+              vacancyId: payment.vacancyId,
+              companyId: payment.companyId,
+            },
+          },
+          create: {
             vacancyId: payment.vacancyId,
             companyId: payment.companyId,
+            paymentId: payment.id,
+            paidAt: now,
+            expiresAt,
           },
-        },
-        create: {
-          vacancyId: payment.vacancyId,
-          companyId: payment.companyId,
-          paymentId: payment.id,
-          paidAt: new Date(),
-          expiresAt,
-        },
-        update: {
-          paymentId: payment.id,
-          paidAt: new Date(),
-          expiresAt,
-        },
-      });
+          update: {
+            paymentId: payment.id,
+            paidAt: now,
+            expiresAt,
+          },
+        });
+      }
     } else if (payment.purpose === PaymentPurpose.WEEKLY_APPLY_PASS) {
       const user = await tx.user.findUnique({
         where: { id: payment.userId },
@@ -165,68 +183,97 @@ export async function getApplyPassStatus(userId: string) {
 }
 
 /**
- * Check whether a company has an active, valid unlock for a vacancy's 80-100% matched candidates.
+ * Check whether a company has an active subscription (Abuna) or an active VacancyUnlock.
+ */
+export async function isCompanySubscribedOrUnlocked(
+  companyId: string,
+  vacancyId?: string | null,
+): Promise<boolean> {
+  const now = new Date();
+  const company = await db.company.findUnique({
+    where: { id: companyId },
+    select: { subscriptionUntil: true },
+  });
+  if (company?.subscriptionUntil && company.subscriptionUntil > now) {
+    return true;
+  }
+
+  if (vacancyId) {
+    const unlock = await db.vacancyUnlock.findUnique({
+      where: {
+        vacancyId_companyId: {
+          vacancyId,
+          companyId,
+        },
+      },
+    });
+    if (unlock && unlock.expiresAt > now) return true;
+  }
+
+  const anyUnlock = await db.vacancyUnlock.findFirst({
+    where: { companyId, expiresAt: { gt: now } },
+    select: { id: true },
+  });
+  return Boolean(anyUnlock);
+}
+
+/**
+ * Check whether a company has an active, valid unlock or subscription for a vacancy's 80-100% matched candidates.
  */
 export async function isVacancyUnlocked(
   companyId: string,
   vacancyId: string,
 ): Promise<boolean> {
-  const unlock = await db.vacancyUnlock.findUnique({
-    where: {
-      vacancyId_companyId: {
-        vacancyId,
-        companyId,
-      },
-    },
-  });
-
-  if (!unlock) return false;
-  return unlock.expiresAt > new Date();
+  return isCompanySubscribedOrUnlocked(companyId, vacancyId);
 }
 
 /**
- * Checks whether a CV is locked (80-100% match without an active VacancyUnlock) for a company.
- * If vacancyId is omitted or has no match for this CV, checks if any active 80+ match for this company's vacancies is still locked.
+ * Checks whether a CV is locked for a company:
+ * - If the company has an active subscription (Abuna) or active unlock -> NOT locked (false).
+ * - If the company does NOT have an active subscription:
+ *   - Mukammal CVs (80–100% AI / quality score) -> LOCKED (true).
+ *   - Lower-tier CVs (< 80% score) -> OPEN / VISIBLE (false).
  */
 export async function isCvLockedForCompany(
   cvId: string,
   companyId: string,
   vacancyId?: string | null,
 ): Promise<boolean> {
-  if (vacancyId) {
-    const [match, unlocked] = await Promise.all([
-      db.match.findFirst({
-        where: { vacancyId, cvId, vacancy: { companyId } },
-        select: { score: true },
-      }),
-      isVacancyUnlocked(companyId, vacancyId),
-    ]);
-    if (match) {
-      return match.score >= 80 && !unlocked;
-    }
+  const hasAccess = await isCompanySubscribedOrUnlocked(companyId, vacancyId);
+  if (hasAccess) {
+    return false;
   }
 
-  const lockedMatches = await db.match.findMany({
-    where: {
-      cvId,
-      score: { gte: 80 },
-      vacancy: { companyId },
-    },
-    select: { vacancyId: true },
-  });
-  if (lockedMatches.length === 0) return false;
+  const [cv, matches] = await Promise.all([
+    db.cv.findUnique({
+      where: { id: cvId },
+      select: { title: true, data: true },
+    }),
+    db.match.findMany({
+      where: vacancyId
+        ? { vacancyId, cvId, vacancy: { companyId } }
+        : { cvId, vacancy: { companyId } },
+      select: { score: true },
+      orderBy: { score: "desc" },
+      take: 1,
+    }),
+  ]);
 
-  const now = new Date();
-  const unlocks = await db.vacancyUnlock.findMany({
-    where: {
-      companyId,
-      vacancyId: { in: lockedMatches.map((m) => m.vacancyId) },
-      expiresAt: { gt: now },
-    },
-    select: { vacancyId: true },
+  const topMatchScore = matches[0]?.score ?? null;
+  if (topMatchScore !== null && topMatchScore >= 80) {
+    return true;
+  }
+
+  if (!cv) return false;
+  const parsed = cvDataSchema.safeParse(cv.data);
+  if (!parsed.success) return false;
+
+  const quality = evaluateCvQuality(parsed.data, {
+    title: cv.title,
+    aiMatchScore: topMatchScore,
   });
-  const unlockedSet = new Set(unlocks.map((u) => u.vacancyId));
-  return lockedMatches.some((m) => !unlockedSet.has(m.vacancyId));
+
+  return quality.isMukammal;
 }
 
 /**

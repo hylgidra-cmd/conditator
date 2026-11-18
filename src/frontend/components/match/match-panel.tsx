@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
+import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import { FormAlert, useErrorText } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
 import { postJson } from "@/backend/client/api";
@@ -30,7 +31,7 @@ export function MatchPanel({
   const errorText = useErrorText();
   const [outcome, setOutcome] = useState(initial);
   const [running, setRunning] = useState(false);
-  const [unlocking, setUnlocking] = useState(false);
+  const [showCardModal, setShowCardModal] = useState(false);
   const [error, setError] = useState<string>();
 
   async function run() {
@@ -45,27 +46,6 @@ export function MatchPanel({
     setRunning(false);
     if (result.ok) setOutcome(result.data);
     else setError(result.error);
-  }
-
-  async function unlockVacancy(provider: "CLICK" | "PAYME" | "TEST" = "TEST") {
-    if (unlocking) return;
-    setUnlocking(true);
-    setError(undefined);
-    const result = await postJson<{ paymentId: string; redirectUrl: string }>(
-      "/api/payments/checkout",
-      {
-        purpose: "VACANCY_UNLOCK",
-        provider,
-        vacancyId,
-        returnUrl: `${window.location.pathname}${window.location.search}`,
-      },
-    );
-    if (result.ok && result.data.redirectUrl) {
-      window.location.href = result.data.redirectUrl;
-      return;
-    }
-    setUnlocking(false);
-    if (!result.ok) setError(result.error);
   }
 
   const { results, stats, notice, mode, pending } = outcome;
@@ -91,7 +71,15 @@ export function MatchPanel({
             >
               {running ? t("running") : neverRun ? t("run") : t("refresh")}
             </button>
-          ) : null}
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowCardModal(true)}
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
+            >
+              {"🔓 Abuna olish (14 999 so'm)"}
+            </button>
+          )}
         </div>
         {running ? (
           <p className="text-muted text-sm">{t("runningHint")}</p>
@@ -108,9 +96,18 @@ export function MatchPanel({
       {notice ? (
         <div
           role="status"
-          className="border-primary/30 bg-primary-soft text-primary-text rounded-2xl border p-4 text-sm font-medium"
+          className="border-primary/30 bg-primary-soft text-primary-text flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 text-sm font-medium"
         >
-          {t(`notice.${notice}`)}
+          <span>{t(`notice.${notice}`)}</span>
+          {notice === "NO_SUBSCRIPTION" ? (
+            <button
+              type="button"
+              onClick={() => setShowCardModal(true)}
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
+            >
+              {"🔓 Abuna faollashtirish"}
+            </button>
+          ) : null}
         </div>
       ) : null}
 
@@ -145,36 +142,54 @@ export function MatchPanel({
               <p className="text-text text-sm font-medium">
                 {t("unlockBanner")}
               </p>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => unlockVacancy("CLICK")}
-                  disabled={unlocking}
-                  className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-bold transition-colors disabled:opacity-60"
-                >
-                  {"CLICK"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => unlockVacancy("PAYME")}
-                  disabled={unlocking}
-                  className="bg-violet text-on-primary rounded-xl px-4 py-2 text-xs font-bold transition-opacity hover:opacity-90 disabled:opacity-60"
-                >
-                  {"PAYME"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => unlockVacancy("TEST")}
-                  disabled={unlocking}
-                  className="border-line bg-card text-text hover:border-primary rounded-xl border px-4 py-2 text-xs font-bold transition-colors disabled:opacity-60"
-                >
-                  {t("unlockBtn")}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowCardModal(true)}
+                className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-5 py-2.5 text-xs font-extrabold transition-colors"
+              >
+                {"🔓 Abuna olish (14 999 so'm)"}
+              </button>
             </div>
           ) : outcome.isVacancyUnlocked ? (
             <div className="border-emerald-500/30 bg-success-soft text-success rounded-2xl border px-4 py-3 text-sm font-medium">
               {t("unlockedBanner")}
+            </div>
+          ) : null}
+
+          {showCardModal ? (
+            <div
+              className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setShowCardModal(false);
+              }}
+            >
+              <div className="ds-modal-panel border-line bg-card shadow-float max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-3xl border p-6">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-text text-lg font-extrabold">
+                      {"Kompaniya Abunasi (Mukammal CV larni ochish)"}
+                    </h3>
+                    <p className="text-subtle mt-1 text-xs leading-relaxed">
+                      {
+                        "14 999 so'm to'lov qilib chek rasmini yuboring. Admin tasdiqlagach, 15 kun davomida barcha 80–100% mos va Mukammal CV lar hamda kontaktlar ochiladi."
+                      }
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowCardModal(false)}
+                    className="text-subtle hover:text-text text-xl font-bold"
+                  >
+                    {"✕"}
+                  </button>
+                </div>
+
+                <ManualCardPaymentBox
+                  purpose="VACANCY_UNLOCK"
+                  amountUzs={14999}
+                  vacancyId={vacancyId}
+                />
+              </div>
             </div>
           ) : null}
           <ol className="space-y-3">

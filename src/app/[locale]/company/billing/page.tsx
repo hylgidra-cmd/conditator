@@ -7,6 +7,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 import { Reveal } from "@/frontend/components/ds/motion";
 import { ArrowLeftIcon } from "@/frontend/components/icons";
+import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import { Link } from "@/i18n/navigation";
 import { companyAccess } from "@/backend/company/access";
 import { requireCompanyPage } from "@/backend/company/page";
@@ -25,6 +26,10 @@ export default async function CompanyBillingPage() {
     orderBy: { createdAt: "desc" },
     take: 50,
   });
+
+  const buyAbunaTitle = "Kompaniya Abunasini faollashtirish (15 kun)";
+  const buyAbunaDesc =
+    "Faol Abuna bilan barcha 🌟 Mukammal ishlangan CV lar (80–100%), nomzodlarning telefon/email kontaktlari, PDF rezyumelari va AI saralash imkoniyatlari to'liq ochiladi. 80% dan pastroq CV lar esa abunasiz ham ochiq ko'rinadi.";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -70,6 +75,20 @@ export default async function CompanyBillingPage() {
               {t("unlockDesc")}
             </p>
           </div>
+        </section>
+      </Reveal>
+
+      <Reveal delay={150}>
+        <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
+          <div className="space-y-1">
+            <h2 className="text-text text-lg font-extrabold">
+              {buyAbunaTitle}
+            </h2>
+            <p className="text-subtle text-sm leading-relaxed">
+              {buyAbunaDesc}
+            </p>
+          </div>
+          <ManualCardPaymentBox purpose="VACANCY_UNLOCK" amountUzs={14999} />
         </section>
       </Reveal>
 

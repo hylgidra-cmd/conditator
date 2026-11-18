@@ -9,6 +9,10 @@ export const WEEKLY_PASS_DAYS = 7;
 export const VACANCY_UNLOCK_PRICE_UZS = 14_999;
 export const UNLOCK_DURATION_DAYS = 15;
 
+export const MANUAL_CARD_NUMBER = "9860 1301 6978 8069";
+export const MANUAL_CARD_DIGITS = "9860130169788069";
+export const MANUAL_CARD_HOLDER = "Gulgina E.";
+
 export type CreatePaymentInput = {
   userId: string;
   purpose: PaymentPurpose;
@@ -87,7 +91,7 @@ export async function completePayment(
     if (payment.purpose === PaymentPurpose.CV_CREATION && payment.cvId) {
       await tx.cv.update({
         where: { id: payment.cvId },
-        data: { isPaid: true },
+        data: { isPaid: true, isVisible: true },
       });
     } else if (
       payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&

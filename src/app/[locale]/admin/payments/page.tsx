@@ -1,8 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
+import { AdminPaymentRowActions } from "@/frontend/components/admin/payment-actions";
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { formatDateTime } from "@/backend/format-date";
+import { MANUAL_CARD_HOLDER, MANUAL_CARD_NUMBER } from "@/backend/payment/service";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +30,7 @@ export default async function AdminPaymentsPage() {
   ]);
 
   const totalRevenue = completedAgg._sum.amount ?? 0;
+  const cardSummary = `${MANUAL_CARD_NUMBER} · ${MANUAL_CARD_HOLDER}`;
 
   return (
     <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
@@ -36,10 +39,15 @@ export default async function AdminPaymentsPage() {
           aria-hidden
           className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
         />
-        <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
-          {t("payments.title")}
-        </h1>
-        <div className="relative z-10">
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-h2 text-text font-extrabold tracking-tight">
+              {t("payments.title")}
+            </h1>
+            <p className="text-subtle mt-1 font-mono text-xs font-semibold sm:text-sm">
+              {cardSummary}
+            </p>
+          </div>
           <AdminNav active="payments" />
         </div>
       </div>
@@ -85,45 +93,62 @@ export default async function AdminPaymentsPage() {
                   {t("payments.purpose")}
                 </th>
                 <th className="px-4 py-3.5 font-bold">
-                  {t("payments.provider")}
-                </th>
-                <th className="px-4 py-3.5 font-bold">
                   {t("payments.amount")}
                 </th>
+                <th className="px-4 py-3.5 font-bold">{t("payments.date")}</th>
                 <th className="px-4 py-3.5 font-bold">
                   {t("payments.status")}
                 </th>
-                <th className="px-4 py-3.5 font-bold">{t("payments.date")}</th>
               </tr>
             </thead>
             <tbody className="divide-line divide-y">
-              {payments.map((p) => (
-                <tr key={p.id} className="hover:bg-canvas/50 transition-colors">
-                  <td className="px-4 py-3.5">
-                    <p className="text-text font-bold">
-                      {p.company?.name ?? p.user.email}
-                    </p>
-                    <p className="text-subtle text-xs">{p.user.email}</p>
-                  </td>
-                  <td className="text-text px-4 py-3.5 text-xs font-semibold">
-                    {p.purpose}
-                  </td>
-                  <td className="text-subtle px-4 py-3.5 text-xs">
-                    {p.provider}
-                  </td>
-                  <td className="text-text px-4 py-3.5 font-bold tabular-nums">
-                    {p.amount.toLocaleString("en-US")}
-                  </td>
-                  <td className="px-4 py-3.5 text-xs font-bold">
-                    <span className="border-line bg-canvas text-primary-text rounded-full border px-2.5 py-0.5">
-                      {p.status}
-                    </span>
-                  </td>
-                  <td className="text-subtle px-4 py-3.5 text-xs">
-                    {formatDateTime(p.createdAt)}
-                  </td>
-                </tr>
-              ))}
+              {payments.map((p) => {
+                const details = p.transactionDetails as {
+                  receiptDataUrl?: string;
+                  note?: string;
+                } | null;
+                const hasReceipt = Boolean(details?.receiptDataUrl);
+
+                return (
+                  <tr
+                    key={p.id}
+                    className="hover:bg-canvas/50 transition-colors"
+                  >
+                    <td className="px-4 py-3.5">
+                      <p className="text-text font-bold">
+                        {p.company?.name ?? p.user.email}
+                      </p>
+                      <p className="text-subtle text-xs">{p.user.email}</p>
+                      {p.externalId ? (
+                        <p className="text-primary-text mt-0.5 font-mono text-[11px] font-bold">
+                          {p.externalId}
+                        </p>
+                      ) : null}
+                    </td>
+                    <td className="text-text px-4 py-3.5 text-xs font-semibold">
+                      <span>{p.purpose}</span>
+                      {details?.note ? (
+                        <p className="text-subtle mt-0.5 text-[11px]">
+                          {details.note}
+                        </p>
+                      ) : null}
+                    </td>
+                    <td className="text-text px-4 py-3.5 font-bold tabular-nums">
+                      {p.amount.toLocaleString("en-US")}
+                    </td>
+                    <td className="text-subtle px-4 py-3.5 text-xs">
+                      {formatDateTime(p.createdAt)}
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <AdminPaymentRowActions
+                        paymentId={p.id}
+                        initialStatus={p.status}
+                        hasReceipt={hasReceipt}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

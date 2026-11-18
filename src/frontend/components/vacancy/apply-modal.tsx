@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { postJson } from "@/backend/client/api";
+import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 
@@ -40,39 +41,8 @@ export function ApplyModal({
   );
   const [note, setNote] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [paying, setPaying] = useState<"CLICK" | "PAYME" | "TEST" | null>(null);
   const [error, setError] = useState<string>();
   const [success, setSuccess] = useState(alreadyApplied);
-
-  async function handleCheckout(
-    purpose: "CV_CREATION" | "WEEKLY_APPLY_PASS",
-    provider: "CLICK" | "PAYME" | "TEST",
-    cvId?: string,
-  ) {
-    if (paying) return;
-    setPaying(provider);
-    setError(undefined);
-    try {
-      const res = await postJson<{ paymentId: string; redirectUrl: string }>(
-        "/api/payments/checkout",
-        {
-          purpose,
-          provider,
-          ...(cvId ? { cvId } : {}),
-          returnUrl: `${window.location.pathname}${window.location.search}`,
-        },
-      );
-      if (res.ok && res.data.redirectUrl) {
-        window.location.href = res.data.redirectUrl;
-        return;
-      }
-      setError("To'lovni boshlashda xatolik yuz berdi");
-    } catch {
-      setError("To'lovni boshlashda xatolik yuz berdi");
-    } finally {
-      setPaying(null);
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -159,95 +129,27 @@ export function ApplyModal({
   if (paidCvs.length === 0) {
     const unpaidCvId = studentCvs[0]?.id;
     return (
-      <div className="border-primary/35 bg-primary-soft/80 rounded-2xl border p-5 shadow-sm backdrop-blur-md">
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <h4 className="text-text font-extrabold">
-              🔒 Avval CV ni faollashtirish to&apos;lovi kerak (5 000 so&apos;m)
-            </h4>
-            <p className="text-subtle text-xs leading-relaxed">
-              Rezyumengiz yaratilgan, lekin undan foydalanish va vakansiyalarga
-              ariza yuborish uchun avval 5 000 so&apos;m CV to&apos;lovini
-              amalga oshiring.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => handleCheckout("CV_CREATION", "CLICK", unpaidCvId)}
-              disabled={Boolean(paying)}
-              className="rounded-xl bg-[#00AEEF] px-4 py-2 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {paying === "CLICK" ? "Yuklanmoqda…" : "Click — 5 000 so'm"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCheckout("CV_CREATION", "PAYME", unpaidCvId)}
-              disabled={Boolean(paying)}
-              className="rounded-xl bg-[#00CCCC] px-4 py-2 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {paying === "PAYME" ? "Yuklanmoqda…" : "Payme — 5 000 so'm"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCheckout("CV_CREATION", "TEST", unpaidCvId)}
-              disabled={Boolean(paying)}
-              className="border-line bg-card text-text hover:border-primary rounded-xl border px-4 py-2 text-xs font-bold transition-colors disabled:opacity-50"
-            >
-              {paying === "TEST" ? "Yuklanmoqda…" : "Test to'lov — 5 000 so'm"}
-            </button>
-          </div>
-        </div>
-        {error && (
-          <p className="text-danger mt-2 text-xs font-medium">{error}</p>
-        )}
+      <div className="border-primary/35 bg-card rounded-3xl border p-5 shadow-md">
+        <ManualCardPaymentBox
+          purpose="CV_CREATION"
+          amountUzs={5000}
+          cvId={unpaidCvId}
+          title="🔒 Avval CV ni faollashtirish to'lovi kerak (5 000 so'm)"
+          description="Rezyumengiz yaratilgan, lekin undan foydalanish va vakansiyalarga ariza yuborish uchun 5 000 so'm to'lov qilib chek rasmini yuboring."
+        />
       </div>
     );
   }
 
   if (!canApply) {
     return (
-      <div className="border-primary/35 bg-primary-soft/80 rounded-2xl border p-5 shadow-sm backdrop-blur-md">
-        <div className="space-y-3">
-          <div className="space-y-1">
-            <h4 className="text-text font-extrabold">
-              🔒 Ariza yuborish uchun oldindan 5 000 so&apos;m to&apos;lov kerak
-            </h4>
-            <p className="text-subtle text-xs leading-relaxed">
-              Vakansiyalarga ariza topshirish va ishlashni davom ettirish uchun
-              oldindan 5 000 so&apos;m (7 kunlik ruxsat) to&apos;lang.
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => handleCheckout("WEEKLY_APPLY_PASS", "CLICK")}
-              disabled={Boolean(paying)}
-              className="rounded-xl bg-[#00AEEF] px-4 py-2 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {paying === "CLICK" ? "Yuklanmoqda…" : "Click — 5 000 so'm"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCheckout("WEEKLY_APPLY_PASS", "PAYME")}
-              disabled={Boolean(paying)}
-              className="rounded-xl bg-[#00CCCC] px-4 py-2 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-            >
-              {paying === "PAYME" ? "Yuklanmoqda…" : "Payme — 5 000 so'm"}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleCheckout("WEEKLY_APPLY_PASS", "TEST")}
-              disabled={Boolean(paying)}
-              className="border-line bg-card text-text hover:border-primary rounded-xl border px-4 py-2 text-xs font-bold transition-colors disabled:opacity-50"
-            >
-              {paying === "TEST" ? "Yuklanmoqda…" : "Test to'lov — 5 000 so'm"}
-            </button>
-          </div>
-        </div>
-        {error && (
-          <p className="text-danger mt-2 text-xs font-medium">{error}</p>
-        )}
+      <div className="border-primary/35 bg-card rounded-3xl border p-5 shadow-md">
+        <ManualCardPaymentBox
+          purpose="WEEKLY_APPLY_PASS"
+          amountUzs={5000}
+          title="🔒 Ariza yuborish uchun oldindan 5 000 so'm to'lov kerak (7 kunlik ruxsat)"
+          description="Vakansiyalarga ariza topshirish va ishlashni davom ettirish uchun oldindan 5 000 so'm o'tkazing va to'lov cheki rasmini yuklang."
+        />
       </div>
     );
   }

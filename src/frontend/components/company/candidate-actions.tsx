@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { postJson } from "@/backend/client/api";
+import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import { Link } from "@/i18n/navigation";
 import type { CandidateStageType } from "@prisma/client";
 
@@ -40,7 +41,6 @@ export function CandidateActions({
   const [updatingStage, setUpdatingStage] = useState(false);
   const [togglingLike, setTogglingLike] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
-  const [paying, setPaying] = useState(false);
 
   async function handleStageChange(newStage: CandidateStageType) {
     setUpdatingStage(true);
@@ -72,35 +72,6 @@ export function CandidateActions({
       console.error(err);
     } finally {
       setTogglingLike(false);
-    }
-  }
-
-  const [payError, setPayError] = useState<string>();
-
-  async function handleUnlockCheckout(provider: "CLICK" | "PAYME" | "TEST") {
-    setPaying(true);
-    setPayError(undefined);
-    try {
-      const res = await postJson<{ paymentId: string; redirectUrl: string }>(
-        "/api/payments/checkout",
-        {
-          purpose: "VACANCY_UNLOCK",
-          provider,
-          vacancyId,
-          cvId,
-          returnUrl: `${window.location.pathname}${window.location.search}`,
-        },
-      );
-      if (res.ok && res.data.redirectUrl) {
-        window.location.href = res.data.redirectUrl;
-        return;
-      }
-      setPayError(res.ok ? "Xatolik yuz berdi" : res.error);
-      setPaying(false);
-    } catch (err) {
-      console.error(err);
-      setPayError("Xatolik yuz berdi");
-      setPaying(false);
     }
   }
 
@@ -205,7 +176,7 @@ export function CandidateActions({
             if (e.target === e.currentTarget) setShowUnlockModal(false);
           }}
         >
-          <div className="ds-modal-panel bg-card border-line shadow-float w-full max-w-md space-y-4 rounded-3xl border p-6">
+          <div className="ds-modal-panel bg-card border-line shadow-float w-full max-w-lg space-y-4 rounded-3xl border p-6">
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-text text-lg font-bold">
@@ -226,43 +197,12 @@ export function CandidateActions({
               </button>
             </div>
 
-            {payError ? (
-              <p className="text-danger text-xs font-semibold">{payError}</p>
-            ) : null}
-
-            <div className="space-y-2 pt-2">
-              <p className="text-subtle text-xs font-semibold tracking-wider uppercase">
-                To&apos;lov tizimini tanlang:
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  disabled={paying}
-                  onClick={() => handleUnlockCheckout("CLICK")}
-                  className="border-line bg-canvas hover:border-primary hover:bg-primary-soft/50 flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors"
-                >
-                  <span className="text-primary-text font-bold">CLICK</span>
-                  <span className="text-subtle text-xs">14 999 UZS</span>
-                </button>
-                <button
-                  type="button"
-                  disabled={paying}
-                  onClick={() => handleUnlockCheckout("PAYME")}
-                  className="border-line bg-canvas hover:border-primary hover:bg-primary-soft/50 flex flex-col items-center justify-center rounded-xl border p-3 font-semibold transition-colors"
-                >
-                  <span className="text-violet font-bold">PAYME</span>
-                  <span className="text-subtle text-xs">14 999 UZS</span>
-                </button>
-              </div>
-              <button
-                type="button"
-                disabled={paying}
-                onClick={() => handleUnlockCheckout("TEST")}
-                className="border-line bg-card-cool text-text hover:border-primary mt-2 w-full rounded-xl border py-2.5 text-xs font-medium transition-colors"
-              >
-                🧪 Sinov / Sandbox to&apos;lov (Tezkor tasdiqlash)
-              </button>
-            </div>
+            <ManualCardPaymentBox
+              purpose="VACANCY_UNLOCK"
+              amountUzs={14999}
+              vacancyId={vacancyId}
+              cvId={cvId}
+            />
           </div>
         </div>
       )}

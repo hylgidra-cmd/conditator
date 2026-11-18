@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
+import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import type {
   CvDocumentLabels,
   CvDocumentLanguage,
@@ -35,47 +36,12 @@ export function CvCompleteScreen({
 }: Props) {
   const t = useTranslations("StudentCv.complete");
   const tCv = useTranslations("StudentCv");
-  const locale = useLocale();
-  const [payingProvider, setPayingProvider] = useState<string | null>(null);
-  const [payError, setPayError] = useState<string | null>(null);
   const [togglingVis, setTogglingVis] = useState(false);
 
   const data = dataFromDraft(draft);
   const pdfUrl = meta.id
     ? `/api/cv/me/pdf?cvId=${encodeURIComponent(meta.id)}`
     : "/api/cv/me/pdf";
-
-  async function handleCheckout(provider: "CLICK" | "PAYME" | "TEST") {
-    if (!meta.id) return;
-    setPayingProvider(provider);
-    setPayError(null);
-    try {
-      const returnUrl = `/${locale}/student/cv?cvId=${meta.id}`;
-      const res = await fetch("/api/payments/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          purpose: "CV_CREATION",
-          provider,
-          cvId: meta.id,
-          returnUrl,
-        }),
-      });
-      const json = (await res.json()) as {
-        redirectUrl?: string;
-        error?: string;
-      };
-      if (!res.ok || !json.redirectUrl) {
-        setPayError(json.error || "PAYMENT_FAILED");
-        setPayingProvider(null);
-        return;
-      }
-      window.location.href = json.redirectUrl;
-    } catch {
-      setPayError("NETWORK_ERROR");
-      setPayingProvider(null);
-    }
-  }
 
   async function handleVisibility(checked: boolean) {
     setTogglingVis(true);
@@ -149,37 +115,12 @@ export function CvCompleteScreen({
               {t("paymentDesc")}
             </p>
 
-            {!meta.isPaid && (
-              <div className="flex flex-wrap gap-2.5 pt-1">
-                <button
-                  type="button"
-                  disabled={Boolean(payingProvider)}
-                  onClick={() => handleCheckout("CLICK")}
-                  className="rounded-xl bg-[#00AEEF] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-                >
-                  {payingProvider === "CLICK" ? t("paying") : t("payWithClick")}
-                </button>
-                <button
-                  type="button"
-                  disabled={Boolean(payingProvider)}
-                  onClick={() => handleCheckout("PAYME")}
-                  className="rounded-xl bg-[#00CCCC] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-                >
-                  {payingProvider === "PAYME" ? t("paying") : t("payWithPayme")}
-                </button>
-                <button
-                  type="button"
-                  disabled={Boolean(payingProvider)}
-                  onClick={() => handleCheckout("TEST")}
-                  className="border-border bg-muted/20 text-foreground hover:bg-muted/40 rounded-xl border px-4 py-2.5 text-xs font-bold transition-colors disabled:opacity-50"
-                >
-                  {payingProvider === "TEST" ? t("paying") : t("payWithTest")}
-                </button>
-              </div>
-            )}
-
-            {payError && (
-              <p className="text-xs font-semibold text-red-500">{payError}</p>
+            {!meta.isPaid && meta.id && (
+              <ManualCardPaymentBox
+                purpose="CV_CREATION"
+                amountUzs={5000}
+                cvId={meta.id}
+              />
             )}
           </div>
 

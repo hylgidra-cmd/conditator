@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getJson, postJson } from "@/backend/client/api";
 import { formatDateTime } from "@/backend/format-date";
+import { AdminPaymentRowActions } from "@/frontend/components/admin/payment-actions";
 import {
   MessageIcon,
   SearchIcon,
@@ -484,6 +485,14 @@ export function ChatRoom({
           ) : null}
           {messages.map((m) => {
             const isMe = m.senderId === currentUserId;
+            const receiptMatch = /\[PAYMENT_RECEIPT:([a-zA-Z0-9_-]+)\]/.exec(
+              m.text,
+            );
+            const receiptPaymentId = receiptMatch?.[1] ?? null;
+            const displayText = receiptPaymentId
+              ? m.text.replace(/\[PAYMENT_RECEIPT:[a-zA-Z0-9_-]+\]/g, "").trim()
+              : m.text;
+
             return (
               <div
                 key={m.id}
@@ -497,8 +506,34 @@ export function ChatRoom({
                   }`}
                 >
                   <p className="leading-relaxed whitespace-pre-line">
-                    {m.text}
+                    {displayText}
                   </p>
+                  {receiptPaymentId ? (
+                    <div className="mt-3 space-y-2.5">
+                      <a
+                        href={`/api/payments/${receiptPaymentId}/receipt`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block overflow-hidden rounded-xl border border-white/20 shadow-sm"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`/api/payments/${receiptPaymentId}/receipt`}
+                          alt="To'lov cheki"
+                          className="max-h-64 w-auto rounded-xl object-contain"
+                        />
+                      </a>
+                      {currentUserRole === "ADMIN" ? (
+                        <div className="rounded-xl bg-white/95 p-2 text-slate-900 shadow-xs">
+                          <AdminPaymentRowActions
+                            paymentId={receiptPaymentId}
+                            initialStatus="PENDING"
+                            hasReceipt={false}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  ) : null}
                   <div
                     className={`mt-1 flex items-center justify-end gap-1 text-[10px] ${
                       isMe ? "text-on-primary/75" : "text-subtle"

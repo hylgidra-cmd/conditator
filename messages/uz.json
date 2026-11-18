@@ -1507,7 +1507,27 @@
     "locationPlaceholder": "Shahar yoki hudud...",
     "minSalaryPlaceholder": "Min. maosh (UZS)",
     "recommendedTitle": "Sizga mos vakansiyalar",
-    "recommendedSubtitle": "CV koʻnikmalaringiz asosida tanlangan"
+    "recommendedSubtitle": "CV koʻnikmalaringiz asosida tanlangan",
+    "sortLabel": "Tartiblash:",
+    "sortMatchFirst": "Moslari birinchi qatorda",
+    "sortOnlyMatch": "Faqat mos vakansiyalar",
+    "sortLatest": "Yangi joylanganlar",
+    "audienceLabel": "Auditoriya va kasb boʻyicha:",
+    "audienceMyCv": "Mening rezyumem ({role})",
+    "audienceAll": "Barchasi",
+    "audiences": {
+      "dispatch": "Dispetcher & Logistika",
+      "edu": "Taʼlim & Mentor",
+      "fin": "Moliya & Buxgalteriya",
+      "sales": "Savdo & Marketing",
+      "med": "Tibbiyot & Farmasevtika",
+      "it": "IT & Dizayn",
+      "eng": "Muhandislik & Sanoat"
+    },
+    "matchedSectionTitle": "Birinchi qatorda — yoʻnalishingizga mos vakansiyalar ({count})",
+    "matchedSectionDesc": "Rezyume yoki tanlangan kasb boʻyicha mos kompaniya vakansiyalari yuqoriga chiqarildi, qolganlari pastda.",
+    "otherSectionTitle": "Qolgan barcha vakansiyalar ({count})",
+    "matchBadge": "Mos: {score}%"
   },
   "VacancyDetail": {
     "back": "← Barcha vakansiyalarga qaytish",

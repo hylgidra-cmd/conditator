@@ -1507,7 +1507,27 @@
     "locationPlaceholder": "City or region...",
     "minSalaryPlaceholder": "Min. salary (UZS)",
     "recommendedTitle": "Recommended for you",
-    "recommendedSubtitle": "Matched based on your CV skills"
+    "recommendedSubtitle": "Matched based on your CV skills",
+    "sortLabel": "Sort order:",
+    "sortMatchFirst": "Matched first",
+    "sortOnlyMatch": "Only matched",
+    "sortLatest": "Newest first",
+    "audienceLabel": "By audience & profession:",
+    "audienceMyCv": "My CV ({role})",
+    "audienceAll": "All fields",
+    "audiences": {
+      "dispatch": "Dispatcher & Logistics",
+      "edu": "Education & Mentor",
+      "fin": "Finance & Accounting",
+      "sales": "Sales & Marketing",
+      "med": "Healthcare & Pharma",
+      "it": "IT & Design",
+      "eng": "Engineering & Industry"
+    },
+    "matchedSectionTitle": "Top priority — vacancies matching your profile ({count})",
+    "matchedSectionDesc": "Vacancies from companies matching your CV or selected profession appear first, followed by all other openings.",
+    "otherSectionTitle": "All other open vacancies ({count})",
+    "matchBadge": "Match: {score}%"
   },
   "VacancyDetail": {
     "back": "← Back to all vacancies",

@@ -1507,7 +1507,27 @@
     "locationPlaceholder": "Qala yamasa aymaq...",
     "minSalaryPlaceholder": "Min. aylıq (UZS)",
     "recommendedTitle": "Sizge sáykes vakansiyalar",
-    "recommendedSubtitle": "CV kónlikpelerińiz tiykarında tańlanǵan"
+    "recommendedSubtitle": "CV kónlikpelerińiz tiykarında tańlanǵan",
+    "sortLabel": "Tártiplew:",
+    "sortMatchFirst": "Sáykesleri birinshi qatarda",
+    "sortOnlyMatch": "Tek sáykes vakansiyalar",
+    "sortLatest": "Jańa jaylastırılǵanlar",
+    "audienceLabel": "Auditoriya hám kásip boyınsha:",
+    "audienceMyCv": "Meniń rezyumem ({role})",
+    "audienceAll": "Barlıǵı",
+    "audiences": {
+      "dispatch": "Dispetcher hám Logistika",
+      "edu": "Bilim hám Mentor",
+      "fin": "Qarjı hám Buxgalteriya",
+      "sales": "Sawda hám Marketing",
+      "med": "Medicina hám Farmacevtika",
+      "it": "IT hám Dizayn",
+      "eng": "Injenerlik hám Sanaat"
+    },
+    "matchedSectionTitle": "Birinshi qatarda — baǵdarıńızǵa sáykes vakansiyalar ({count})",
+    "matchedSectionDesc": "Rezyumeńiz yamasa tańlanǵan kásip boyınsha sáykes kompaniyalardıń vakansiyaları birinshi qatarda turadı, qalǵanı izine túsedi.",
+    "otherSectionTitle": "Qalǵan barlıq vakansiyalar ({count})",
+    "matchBadge": "Sáykes: {score}%"
   },
   "VacancyDetail": {
     "back": "← Barlıq vakansiyalarǵa qaytıw",

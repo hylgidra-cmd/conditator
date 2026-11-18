@@ -253,50 +253,51 @@ export async function getMatchingVacanciesForCv(
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
     include: {
-      company: { select: { name: true } },
+      company: { select: { name: true, industry: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: 40,
+    take: 50,
   });
 
-  const cvSkills = new Set(cvData.skills.map((s) => s.trim().toLowerCase()));
-  const titleWords = (cvTitle ?? "")
-    .toLowerCase()
-    .split(/\s+/)
-    .filter((w) => w.length >= 3);
+  const { scoreVacancyForAudience } = await import(
+    "@/backend/vacancy/audience-match"
+  );
+  const profile = {
+    titles: [cvTitle ?? "", cvData.goal ?? ""].filter(Boolean),
+    skills: cvData.skills,
+    searchText: [
+      cvTitle ?? "",
+      cvData.goal ?? "",
+      ...cvData.skills,
+      ...cvData.experience.map((e) => `${e.position ?? ""} ${e.organization}`),
+    ].join(" "),
+    locations: cvData.location ? [cvData.location] : [],
+    workTypes: [],
+  };
 
   const scored = vacancies.map((v) => {
-    const vSkills = v.skills.map((s) => s.trim().toLowerCase());
-    let skillHits = 0;
-    for (const vs of vSkills) {
-      if (
-        cvSkills.has(vs) ||
-        [...cvSkills].some((cs) => cs.includes(vs) || vs.includes(cs))
-      ) {
-        skillHits += 1;
-      }
-    }
-    const skillScore =
-      vSkills.length > 0 ? Math.round((skillHits / vSkills.length) * 75) : 35;
-
-    const vTitleLower = v.title.toLowerCase();
-    const titleHit = titleWords.some((w) => vTitleLower.includes(w)) ? 25 : 0;
-    const matchScore = Math.min(98, Math.max(20, skillScore + titleHit));
-
+    const res = scoreVacancyForAudience(v, profile);
     return {
       id: v.id,
       title: v.title,
-      companyName: v.company.name ?? "",
+      companyName:
+        v.company.name?.trim() || v.company.industry?.trim() || "CANDIDATOR",
       workType: v.workType,
       salaryFrom: v.salaryFrom,
       salaryTo: v.salaryTo,
       currency: v.currency,
       skills: v.skills.slice(0, 5),
-      matchScore,
+      matchScore: res.isAudienceMatch ? res.matchScore : 25,
+      isAudienceMatch: res.isAudienceMatch,
     };
   });
 
-  scored.sort((a, b) => b.matchScore - a.matchScore);
+  scored.sort((a, b) => {
+    if (a.isAudienceMatch !== b.isAudienceMatch) {
+      return a.isAudienceMatch ? -1 : 1;
+    }
+    return b.matchScore - a.matchScore;
+  });
   return scored.slice(0, limit);
 }
 

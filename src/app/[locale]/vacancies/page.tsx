@@ -1,26 +1,66 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { Prisma, VacancyStatus, WorkType } from "@prisma/client";
+import { getLocale, getTranslations } from "next-intl/server";
+import { currentUser } from "@/backend/auth/current-user";
+import { db } from "@/backend/db";
+import { formatDate } from "@/backend/format-date";
+import {
+  AUDIENCE_KEYS,
+  type AudienceProfile,
+  isValidAudienceKey,
+  rankVacanciesForAudience,
+} from "@/backend/vacancy/audience-match";
+import { cn } from "@/frontend/components/ds/cn";
 import { Reveal } from "@/frontend/components/ds/motion";
+import {
+  ArrowRightIcon,
+  BriefcaseIcon,
+  CheckIcon,
+  MapPinIcon,
+  SearchIcon,
+  SparkIcon,
+} from "@/frontend/components/icons";
+import { Link, redirect } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Header");
   return { title: t("jobs") };
 }
-import {
-  ArrowRightIcon,
-  BriefcaseIcon,
-  MapPinIcon,
-  SearchIcon,
-  SparkIcon,
-} from "@/frontend/components/icons";
-import { currentUser } from "@/backend/auth/current-user";
-import { db } from "@/backend/db";
-import { Link, redirect } from "@/i18n/navigation";
-import { formatDate } from "@/backend/format-date";
-import { Prisma, VacancyStatus, WorkType } from "@prisma/client";
-import { getLocale } from "next-intl/server";
 
 const REVEAL_DELAYS = [0, 75, 150, 225] as const;
+
+type SortMode = "match" | "only_match" | "latest";
+
+function parseSortMode(val?: string): SortMode {
+  if (val === "only_match" || val === "latest") return val;
+  return "match";
+}
+
+function buildFilterHref(
+  current: {
+    q?: string;
+    workType?: string;
+    location?: string;
+    minSalary?: string;
+    audience?: string;
+    sort?: string;
+  },
+  overrides: Partial<{
+    audience: string | undefined;
+    sort: string | undefined;
+  }>,
+): string {
+  const merged = { ...current, ...overrides };
+  const params = new URLSearchParams();
+  if (merged.q) params.set("q", merged.q);
+  if (merged.workType) params.set("workType", merged.workType);
+  if (merged.location) params.set("location", merged.location);
+  if (merged.minSalary) params.set("minSalary", merged.minSalary);
+  if (merged.audience) params.set("audience", merged.audience);
+  if (merged.sort && merged.sort !== "match") params.set("sort", merged.sort);
+  const qs = params.toString();
+  return qs ? `/vacancies?${qs}` : "/vacancies";
+}
 
 export default async function PublicVacanciesPage({
   searchParams,
@@ -30,6 +70,8 @@ export default async function PublicVacanciesPage({
     workType?: string;
     location?: string;
     minSalary?: string;
+    audience?: string;
+    sort?: string;
   }>;
 }) {
   const user = await currentUser();
@@ -38,7 +80,9 @@ export default async function PublicVacanciesPage({
     return redirect({ href: "/company/students", locale });
   }
 
-  const { q, workType, location, minSalary } = await searchParams;
+  const sp = await searchParams;
+  const { q, workType, location, minSalary, audience } = sp;
+  const sortMode = parseSortMode(sp.sort);
   const t = await getTranslations("VacanciesList");
 
   const now = new Date();
@@ -56,6 +100,8 @@ export default async function PublicVacanciesPage({
         { title: { contains: q, mode: "insensitive" } },
         { rawText: { contains: q, mode: "insensitive" } },
         { skills: { has: q } },
+        { company: { name: { contains: q, mode: "insensitive" } } },
+        { company: { industry: { contains: q, mode: "insensitive" } } },
       ],
     });
   }
@@ -82,7 +128,7 @@ export default async function PublicVacanciesPage({
     AND: andConditions,
   };
 
-  const [vacancies, studentCv] = await Promise.all([
+  const [vacancies, studentCvs] = await Promise.all([
     db.vacancy.findMany({
       where,
       include: {
@@ -97,51 +143,285 @@ export default async function PublicVacanciesPage({
         },
       },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: 60,
     }),
     user?.role === "STUDENT"
-      ? db.cv.findFirst({
+      ? db.cv.findMany({
           where: { userId: user.id, savedAt: { not: null } },
-          select: { skills: true },
+          select: {
+            title: true,
+            skills: true,
+            searchText: true,
+            location: true,
+            workTypes: true,
+            data: true,
+          },
           orderBy: { updatedAt: "desc" },
         })
-      : Promise.resolve(null),
+      : Promise.resolve([]),
   ]);
 
-  const studentSkills = new Set(
-    (studentCv?.skills ?? []).map((s) => s.toLowerCase()),
-  );
-  const recommended =
-    studentSkills.size > 0
-      ? vacancies
-          .filter((v) =>
-            v.skills.some((skill) => studentSkills.has(skill.toLowerCase())),
-          )
-          .slice(0, 3)
-      : [];
+  // Build audience profile from student's saved CVs or explicit audience filter pill
+  const explicitAudience = isValidAudienceKey(audience) ? audience : null;
+  const disableCvMatch = audience === "all";
+  const hasStudentCv = studentCvs.length > 0;
+  const primaryCvTitle =
+    studentCvs.find((c) => c.title.trim())?.title.trim() ||
+    (studentCvs[0]?.data as { goal?: string } | null)?.goal?.trim() ||
+    "CV";
+
+  let audienceProfile: AudienceProfile | null = null;
+  if (explicitAudience) {
+    audienceProfile = {
+      titles: [],
+      skills: [],
+      searchText: "",
+      locations: [],
+      workTypes: [],
+      explicitAudience,
+    };
+  } else if (hasStudentCv && !disableCvMatch) {
+    const titles: string[] = [];
+    const skills: string[] = [];
+    const searchTexts: string[] = [];
+    const locations: string[] = [];
+    const workTypes: string[] = [];
+
+    for (const cv of studentCvs) {
+      if (cv.title) titles.push(cv.title);
+      const dataObj = cv.data as { goal?: string | null } | null;
+      if (dataObj?.goal) titles.push(dataObj.goal);
+      skills.push(...cv.skills);
+      if (cv.searchText) searchTexts.push(cv.searchText);
+      if (cv.location) locations.push(cv.location);
+      workTypes.push(...cv.workTypes);
+    }
+
+    audienceProfile = {
+      titles,
+      skills,
+      searchText: searchTexts.join(" "),
+      locations,
+      workTypes,
+    };
+  }
+
+  const ranked = rankVacanciesForAudience(vacancies, audienceProfile, sortMode);
+  const matchedItems = ranked.filter((r) => r.isAudienceMatch);
+  const otherItems = ranked.filter((r) => !r.isAudienceMatch);
+  const showSplitSections =
+    sortMode === "match" &&
+    Boolean(audienceProfile) &&
+    matchedItems.length > 0 &&
+    otherItems.length > 0;
+
+  function renderVacancyCard(
+    item: (typeof ranked)[number],
+    idx: number,
+  ) {
+    const { vacancy, isAudienceMatch, matchScore } = item;
+    const salaryLabel =
+      vacancy.salaryFrom || vacancy.salaryTo
+        ? [
+            vacancy.salaryFrom ? vacancy.salaryFrom.toLocaleString() : "",
+            vacancy.salaryTo ? `– ${vacancy.salaryTo.toLocaleString()}` : "",
+            vacancy.currency,
+          ]
+            .filter(Boolean)
+            .join(" ")
+        : null;
+    const companyDisplay =
+      vacancy.company.name?.trim() ||
+      vacancy.company.industry?.trim() ||
+      "CANDIDATOR";
+    const industryLabel =
+      vacancy.company.industry &&
+      vacancy.company.name &&
+      vacancy.company.industry.trim() !== vacancy.company.name.trim()
+        ? `· ${vacancy.company.industry}`
+        : null;
+    const companyInitial = (companyDisplay[0] ?? "C").toUpperCase();
+
+    return (
+      <Reveal key={vacancy.id} delay={REVEAL_DELAYS[idx % 4]}>
+        <Link
+          href={`/vacancies/${vacancy.id}`}
+          className={cn(
+            "bg-card shadow-soft hover:shadow-float group relative block overflow-hidden rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1",
+            isAudienceMatch && sortMode !== "latest"
+              ? "border-emerald-500/55 ring-1 ring-emerald-500/20"
+              : "border-line hover:border-primary/45",
+          )}
+        >
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex min-w-0 items-start gap-3.5">
+              {vacancy.company.logoPath ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={`/api/companies/${vacancy.company.id}/logo`}
+                  alt={companyDisplay}
+                  className="size-12 shrink-0 rounded-2xl bg-white object-contain p-1 ring-1 ring-black/5"
+                />
+              ) : (
+                <span
+                  aria-hidden
+                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 text-base font-black text-white shadow-sm"
+                >
+                  {companyInitial}
+                </span>
+              )}
+              <div className="min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-subtle text-xs font-extrabold tracking-wider uppercase">
+                    {companyDisplay}
+                  </span>
+                  {industryLabel ? (
+                    <span className="text-subtle text-xs font-medium">
+                      {industryLabel}
+                    </span>
+                  ) : null}
+                  {isAudienceMatch && sortMode !== "latest" ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/35 bg-emerald-500/12 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300">
+                      <CheckIcon size={12} />
+                      {t("matchBadge", { score: matchScore })}
+                    </span>
+                  ) : null}
+                </div>
+                <h2 className="text-text group-hover:text-primary-text text-lg font-black transition-colors sm:text-xl">
+                  {vacancy.title}
+                </h2>
+              </div>
+            </div>
+
+            {/* Salary */}
+            <div className="flex items-center gap-3">
+              {salaryLabel ? (
+                <span className="bg-primary-soft text-primary-text rounded-xl px-3.5 py-1.5 text-sm font-black tabular-nums">
+                  {salaryLabel}
+                </span>
+              ) : (
+                <span className="text-subtle text-xs font-bold">
+                  {t("salaryNegotiable")}
+                </span>
+              )}
+              <span className="border-line bg-card-cool text-subtle group-hover:bg-primary group-hover:text-on-primary hidden size-9 items-center justify-center rounded-full border transition-colors sm:inline-flex">
+                <ArrowRightIcon size={16} />
+              </span>
+            </div>
+          </div>
+
+          {/* Metadata Badges */}
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
+            {vacancy.workType ? (
+              <span className="bg-primary-soft text-primary-text rounded-xl px-3 py-1 font-bold">
+                {t(`workTypes.${vacancy.workType}` as "workTypes.FULL_TIME")}
+              </span>
+            ) : null}
+            {vacancy.location ? (
+              <span className="border-line bg-card-cool text-text rounded-xl border px-3 py-1 font-medium">
+                {t("location", { location: vacancy.location })}
+              </span>
+            ) : null}
+            {vacancy.minExperienceYears !== null ? (
+              <span className="border-line bg-card-cool text-text rounded-xl border px-3 py-1 font-medium">
+                {vacancy.minExperienceYears > 0
+                  ? t("experience", {
+                      years: vacancy.minExperienceYears,
+                    })
+                  : t("noExperience")}
+              </span>
+            ) : null}
+            <span className="text-subtle ml-auto font-medium">
+              {formatDate(vacancy.createdAt)}
+            </span>
+          </div>
+
+          {/* Skills */}
+          {vacancy.skills.length > 0 ? (
+            <div className="border-line/70 mt-4 flex flex-wrap gap-1.5 border-t pt-3">
+              {vacancy.skills.slice(0, 6).map((skill) => (
+                <span
+                  key={skill}
+                  className="border-line bg-card-cool text-text rounded-lg border px-2.5 py-1 text-xs font-semibold"
+                >
+                  {skill}
+                </span>
+              ))}
+              {vacancy.skills.length > 6 ? (
+                <span className="text-subtle self-center px-1 text-xs font-semibold">
+                  {t("moreSkills", {
+                    count: vacancy.skills.length - 6,
+                  })}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
+        </Link>
+      </Reveal>
+    );
+  }
 
   return (
     <div className="page-x font-ui space-y-8 py-8 sm:py-12">
-      {/* Page Header & Glassmorphic Filter Panel */}
+      {/* Page Header, Search Form & Audience-Matching Filter Bar */}
       <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div className="border-line bg-card shadow-float relative overflow-hidden rounded-3xl border p-6 sm:p-8">
           <div
             aria-hidden
             className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
           />
-          <div className="relative z-10 space-y-2">
-            <h1 className="text-h2 text-text font-extrabold tracking-tight">
-              {t("title")}
-            </h1>
-            <p className="text-subtle max-w-2xl text-sm sm:text-base">
-              {t("description")}
-            </p>
+          <div className="relative z-10 flex flex-wrap items-end justify-between gap-4">
+            <div className="space-y-2">
+              <h1 className="text-h2 text-text font-black tracking-tight">
+                {t("title")}
+              </h1>
+              <p className="text-subtle max-w-2xl text-sm sm:text-base">
+                {t("description")}
+              </p>
+            </div>
+
+            {/* Sort Order Switcher (Matched First vs Only Matched vs Latest) */}
+            <div className="border-line bg-card-cool inline-flex flex-wrap items-center gap-1 rounded-2xl border p-1">
+              <span className="text-subtle px-2.5 text-xs font-bold">
+                {t("sortLabel")}
+              </span>
+              {(
+                [
+                  ["match", t("sortMatchFirst")],
+                  ["only_match", t("sortOnlyMatch")],
+                  ["latest", t("sortLatest")],
+                ] as const
+              ).map(([key, label]) => {
+                const active = sortMode === key;
+                return (
+                  <Link
+                    key={key}
+                    href={buildFilterHref(sp, { sort: key })}
+                    className={cn(
+                      "rounded-xl px-3 py-1.5 text-xs font-extrabold transition-all",
+                      active
+                        ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
+                        : "text-subtle hover:text-text",
+                    )}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           <form
             method="GET"
             className="relative z-10 mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto]"
           >
+            {audience ? (
+              <input type="hidden" name="audience" value={audience} />
+            ) : null}
+            {sortMode !== "match" ? (
+              <input type="hidden" name="sort" value={sortMode} />
+            ) : null}
+
             <div className="relative">
               <SearchIcon
                 size={16}
@@ -200,182 +480,120 @@ export default async function PublicVacanciesPage({
               {t("search")}
             </button>
           </form>
+
+          {/* Audience / Profession Filter Pills (Dispatcher, Education, Finance, Sales, Med, IT, Eng) */}
+          <div className="border-line/70 relative z-10 mt-5 flex flex-wrap items-center gap-2 border-t pt-4">
+            <span className="text-subtle mr-1 inline-flex items-center gap-1.5 text-xs font-extrabold">
+              <SparkIcon size={14} className="text-primary-text" />
+              {t("audienceLabel")}
+            </span>
+
+            {hasStudentCv ? (
+              <Link
+                href={buildFilterHref(sp, {
+                  audience: undefined,
+                  sort: sortMode === "latest" ? "match" : sortMode,
+                })}
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-extrabold transition-all",
+                  !explicitAudience && !disableCvMatch
+                    ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
+                    : "border-line bg-card-cool text-text hover:border-primary",
+                )}
+              >
+                <SparkIcon size={12} />
+                <span>{t("audienceMyCv", { role: primaryCvTitle })}</span>
+              </Link>
+            ) : null}
+
+            <Link
+              href={buildFilterHref(sp, {
+                audience: hasStudentCv ? "all" : undefined,
+              })}
+              className={cn(
+                "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
+                (!hasStudentCv && !explicitAudience) || disableCvMatch
+                  ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
+                  : "border-line bg-card-cool text-subtle hover:border-primary hover:text-text",
+              )}
+            >
+              {t("audienceAll")}
+            </Link>
+
+            {AUDIENCE_KEYS.map((key) => {
+              const active = explicitAudience === key;
+              return (
+                <Link
+                  key={key}
+                  href={buildFilterHref(sp, {
+                    audience: active ? (hasStudentCv ? "all" : undefined) : key,
+                    sort: sortMode === "latest" ? "match" : sortMode,
+                  })}
+                  className={cn(
+                    "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
+                    active
+                      ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
+                      : "border-line bg-card-cool text-text hover:border-primary hover:text-primary-text",
+                  )}
+                >
+                  {t(`audiences.${key}` as "audiences.dispatch")}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </Reveal>
 
-      {/* Recommended for student */}
-      {recommended.length > 0 ? (
-        <Reveal delay={75}>
-          <section className="border-primary/30 bg-primary-soft/25 space-y-4 rounded-3xl border p-6 backdrop-blur-md">
-            <div className="flex items-center gap-2.5">
-              <span className="bg-primary-soft text-primary-text inline-flex size-9 items-center justify-center rounded-xl">
-                <SparkIcon size={18} />
-              </span>
-              <div>
-                <h2 className="text-text text-lg font-extrabold">
-                  {t("recommendedTitle")}
-                </h2>
-                <p className="text-subtle text-xs">{t("recommendedSubtitle")}</p>
-              </div>
-            </div>
-            <div className="grid gap-3.5 sm:grid-cols-3">
-              {recommended.map((v) => (
-                <Link
-                  key={v.id}
-                  href={`/vacancies/${v.id}`}
-                  className="border-line bg-card/90 hover:border-primary/60 shadow-soft hover:shadow-float group block rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1"
-                >
-                  <p className="text-subtle truncate text-xs font-bold uppercase">
-                    {v.company.name ?? ""}
-                  </p>
-                  <p className="text-text group-hover:text-primary-text mt-1 line-clamp-1 font-bold transition-colors">
-                    {v.title}
-                  </p>
-                  {v.location ? (
-                    <p className="text-subtle mt-1.5 flex items-center gap-1 truncate text-xs">
-                      <MapPinIcon size={12} />
-                      {v.location}
-                    </p>
-                  ) : null}
-                </Link>
-              ))}
-            </div>
-          </section>
-        </Reveal>
-      ) : null}
-
-      {/* Vacancies List */}
-      {vacancies.length === 0 ? (
+      {/* Vacancies List: Audience-Matched First, Remaining Below ("qalgani izine tusedi") */}
+      {ranked.length === 0 ? (
         <Reveal>
-          <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-md">
+          <div className="border-line bg-card shadow-soft rounded-3xl border p-12 text-center">
             <BriefcaseIcon size={32} className="text-subtle mx-auto mb-3" />
             <p className="text-subtle text-base font-medium">{t("empty")}</p>
           </div>
         </Reveal>
+      ) : showSplitSections ? (
+        <div className="space-y-8">
+          {/* 1. First Row: Vacancies Matching the User's CV / Audience */}
+          <section className="space-y-4">
+            <div className="border-primary/35 bg-primary-soft/60 flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-5 py-3.5">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 text-white shadow-xs">
+                  <SparkIcon size={18} />
+                </span>
+                <div>
+                  <h2 className="text-text text-sm font-black sm:text-base">
+                    {t("matchedSectionTitle", { count: matchedItems.length })}
+                  </h2>
+                  <p className="text-subtle text-xs">
+                    {t("matchedSectionDesc")}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4">
+              {matchedItems.map((item, idx) => renderVacancyCard(item, idx))}
+            </div>
+          </section>
+
+          {/* 2. Below ("qalgani izine tusedi"): All Remaining Open Vacancies */}
+          <section className="space-y-4">
+            <div className="flex items-center gap-3 px-1">
+              <h2 className="text-subtle text-sm font-extrabold tracking-wide uppercase">
+                {t("otherSectionTitle", { count: otherItems.length })}
+              </h2>
+              <div className="bg-line h-px flex-1" />
+            </div>
+
+            <div className="grid gap-4">
+              {otherItems.map((item, idx) => renderVacancyCard(item, idx))}
+            </div>
+          </section>
+        </div>
       ) : (
         <div className="grid gap-4">
-          {vacancies.map((vacancy, idx) => {
-            const salaryLabel =
-              vacancy.salaryFrom || vacancy.salaryTo
-                ? [
-                    vacancy.salaryFrom
-                      ? vacancy.salaryFrom.toLocaleString()
-                      : "",
-                    vacancy.salaryTo
-                      ? `– ${vacancy.salaryTo.toLocaleString()}`
-                      : "",
-                    vacancy.currency,
-                  ]
-                    .filter(Boolean)
-                    .join(" ")
-                : null;
-            const industryLabel = vacancy.company.industry
-              ? `· ${vacancy.company.industry}`
-              : null;
-            const companyInitial = (
-              vacancy.company.name?.trim()?.[0] ?? "C"
-            ).toUpperCase();
-
-            return (
-              <Reveal key={vacancy.id} delay={REVEAL_DELAYS[idx % 4]}>
-                <Link
-                  href={`/vacancies/${vacancy.id}`}
-                  className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/45 group block rounded-3xl border p-6 backdrop-blur-md transition-all duration-300 hover:-translate-y-1"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
-                    <div className="flex min-w-0 items-start gap-3.5">
-                      <span
-                        aria-hidden
-                        className="bg-primary-soft text-primary-text border-primary/20 inline-flex size-11 shrink-0 items-center justify-center rounded-2xl border text-base font-extrabold"
-                      >
-                        {companyInitial}
-                      </span>
-                      <div className="min-w-0 space-y-1">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className="text-subtle text-xs font-bold tracking-wider uppercase">
-                            {vacancy.company.name ?? ""}
-                          </span>
-                          {industryLabel ? (
-                            <span className="text-subtle text-xs">
-                              {industryLabel}
-                            </span>
-                          ) : null}
-                        </div>
-                        <h2 className="text-text group-hover:text-primary-text text-lg font-extrabold transition-colors sm:text-xl">
-                          {vacancy.title}
-                        </h2>
-                      </div>
-                    </div>
-
-                    {/* Salary */}
-                    <div className="flex items-center gap-3">
-                      {salaryLabel ? (
-                        <span className="bg-primary-soft text-primary-text rounded-xl px-3.5 py-1.5 text-sm font-extrabold tabular-nums">
-                          {salaryLabel}
-                        </span>
-                      ) : (
-                        <span className="text-subtle text-xs font-semibold">
-                          {t("salaryNegotiable")}
-                        </span>
-                      )}
-                      <span className="border-line bg-card-cool text-subtle group-hover:bg-primary group-hover:text-on-primary hidden size-9 items-center justify-center rounded-full border transition-colors sm:inline-flex">
-                        <ArrowRightIcon size={16} />
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Metadata Badges */}
-                  <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-                    {vacancy.workType ? (
-                      <span className="bg-primary-soft text-primary-text rounded-xl px-3 py-1 font-bold">
-                        {t(
-                          `workTypes.${vacancy.workType}` as "workTypes.FULL_TIME",
-                        )}
-                      </span>
-                    ) : null}
-                    {vacancy.location ? (
-                      <span className="border-line bg-card-cool text-text rounded-xl border px-3 py-1 font-medium">
-                        {t("location", { location: vacancy.location })}
-                      </span>
-                    ) : null}
-                    {vacancy.minExperienceYears !== null ? (
-                      <span className="border-line bg-card-cool text-text rounded-xl border px-3 py-1 font-medium">
-                        {vacancy.minExperienceYears > 0
-                          ? t("experience", {
-                              years: vacancy.minExperienceYears,
-                            })
-                          : t("noExperience")}
-                      </span>
-                    ) : null}
-                    <span className="text-subtle ml-auto font-medium">
-                      {formatDate(vacancy.createdAt)}
-                    </span>
-                  </div>
-
-                  {/* Skills */}
-                  {vacancy.skills.length > 0 ? (
-                    <div className="border-line/70 mt-4 flex flex-wrap gap-1.5 border-t pt-3">
-                      {vacancy.skills.slice(0, 6).map((skill) => (
-                        <span
-                          key={skill}
-                          className="border-line bg-card-cool text-text rounded-lg border px-2.5 py-1 text-xs font-semibold"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                      {vacancy.skills.length > 6 ? (
-                        <span className="text-subtle self-center px-1 text-xs font-semibold">
-                          {t("moreSkills", {
-                            count: vacancy.skills.length - 6,
-                          })}
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </Link>
-              </Reveal>
-            );
-          })}
+          {ranked.map((item, idx) => renderVacancyCard(item, idx))}
         </div>
       )}
     </div>

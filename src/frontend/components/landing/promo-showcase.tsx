@@ -1,15 +1,58 @@
 import { getTranslations } from "next-intl/server";
+import { currentUser } from "@/backend/auth/current-user";
+import { db } from "@/backend/db";
 import type { LandingStats } from "@/backend/landing-stats";
+import { rankVacanciesForAudience } from "@/backend/vacancy/audience-match";
 import { Reveal } from "@/frontend/components/ds/motion";
 import { SparkIcon } from "@/frontend/components/icons";
 import { PromoBillboardClient } from "./promo-billboard-client";
 
 export async function PromoShowcase({ stats }: { stats: LandingStats }) {
-  const [t, tLive, tDetail] = await Promise.all([
+  const [t, tLive, tDetail, user] = await Promise.all([
     getTranslations("Landing.promo"),
     getTranslations("Landing.liveJobs"),
     getTranslations("VacancyDetail"),
+    currentUser(),
   ]);
+
+  let rankedVacancies = stats.featuredVacancies;
+  if (user?.role === "STUDENT" && stats.featuredVacancies.length > 1) {
+    const cvs = await db.cv.findMany({
+      where: { userId: user.id, savedAt: { not: null } },
+      select: {
+        title: true,
+        skills: true,
+        searchText: true,
+        location: true,
+        workTypes: true,
+        data: true,
+      },
+      orderBy: { updatedAt: "desc" },
+    });
+    if (cvs.length > 0) {
+      const titles = cvs
+        .flatMap((c) => [
+          c.title,
+          (c.data as { goal?: string | null } | null)?.goal ?? "",
+        ])
+        .filter(Boolean);
+      const ranked = rankVacanciesForAudience(
+        stats.featuredVacancies.map((v) => ({
+          ...v,
+          company: { name: v.companyName, industry: null },
+        })),
+        {
+          titles,
+          skills: cvs.flatMap((c) => c.skills),
+          searchText: cvs.map((c) => c.searchText).join(" "),
+          locations: cvs.map((c) => c.location ?? "").filter(Boolean),
+          workTypes: cvs.flatMap((c) => c.workTypes),
+        },
+        "match",
+      );
+      rankedVacancies = ranked.map((r) => r.vacancy);
+    }
+  }
 
   const industries = [
     {
@@ -93,7 +136,7 @@ export async function PromoShowcase({ stats }: { stats: LandingStats }) {
 
         <Reveal delay={75}>
           <PromoBillboardClient
-            vacancies={stats.featuredVacancies}
+            vacancies={rankedVacancies}
             workTypes={workTypes}
             industries={industries}
             labels={{

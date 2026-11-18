@@ -109,7 +109,7 @@ export function PromoBillboardClient({
           {marqueeItems.map((ind, idx) => (
             <Link
               key={`${ind.title}-${idx}`}
-              href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
+              href={`/vacancies?audience=${encodeURIComponent(ind.iconKey)}`}
               className="border-line bg-card-cool hover:border-primary group flex min-w-[17rem] flex-1 items-center gap-3.5 rounded-2xl border p-3.5 transition-all hover:-translate-y-0.5 hover:shadow-md sm:min-w-[19rem]"
             >
               <span
@@ -349,7 +349,7 @@ export function PromoBillboardClient({
               {industries.slice(0, 4).map((ind) => (
                 <Link
                   key={ind.title}
-                  href={`/vacancies?q=${encodeURIComponent(ind.query)}`}
+                  href={`/vacancies?audience=${encodeURIComponent(ind.iconKey)}`}
                   className="border-line bg-card hover:border-primary hover:text-primary-text rounded-full border px-3 py-1 text-[11px] font-bold transition-colors"
                 >
                   {ind.title}

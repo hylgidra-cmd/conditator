@@ -52,13 +52,15 @@ export default async function AdminSupportPage() {
   const firstThreadId = supportThreads[0] ? `support:${supportThreads[0].id}` : undefined;
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 px-4 py-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="mx-auto max-w-6xl space-y-4 px-2.5 py-4 sm:space-y-6 sm:px-4 sm:py-8">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-1">
         <div>
-          <h1 className="text-text text-2xl font-extrabold tracking-tight sm:text-3xl">
+          <h1 className="text-text text-xl font-extrabold tracking-tight sm:text-3xl">
             {tAdmin("support")}
           </h1>
-          <p className="text-subtle mt-1 text-sm">{tChat("subtitleAdmin")}</p>
+          <p className="text-subtle mt-1 text-xs sm:text-sm">
+            {tChat("subtitleAdmin")}
+          </p>
         </div>
         <AdminNav active="support" />
       </div>

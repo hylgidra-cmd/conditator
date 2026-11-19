@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { currentUser } from "@/backend/auth/current-user";
 import { listSupportThreadsForUser } from "@/backend/chat/support-service";
+import { db } from "@/backend/db";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
 export const dynamic = "force-dynamic";
@@ -23,10 +24,17 @@ export default async function SupportPage() {
     return redirect({ href: "/admin/support", locale });
   }
 
-  const [tHeader, tChat, rawSupportThreads] = await Promise.all([
+  const [tHeader, tChat, rawSupportThreads, studentCvs] = await Promise.all([
     getTranslations("Header"),
     getTranslations("Chat"),
     listSupportThreadsForUser(user.id, user.role),
+    user.role === "STUDENT"
+      ? db.cv.findMany({
+          where: { userId: user.id },
+          orderBy: { updatedAt: "desc" },
+          select: { id: true, title: true, isPaid: true },
+        })
+      : Promise.resolve([]),
   ]);
 
   const supportThreads = rawSupportThreads.map((st) => ({
@@ -51,12 +59,12 @@ export default async function SupportPage() {
   const firstThreadId = supportThreads[0] ? `support:${supportThreads[0].id}` : undefined;
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <div>
-        <h1 className="text-text text-3xl font-extrabold tracking-tight">
+    <div className="mx-auto max-w-4xl space-y-4 px-2.5 py-4 sm:space-y-6 sm:px-4 sm:py-8">
+      <div className="px-1">
+        <h1 className="text-text text-2xl font-extrabold tracking-tight sm:text-3xl">
           {tHeader("support")}
         </h1>
-        <p className="text-subtle mt-1 text-sm">
+        <p className="text-subtle mt-1 text-xs sm:text-sm">
           {user.role === "STUDENT"
             ? tChat("subtitleStudent")
             : tChat("subtitleCompany")}
@@ -69,6 +77,7 @@ export default async function SupportPage() {
         currentUserId={user.id}
         currentUserRole={user.role}
         selectedConversationId={firstThreadId}
+        studentCvs={studentCvs}
         supportOnly
       />
     </div>

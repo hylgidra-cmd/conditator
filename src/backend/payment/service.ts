@@ -88,11 +88,22 @@ export async function completePayment(
       where: { id: paymentId },
     });
 
-    if (payment.purpose === PaymentPurpose.CV_CREATION && payment.cvId) {
-      await tx.cv.update({
-        where: { id: payment.cvId },
-        data: { isPaid: true, isVisible: true },
-      });
+    if (payment.purpose === PaymentPurpose.CV_CREATION) {
+      const targetCvId =
+        payment.cvId ??
+        (
+          await tx.cv.findFirst({
+            where: { userId: payment.userId, isPaid: false },
+            orderBy: { updatedAt: "desc" },
+            select: { id: true },
+          })
+        )?.id;
+      if (targetCvId) {
+        await tx.cv.update({
+          where: { id: targetCvId },
+          data: { isPaid: true, isVisible: true },
+        });
+      }
     } else if (
       payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&
       payment.companyId

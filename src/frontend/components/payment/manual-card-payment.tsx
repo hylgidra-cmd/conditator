@@ -3,11 +3,21 @@
 import { type ChangeEvent, useState } from "react";
 import { postJson } from "@/backend/client/api";
 import { CheckIcon, SendIcon } from "@/frontend/components/icons";
+import { compressImageForUpload } from "@/frontend/lib/compress-image";
 import { Link } from "@/i18n/navigation";
 
 const CARD_DISPLAY = "9860 1301 6978 8069";
 const CARD_DIGITS = "9860130169788069";
 const CARD_HOLDER = "GULGINA E.";
+
+const MANUAL_PAY_ERRORS: Record<string, string> = {
+  INVALID_RECEIPT_IMAGE: "Rasm formati qo'llab-quvvatlanmadi. JPG, PNG yoki WebP skrinshot yuklang.",
+  FILE_TYPE_NOT_ALLOWED: "Faqat rasm (JPG, PNG, WebP) yuklash mumkin.",
+  PAYLOAD_TOO_LARGE: "Rasm hajmi juda katta. Qaytadan tanlang.",
+  RATE_LIMITED: "Juda ko'p urinish. Biroz kutib qaytadan yuboring.",
+  NOT_FOUND: "CV topilmadi. Sahifani yangilab qayta urinib ko'ring.",
+  FORBIDDEN: "Ushbu amal uchun ruxsat yetarli emas.",
+};
 
 type PaymentPurposeType =
   | "CV_CREATION"
@@ -24,49 +34,6 @@ type Props = {
   description?: string;
   onSubmitted?: () => void;
 };
-
-/**
- * Compresses an uploaded receipt image on the client to max 1100px JPEG (0.82)
- * so large mobile screenshots upload quickly and reliably.
- */
-function compressReceiptImage(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error("FILE_READ_FAILED"));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error("INVALID_IMAGE"));
-      img.onload = () => {
-        const maxDim = 1100;
-        let w = img.naturalWidth || img.width;
-        let h = img.naturalHeight || img.height;
-        if (w > maxDim || h > maxDim) {
-          if (w >= h) {
-            h = Math.round((h * maxDim) / w);
-            w = maxDim;
-          } else {
-            w = Math.round((w * maxDim) / h);
-            h = maxDim;
-          }
-        }
-        const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          reject(new Error("CANVAS_ERROR"));
-          return;
-        }
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, w, h);
-        ctx.drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL("image/jpeg", 0.82));
-      };
-      img.src = String(reader.result);
-    };
-    reader.readAsDataURL(file);
-  });
-}
 
 export function ManualCardPaymentBox({
   purpose,
@@ -111,18 +78,15 @@ export function ManualCardPaymentBox({
 
   async function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = "";
     if (!file) return;
     setError(null);
-    if (!file.type.startsWith("image/")) {
-      setError("Iltimos, to'lov cheki rasmini (JPG, PNG yoki WebP) yuklang.");
-      return;
-    }
     try {
-      const compressed = await compressReceiptImage(file);
+      const compressed = await compressImageForUpload(file);
       setReceiptDataUrl(compressed);
-      setReceiptName(file.name);
+      setReceiptName(file.name || "chek.jpg");
     } catch {
-      setError("Rasmni o'qishda xatolik yuz berdi. Boshqa rasm tanlang.");
+      setError("Rasmni o'qishda xatolik yuz berdi. Iltimos, skrinshot (JPG/PNG) tanlang.");
     }
   }
 
@@ -150,7 +114,10 @@ export function ManualCardPaymentBox({
       });
 
       if (!res.ok) {
-        setError(res.error || "Chekni yuborishda xatolik yuz berdi.");
+        setError(
+          (res.error && MANUAL_PAY_ERRORS[res.error]) ||
+            "Chekni yuborishda xatolik yuz berdi. Qaytadan urinib ko'ring.",
+        );
         setSubmitting(false);
         return;
       }
@@ -226,7 +193,7 @@ export function ManualCardPaymentBox({
             <p className="text-[10px] font-semibold tracking-widest text-emerald-200/75 uppercase">
               {"16 xonali karta raqami"}
             </p>
-            <p className="mt-0.5 font-mono text-lg font-black tracking-wider text-white sm:text-xl">
+            <p className="mt-0.5 font-mono text-base font-black tracking-normal text-white sm:text-xl sm:tracking-wider">
               {CARD_DISPLAY}
             </p>
           </div>

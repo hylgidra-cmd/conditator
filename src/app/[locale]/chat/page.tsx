@@ -12,6 +12,7 @@ import {
   listUserConversations,
 } from "@/backend/chat/service";
 import { listSupportThreadsForUser } from "@/backend/chat/support-service";
+import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
@@ -42,11 +43,18 @@ export default async function ChatPage({
       selectedId = undefined;
     }
   }
-  const [rawConversations, rawSupportThreads] = await Promise.all([
+  const [rawConversations, rawSupportThreads, studentCvs] = await Promise.all([
     user.role === "ADMIN"
       ? Promise.resolve([])
       : listUserConversations(user.id, user.role),
     listSupportThreadsForUser(user.id, user.role),
+    user.role === "STUDENT"
+      ? db.cv.findMany({
+          where: { userId: user.id },
+          orderBy: { updatedAt: "desc" },
+          select: { id: true, title: true, isPaid: true },
+        })
+      : Promise.resolve([]),
   ]);
 
   const conversations = rawConversations.map((c) => ({
@@ -90,10 +98,12 @@ export default async function ChatPage({
   }));
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <div>
-        <h1 className="text-3xl font-extrabold tracking-tight">{t("title")}</h1>
-        <p className="text-muted mt-1 text-sm">
+    <div className="mx-auto max-w-5xl space-y-4 px-2.5 py-4 sm:space-y-6 sm:px-4 sm:py-8">
+      <div className="px-1">
+        <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+          {t("title")}
+        </h1>
+        <p className="text-muted mt-1 text-xs sm:text-sm">
           {user.role === "STUDENT"
             ? t("subtitleStudent")
             : user.role === "COMPANY"
@@ -108,6 +118,7 @@ export default async function ChatPage({
         currentUserId={user.id}
         currentUserRole={user.role}
         selectedConversationId={selectedId}
+        studentCvs={studentCvs}
       />
     </div>
   );

@@ -1,9 +1,37 @@
+import { isValidImageDataUrl } from "@/backend/company/logo";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { Role } from "@prisma/client";
 
+const RECEIPT_TAG_GLOBAL_RE = /\[PAYMENT_RECEIPT:[^\]]*\]/gi;
+const RECEIPT_ID_RE = /\[PAYMENT_RECEIPT:([a-zA-Z0-9_-]+)\]/;
+const SUPPORT_IMAGE_TAG_GLOBAL_RE = /\[SUPPORT_IMAGE:[^\]]*\]/gi;
+const SUPPORT_IMAGE_DATA_RE =
+  /\[SUPPORT_IMAGE:(data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+)\]/;
+
+export function extractSupportImageDataUrl(text: string): string | null {
+  return SUPPORT_IMAGE_DATA_RE.exec(text)?.[1] ?? null;
+}
+
+function summarizeSupportText(text: string): string {
+  const hasReceipt = RECEIPT_ID_RE.test(text);
+  const hasImage = SUPPORT_IMAGE_DATA_RE.test(text);
+  const cleaned = text
+    .replace(RECEIPT_TAG_GLOBAL_RE, "")
+    .replace(SUPPORT_IMAGE_TAG_GLOBAL_RE, "")
+    .trim();
+  if (cleaned) return cleaned;
+  if (hasReceipt) return "💳 To'lov cheki yuborildi";
+  if (hasImage) return "📷 Rasm yuborildi";
+  return "";
+}
+
+function stripSupportImageTag(text: string): string {
+  return text.replace(SUPPORT_IMAGE_TAG_GLOBAL_RE, "").trim();
+}
+
 export async function ensureSupportThread(userId: string) {
-  return db.supportThread.upsert({
+  const thread = await db.supportThread.upsert({
     where: { userId },
     create: { userId },
     update: {},
@@ -22,11 +50,18 @@ export async function ensureSupportThread(userId: string) {
       },
     },
   });
+  return {
+    ...thread,
+    messages: thread.messages.map((m) => ({
+      ...m,
+      text: summarizeSupportText(m.text),
+    })),
+  };
 }
 
 export async function listSupportThreadsForUser(userId: string, role: Role) {
   if (role === Role.ADMIN) {
-    return db.supportThread.findMany({
+    const threads = await db.supportThread.findMany({
       where: {
         messages: { some: {} },
       },
@@ -46,14 +81,18 @@ export async function listSupportThreadsForUser(userId: string, role: Role) {
       },
       orderBy: { updatedAt: "desc" },
     });
+    return threads.map((t) => ({
+      ...t,
+      messages: t.messages.map((m) => ({
+        ...m,
+        text: summarizeSupportText(m.text),
+      })),
+    }));
   }
 
   const thread = await ensureSupportThread(userId);
   return [thread];
 }
-
-const RECEIPT_TAG_GLOBAL_RE = /\[PAYMENT_RECEIPT:[^\]]*\]/gi;
-const RECEIPT_ID_RE = /\[PAYMENT_RECEIPT:([a-zA-Z0-9_-]+)\]/;
 
 export async function getSupportMessages(
   threadId: string,
@@ -108,8 +147,11 @@ export async function getSupportMessages(
 
   return messages.map((m) => {
     const rid = RECEIPT_ID_RE.exec(m.text)?.[1];
+    const hasImage = SUPPORT_IMAGE_DATA_RE.test(m.text);
     return {
       ...m,
+      text: hasImage ? stripSupportImageTag(m.text) : m.text,
+      imageUrl: hasImage ? `/api/support/messages/${m.id}/image` : null,
       receiptPaymentStatus: rid ? (paymentStatusMap.get(rid) ?? null) : null,
     };
   });
@@ -119,14 +161,30 @@ export async function sendSupportMessage(params: {
   threadId: string;
   senderId: string;
   senderRole: Role;
-  text: string;
+  text?: string;
+  imageDataUrl?: string;
   allowSystemTags?: boolean;
 }) {
-  const rawText = params.allowSystemTags
-    ? params.text
-    : params.text.replace(RECEIPT_TAG_GLOBAL_RE, "");
-  const cleanText = rawText.trim();
-  if (!cleanText) {
+  const rawInput = params.text ?? "";
+  const sanitized = params.allowSystemTags
+    ? rawInput
+    : rawInput
+        .replace(RECEIPT_TAG_GLOBAL_RE, "")
+        .replace(SUPPORT_IMAGE_TAG_GLOBAL_RE, "");
+  const cleanText = sanitized.trim();
+
+  let validatedImage: string | null = null;
+  if (params.imageDataUrl) {
+    if (
+      params.imageDataUrl.length > 2_500_000 ||
+      !isValidImageDataUrl(params.imageDataUrl)
+    ) {
+      throw new ApiError(400, "FILE_TYPE_NOT_ALLOWED");
+    }
+    validatedImage = params.imageDataUrl;
+  }
+
+  if (!cleanText && !validatedImage) {
     throw new ApiError(400, "VALIDATION");
   }
 
@@ -143,12 +201,16 @@ export async function sendSupportMessage(params: {
     throw new ApiError(403, "FORBIDDEN");
   }
 
+  const storedText = validatedImage
+    ? [cleanText, `[SUPPORT_IMAGE:${validatedImage}]`].filter(Boolean).join("\n")
+    : cleanText;
+
   const message = await db.supportMessage.create({
     data: {
       threadId: params.threadId,
       senderId: params.senderId,
       senderRole: params.senderRole,
-      text: cleanText,
+      text: storedText,
     },
   });
 
@@ -157,5 +219,10 @@ export async function sendSupportMessage(params: {
     data: { updatedAt: new Date() },
   });
 
-  return message;
+  return {
+    ...message,
+    text: validatedImage ? cleanText : message.text,
+    imageUrl: validatedImage ? `/api/support/messages/${message.id}/image` : null,
+    receiptPaymentStatus: null,
+  };
 }

@@ -9,10 +9,14 @@ export function AdminPaymentRowActions({
   paymentId,
   initialStatus,
   hasReceipt,
+  onStatusChange,
 }: {
   paymentId: string;
   initialStatus: "PENDING" | "COMPLETED" | "FAILED" | "CANCELLED";
   hasReceipt: boolean;
+  onStatusChange?: (
+    status: "PENDING" | "COMPLETED" | "FAILED" | "CANCELLED",
+  ) => void;
 }) {
   const router = useRouter();
   const [status, setStatus] = useState(initialStatus);
@@ -31,6 +35,7 @@ export function AdminPaymentRowActions({
     setLoading(null);
     if (res.ok) {
       setStatus(res.data.status);
+      onStatusChange?.(res.data.status);
       router.refresh();
     } else {
       setError(res.error);
@@ -79,7 +84,7 @@ export function AdminPaymentRowActions({
         </span>
       ) : (
         <span className="bg-danger-soft text-danger rounded-full px-3 py-1 text-xs font-bold">
-          {status}
+          {status === "FAILED" ? "Rad etilgan" : "Bekor qilingan"}
         </span>
       )}
 

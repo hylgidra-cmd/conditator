@@ -126,75 +126,137 @@ export default async function AdminPaymentsPage() {
           <p className="text-subtle text-sm">{t("payments.empty")}</p>
         </div>
       ) : (
-        <div className="border-line bg-card/90 shadow-soft overflow-x-auto rounded-3xl border backdrop-blur-md">
-          <table className="w-full text-left text-sm">
-            <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
-              <tr>
-                <th className="px-4 py-3.5 font-bold">{t("payments.user")}</th>
-                <th className="px-4 py-3.5 font-bold">
-                  {t("payments.purpose")}
-                </th>
-                <th className="px-4 py-3.5 font-bold">
-                  {t("payments.amount")}
-                </th>
-                <th className="px-4 py-3.5 font-bold">{t("payments.date")}</th>
-                <th className="px-4 py-3.5 font-bold">
-                  {t("payments.status")}
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-line divide-y">
-              {payments.map((p) => {
-                const details = metaMap.get(p.id);
-                const hasReceipt = Boolean(details?.hasReceipt);
-                const purposeDisplay =
-                  details?.planName && details?.durationDays
-                    ? `Obuna — ${details.planName} (${details.durationDays} kun)`
-                    : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
+        <>
+          {/* Mobile card list (phones) */}
+          <ul className="space-y-3 md:hidden">
+            {payments.map((p) => {
+              const details = metaMap.get(p.id);
+              const hasReceipt = Boolean(details?.hasReceipt);
+              const purposeDisplay =
+                details?.planName && details?.durationDays
+                  ? `Obuna — ${details.planName} (${details.durationDays} kun)`
+                  : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
+              const amountDisplay = `${p.amount.toLocaleString("en-US")} so'm`;
 
-                return (
-                  <tr
-                    key={p.id}
-                    className="hover:bg-canvas/50 transition-colors"
-                  >
-                    <td className="px-4 py-3.5">
-                      <p className="text-text font-bold">
+              return (
+                <li
+                  key={p.id}
+                  className="border-line bg-card/90 shadow-soft space-y-3 rounded-3xl border p-4 backdrop-blur-md"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-text truncate text-sm font-extrabold">
                         {p.company?.name ?? p.user.email}
                       </p>
-                      <p className="text-subtle text-xs">{p.user.email}</p>
+                      <p className="text-subtle truncate text-xs">
+                        {p.user.email}
+                      </p>
                       {p.externalId ? (
                         <p className="text-primary-text mt-0.5 font-mono text-[11px] font-bold">
                           {p.externalId}
                         </p>
                       ) : null}
-                    </td>
-                    <td className="text-text px-4 py-3.5 text-xs font-semibold">
-                      <span>{purposeDisplay}</span>
-                      {details?.note ? (
-                        <p className="text-subtle mt-0.5 text-[11px]">
-                          {details.note}
-                        </p>
-                      ) : null}
-                    </td>
-                    <td className="text-text px-4 py-3.5 font-bold tabular-nums">
-                      {p.amount.toLocaleString("en-US")}
-                    </td>
-                    <td className="text-subtle px-4 py-3.5 text-xs">
+                    </div>
+                    <span className="bg-primary-soft text-primary-text shrink-0 rounded-xl px-2.5 py-1 text-xs font-black tabular-nums">
+                      {amountDisplay}
+                    </span>
+                  </div>
+
+                  <div className="border-line bg-canvas/70 space-y-1 rounded-2xl border p-3 text-xs">
+                    <p className="text-text font-bold">{purposeDisplay}</p>
+                    {details?.note ? (
+                      <p className="text-subtle">{details.note}</p>
+                    ) : null}
+                    <p className="text-subtle text-[11px]">
                       {formatDateTime(p.createdAt)}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <AdminPaymentRowActions
-                        paymentId={p.id}
-                        initialStatus={p.status}
-                        hasReceipt={hasReceipt}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </p>
+                  </div>
+
+                  <AdminPaymentRowActions
+                    paymentId={p.id}
+                    initialStatus={p.status}
+                    hasReceipt={hasReceipt}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Desktop table */}
+          <div className="border-line bg-card/90 shadow-soft hidden overflow-x-auto rounded-3xl border backdrop-blur-md md:block">
+            <table className="w-full text-left text-sm">
+              <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
+                <tr>
+                  <th className="px-4 py-3.5 font-bold">
+                    {t("payments.user")}
+                  </th>
+                  <th className="px-4 py-3.5 font-bold">
+                    {t("payments.purpose")}
+                  </th>
+                  <th className="px-4 py-3.5 font-bold">
+                    {t("payments.amount")}
+                  </th>
+                  <th className="px-4 py-3.5 font-bold">
+                    {t("payments.date")}
+                  </th>
+                  <th className="px-4 py-3.5 font-bold">
+                    {t("payments.status")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-line divide-y">
+                {payments.map((p) => {
+                  const details = metaMap.get(p.id);
+                  const hasReceipt = Boolean(details?.hasReceipt);
+                  const purposeDisplay =
+                    details?.planName && details?.durationDays
+                      ? `Obuna — ${details.planName} (${details.durationDays} kun)`
+                      : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
+
+                  return (
+                    <tr
+                      key={p.id}
+                      className="hover:bg-canvas/50 transition-colors"
+                    >
+                      <td className="px-4 py-3.5">
+                        <p className="text-text font-bold">
+                          {p.company?.name ?? p.user.email}
+                        </p>
+                        <p className="text-subtle text-xs">{p.user.email}</p>
+                        {p.externalId ? (
+                          <p className="text-primary-text mt-0.5 font-mono text-[11px] font-bold">
+                            {p.externalId}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td className="text-text px-4 py-3.5 text-xs font-semibold">
+                        <span>{purposeDisplay}</span>
+                        {details?.note ? (
+                          <p className="text-subtle mt-0.5 text-[11px]">
+                            {details.note}
+                          </p>
+                        ) : null}
+                      </td>
+                      <td className="text-text px-4 py-3.5 font-bold tabular-nums">
+                        {p.amount.toLocaleString("en-US")}
+                      </td>
+                      <td className="text-subtle px-4 py-3.5 text-xs">
+                        {formatDateTime(p.createdAt)}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <AdminPaymentRowActions
+                          paymentId={p.id}
+                          initialStatus={p.status}
+                          hasReceipt={hasReceipt}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );

@@ -62,7 +62,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         {/* Saqlangan rejim birinchi chizishdan oldin qoʻyiladi: miltillash yoʻq. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="flex min-h-screen flex-col font-sans antialiased">
+      <body className="flex min-h-screen flex-col overflow-x-clip font-sans antialiased">
         <ClientMessages namespaces={[]}>
           <SiteChrome>
             <SiteHeader />

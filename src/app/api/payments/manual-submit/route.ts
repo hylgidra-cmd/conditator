@@ -62,24 +62,49 @@ export const POST = route(async (request) => {
 
   let companyId: string | undefined;
   if (user.role === "COMPANY") {
-    const company = await db.company.findFirst({
+    const existingCompany = await db.company.findFirst({
       where: {
         OR: [{ userId: user.id }, { members: { some: { userId: user.id } } }],
       },
       select: { id: true },
     });
-    companyId = company?.id;
+    if (existingCompany) {
+      companyId = existingCompany.id;
+    } else {
+      const created = await db.company.upsert({
+        where: { userId: user.id },
+        create: { userId: user.id },
+        update: {},
+        select: { id: true },
+      });
+      companyId = created.id;
+    }
   }
 
   let verifiedCvId: string | undefined;
   if (input.purpose === PaymentPurpose.CV_CREATION) {
-    if (!input.cvId) throw new ApiError(400, "VALIDATION");
-    const cv = await db.cv.findFirst({
-      where: { id: input.cvId, userId: user.id },
-      select: { id: true },
-    });
-    if (!cv) throw new ApiError(404, "NOT_FOUND");
-    verifiedCvId = cv.id;
+    if (input.cvId) {
+      const cv = await db.cv.findFirst({
+        where: { id: input.cvId, userId: user.id },
+        select: { id: true },
+      });
+      if (!cv) throw new ApiError(404, "NOT_FOUND");
+      verifiedCvId = cv.id;
+    } else {
+      // Qo'llab-quvvatlash chatidan to'g'ridan-to'g'ri chek yuborilganda oxirgi to'lanmagan CV ni avtomatik ulash
+      const unpaidCv =
+        (await db.cv.findFirst({
+          where: { userId: user.id, isPaid: false },
+          orderBy: { updatedAt: "desc" },
+          select: { id: true },
+        })) ??
+        (await db.cv.findFirst({
+          where: { userId: user.id },
+          orderBy: { updatedAt: "desc" },
+          select: { id: true },
+        }));
+      verifiedCvId = unpaidCv?.id;
+    }
   } else if (input.cvId && user.role === "STUDENT") {
     const cv = await db.cv.findFirst({
       where: { id: input.cvId, userId: user.id },

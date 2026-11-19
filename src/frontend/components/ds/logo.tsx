@@ -73,11 +73,10 @@ export function LogoMark({
 
 /**
  * Candidator to'liq logotipi:
- * Zumrad nishon + "CANDIDATOR" + "AI" yorlig'i.
+ * Zumrad nishon + "CANDIDATOR".
  */
 export function Logo({
   name = "CANDIDATOR",
-  tag = "AI",
   className,
   tone = "default",
 }: {
@@ -97,11 +96,6 @@ export function Logo({
       >
         {name}
       </span>
-      {tag ? (
-        <span className="rounded-md bg-gradient-to-r from-emerald-600 to-teal-500 px-1.5 py-0.5 text-[10px] leading-none font-extrabold tracking-wider text-white shadow-xs">
-          {tag}
-        </span>
-      ) : null}
     </span>
   );
 }

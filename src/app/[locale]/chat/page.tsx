@@ -12,6 +12,7 @@ import {
   listUserConversations,
 } from "@/backend/chat/service";
 import { listSupportThreadsForUser } from "@/backend/chat/support-service";
+import { ApiError } from "@/backend/http/errors";
 import { ChatRoom } from "@/frontend/components/chat/chat-room";
 
 export const dynamic = "force-dynamic";
@@ -32,7 +33,14 @@ export default async function ChatPage({
   const { id, vacancyId, cvId } = await searchParams;
   let selectedId = id;
   if (!selectedId && user.role === "COMPANY" && vacancyId && cvId) {
-    selectedId = await ensureConversationForCompany(user.id, vacancyId, cvId);
+    try {
+      selectedId = await ensureConversationForCompany(user.id, vacancyId, cvId);
+    } catch (error) {
+      if (error instanceof ApiError && error.code === "SUBSCRIPTION_REQUIRED") {
+        return redirect({ href: "/company/billing", locale });
+      }
+      selectedId = undefined;
+    }
   }
   const [rawConversations, rawSupportThreads] = await Promise.all([
     user.role === "ADMIN"

@@ -270,7 +270,7 @@ export async function getMatchingVacanciesForCv(
   const vacancies = await db.vacancy.findMany({
     where: {
       status: "ACTIVE",
-      company: { approval: "APPROVED" },
+      company: { approval: "APPROVED", user: { status: "ACTIVE" } },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     },
     include: {

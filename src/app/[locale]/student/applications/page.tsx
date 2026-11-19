@@ -60,6 +60,8 @@ export default async function StudentApplicationsPage() {
       .map((c) => [c.vacancyId, c.id]),
   );
 
+  const payCvLabel = "🔒 To'lov qilish";
+
   return (
     <div className="page-x font-ui space-y-8 py-8 sm:py-12">
       {/* Header + Stats Bento */}
@@ -174,12 +176,21 @@ export default async function StudentApplicationsPage() {
                     >
                       {t("editCv")}
                     </Link>
-                    <a
-                      href={`/api/cv/me/pdf?cvId=${encodeURIComponent(cv.id)}`}
-                      className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-4 py-2 text-xs font-bold transition-colors"
-                    >
-                      {t("downloadPdf")}
-                    </a>
+                    {cv.isPaid ? (
+                      <a
+                        href={`/api/cv/me/pdf?cvId=${encodeURIComponent(cv.id)}`}
+                        className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-4 py-2 text-xs font-bold transition-colors"
+                      >
+                        {t("downloadPdf")}
+                      </a>
+                    ) : (
+                      <Link
+                        href={`/student/cv?cvId=${cv.id}`}
+                        className="border-amber-500/35 bg-warning-soft text-warning hover:bg-amber-500/20 rounded-xl border px-3.5 py-2 text-xs font-bold transition-colors"
+                      >
+                        {payCvLabel}
+                      </Link>
+                    )}
                   </div>
                 </div>
               </Reveal>

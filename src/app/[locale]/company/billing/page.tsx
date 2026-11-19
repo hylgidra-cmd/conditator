@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { companyAccess } from "@/backend/company/access";
 import { requireCompanyPage } from "@/backend/company/page";
@@ -26,13 +27,10 @@ function formatPaymentStatus(status: string): string {
 
 function formatPaymentPurpose(
   purpose: string,
-  details: unknown,
+  meta?: { planName: string | null; durationDays: number | null },
 ): string {
-  if (typeof details === "object" && details !== null) {
-    const d = details as Record<string, unknown>;
-    if (typeof d.planName === "string" && typeof d.durationDays === "number") {
-      return `Obuna — ${d.planName} (${d.durationDays} kun)`;
-    }
+  if (meta?.planName && meta?.durationDays) {
+    return `Obuna — ${meta.planName} (${meta.durationDays} kun)`;
   }
   if (purpose === "VACANCY_UNLOCK") return "Kompaniya Obunasi";
   return purpose;
@@ -42,15 +40,48 @@ export default async function CompanyBillingPage() {
   const { company } = await requireCompanyPage();
   const t = await getTranslations("Company.billing");
   const access = companyAccess(company);
-  const hasActiveAbuna =
-    access.subscriptionActive ||
-    (await isCompanySubscribedOrUnlocked(company.id));
+  const [unlocked, payments] = await Promise.all([
+    access.subscriptionActive
+      ? Promise.resolve(true)
+      : isCompanySubscribedOrUnlocked(company.id),
+    db.payment.findMany({
+      where: { companyId: company.id },
+      select: {
+        id: true,
+        purpose: true,
+        provider: true,
+        amount: true,
+        status: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+      take: 50,
+    }),
+  ]);
+  const hasActiveAbuna = access.subscriptionActive || unlocked;
 
-  const payments = await db.payment.findMany({
-    where: { companyId: company.id },
-    orderBy: { createdAt: "desc" },
-    take: 50,
-  });
+  const paymentIds = payments.map((p) => p.id);
+  const metaRows =
+    paymentIds.length > 0
+      ? await db.$queryRaw<
+          Array<{
+            id: string;
+            planName: string | null;
+            durationDays: number | null;
+          }>
+        >(Prisma.sql`
+          SELECT id,
+            "transactionDetails"->>'planName' AS "planName",
+            CASE
+              WHEN ("transactionDetails"->>'durationDays') ~ '^[0-9]+$'
+              THEN ("transactionDetails"->>'durationDays')::int
+              ELSE NULL
+            END AS "durationDays"
+          FROM "Payment"
+          WHERE id IN (${Prisma.join(paymentIds)})
+        `)
+      : [];
+  const metaMap = new Map(metaRows.map((row) => [row.id, row]));
 
   const buyAbunaTitle = "Kompaniya Obunasi — Tarifni tanlang";
   const buyAbunaDesc =
@@ -58,6 +89,7 @@ export default async function CompanyBillingPage() {
   const variantExplainTitle = "Obunasiz va Obuna bilan farqi";
   const variantExplainDesc =
     "Obunasiz siz barcha nomzodlarning mutaxassisligi, ko'nikmalari, hududi va AI bahosini (%) ko'rasiz. Obuna faollashgach, barcha aloqa ma'lumotlari va PDF yuklash darhol ochiladi.";
+  const activeFallbackText = "Kompaniya Obunasi faol";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -92,8 +124,13 @@ export default async function CompanyBillingPage() {
             }`}
           >
             <p className="text-sm font-bold">
-              {hasActiveAbuna && company.subscriptionUntil
-                ? t("subActive", { date: formatDate(company.subscriptionUntil) })
+              {hasActiveAbuna
+                ? company.subscriptionUntil &&
+                  company.subscriptionUntil > new Date()
+                  ? t("subActive", {
+                      date: formatDate(company.subscriptionUntil),
+                    })
+                  : activeFallbackText
                 : t("subInactive")}
             </p>
           </div>
@@ -143,7 +180,7 @@ export default async function CompanyBillingPage() {
                   {payments.map((p) => {
                     const purposeLabel = formatPaymentPurpose(
                       p.purpose,
-                      p.transactionDetails,
+                      metaMap.get(p.id),
                     );
                     const amountLabel = `${p.amount.toLocaleString("en-US")} so'm`;
                     const statusLabel = formatPaymentStatus(p.status);

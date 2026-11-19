@@ -2,9 +2,28 @@
 
 import { useState } from "react";
 import { postJson } from "@/backend/client/api";
+import { formatDate } from "@/backend/format-date";
 import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+
+const APPLICATION_STATUS_LABELS: Record<string, string> = {
+  SUBMITTED: "Yuborilgan",
+  VIEWED: "Ko'rilgan",
+  INTERESTED: "Qiziqish bildirildi",
+  ACCEPTED: "Qabul qilindi",
+  REJECTED: "Rad etildi",
+};
+
+const APPLY_ERROR_LABELS: Record<string, string> = {
+  ALREADY_APPLIED: "Siz bu vakansiyaga allaqachon ariza yuborgansiz.",
+  APPLY_PASS_REQUIRED: "Ariza yuborish uchun 7 kunlik ruxsatnoma (5 000 so'm) kerak.",
+  CV_PAYMENT_REQUIRED: "Avval ushbu rezyumeni faollashtirish to'lovini (5 000 so'm) bajaring.",
+  INVALID_OR_UNSAVED_CV: "Tanlangan rezyume saqlanmagan yoki topilmadi.",
+  VACANCY_INACTIVE_OR_EXPIRED: "Ushbu vakansiya yopilgan yoki muddati tugagan.",
+  VACANCY_NOT_FOUND: "Vakansiya topilmadi.",
+  RATE_LIMITED: "Juda ko'p so'rov yuborildi. Biroz kutib qayta urinib ko'ring.",
+};
 
 type Props = {
   vacancyId: string;
@@ -68,7 +87,10 @@ export function ApplyModal({
         setIsOpen(false);
         router.refresh();
       } else {
-        setError(res.error || "Ariza yuborishda xatolik yuz berdi");
+        setError(
+          (res.error && APPLY_ERROR_LABELS[res.error]) ||
+            "Ariza yuborishda xatolik yuz berdi",
+        );
       }
     } catch (err: unknown) {
       const errorObj = err as { message?: string };
@@ -79,15 +101,16 @@ export function ApplyModal({
   }
 
   if (success) {
+    const statusLabel =
+      (applicationStatus && APPLICATION_STATUS_LABELS[applicationStatus]) ||
+      "Ko'rib chiqilmoqda";
     return (
       <div className="border-line bg-card/90 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <span className="text-xl">✅</span>
           <div>
             <h4 className="text-success font-bold">Ariza yuborilgan</h4>
-            <p className="text-subtle text-xs">
-              Holat: {applicationStatus ?? "Ko'rib chiqilmoqda"}
-            </p>
+            <p className="text-subtle text-xs">Holat: {statusLabel}</p>
           </div>
         </div>
         {conversationId ? (
@@ -166,7 +189,7 @@ export function ApplyModal({
         </button>
         <span className="text-subtle text-xs font-medium">
           {hasActivePass && applyPassUntil
-            ? `✅ Ruxsat faol: ${new Date(applyPassUntil).toLocaleDateString()} gacha`
+            ? `✅ Ruxsat faol: ${formatDate(applyPassUntil)} gacha`
             : ""}
         </span>
       </div>

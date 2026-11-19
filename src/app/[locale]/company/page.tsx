@@ -123,10 +123,13 @@ export default async function CompanyPage() {
             className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-sm font-medium ${hasActiveAbuna ? TONE.APPROVED : "border-line bg-card-cool/50 text-subtle"}`}
           >
             <span>
-              {hasActiveAbuna && company.subscriptionUntil
-                ? t("status.subscriptionActive", {
-                    date: formatDate(company.subscriptionUntil),
-                  })
+              {hasActiveAbuna
+                ? company.subscriptionUntil &&
+                  company.subscriptionUntil > new Date()
+                  ? t("status.subscriptionActive", {
+                      date: formatDate(company.subscriptionUntil),
+                    })
+                  : "Kompaniya Obunasi faol"
                 : t("status.subscriptionInactive")}
             </span>
             <CompanySubscribeButton

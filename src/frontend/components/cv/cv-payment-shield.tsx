@@ -9,6 +9,76 @@ type Props = {
   children: ReactNode;
 };
 
+type ShieldTrigger = (reason: string) => void;
+
+const activeDisplayMediaListeners = new Set<ShieldTrigger>();
+let savedOriginalDisplayMedia:
+  | typeof navigator.mediaDevices.getDisplayMedia
+  | null = null;
+
+function registerDisplayMediaGuard(trigger: ShieldTrigger): () => void {
+  const mediaDevices =
+    typeof navigator !== "undefined" ? navigator.mediaDevices : undefined;
+  activeDisplayMediaListeners.add(trigger);
+
+  if (
+    activeDisplayMediaListeners.size === 1 &&
+    mediaDevices &&
+    typeof mediaDevices.getDisplayMedia === "function"
+  ) {
+    savedOriginalDisplayMedia = mediaDevices.getDisplayMedia.bind(mediaDevices);
+    try {
+      Object.defineProperty(mediaDevices, "getDisplayMedia", {
+        configurable: true,
+        value: async () => {
+          for (const listener of activeDisplayMediaListeners) {
+            listener(
+              "Ekran yozib olish (Screen Recording) to'lanmagan CV da taqiqlangan.",
+            );
+          }
+          throw new DOMException(
+            "Screen recording is disabled for unpaid CVs.",
+            "NotAllowedError",
+          );
+        },
+      });
+    } catch {
+      savedOriginalDisplayMedia = null;
+    }
+  }
+
+  return () => {
+    activeDisplayMediaListeners.delete(trigger);
+    if (
+      activeDisplayMediaListeners.size === 0 &&
+      mediaDevices &&
+      savedOriginalDisplayMedia
+    ) {
+      try {
+        Object.defineProperty(mediaDevices, "getDisplayMedia", {
+          configurable: true,
+          value: savedOriginalDisplayMedia,
+        });
+      } catch {
+        // ignore
+      }
+      savedOriginalDisplayMedia = null;
+    }
+  };
+}
+
+function isEditableTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.closest(".cv-unpaid-protected-content")) return false;
+  const tag = target.tagName;
+  return (
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT" ||
+    target.isContentEditable
+  );
+}
+
 /**
  * To'lanmagan CV oldindan ko'rinishini skrinshot, ekran yozib olish, chop etish (Ctrl+P)
  * va nusxa ko'chirishdan himoyalaydigan ko'p qatlamli qalqon.
@@ -42,8 +112,13 @@ export function CvPaymentShield({
         (e.metaKey || e.ctrlKey) &&
         e.shiftKey &&
         (key === "3" || key === "4" || key === "5" || key === "s");
+      const isCopy = ctrlOrMeta && key === "c" && !e.shiftKey;
       const isPrintOrSave =
-        ctrlOrMeta && (key === "p" || key === "s" || key === "u" || key === "c");
+        ctrlOrMeta &&
+        (key === "p" ||
+          key === "s" ||
+          key === "u" ||
+          (isCopy && !isEditableTarget(e.target)));
       const isDevTools =
         e.key === "F12" ||
         (ctrlOrMeta && e.shiftKey && (key === "i" || key === "j" || key === "c"));
@@ -91,31 +166,7 @@ export function CvPaymentShield({
       );
     };
 
-    // Brauzer ichidagi screen-recording (getDisplayMedia) urinishini aniqlash
-    let originalDisplayMedia:
-      | typeof navigator.mediaDevices.getDisplayMedia
-      | undefined;
-    const mediaDevices =
-      typeof navigator !== "undefined" ? navigator.mediaDevices : undefined;
-    if (mediaDevices && typeof mediaDevices.getDisplayMedia === "function") {
-      originalDisplayMedia = mediaDevices.getDisplayMedia.bind(mediaDevices);
-      try {
-        Object.defineProperty(mediaDevices, "getDisplayMedia", {
-          configurable: true,
-          value: async () => {
-            triggerShield(
-              "Ekran yozib olish (Screen Recording) to'lanmagan CV da taqiqlangan.",
-            );
-            throw new DOMException(
-              "Screen recording is disabled for unpaid CVs.",
-              "NotAllowedError",
-            );
-          },
-        });
-      } catch {
-        // Ba'zi brauzerlarda mediaDevices read-only bo'lishi mumkin
-      }
-    }
+    const unregisterDisplayMedia = registerDisplayMediaGuard(triggerShield);
 
     window.addEventListener("keydown", handleKeyDown, { capture: true });
     window.addEventListener("keyup", handleKeyUp, { capture: true });
@@ -135,16 +186,7 @@ export function CvPaymentShield({
       window.removeEventListener("beforeprint", handleBeforePrint);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.clearInterval(interval);
-      if (mediaDevices && originalDisplayMedia) {
-        try {
-          Object.defineProperty(mediaDevices, "getDisplayMedia", {
-            configurable: true,
-            value: originalDisplayMedia,
-          });
-        } catch {
-          // ignore
-        }
-      }
+      unregisterDisplayMedia();
     };
   }, [isPaid]);
 

@@ -10,9 +10,18 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
     const { id } = await params;
   const company = await db.company.findUnique({
     where: { id },
-    select: { approval: true, logoPath: true },
+    select: {
+      approval: true,
+      logoPath: true,
+      user: { select: { status: true } },
+    },
   });
-  if (!company || company.approval !== "APPROVED" || !company.logoPath) {
+  if (
+    !company ||
+    company.approval !== "APPROVED" ||
+    company.user.status !== "ACTIVE" ||
+    !company.logoPath
+  ) {
     throw new ApiError(404, "NOT_FOUND");
   }
   const logo = await readLogo(company.logoPath);

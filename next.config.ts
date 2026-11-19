@@ -23,12 +23,12 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             key: "Content-Security-Policy",
             value:
-              "default-src 'self'; img-src 'self' data: blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+              "default-src 'self'; img-src 'self' data: blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline' https://unpkg.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
           },
         ],
       },
@@ -36,13 +36,15 @@ const nextConfig: NextConfig = {
   },
   // Chromium boshqaruvchisi bundle ga kirmaydi; standalone/Vercel ga node_modules dan olinadi.
   serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
-  // PDF ga joylanadigan shriftlar standalone obrazga ham tushsin.
+  // PDF ga joylanadigan shriftlar va Vercel serverless Chromium binarilari obrazga tushsin.
   outputFileTracingIncludes: {
     "/api/cv/me/pdf": [
       "./node_modules/@fontsource-variable/noto-sans/files/noto-sans-{latin,latin-ext,cyrillic,cyrillic-ext}-wght-normal.woff2",
+      "./node_modules/@sparticuz/chromium/bin/**/*",
     ],
     "/api/cv/[id]/pdf": [
       "./node_modules/@fontsource-variable/noto-sans/files/noto-sans-{latin,latin-ext,cyrillic,cyrillic-ext}-wght-normal.woff2",
+      "./node_modules/@sparticuz/chromium/bin/**/*",
     ],
   },
 };

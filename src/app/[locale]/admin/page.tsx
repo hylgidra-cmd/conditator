@@ -130,21 +130,49 @@ export default async function AdminDashboardPage() {
           <ul className="border-line bg-canvas/60 divide-line divide-y rounded-2xl border text-sm">
             {logs.map((log) => {
               const target = String(
-                log.details.name ?? log.details.email ?? log.targetId,
+                log.details.name ??
+                  log.details.email ??
+                  log.details.title ??
+                  log.details.externalId ??
+                  log.targetId,
               );
+              let actionText: string;
+              if (log.targetType === "Payment") {
+                const amount =
+                  typeof log.details.amount === "number"
+                    ? `${log.details.amount.toLocaleString("en-US")} so'm`
+                    : "";
+                const ref = log.details.externalId
+                  ? `#${String(log.details.externalId)}`
+                  : log.targetId.slice(-6);
+                actionText =
+                  log.details.decision === "APPROVE"
+                    ? `To'lov tasdiqlandi: ${ref}${amount ? ` (${amount})` : ""}`
+                    : `To'lov rad etildi: ${ref}${amount ? ` (${amount})` : ""}`;
+              } else if (log.targetType === "Vacancy") {
+                actionText = log.details.deleted
+                  ? `Vakansiya o'chirildi: ${target}`
+                  : `Vakansiya holati (${String(log.details.newStatus ?? "")}): ${target}`;
+              } else {
+                const rawTo = log.details.to;
+                const formattedTo =
+                  log.action === "SUBSCRIPTION_SET" &&
+                  (typeof rawTo === "string" || rawTo instanceof Date) &&
+                  !Number.isNaN(new Date(rawTo).getTime())
+                    ? formatDate(rawTo)
+                    : String(rawTo ?? "—");
+                actionText = t(`logs.actions.${log.action}`, {
+                  target,
+                  to: formattedTo,
+                });
+              }
               return (
                 <li
                   key={log.id}
                   className="hover:bg-card/60 flex flex-wrap justify-between gap-2 px-4 py-3 transition-colors"
                 >
                   <span className="text-text min-w-0 break-words">
-                    {t(`logs.actions.${log.action}`, {
-                      target,
-                      to:
-                        log.action === "SUBSCRIPTION_SET"
-                          ? formatDate(String(log.details.to))
-                          : String(log.details.to ?? ""),
-                    })}
+                    {actionText}
                   </span>
                   <span className="text-subtle text-xs">
                     {formatDateTime(log.createdAt)}

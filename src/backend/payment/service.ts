@@ -1,6 +1,4 @@
 import { randomBytes } from "node:crypto";
-import { evaluateCvQuality } from "@/backend/cv/quality";
-import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { PaymentPurpose, PaymentProvider, PaymentStatus } from "@prisma/client";
@@ -8,7 +6,7 @@ import { PaymentPurpose, PaymentProvider, PaymentStatus } from "@prisma/client";
 export const CV_CREATION_PRICE_UZS = 5_000;
 export const WEEKLY_PASS_PRICE_UZS = 5_000;
 export const WEEKLY_PASS_DAYS = 7;
-export const VACANCY_UNLOCK_PRICE_UZS = 14_999;
+export const VACANCY_UNLOCK_PRICE_UZS = 29_000;
 export const UNLOCK_DURATION_DAYS = 15;
 
 export const MANUAL_CARD_NUMBER = "9860 1301 6978 8069";
@@ -52,7 +50,7 @@ export async function createPaymentOrder(input: CreatePaymentInput) {
 /**
  * Marks payment as completed and fulfills the benefit:
  * - If CV_CREATION: marks Cv.isPaid = true
- * - If VACANCY_UNLOCK: extends Company.subscriptionUntil by 15 days (and VacancyUnlock if vacancyId is set)
+ * - If VACANCY_UNLOCK: extends Company.subscriptionUntil by selected plan durationDays (default 15 days)
  * - If WEEKLY_APPLY_PASS: extends User.applyPassUntil by 7 days
  */
 export async function completePayment(
@@ -99,6 +97,18 @@ export async function completePayment(
       payment.purpose === PaymentPurpose.VACANCY_UNLOCK &&
       payment.companyId
     ) {
+      const details =
+        typeof payment.transactionDetails === "object" &&
+        payment.transactionDetails !== null
+          ? (payment.transactionDetails as Record<string, unknown>)
+          : null;
+      const rawDays =
+        typeof details?.durationDays === "number"
+          ? Math.trunc(details.durationDays)
+          : UNLOCK_DURATION_DAYS;
+      const durationDays =
+        rawDays >= 1 && rawDays <= 365 ? rawDays : UNLOCK_DURATION_DAYS;
+
       const company = await tx.company.findUnique({
         where: { id: payment.companyId },
         select: { subscriptionUntil: true },
@@ -109,7 +119,7 @@ export async function completePayment(
           ? company.subscriptionUntil
           : now;
       const expiresAt = new Date(
-        baseDate.getTime() + UNLOCK_DURATION_DAYS * 24 * 60 * 60 * 1000,
+        baseDate.getTime() + durationDays * 24 * 60 * 60 * 1000,
       );
 
       await tx.company.update({
@@ -228,52 +238,19 @@ export async function isVacancyUnlocked(
 }
 
 /**
- * Checks whether a CV is locked for a company:
+ * Checks whether a CV is locked for a company (Variant 1 — Teaser + Full Subscription):
  * - If the company has an active subscription (Abuna) or active unlock -> NOT locked (false).
- * - If the company does NOT have an active subscription:
- *   - Mukammal CVs (80–100% AI / quality score) -> LOCKED (true).
- *   - Lower-tier CVs (< 80% score) -> OPEN / VISIBLE (false).
+ * - If the company does NOT have an active subscription -> LOCKED (true):
+ *   skills, experience, education & AI score remain visible as teaser,
+ *   while fullName, phone, email, telegram, photo & PDF download are locked until subscription.
  */
 export async function isCvLockedForCompany(
-  cvId: string,
+  _cvId: string,
   companyId: string,
   vacancyId?: string | null,
 ): Promise<boolean> {
   const hasAccess = await isCompanySubscribedOrUnlocked(companyId, vacancyId);
-  if (hasAccess) {
-    return false;
-  }
-
-  const [cv, matches] = await Promise.all([
-    db.cv.findUnique({
-      where: { id: cvId },
-      select: { title: true, data: true },
-    }),
-    db.match.findMany({
-      where: vacancyId
-        ? { vacancyId, cvId, vacancy: { companyId } }
-        : { cvId, vacancy: { companyId } },
-      select: { score: true },
-      orderBy: { score: "desc" },
-      take: 1,
-    }),
-  ]);
-
-  const topMatchScore = matches[0]?.score ?? null;
-  if (topMatchScore !== null && topMatchScore >= 80) {
-    return true;
-  }
-
-  if (!cv) return false;
-  const parsed = cvDataSchema.safeParse(cv.data);
-  if (!parsed.success) return false;
-
-  const quality = evaluateCvQuality(parsed.data, {
-    title: cv.title,
-    aiMatchScore: topMatchScore,
-  });
-
-  return quality.isMukammal;
+  return !hasAccess;
 }
 
 /**

@@ -222,7 +222,8 @@
     "INVALID_OR_UNSAVED_CV": "Please save your CV first.",
     "ALREADY_APPLIED": "You have already applied to this vacancy.",
     "CV_PAYMENT_REQUIRED": "Please pay the CV activation fee (5,000 UZS) first.",
-    "APPLY_PASS_REQUIRED": "Weekly application pass required (5,000 UZS / 7 days)."
+    "APPLY_PASS_REQUIRED": "Weekly application pass required (5,000 UZS / 7 days).",
+    "SUBSCRIPTION_REQUIRED": "An active company subscription is required to view candidate contacts and download PDFs."
   },
   "Form": {
     "submitting": "Sending…"

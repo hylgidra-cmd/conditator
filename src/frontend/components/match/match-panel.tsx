@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
+import { CompanySubscriptionPlans } from "@/frontend/components/company/company-subscription-plans";
 import { FormAlert, useErrorText } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
 import { postJson } from "@/backend/client/api";
@@ -75,9 +75,9 @@ export function MatchPanel({
             <button
               type="button"
               onClick={() => setShowCardModal(true)}
-              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
             >
-              {"🔓 Abuna olish (14 999 so'm)"}
+              {"🔓 Obuna sotib olish (15 000 so'mdan)"}
             </button>
           )}
         </div>
@@ -103,9 +103,9 @@ export function MatchPanel({
             <button
               type="button"
               onClick={() => setShowCardModal(true)}
-              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
             >
-              {"🔓 Abuna faollashtirish"}
+              {"🔓 Obuna faollashtirish"}
             </button>
           ) : null}
         </div>
@@ -140,14 +140,16 @@ export function MatchPanel({
           {hasLocked ? (
             <div className="border-primary/30 bg-primary-soft/80 flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-4 backdrop-blur-md">
               <p className="text-text text-sm font-medium">
-                {t("unlockBanner")}
+                {
+                  "Nomzodlarning to'liq ismi, telefon raqami, Telegram, emaili va PDF rezyumesini ko'rish uchun Kompaniya Obunasini faollashtiring."
+                }
               </p>
               <button
                 type="button"
                 onClick={() => setShowCardModal(true)}
-                className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-5 py-2.5 text-xs font-extrabold transition-colors"
+                className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-5 py-2.5 text-xs font-extrabold transition-colors"
               >
-                {"🔓 Abuna olish (14 999 so'm)"}
+                {"🔓 Obuna sotib olish (15 000 so'mdan)"}
               </button>
             </div>
           ) : outcome.isVacancyUnlocked ? (
@@ -163,32 +165,28 @@ export function MatchPanel({
                 if (e.target === e.currentTarget) setShowCardModal(false);
               }}
             >
-              <div className="ds-modal-panel border-line bg-card shadow-float max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-3xl border p-6">
+              <div className="ds-modal-panel border-line bg-card shadow-float max-h-[92vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-3xl border p-5 sm:p-6">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h3 className="text-text text-lg font-extrabold">
-                      {"Kompaniya Abunasi (Mukammal CV larni ochish)"}
+                    <h3 className="text-text text-lg font-black">
+                      {"Kompaniya Obunasi — Tarifni tanlang"}
                     </h3>
                     <p className="text-subtle mt-1 text-xs leading-relaxed">
                       {
-                        "14 999 so'm to'lov qilib chek rasmini yuboring. Admin tasdiqlagach, 15 kun davomida barcha 80–100% mos va Mukammal CV lar hamda kontaktlar ochiladi."
+                        "Tarifni tanlab chek rasmini yuboring. Admin tasdiqlagach barcha nomzodlarning kontaktlari, PDF rezyumelari va AI saralash darhol ochiladi."
                       }
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setShowCardModal(false)}
-                    className="text-subtle hover:text-text text-xl font-bold"
+                    className="text-subtle hover:text-text cursor-pointer text-xl font-bold"
                   >
                     {"✕"}
                   </button>
                 </div>
 
-                <ManualCardPaymentBox
-                  purpose="VACANCY_UNLOCK"
-                  amountUzs={14999}
-                  vacancyId={vacancyId}
-                />
+                <CompanySubscriptionPlans vacancyId={vacancyId} compact />
               </div>
             </div>
           ) : null}

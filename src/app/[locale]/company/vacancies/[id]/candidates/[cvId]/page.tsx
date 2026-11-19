@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { CandidateActions } from "@/frontend/components/company/candidate-actions";
+import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
 import { SparkIcon } from "@/frontend/components/icons";
 import { DecisionButtons } from "@/frontend/components/match/decision-buttons";
 import { FormAlert } from "@/frontend/components/ui/form";
@@ -138,8 +139,9 @@ export default async function CandidatePage({
   const qualityBadgeLabel = quality
     ? quality.isMukammal
       ? `🌟 Mukammal CV (${quality.score}%)`
-      : `📄 Ochiq CV (${quality.score}%)`
+      : `📄 AI bahosi: ${quality.score}%`
     : null;
+  const lockedPdfLabel = "🔒 Obuna bilan PDF yuklash";
 
   return (
     <div className="mx-auto max-w-4xl space-y-5 px-4 py-8">
@@ -167,12 +169,20 @@ export default async function CandidatePage({
             {t("forVacancy", { title: vacancy.title })}
           </p>
         </div>
-        <a
-          href={`/api/cv/${cv.id}/pdf?vacancyId=${vacancy.id}`}
-          className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold shadow hover:opacity-95"
-        >
-          {t("download")}
-        </a>
+        {isLocked ? (
+          <CompanySubscribeButton
+            label={lockedPdfLabel}
+            vacancyId={vacancy.id}
+            cvId={cv.id}
+          />
+        ) : (
+          <a
+            href={`/api/cv/${cv.id}/pdf?vacancyId=${vacancy.id}`}
+            className="bg-brand text-brand-foreground rounded-lg px-4 py-2 font-semibold shadow hover:opacity-95"
+          >
+            {t("download")}
+          </a>
+        )}
       </div>
 
       {quality ? (

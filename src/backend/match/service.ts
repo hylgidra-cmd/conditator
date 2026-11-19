@@ -107,7 +107,7 @@ function keywordResults(
       };
       const likeBonus = Math.min(10, likeInfo.count);
       const finalScore = Math.min(100, baseScore + likeBonus);
-      const isLocked = finalScore >= 80 && !isUnlocked;
+      const isLocked = !isUnlocked;
 
       return {
         order,
@@ -204,7 +204,7 @@ function aiOutcome(state: State): MatchOutcome {
       };
       const likeBonus = Math.min(10, likeInfo.count);
       const finalScore = Math.min(100, baseScore + likeBonus);
-      const isLocked = finalScore >= 80 && !state.isVacancyUnlocked;
+      const isLocked = !state.isVacancyUnlocked;
 
       return {
         cvId: match.cvId,

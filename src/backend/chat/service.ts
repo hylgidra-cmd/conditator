@@ -1,5 +1,6 @@
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
+import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
 import { Role, ComplaintStatus } from "@prisma/client";
 
 export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -211,6 +212,9 @@ export async function ensureConversationForCompany(
     }),
   ]);
   if (!vacancy || !cv) return undefined;
+
+  const hasAccess = await isCompanySubscribedOrUnlocked(company.id, vacancy.id);
+  if (!hasAccess) return undefined;
 
   const conversation = await db.conversation.upsert({
     where: {

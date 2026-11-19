@@ -14,14 +14,15 @@ import {
   CV_CREATION_PRICE_UZS,
   MANUAL_CARD_HOLDER,
   MANUAL_CARD_NUMBER,
-  VACANCY_UNLOCK_PRICE_UZS,
   WEEKLY_PASS_PRICE_UZS,
 } from "@/backend/payment/service";
+import { getCompanySubscriptionPlan } from "@/backend/payment/plans";
 
 const DATA_URL_RE = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 
 const manualSubmitSchema = z.object({
   purpose: z.nativeEnum(PaymentPurpose),
+  planId: z.enum(["START_7", "STANDARD_15", "PRO_30"]).optional(),
   cvId: z.string().min(1).max(64).optional(),
   vacancyId: z.string().min(1).max(64).optional(),
   receiptDataUrl: z
@@ -35,7 +36,7 @@ const PURPOSE_LABELS: Record<PaymentPurpose, string> = {
   CV_CREATION: "CV yaratish va faollashtirish",
   WEEKLY_APPLY_PASS: "7 kunlik ariza yuborish ruxsatnomasi",
   VACANCY_UNLOCK:
-    "Kompaniya Obunasi (Abuna) — Mukammal (80–100%) CV larni ochish (15 kun)",
+    "Kompaniya Obunasi (Abuna) — Barcha CV kontaktlari va PDF larni ochish",
 };
 
 export const POST = route(async (request) => {
@@ -88,12 +89,16 @@ export const POST = route(async (request) => {
     }
   }
 
-  const amount =
+  const companyPlan =
     input.purpose === PaymentPurpose.VACANCY_UNLOCK
-      ? VACANCY_UNLOCK_PRICE_UZS
-      : input.purpose === PaymentPurpose.WEEKLY_APPLY_PASS
-        ? WEEKLY_PASS_PRICE_UZS
-        : CV_CREATION_PRICE_UZS;
+      ? getCompanySubscriptionPlan(input.planId)
+      : null;
+
+  const amount = companyPlan
+    ? companyPlan.priceUzs
+    : input.purpose === PaymentPurpose.WEEKLY_APPLY_PASS
+      ? WEEKLY_PASS_PRICE_UZS
+      : CV_CREATION_PRICE_UZS;
 
   const externalId = `CHEK-${Date.now().toString().slice(-6)}-${randomBytes(2).toString("hex").toUpperCase()}`;
 
@@ -115,15 +120,25 @@ export const POST = route(async (request) => {
         receiptDataUrl: input.receiptDataUrl,
         note: input.note ?? null,
         submittedAt: new Date().toISOString(),
+        ...(companyPlan
+          ? {
+              planId: companyPlan.id,
+              planName: companyPlan.name,
+              durationDays: companyPlan.days,
+            }
+          : {}),
       },
     },
   });
 
   // Automatically post receipt message into the user's SupportThread so Admin sees it in Support Chat too
   const thread = await ensureSupportThread(user.id);
+  const serviceLabel = companyPlan
+    ? `Kompaniya Obunasi — ${companyPlan.name} (${companyPlan.days} kun)`
+    : PURPOSE_LABELS[input.purpose];
   const supportText = [
     `💳 To'lov cheki yuborildi (#${externalId})`,
-    `Xizmat: ${PURPOSE_LABELS[input.purpose]}`,
+    `Xizmat: ${serviceLabel}`,
     `Summa: ${amount.toLocaleString("en-US")} so'm`,
     `Karta: ${MANUAL_CARD_NUMBER} (${MANUAL_CARD_HOLDER})`,
     input.note ? `Izoh: ${input.note}` : "",

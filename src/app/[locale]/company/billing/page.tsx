@@ -1,25 +1,50 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { companyAccess } from "@/backend/company/access";
+import { requireCompanyPage } from "@/backend/company/page";
+import { db } from "@/backend/db";
+import { formatDate, formatDateTime } from "@/backend/format-date";
+import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
+import { CompanySubscriptionPlans } from "@/frontend/components/company/company-subscription-plans";
+import { Reveal } from "@/frontend/components/ds/motion";
+import { ArrowLeftIcon } from "@/frontend/components/icons";
+import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Company.billing");
   return { title: t("title") };
 }
-import { Reveal } from "@/frontend/components/ds/motion";
-import { ArrowLeftIcon } from "@/frontend/components/icons";
-import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
-import { Link } from "@/i18n/navigation";
-import { companyAccess } from "@/backend/company/access";
-import { requireCompanyPage } from "@/backend/company/page";
-import { db } from "@/backend/db";
-import { formatDate, formatDateTime } from "@/backend/format-date";
 
 export const dynamic = "force-dynamic";
+
+function formatPaymentStatus(status: string): string {
+  if (status === "COMPLETED") return "Tasdiqlangan";
+  if (status === "PENDING") return "Tekshirilmoqda";
+  if (status === "CANCELLED" || status === "FAILED") return "Rad etilgan";
+  return status;
+}
+
+function formatPaymentPurpose(
+  purpose: string,
+  details: unknown,
+): string {
+  if (typeof details === "object" && details !== null) {
+    const d = details as Record<string, unknown>;
+    if (typeof d.planName === "string" && typeof d.durationDays === "number") {
+      return `Obuna — ${d.planName} (${d.durationDays} kun)`;
+    }
+  }
+  if (purpose === "VACANCY_UNLOCK") return "Kompaniya Obunasi";
+  return purpose;
+}
 
 export default async function CompanyBillingPage() {
   const { company } = await requireCompanyPage();
   const t = await getTranslations("Company.billing");
   const access = companyAccess(company);
+  const hasActiveAbuna =
+    access.subscriptionActive ||
+    (await isCompanySubscribedOrUnlocked(company.id));
 
   const payments = await db.payment.findMany({
     where: { companyId: company.id },
@@ -27,9 +52,12 @@ export default async function CompanyBillingPage() {
     take: 50,
   });
 
-  const buyAbunaTitle = "Kompaniya Abunasini faollashtirish (15 kun)";
+  const buyAbunaTitle = "Kompaniya Obunasi — Tarifni tanlang";
   const buyAbunaDesc =
-    "Faol Abuna bilan barcha 🌟 Mukammal ishlangan CV lar (80–100%), nomzodlarning telefon/email kontaktlari, PDF rezyumelari va AI saralash imkoniyatlari to'liq ochiladi. 80% dan pastroq CV lar esa abunasiz ham ochiq ko'rinadi.";
+    "Faol Obuna bilan barcha nomzodlarning to'liq ismi, telefon raqami, Telegram, emaili, PDF rezyumesi, chat va AI saralash imkoniyatlari to'liq ochiladi.";
+  const variantExplainTitle = "Obunasiz va Obuna bilan farqi";
+  const variantExplainDesc =
+    "Obunasiz siz barcha nomzodlarning mutaxassisligi, ko'nikmalari, hududi va AI bahosini (%) ko'rasiz. Obuna faollashgach, barcha aloqa ma'lumotlari va PDF yuklash darhol ochiladi.";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -58,28 +86,28 @@ export default async function CompanyBillingPage() {
         <section className="grid gap-4 sm:grid-cols-2">
           <div
             className={`space-y-2 rounded-3xl border p-6 backdrop-blur-md ${
-              access.subscriptionActive
+              hasActiveAbuna
                 ? "border-emerald-500/30 bg-success-soft text-success"
                 : "border-line bg-card/90 text-text shadow-soft"
             }`}
           >
             <p className="text-sm font-bold">
-              {access.subscriptionActive && company.subscriptionUntil
+              {hasActiveAbuna && company.subscriptionUntil
                 ? t("subActive", { date: formatDate(company.subscriptionUntil) })
                 : t("subInactive")}
             </p>
           </div>
           <div className="border-line bg-card/90 shadow-soft space-y-2 rounded-3xl border p-6 backdrop-blur-md">
-            <h2 className="text-text font-extrabold">{t("unlockTitle")}</h2>
+            <h2 className="text-text font-extrabold">{variantExplainTitle}</h2>
             <p className="text-subtle text-sm leading-relaxed">
-              {t("unlockDesc")}
+              {variantExplainDesc}
             </p>
           </div>
         </section>
       </Reveal>
 
       <Reveal delay={150}>
-        <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
+        <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
           <div className="space-y-1">
             <h2 className="text-text text-lg font-extrabold">
               {buyAbunaTitle}
@@ -88,11 +116,11 @@ export default async function CompanyBillingPage() {
               {buyAbunaDesc}
             </p>
           </div>
-          <ManualCardPaymentBox purpose="VACANCY_UNLOCK" amountUzs={14999} />
+          <CompanySubscriptionPlans />
         </section>
       </Reveal>
 
-      <Reveal delay={150}>
+      <Reveal delay={225}>
         <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
           <h2 className="text-text text-lg font-extrabold">
             {t("historyTitle")}
@@ -112,25 +140,45 @@ export default async function CompanyBillingPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-line divide-y">
-                  {payments.map((p) => (
-                    <tr key={p.id} className="hover:bg-card/60 transition-colors">
-                      <td className="text-text px-4 py-3 font-semibold">
-                        {p.purpose}
-                      </td>
-                      <td className="text-subtle px-4 py-3">{p.provider}</td>
-                      <td className="text-text px-4 py-3 font-bold">
-                        {p.amount.toLocaleString("en-US")}
-                      </td>
-                      <td className="px-4 py-3 text-xs font-bold">
-                        <span className="border-line bg-card rounded-full border px-2.5 py-0.5">
-                          {p.status}
-                        </span>
-                      </td>
-                      <td className="text-subtle px-4 py-3 text-xs">
-                        {formatDateTime(p.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
+                  {payments.map((p) => {
+                    const purposeLabel = formatPaymentPurpose(
+                      p.purpose,
+                      p.transactionDetails,
+                    );
+                    const amountLabel = `${p.amount.toLocaleString("en-US")} so'm`;
+                    const statusLabel = formatPaymentStatus(p.status);
+                    const statusClass =
+                      p.status === "COMPLETED"
+                        ? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+                        : p.status === "PENDING"
+                          ? "border-amber-500/40 bg-amber-500/15 text-amber-800 dark:text-amber-300"
+                          : "border-red-500/40 bg-red-500/15 text-red-700 dark:text-red-300";
+
+                    return (
+                      <tr
+                        key={p.id}
+                        className="hover:bg-card/60 transition-colors"
+                      >
+                        <td className="text-text px-4 py-3 font-semibold">
+                          {purposeLabel}
+                        </td>
+                        <td className="text-subtle px-4 py-3">{p.provider}</td>
+                        <td className="text-text px-4 py-3 font-bold">
+                          {amountLabel}
+                        </td>
+                        <td className="px-4 py-3 text-xs font-bold">
+                          <span
+                            className={`rounded-full border px-2.5 py-0.5 ${statusClass}`}
+                          >
+                            {statusLabel}
+                          </span>
+                        </td>
+                        <td className="text-subtle px-4 py-3 text-xs">
+                          {formatDateTime(p.createdAt)}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

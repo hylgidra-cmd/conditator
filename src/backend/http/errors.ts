@@ -35,6 +35,7 @@ export type ErrorCode =
   | "ALREADY_APPLIED"
   | "CV_PAYMENT_REQUIRED"
   | "APPLY_PASS_REQUIRED"
+  | "SUBSCRIPTION_REQUIRED"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

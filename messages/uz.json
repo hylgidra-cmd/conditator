@@ -222,7 +222,8 @@
     "INVALID_OR_UNSAVED_CV": "Avval rezyumeyingizni saqlang.",
     "ALREADY_APPLIED": "Siz ushbu vakansiyaga allaqachon ariza yuborgansiz.",
     "CV_PAYMENT_REQUIRED": "Avval CV ni faollashtirish toʻlovini (5 000 soʻm) amalga oshiring.",
-    "APPLY_PASS_REQUIRED": "Haftalik CV topshirish ruxsati (5 000 soʻm / 7 kun) kerak."
+    "APPLY_PASS_REQUIRED": "Haftalik CV topshirish ruxsati (5 000 soʻm / 7 kun) kerak.",
+    "SUBSCRIPTION_REQUIRED": "Nomzod kontaktlari va PDF rezyumeni koʻrish uchun kompaniya obunasi kerak."
   },
   "Form": {
     "submitting": "Yuborilmoqda…"

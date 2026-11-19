@@ -17,6 +17,7 @@ type PaymentPurposeType =
 type Props = {
   purpose: PaymentPurposeType;
   amountUzs: number;
+  planId?: string;
   cvId?: string;
   vacancyId?: string;
   title?: string;
@@ -70,6 +71,7 @@ function compressReceiptImage(file: File): Promise<string> {
 export function ManualCardPaymentBox({
   purpose,
   amountUzs,
+  planId,
   cvId,
   vacancyId,
   title,
@@ -83,6 +85,8 @@ export function ManualCardPaymentBox({
   const [submitting, setSubmitting] = useState(false);
   const [submittedCode, setSubmittedCode] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const isCompanyPlan = purpose === "VACANCY_UNLOCK";
 
   async function handleCopyCard() {
     try {
@@ -127,6 +131,7 @@ export function ManualCardPaymentBox({
         externalId: string;
       }>("/api/payments/manual-submit", {
         purpose,
+        ...(planId ? { planId } : {}),
         ...(cvId ? { cvId } : {}),
         ...(vacancyId ? { vacancyId } : {}),
         receiptDataUrl,
@@ -160,9 +165,9 @@ export function ManualCardPaymentBox({
               {`To'lov cheki yuborildi (#${submittedCode})`}
             </h4>
             <p className="text-subtle text-xs leading-relaxed sm:text-sm">
-              {
-                "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan CV va xizmat darhol ishga tushadi."
-              }
+              {isCompanyPlan
+                ? "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan Kompaniya Obunasi darhol faollashadi va barcha CV kontaktlari hamda PDF lar ochiladi."
+                : "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan CV va xizmat darhol ishga tushadi."}
             </p>
             <div className="pt-2">
               <Link
@@ -245,9 +250,9 @@ export function ManualCardPaymentBox({
             }
           </p>
           <p className="text-subtle text-[11px]">
-            {
-              "Admin «Qabul qilindi» tugmasini bosishi bilan CV darhol faollashadi."
-            }
+            {isCompanyPlan
+              ? "Admin «Qabul qilindi» tugmasini bosishi bilan tanlangan obuna muddati darhol faollashadi."
+              : "Admin «Qabul qilindi» tugmasini bosishi bilan CV darhol faollashadi."}
           </p>
         </div>
 

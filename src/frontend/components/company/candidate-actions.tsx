@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { postJson } from "@/backend/client/api";
-import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
+import { CompanySubscriptionPlans } from "@/frontend/components/company/company-subscription-plans";
 import { Link } from "@/i18n/navigation";
 import type { CandidateStageType } from "@prisma/client";
 
@@ -77,28 +77,29 @@ export function CandidateActions({
 
   return (
     <div className="space-y-4">
-      {/* 80-100% Locked Banner */}
+      {/* Subscription Locked Banner (Variant 1) */}
       {isLocked && (
-        <div className="border-primary/30 bg-primary-soft/80 rounded-2xl border p-4 shadow-sm backdrop-blur">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="rounded-3xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-5 text-white shadow-lg">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <span className="text-xl">🔒</span>
-                <h4 className="text-text font-bold">
-                  80–100% Mos nomzod kontaktlari qulflangan
+                <span className="text-xl">{"🔒"}</span>
+                <h4 className="font-black text-white">
+                  {"Nomzod kontaktlari va PDF rezyumesi qulflangan"}
                 </h4>
               </div>
-              <p className="text-subtle text-sm">
-                Ushbu vakansiya bo&apos;yicha barcha yuqori mos nomzodlarning
-                to&apos;liq kontaktlarini 15 kunga oching.
+              <p className="text-xs leading-relaxed text-emerald-100/80 sm:text-sm">
+                {
+                  "Kompaniya Obunasini faollashtiring — barcha nomzodlarning to'liq ismi, telefon raqami, Telegram, emaili, PDF hujjati va chat darhol ochiladi."
+                }
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowUnlockModal(true)}
-              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-xl px-5 py-2.5 text-sm font-bold transition-colors"
+              className="cursor-pointer rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-300 px-5 py-2.5 text-xs font-black text-slate-950 shadow-lg transition-all hover:brightness-105 sm:text-sm"
             >
-              Kontaktlarni ochish — 14 999 so&apos;m
+              {"🔓 Obuna sotib olish (15 000 so'mdan)"}
             </button>
           </div>
         </div>
@@ -110,7 +111,7 @@ export function CandidateActions({
           {/* HeadHunter Stage Selector */}
           <div className="flex items-center gap-2">
             <span className="text-muted text-xs font-semibold tracking-wider uppercase">
-              Bosqich:
+              {"Bosqich:"}
             </span>
             <select
               value={stage}
@@ -142,33 +143,42 @@ export function CandidateActions({
           >
             <span>{liked ? "❤️" : "🤍"}</span>
             <span>{likes}</span>
-            <span className="hidden sm:inline">Yoqdi</span>
+            <span className="hidden sm:inline">{"Yoqdi"}</span>
           </button>
         </div>
 
-        {/* Chat link */}
+        {/* Chat link (gated behind subscription when locked) */}
         <div className="flex items-center gap-2">
-          {conversationId ? (
+          {isLocked ? (
+            <button
+              type="button"
+              onClick={() => setShowUnlockModal(true)}
+              className="border-primary/40 bg-primary-soft text-primary-text hover:bg-primary/20 inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
+            >
+              <span>{"🔒"}</span>
+              <span>{"Chat (Obuna bilan)"}</span>
+            </button>
+          ) : conversationId ? (
             <Link
               href={`/chat?id=${conversationId}`}
               className="border-primary/40 bg-primary-soft text-primary-text hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
             >
-              <span>💬</span>
-              <span>Yozishish</span>
+              <span>{"💬"}</span>
+              <span>{"Yozishish"}</span>
             </Link>
           ) : (
             <Link
               href={`/chat?vacancyId=${vacancyId}&cvId=${cvId}`}
               className="border-primary/40 bg-primary-soft text-primary-text hover:bg-primary/20 inline-flex items-center gap-1.5 rounded-lg border px-4 py-1.5 text-sm font-semibold transition-colors"
             >
-              <span>💬</span>
-              <span>Chat boshlash</span>
+              <span>{"💬"}</span>
+              <span>{"Chat boshlash"}</span>
             </Link>
           )}
         </div>
       </div>
 
-      {/* Unlock Checkout Modal */}
+      {/* Subscription Plans Modal */}
       {showUnlockModal && (
         <div
           className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
@@ -176,32 +186,31 @@ export function CandidateActions({
             if (e.target === e.currentTarget) setShowUnlockModal(false);
           }}
         >
-          <div className="ds-modal-panel bg-card border-line shadow-float w-full max-w-lg space-y-4 rounded-3xl border p-6">
-            <div className="flex items-start justify-between">
+          <div className="ds-modal-panel bg-card border-line shadow-float max-h-[92vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-3xl border p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <h3 className="text-text text-lg font-bold">
-                  Nomzodlarni ochish
+                <h3 className="text-text text-lg font-black">
+                  {"Kompaniya Obunasi — Tarifni tanlang"}
                 </h3>
-                <p className="text-subtle mt-1 text-sm">
-                  14 999 so&apos;m evaziga ushbu vakansiya bo&apos;yicha 15
-                  kunga barcha 80-100% mos nomzodlarning telefon va emaillari
-                  ochiladi.
+                <p className="text-subtle mt-1 text-xs leading-relaxed">
+                  {
+                    "Tarifni tanlab chek rasmini yuboring. Admin tasdiqlagach barcha nomzodlarning kontaktlari, PDF hujjatlari va chat darhol ochiladi."
+                  }
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowUnlockModal(false)}
-                className="text-subtle hover:text-text text-xl"
+                className="text-subtle hover:text-text cursor-pointer text-xl font-bold"
               >
                 {"✕"}
               </button>
             </div>
 
-            <ManualCardPaymentBox
-              purpose="VACANCY_UNLOCK"
-              amountUzs={14999}
+            <CompanySubscriptionPlans
               vacancyId={vacancyId}
               cvId={cvId}
+              compact
             />
           </div>
         </div>

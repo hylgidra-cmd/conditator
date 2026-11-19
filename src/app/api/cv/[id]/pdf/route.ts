@@ -21,7 +21,10 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
     const cvId = (await params).id;
     const vacancyId = new URL(request.url).searchParams.get("vacancyId");
     const isLocked = await isCvLockedForCompany(cvId, company.id, vacancyId);
-    const cv = await loadVisibleCvDocument(cvId, { isLocked });
+    if (isLocked) {
+      throw new ApiError(403, "SUBSCRIPTION_REQUIRED");
+    }
+    const cv = await loadVisibleCvDocument(cvId, { isLocked: false });
     if (!cv) throw new ApiError(404, "NOT_FOUND");
     await db.cvView.create({
       data: { cvId: cv.id, companyId: company.id, pdf: true },

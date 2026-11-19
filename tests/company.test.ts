@@ -159,10 +159,23 @@ describe("tasdiqlanmagan kompaniya CV ko'ra olmaydi", () => {
 });
 
 describe("tasdiqlangan kompaniya", () => {
-  it("faqat ochiq CV ni ko'radi, har ochish yoziladi", async () => {
+  it("obunasiz kontaktlar yashirin va PDF 403; obuna bilan to'liq CV va PDF ko'rinadi", async () => {
     const { cookie: student, cvId } = await visibleCv();
     const company = await signUp("hr@test.local", "COMPANY");
     await setApproval("APPROVED");
+
+    // Obunasiz (Variant 1): teaser ko'rinadi, ism/aloqa qulflangan, PDF 403
+    const lockedRes = await viewCv(cvId, company);
+    expect(lockedRes.status).toBe(200);
+    const lockedBody = await lockedRes.json();
+    expect(lockedBody.isLocked).toBe(true);
+    expect(lockedBody.cv.data.fullName).toBe("Nomzod (qulflangan)");
+    expect((await viewPdf(cvId, company)).status).toBe(403);
+
+    // Obuna faollashgach: ism, aloqa va PDF to'liq ochiladi
+    await db.company.updateMany({
+      data: { subscriptionUntil: new Date(Date.now() + 7 * 86_400_000) },
+    });
 
     const res = await viewCv(cvId, company);
     expect(res.status).toBe(200);
@@ -176,7 +189,7 @@ describe("tasdiqlangan kompaniya", () => {
         select: { pdf: true },
         orderBy: { createdAt: "asc" },
       }),
-    ).toEqual([{ pdf: false }, { pdf: true }]);
+    ).toEqual([{ pdf: false }, { pdf: false }, { pdf: true }]);
 
     // Yashirilgan CV, mavjud bo'lmagan CV va bloklangan talaba: 404.
     await patchVisibility(

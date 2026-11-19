@@ -14,6 +14,7 @@ import {
   isCompanySubscribedOrUnlocked,
   isCvLockedForCompany,
 } from "@/backend/payment/service";
+import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
 import { StudentsSubscriptionBar } from "@/frontend/components/company/students-subscription-bar";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { ArrowLeftIcon, SparkIcon } from "@/frontend/components/icons";
@@ -105,12 +106,13 @@ export default async function CompanyStudentCvPage({
   const mukammalBadge = quality
     ? quality.isMukammal
       ? `🌟 Mukammal CV (${quality.score}%)`
-      : `📄 Ochiq CV (${quality.score}%)`
+      : `📄 AI bahosi: ${quality.score}%`
     : null;
   const subUntilLabel =
     company.subscriptionUntil && company.subscriptionUntil > new Date()
       ? formatDate(company.subscriptionUntil)
       : null;
+  const lockedPdfLabel = "🔒 Obuna bilan PDF va kontaktlarni ochish";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -143,12 +145,16 @@ export default async function CompanyStudentCvPage({
             ) : null}
           </div>
 
-          <a
-            href={`/api/cv/${cv.id}/pdf`}
-            className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-2xl px-4 py-2.5 text-xs font-extrabold transition-all"
-          >
-            {t("download")}
-          </a>
+          {isLocked ? (
+            <CompanySubscribeButton label={lockedPdfLabel} cvId={cv.id} />
+          ) : (
+            <a
+              href={`/api/cv/${cv.id}/pdf`}
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-2xl px-4 py-2.5 text-xs font-extrabold transition-all"
+            >
+              {t("download")}
+            </a>
+          )}
         </div>
 
         {quality ? (
@@ -162,8 +168,8 @@ export default async function CompanyStudentCvPage({
         <StudentsSubscriptionBar
           hasActiveAbuna={hasActiveAbuna}
           subscriptionUntilLabel={subUntilLabel}
-          mukammalCount={1}
-          openCount={0}
+          mukammalCount={quality?.isMukammal ? 1 : 0}
+          openCount={quality?.isMukammal ? 0 : 1}
         />
       ) : null}
 

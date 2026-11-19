@@ -7,6 +7,7 @@ import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
+import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
 import { StudentsSubscriptionBar } from "@/frontend/components/company/students-subscription-bar";
 import { Reveal } from "@/frontend/components/ds/motion";
 import {
@@ -113,7 +114,8 @@ export default async function CompanyStudentsPage({
             aiSummary: "AI tahlili: Boshlang'ich CV",
           };
 
-      const isLocked = quality.isMukammal && !hasActiveAbuna;
+      // Variant 1: Obunasiz barcha CV larning kontaktlari, F.I.Sh va PDF i qulflangan (teaser ko'rinadi).
+      const isLocked = !hasActiveAbuna;
       const safe = parsed.success
         ? sanitizeCvData(parsed.data, {
             privacy: parsePrivacy(cv.privacy),
@@ -174,8 +176,9 @@ export default async function CompanyStudentsPage({
 
   const tabAllLabel = `Barchasi (${evaluatedItems.length})`;
   const tabMukammalLabel = `🌟 Mukammal CV lar 80–100% (${mukammalCount})`;
-  const tabOpenLabel = `📄 Pastroq / Ochiq CV lar <80% (${openCount})`;
-  const openDetailsLabel = "CV ni o'qish";
+  const tabStandardLabel = `📄 Standart CV lar <80% (${openCount})`;
+  const openDetailsLabel = "Profilni ko'rish";
+  const unlockBtnLabel = "🔓 Obuna olish";
 
   return (
     <div className="page-x font-ui space-y-6 py-8 sm:py-12">
@@ -229,7 +232,7 @@ export default async function CompanyStudentsPage({
             </button>
           </form>
 
-          {/* Filter Tabs: All / Mukammal (80-100%) / Open (<80%) */}
+          {/* Filter Tabs: All / Mukammal (80-100%) / Standard (<80%) */}
           <div className="relative z-10 mt-5 flex flex-wrap gap-2">
             <Link
               href={`/company/students${q ? `?q=${encodeURIComponent(q)}` : ""}`}
@@ -259,7 +262,7 @@ export default async function CompanyStudentsPage({
                   : "border-line bg-canvas text-text hover:border-primary border"
               }`}
             >
-              {tabOpenLabel}
+              {tabStandardLabel}
             </Link>
           </div>
         </div>
@@ -290,12 +293,10 @@ export default async function CompanyStudentsPage({
               item.skills.length > 6 ? `+${item.skills.length - 6}` : null;
             const aiBadgeLabel = item.isMukammal
               ? `🌟 Mukammal CV (${item.score}%)`
-              : `📄 ${item.score}%`;
+              : `📄 AI bahosi: ${item.score}%`;
             const lockStatusText = item.isLocked
-              ? "🔒 Abuna bilan ko'riladi"
-              : item.isMukammal
-                ? "🔓 Abuna orqali ochiq"
-                : tStudents("openCv");
+              ? "🔒 Kontakt va PDF obuna bilan"
+              : "🔓 Obuna bilan ochiq";
             return (
               <li key={item.id}>
                 <Reveal delay={REVEAL_DELAYS[idx % 4]} className="h-full">
@@ -393,14 +394,22 @@ export default async function CompanyStudentsPage({
                         >
                           {openDetailsLabel}
                         </Link>
-                        <a
-                          href={`/api/cv/${item.id}/pdf`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-3.5 py-1.5 font-bold transition-colors"
-                        >
-                          {tStudents("viewPdf")}
-                        </a>
+                        {item.isLocked ? (
+                          <CompanySubscribeButton
+                            variant="compact"
+                            label={unlockBtnLabel}
+                            cvId={item.id}
+                          />
+                        ) : (
+                          <a
+                            href={`/api/cv/${item.id}/pdf`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-3.5 py-1.5 font-bold transition-colors"
+                          >
+                            {tStudents("viewPdf")}
+                          </a>
+                        )}
                       </div>
                     </div>
                   </div>

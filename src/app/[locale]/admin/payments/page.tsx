@@ -106,8 +106,14 @@ export default async function AdminPaymentsPage() {
                 const details = p.transactionDetails as {
                   receiptDataUrl?: string;
                   note?: string;
+                  planName?: string;
+                  durationDays?: number;
                 } | null;
                 const hasReceipt = Boolean(details?.receiptDataUrl);
+                const purposeDisplay =
+                  details?.planName && details?.durationDays
+                    ? `Obuna — ${details.planName} (${details.durationDays} kun)`
+                    : p.purpose;
 
                 return (
                   <tr
@@ -126,7 +132,7 @@ export default async function AdminPaymentsPage() {
                       ) : null}
                     </td>
                     <td className="text-text px-4 py-3.5 text-xs font-semibold">
-                      <span>{p.purpose}</span>
+                      <span>{purposeDisplay}</span>
                       {details?.note ? (
                         <p className="text-subtle mt-0.5 text-[11px]">
                           {details.note}

@@ -222,7 +222,8 @@
     "INVALID_OR_UNSAVED_CV": "Aldın CV-ıńızdı saqlań.",
     "ALREADY_APPLIED": "Siz bul vakansiyaǵa aldın arza jibergensiz.",
     "CV_PAYMENT_REQUIRED": "Dáslep CV di aktivlestiriw tólemin (5 000 soʻm) ámelge asırıń.",
-    "APPLY_PASS_REQUIRED": "Háptelik CV tapsırıw ruxsatı (5 000 soʻm / 7 kún) kerek."
+    "APPLY_PASS_REQUIRED": "Háptelik CV tapsırıw ruxsatı (5 000 soʻm / 7 kún) kerek.",
+    "SUBSCRIPTION_REQUIRED": "Talaban kontaktları hám PDF rezyumeni kóriw ushın kompaniya abunası kerek."
   },
   "Form": {
     "submitting": "Jiberilmekte…"

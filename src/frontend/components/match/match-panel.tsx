@@ -157,39 +157,6 @@ export function MatchPanel({
               {t("unlockedBanner")}
             </div>
           ) : null}
-
-          {showCardModal ? (
-            <div
-              className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
-              onClick={(e) => {
-                if (e.target === e.currentTarget) setShowCardModal(false);
-              }}
-            >
-              <div className="ds-modal-panel border-line bg-card shadow-float max-h-[92vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-3xl border p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-text text-lg font-black">
-                      {"Kompaniya Obunasi — Tarifni tanlang"}
-                    </h3>
-                    <p className="text-subtle mt-1 text-xs leading-relaxed">
-                      {
-                        "Tarifni tanlab chek rasmini yuboring. Admin tasdiqlagach barcha nomzodlarning kontaktlari, PDF rezyumelari va AI saralash darhol ochiladi."
-                      }
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowCardModal(false)}
-                    className="text-subtle hover:text-text cursor-pointer text-xl font-bold"
-                  >
-                    {"✕"}
-                  </button>
-                </div>
-
-                <CompanySubscriptionPlans vacancyId={vacancyId} compact />
-              </div>
-            </div>
-          ) : null}
           <ol className="space-y-3">
             {results.map((item, index) => (
               <li
@@ -260,6 +227,39 @@ export function MatchPanel({
             ))}
           </ol>
         </section>
+      ) : null}
+
+      {showCardModal ? (
+        <div
+          className="ds-modal-backdrop fixed inset-0 z-50 flex items-center justify-center bg-slate-950/75 p-4 backdrop-blur-md"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowCardModal(false);
+          }}
+        >
+          <div className="ds-modal-panel border-line bg-card shadow-float max-h-[92vh] w-full max-w-2xl space-y-4 overflow-y-auto rounded-3xl border p-5 sm:p-6">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="text-text text-lg font-black">
+                  {"Kompaniya Obunasi — Tarifni tanlang"}
+                </h3>
+                <p className="text-subtle mt-1 text-xs leading-relaxed">
+                  {
+                    "Tarifni tanlab chek rasmini yuboring. Admin tasdiqlagach barcha nomzodlarning kontaktlari, PDF rezyumelari va AI saralash darhol ochiladi."
+                  }
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCardModal(false)}
+                className="text-subtle hover:text-text cursor-pointer text-xl font-bold"
+              >
+                {"✕"}
+              </button>
+            </div>
+
+            <CompanySubscriptionPlans vacancyId={vacancyId} compact />
+          </div>
+        </div>
       ) : null}
     </div>
   );

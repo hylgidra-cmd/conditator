@@ -43,6 +43,18 @@ export function detectImageType(bytes: Buffer) {
   return TYPES.find((type) => type.match(bytes)) ?? null;
 }
 
+const IMAGE_DATA_URL_RE =
+  /^data:image\/(?:png|jpeg|webp);base64,([A-Za-z0-9+/=]+)$/;
+
+/** Base64 data URL rasm haqiqatan PNG/JPEG/WebP magic-baytlariga ega ekanini tekshiradi. */
+export function isValidImageDataUrl(value: string): boolean {
+  const match = IMAGE_DATA_URL_RE.exec(value);
+  if (!match) return false;
+  const decoded = Buffer.from(match[1], "base64");
+  if (decoded.length === 0) return false;
+  return detectImageType(decoded) !== null;
+}
+
 /** Logoni tekshiradi va Base64 data URL ko'rinishida saqlaydi (Vercel serverless muhitida ham ishlaydi). */
 export async function storeLogo(
   _companyId: string,
@@ -67,10 +79,9 @@ export async function readLogo(
     const match =
       /^data:(image\/(?:png|jpeg|webp));base64,([A-Za-z0-9+/=]+)$/.exec(name);
     if (!match) return null;
-    return {
-      mime: match[1],
-      bytes: Buffer.from(match[2], "base64"),
-    };
+    const bytes = Buffer.from(match[2], "base64");
+    const type = detectImageType(bytes);
+    return type ? { mime: type.mime, bytes } : null;
   }
   try {
     const bytes = await readFile(resolveStored(name));
@@ -83,5 +94,9 @@ export async function readLogo(
 
 export async function removeLogo(name: string | null): Promise<void> {
   if (!name || name.startsWith("data:")) return;
-  await rm(resolveStored(name), { force: true });
+  try {
+    await rm(resolveStored(name), { force: true });
+  } catch {
+    // Vercel serverless read-only FS da eski disk faylini o'chirib bo'lmasa xato bermaydi.
+  }
 }

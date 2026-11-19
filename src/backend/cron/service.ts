@@ -25,16 +25,24 @@ export async function runFifteenDaysCron() {
     },
   });
 
-  // 2. Count expired vacancy unlocks
-  const expiredUnlocksCount = await db.vacancyUnlock.count({
-    where: {
-      expiresAt: { lte: now },
-    },
-  });
+  // 2. Delete expired vacancy unlocks, expired sessions, and expired email codes
+  const [deletedUnlocks, deletedSessions, deletedCodes] = await Promise.all([
+    db.vacancyUnlock.deleteMany({
+      where: { expiresAt: { lte: now } },
+    }),
+    db.session.deleteMany({
+      where: { expiresAt: { lte: now } },
+    }),
+    db.emailCode.deleteMany({
+      where: { expiresAt: { lte: now } },
+    }),
+  ]);
 
   return {
     closedVacanciesCount: closedVacancies.count,
-    expiredUnlocksCount,
+    deletedUnlocksCount: deletedUnlocks.count,
+    deletedSessionsCount: deletedSessions.count,
+    deletedEmailCodesCount: deletedCodes.count,
     timestamp: now.toISOString(),
   };
 }

@@ -1,10 +1,17 @@
+import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { runFifteenDaysCron } from "@/backend/cron/service";
 
+function isAuthorizedCron(authHeader: string | null, secret?: string): boolean {
+  if (!secret || !authHeader) return false;
+  const expected = Buffer.from(`Bearer ${secret}`, "utf8");
+  const actual = Buffer.from(authHeader, "utf8");
+  if (expected.length !== actual.length) return false;
+  return timingSafeEqual(expected, actual);
+}
+
 export async function GET(req: Request) {
-  const secret = process.env.CRON_SECRET;
-  const authHeader = req.headers.get("authorization");
-  if (!secret || authHeader !== `Bearer ${secret}`) {
+  if (!isAuthorizedCron(req.headers.get("authorization"), process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "FORBIDDEN" }, { status: 403 });
   }
 

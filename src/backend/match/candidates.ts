@@ -79,6 +79,7 @@ export type CandidateRow = {
   skills: string[];
   languages: string[];
   location: string | null;
+  hideAddress: boolean;
   savedAt: Date;
   /** Talab ko'nikmalaridan CV ko'nikmalarida aynan borlari. */
   skillHits: number;
@@ -158,7 +159,9 @@ export async function filterCandidates(
     db.$queryRaw<
       Array<Omit<CandidateRow, "skillHits"> & { skillHits: number }>
     >(Prisma.sql`
-      SELECT c.id, c.language, c.skills, c.languages, c.location, c."savedAt",
+      SELECT c.id, c.language, c.skills, c.languages, c.location,
+        COALESCE((c.privacy->>'hideAddress')::boolean, false) AS "hideAddress",
+        c."savedAt",
         cardinality(ARRAY(SELECT unnest(c.skills) INTERSECT SELECT unnest(${skills}::text[])))::int AS "skillHits",
         ARRAY(SELECT t FROM unnest(${terms}::text[]) AS t WHERE strpos(c."searchText", t) > 0) AS "matchedTerms"
       FROM "Cv" c

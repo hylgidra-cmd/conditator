@@ -22,7 +22,8 @@ export function ChangePasswordForm() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = new FormData(event.currentTarget);
+    const formEl = event.currentTarget;
+    const form = new FormData(formEl);
     setPending(true);
     setError(undefined);
     setFields({});
@@ -36,7 +37,7 @@ export function ChangePasswordForm() {
 
     if (result.ok) {
       setSaved(true);
-      event.currentTarget.reset();
+      formEl.reset();
       return;
     }
     if (result.fields) setFields(result.fields);
@@ -44,7 +45,7 @@ export function ChangePasswordForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4" noValidate>
+    <form method="post" onSubmit={onSubmit} className="space-y-4" noValidate>
       <FormAlert>{errorText(error)}</FormAlert>
       {saved ? (
         <p
@@ -76,9 +77,6 @@ export function ChangePasswordForm() {
       <div className="flex items-center justify-between pt-1 text-sm">
         <Link href="/account" className="text-muted underline">
           {t("backToAccount")}
-        </Link>
-        <Link href="/forgot" className="text-muted underline">
-          {t("forgotLink")}
         </Link>
       </div>
     </form>

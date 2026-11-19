@@ -16,7 +16,7 @@ const aboutMeRequestSchema = z.object({
 });
 
 export const POST = route(async (request) => {
-  const user = await requireRole(request);
+  const user = await requireRole(request, "STUDENT");
   rateLimit(`ai-about:${user.id}`, LIMITS.cvGenerate);
   const body = await parseJson(request, aboutMeRequestSchema);
 

@@ -1,6 +1,7 @@
 import { PaymentPurpose, PaymentProvider } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import { db } from "@/backend/db";
 import { ApiError, parseJson } from "@/backend/http/errors";
@@ -18,18 +19,21 @@ const checkoutSchema = z.object({
   returnUrl: z
     .string()
     .max(512)
-    .refine((v) => v.startsWith("/") && !v.startsWith("//"), "INVALID_RETURN")
+    .refine(
+      (v) => v.startsWith("/") && !v.startsWith("//") && !v.includes("\\"),
+      "INVALID_RETURN",
+    )
     .optional(),
 });
 
 export const POST = route(async (request) => {
   const user = await requireRole(request);
+  rateLimit(`checkout:${user.id}`, { max: 15, windowMs: 10 * 60_000 });
   const input = await parseJson(request, checkoutSchema);
 
   if (
     input.provider === PaymentProvider.TEST &&
-    process.env.NODE_ENV === "production" &&
-    process.env.ALLOW_TEST_PAYMENTS !== "true"
+    process.env.NODE_ENV === "production"
   ) {
     throw new ApiError(403, "FORBIDDEN");
   }

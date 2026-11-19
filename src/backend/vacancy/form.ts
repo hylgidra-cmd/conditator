@@ -14,5 +14,10 @@ export function formValuesFrom(vacancy: VacancyView): VacancyFormValues {
         : String(vacancy.minExperienceYears),
     location: vacancy.location ?? "",
     workType: vacancy.workType ?? "",
+    salaryFrom:
+      vacancy.salaryFrom === null ? "" : String(vacancy.salaryFrom),
+    salaryTo: vacancy.salaryTo === null ? "" : String(vacancy.salaryTo),
+    currency: vacancy.currency === "USD" ? "USD" : "UZS",
+    status: vacancy.status === "CLOSED" ? "CLOSED" : "ACTIVE",
   };
 }

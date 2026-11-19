@@ -8,14 +8,9 @@ import { loadVisibleCvDocument } from "@/backend/cv-document/load";
 import { evaluateCvQuality } from "@/backend/cv/quality";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
-import { formatDate } from "@/backend/format-date";
 import { ApiError } from "@/backend/http/errors";
-import {
-  isCompanySubscribedOrUnlocked,
-  isCvLockedForCompany,
-} from "@/backend/payment/service";
+import { isCvLockedForCompany } from "@/backend/payment/service";
 import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
-import { StudentsSubscriptionBar } from "@/frontend/components/company/students-subscription-bar";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { ArrowLeftIcon, SparkIcon } from "@/frontend/components/icons";
 import { FormAlert } from "@/frontend/components/ui/form";
@@ -54,7 +49,7 @@ export default async function CompanyStudentCvPage({
     );
   }
 
-  const [rawCv, matches, hasActiveAbuna, isLocked] = await Promise.all([
+  const [rawCv, matches, isLocked] = await Promise.all([
     db.cv.findFirst({
       where: {
         id: cvId,
@@ -70,7 +65,6 @@ export default async function CompanyStudentCvPage({
       orderBy: { score: "desc" },
       take: 1,
     }),
-    isCompanySubscribedOrUnlocked(company.id),
     isCvLockedForCompany(cvId, company.id),
   ]);
 
@@ -108,11 +102,11 @@ export default async function CompanyStudentCvPage({
       ? `🌟 Mukammal CV (${quality.score}%)`
       : `📄 AI bahosi: ${quality.score}%`
     : null;
-  const subUntilLabel =
-    company.subscriptionUntil && company.subscriptionUntil > new Date()
-      ? formatDate(company.subscriptionUntil)
-      : null;
-  const lockedPdfLabel = "🔒 Obuna bilan PDF va kontaktlarni ochish";
+  const lockedPdfLabel = "🔓 Obuna sotib olish (15 000 so'mdan)";
+  const lockedBannerTitle =
+    "🔒 Nomzodning F.I.Sh, kontaktlari va PDF rezyumesi qulflangan";
+  const lockedBannerDesc =
+    "Kompaniya obunasini faollashtiring — ushbu va boshqa barcha nomzodlarning telefon raqami, Telegram, emaili, PDF hujjati hamda chat darhol ochiladi.";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -165,12 +159,19 @@ export default async function CompanyStudentCvPage({
       </div>
 
       {isLocked ? (
-        <StudentsSubscriptionBar
-          hasActiveAbuna={hasActiveAbuna}
-          subscriptionUntilLabel={subUntilLabel}
-          mukammalCount={quality?.isMukammal ? 1 : 0}
-          openCount={quality?.isMukammal ? 0 : 1}
-        />
+        <div className="rounded-3xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-5 text-white shadow-lg">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-xl space-y-1">
+              <h2 className="text-sm font-black text-white sm:text-base">
+                {lockedBannerTitle}
+              </h2>
+              <p className="text-xs leading-relaxed text-emerald-100/80 sm:text-sm">
+                {lockedBannerDesc}
+              </p>
+            </div>
+            <CompanySubscribeButton label={lockedPdfLabel} cvId={cv.id} />
+          </div>
+        </div>
       ) : null}
 
       <div className="border-line overflow-hidden rounded-3xl border bg-white p-6 shadow-sm sm:p-[16mm]">

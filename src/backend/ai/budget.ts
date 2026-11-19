@@ -1,14 +1,20 @@
 import { Prisma } from "@prisma/client";
 import { db } from "@/backend/db";
 
-/** $ / 1M token. Manba: Anthropic narxlari (2026-10). Yangi model qo'shilsa shu yerga yoziladi. */
+/** $ / 1M token. Yangi model qo'shilsa shu yerga yoziladi. */
 const PRICES: Record<string, { input: number; output: number }> = {
+  "gemini-2.5-flash": { input: 0.15, output: 0.6 },
+  "gemini-2.0-flash": { input: 0.1, output: 0.4 },
+  "gemini-1.5-flash": { input: 0.075, output: 0.3 },
+  "llama-3.3-70b-versatile": { input: 0.59, output: 0.79 },
+  "claude-haiku-4-5": { input: 0.8, output: 4 },
+  "claude-sonnet-4-5": { input: 3, output: 15 },
   "claude-haiku-5-5": { input: 0.1, output: 0.5 },
   "claude-sonnet-5-5": { input: 2, output: 10 },
   "claude-opus-5-5": { input: 4, output: 20 },
 };
-// Noma'lum model uchun ehtiyotkor (qimmat) narx: limit kam hisoblanib ketmasligi uchun.
-const FALLBACK_PRICE = { input: 10, output: 50 };
+// Noma'lum model uchun ehtiyotkor narx: limit kam hisoblanib ketmasligi uchun.
+const FALLBACK_PRICE = { input: 2, output: 10 };
 
 export function costUsd(
   model: string,

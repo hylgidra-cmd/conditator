@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
-import { loadSavedCvDocument } from "@/backend/cv-document/load";
+import {
+  docxContentDisposition,
+  loadSavedCvDocument,
+} from "@/backend/cv-document/load";
 import {
   generateObyektivkaDocx,
   mapCvDataToObyektivka,
@@ -10,6 +13,7 @@ import { ApiError } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 /** Talabaning o'z saqlangan CV sini Obyektivka (.docx) formatida yuklab olish. */
 export const GET = route(async (request) => {
@@ -17,18 +21,16 @@ export const GET = route(async (request) => {
   const cvId = request.nextUrl.searchParams.get("cvId") || undefined;
   const cv = await loadSavedCvDocument(user.id, cvId);
   if (!cv) throw new ApiError(409, "CV_NOT_SAVED");
+  if (!cv.isPaid) throw new ApiError(402, "CV_PAYMENT_REQUIRED");
   rateLimit(`cv-pdf:${user.id}`, LIMITS.cvPdf);
 
   const buffer = await generateObyektivkaDocx(mapCvDataToObyektivka(cv.data));
-  const safeName = (cv.data.fullName || "obyektivka")
-    .replace(/[^\p{L}\p{N}_-]+/gu, "_")
-    .slice(0, 60);
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "Content-Disposition": `attachment; filename="${safeName}_obyektivka.docx"`,
+      "Content-Disposition": docxContentDisposition(cv.data.fullName),
       "Cache-Control": "private, no-store",
     },
   });

@@ -204,6 +204,7 @@ function DecorTile({
 }
 
 export default async function DesignSystemPage({ params }: Props) {
+  if (process.env.NODE_ENV === "production") notFound();
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);

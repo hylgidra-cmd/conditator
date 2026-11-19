@@ -10,6 +10,7 @@ import { ApiError } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 /** Talabaning o'z saqlangan CV si PDF ko'rinishida (server tomonda, Chromium). */
 export const GET = route(async (request) => {
@@ -17,6 +18,7 @@ export const GET = route(async (request) => {
   const cvId = request.nextUrl.searchParams.get("cvId") || undefined;
   const cv = await loadSavedCvDocument(user.id, cvId);
   if (!cv) throw new ApiError(409, "CV_NOT_SAVED");
+  if (!cv.isPaid) throw new ApiError(402, "CV_PAYMENT_REQUIRED");
   rateLimit(`cv-pdf:${user.id}`, LIMITS.cvPdf);
 
   const pdf = await renderCvPdf(cv);

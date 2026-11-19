@@ -1,5 +1,6 @@
 import type { MatchDecision } from "@prisma/client";
 import { z } from "zod";
+import { parsePrivacy } from "@/backend/cv/privacy";
 import { loadVisibleCvDocument } from "@/backend/cv-document/load";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
@@ -90,6 +91,7 @@ export type DecidedCandidate = {
 /** Qaror qo'yilgan nomzodlar (saralash sahifasining pastida). */
 export async function listDecided(
   vacancyId: string,
+  hideLocations = false,
 ): Promise<DecidedCandidate[]> {
   const rows = await db.match.findMany({
     where: {
@@ -107,14 +109,17 @@ export async function listDecided(
       cvId: true,
       decision: true,
       updatedAt: true,
-      cv: { select: { skills: true, location: true } },
+      cv: { select: { skills: true, location: true, privacy: true } },
     },
   });
   return rows.map((row) => ({
     cvId: row.cvId,
     decision: row.decision,
     skills: row.cv.skills.slice(0, 12),
-    location: row.cv.location,
+    location:
+      hideLocations || parsePrivacy(row.cv.privacy).hideAddress
+        ? null
+        : row.cv.location,
     updatedAt: row.updatedAt.toISOString(),
   }));
 }

@@ -1,7 +1,7 @@
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
-import { Role, ComplaintStatus } from "@prisma/client";
+import { ComplaintStatus, ConversationStatus, Role } from "@prisma/client";
 
 export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5 MB
 
@@ -23,10 +23,9 @@ async function assertConversationParticipant(
 }
 
 function isSafeFileUrl(url: string): boolean {
-  return (
-    url.startsWith("https://") ||
-    (url.startsWith("/") && !url.startsWith("//"))
-  );
+  if (url.includes("\\") || /[\r\n]/.test(url)) return false;
+  if (url.startsWith("https://")) return true;
+  return url.startsWith("/") && !url.startsWith("//");
 }
 
 export async function sendMessage(params: {
@@ -38,12 +37,17 @@ export async function sendMessage(params: {
   fileName?: string;
   fileSize?: number;
 }) {
+  const cleanText = params.text.trim();
+  if (!cleanText && !params.fileUrl) {
+    throw new ApiError(400, "VALIDATION");
+  }
+
   const conversation = await db.conversation.findUnique({
     where: { id: params.conversationId },
     include: {
       messages: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
+        select: { senderRole: true },
+        orderBy: { createdAt: "asc" },
       },
     },
   });
@@ -52,12 +56,21 @@ export async function sendMessage(params: {
     throw new ApiError(404, "CONVERSATION_NOT_FOUND");
   }
 
+  if (conversation.status !== ConversationStatus.ACTIVE) {
+    throw new ApiError(403, "FORBIDDEN");
+  }
+
   await assertConversationParticipant(conversation, params.senderId);
 
-  // Check 1-message rule for students
+  // 1-xabar qoidasi: faqat kompaniya hali umuman javob bermagan bo'lsa, talaba ketma-ket xabar yubora olmaydi.
   if (params.senderRole === Role.STUDENT) {
-    const lastMsg = conversation.messages[0];
-    if (lastMsg && lastMsg.senderRole === Role.STUDENT) {
+    const companyHasReplied = conversation.messages.some(
+      (m) => m.senderRole === Role.COMPANY,
+    );
+    const studentHasSent = conversation.messages.some(
+      (m) => m.senderRole === Role.STUDENT,
+    );
+    if (!companyHasReplied && studentHasSent) {
       throw new ApiError(403, "ONE_MESSAGE_RULE_AWAIT_REPLY");
     }
   }
@@ -75,7 +88,7 @@ export async function sendMessage(params: {
       conversationId: params.conversationId,
       senderId: params.senderId,
       senderRole: params.senderRole,
-      text: params.text.trim(),
+      text: cleanText,
       fileUrl: params.fileUrl,
       fileName: params.fileName,
       fileSize: params.fileSize,
@@ -127,7 +140,9 @@ export async function listUserConversations(userId: string, role: Role) {
     const rows = await db.conversation.findMany({
       where: { studentId: userId },
       include: {
-        company: { select: { id: true, userId: true, name: true, logoPath: true } },
+        company: {
+          select: { id: true, userId: true, name: true, logoPath: true },
+        },
         vacancy: { select: { id: true, title: true } },
         messages: {
           orderBy: { createdAt: "desc" },
@@ -146,18 +161,23 @@ export async function listUserConversations(userId: string, role: Role) {
   });
   if (!company) return [];
 
-  const rows = await db.conversation.findMany({
-    where: { companyId: company.id },
-    include: {
-      company: { select: { id: true, userId: true, name: true, logoPath: true } },
-      vacancy: { select: { id: true, title: true } },
-      messages: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
+  const [rows, hasActiveSubscription] = await Promise.all([
+    db.conversation.findMany({
+      where: { companyId: company.id },
+      include: {
+        company: {
+          select: { id: true, userId: true, name: true, logoPath: true },
+        },
+        vacancy: { select: { id: true, title: true } },
+        messages: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+        },
       },
-    },
-    orderBy: { updatedAt: "desc" },
-  });
+      orderBy: { updatedAt: "desc" },
+    }),
+    isCompanySubscribedOrUnlocked(company.id),
+  ]);
 
   const cvIds = rows
     .map((r) => r.studentCvId)
@@ -173,6 +193,9 @@ export async function listUserConversations(userId: string, role: Role) {
 
   const cvNameMap = new Map(
     cvs.map((c) => {
+      if (!hasActiveSubscription) {
+        return [c.id, c.title ? `${c.title} (qulflangan)` : "Nomzod (qulflangan)"];
+      }
       const data = c.data as { fullName?: string } | null;
       const privacy = c.privacy as { hideName?: boolean } | null;
       const name = privacy?.hideName
@@ -184,7 +207,8 @@ export async function listUserConversations(userId: string, role: Role) {
 
   return rows.map((r) => ({
     ...r,
-    studentName: (r.studentCvId ? cvNameMap.get(r.studentCvId) : null) ?? "Nomzod",
+    studentName:
+      (r.studentCvId ? cvNameMap.get(r.studentCvId) : null) ?? "Nomzod",
   }));
 }
 
@@ -197,17 +221,25 @@ export async function ensureConversationForCompany(
     where: {
       OR: [{ userId }, { members: { some: { userId } } }],
     },
-    select: { id: true },
+    select: { id: true, approval: true },
   });
-  if (!company) return undefined;
+  if (!company || company.approval !== "APPROVED") return undefined;
 
   const [vacancy, cv] = await Promise.all([
     db.vacancy.findFirst({
       where: { id: vacancyId, companyId: company.id },
       select: { id: true },
     }),
-    db.cv.findUnique({
-      where: { id: cvId },
+    db.cv.findFirst({
+      where: {
+        id: cvId,
+        savedAt: { not: null },
+        user: { status: "ACTIVE" },
+        OR: [
+          { isVisible: true },
+          { applications: { some: { vacancyId } } },
+        ],
+      },
       select: { id: true, userId: true },
     }),
   ]);
@@ -261,6 +293,17 @@ export async function createComplaint(params: {
     await assertConversationParticipant(conv, params.reporterId);
     resolvedReportedUserId =
       conv.studentId === params.reporterId ? conv.company.userId : conv.studentId;
+  } else {
+    if (resolvedReportedUserId === params.reporterId) {
+      throw new ApiError(400, "VALIDATION");
+    }
+    const target = await db.user.findUnique({
+      where: { id: resolvedReportedUserId },
+      select: { id: true, role: true },
+    });
+    if (!target || target.role === Role.ADMIN) {
+      throw new ApiError(404, "NOT_FOUND");
+    }
   }
 
   return db.complaint.create({
@@ -280,6 +323,13 @@ export async function resolveComplaint(
   complaintId: string,
   status: ComplaintStatus,
 ) {
+  const existing = await db.complaint.findUnique({
+    where: { id: complaintId },
+    select: { id: true },
+  });
+  if (!existing) {
+    throw new ApiError(404, "NOT_FOUND");
+  }
   return db.complaint.update({
     where: { id: complaintId },
     data: {

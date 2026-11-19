@@ -56,7 +56,11 @@ export default async function SupportPage() {
         <h1 className="text-text text-3xl font-extrabold tracking-tight">
           {tHeader("support")}
         </h1>
-        <p className="text-subtle mt-1 text-sm">{tChat("subtitleAdmin")}</p>
+        <p className="text-subtle mt-1 text-sm">
+          {user.role === "STUDENT"
+            ? tChat("subtitleStudent")
+            : tChat("subtitleCompany")}
+        </p>
       </div>
 
       <ChatRoom

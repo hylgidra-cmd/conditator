@@ -516,7 +516,7 @@
       "subActive": "AI saralash obunasi faol ({date} gacha)",
       "subInactive": "AI saralash obunasi faol emas",
       "unlockTitle": "Top nomzodlarni ochish (80–100% moslik)",
-      "unlockDesc": "14 999 UZS — 15 kun davomida barcha yuqori moslikdagi nomzodlarning aloqa maʼlumotlarini ochadi.",
+      "unlockDesc": "15 000 UZS dan — obuna muddati davomida barcha nomzodlarning aloqa maʼlumotlari va PDF rezyumelarini ochadi.",
       "historyTitle": "Toʻlovlar tarixi",
       "empty": "Hozircha toʻlovlar yoʻq.",
       "purpose": "Maqsad",
@@ -624,7 +624,7 @@
     "viewApplication": "Koʻrish",
     "lockedBadge": "🔒 Qulflangan (80%+)",
     "unlockBanner": "80–100% mos kelgan top nomzodlarning aloqa maʼlumotlari va PDF qulflangan.",
-    "unlockBtn": "🔓 14 999 UZS ga ochish (15 kun)",
+    "unlockBtn": "🔓 Obuna sotib olish (15 000 UZS dan)",
     "unlockedBanner": "🔓 Top nomzodlar (80–100%) ushbu vakansiya uchun ochilgan."
   },
   "Candidate": {

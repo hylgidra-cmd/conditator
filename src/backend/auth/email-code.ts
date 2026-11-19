@@ -91,19 +91,28 @@ export async function consumeCode(
   const expected = Buffer.from(active.codeHash, "hex");
   const actual = Buffer.from(hashCode(userId, purpose, code), "hex");
   if (!timingSafeEqual(expected, actual)) {
-    const { attempts } = await db.emailCode.update({
-      where: { id: active.id },
+    const bumped = await db.emailCode.updateMany({
+      where: { id: active.id, usedAt: null, attempts: { lt: CODE_MAX_ATTEMPTS } },
       data: { attempts: { increment: 1 } },
+    });
+    if (bumped.count === 0) {
+      throw new ApiError(400, "CODE_LOCKED");
+    }
+    const updated = await db.emailCode.findUnique({
+      where: { id: active.id },
+      select: { attempts: true },
     });
     throw new ApiError(
       400,
-      attempts >= CODE_MAX_ATTEMPTS ? "CODE_LOCKED" : "CODE_INVALID",
+      (updated?.attempts ?? CODE_MAX_ATTEMPTS) >= CODE_MAX_ATTEMPTS
+        ? "CODE_LOCKED"
+        : "CODE_INVALID",
     );
   }
 
   // Bir vaqtdagi ikki so'rov bitta kodni ikki marta ishlata olmasligi uchun shartli yangilash.
   const { count } = await db.emailCode.updateMany({
-    where: { id: active.id, usedAt: null },
+    where: { id: active.id, usedAt: null, attempts: { lt: CODE_MAX_ATTEMPTS } },
     data: { usedAt: new Date() },
   });
   if (count === 0) throw new ApiError(400, "CODE_EXPIRED");

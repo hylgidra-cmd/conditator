@@ -51,7 +51,7 @@ export default async function AccountPage() {
         cvs: {
           orderBy: { updatedAt: "desc" },
           take: 1,
-          select: { title: true },
+          select: { title: true, data: true },
         },
         company: {
           select: {
@@ -82,10 +82,12 @@ export default async function AccountPage() {
       account.company.subscriptionUntil > now,
   );
 
+  const latestCvData = account.cvs[0]?.data as { fullName?: string } | null;
+  const studentFullName = latestCvData?.fullName?.trim();
   const displayName =
     account.role === "COMPANY"
       ? account.company?.name || account.email
-      : account.cvs[0]?.title || account.email;
+      : studentFullName || account.cvs[0]?.title || account.email;
 
   const avatarInitial = displayName.slice(0, 1).toUpperCase();
 
@@ -107,16 +109,12 @@ export default async function AccountPage() {
                   <span className="bg-primary/10 text-primary rounded-full px-3 py-0.5 text-xs font-bold">
                     {t(`roles.${account.role}`)}
                   </span>
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
-                      account.emailVerifiedAt
-                        ? "border-emerald-500/30 bg-success-soft text-success"
-                        : "border-primary/30 bg-primary-soft text-primary-text"
-                    }`}
-                  >
-                    {account.emailVerifiedAt ? <CheckIcon size={12} /> : null}
-                    {account.emailVerifiedAt ? t("verified") : t("unverified")}
-                  </span>
+                  {account.emailVerifiedAt ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
+                      <CheckIcon size={12} />
+                      {t("verified")}
+                    </span>
+                  ) : null}
                 </div>
                 <h1 className="text-h2 text-text mt-1.5 font-extrabold tracking-tight">
                   {displayName}
@@ -416,7 +414,7 @@ export default async function AccountPage() {
               )}
 
               <Link
-                href="/chat"
+                href={account.role === "ADMIN" ? "/admin/support" : "/chat"}
                 className="border-line bg-canvas hover:border-primary text-text flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition-colors"
               >
                 <span className="flex items-center gap-2.5">

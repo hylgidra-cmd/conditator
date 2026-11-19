@@ -116,6 +116,7 @@ export async function SiteHeader() {
           )}
           <MobileMenu
             items={user ? roleLinks : sections}
+            unreadCount={unreadCount}
             openLabel={t("menuOpen")}
             closeLabel={t("menuClose")}
             footer={
@@ -126,12 +127,20 @@ export async function SiteHeader() {
                     className={buttonClass({ variant: "outline", size: "sm" })}
                   />
                 ) : (
-                  <Link
-                    href="/register"
-                    className={buttonClass({ variant: "primary", size: "sm" })}
-                  >
-                    {t("register")}
-                  </Link>
+                  <>
+                    <Link
+                      href="/login"
+                      className={buttonClass({ variant: "outline", size: "sm" })}
+                    >
+                      {t("login")}
+                    </Link>
+                    <Link
+                      href="/register"
+                      className={buttonClass({ variant: "primary", size: "sm" })}
+                    >
+                      {t("register")}
+                    </Link>
+                  </>
                 )}
               </>
             }

@@ -124,7 +124,7 @@ export default async function PublicVacanciesPage({
 
   const where: Prisma.VacancyWhereInput = {
     status: VacancyStatus.ACTIVE,
-    company: { approval: "APPROVED" },
+    company: { approval: "APPROVED", user: { status: "ACTIVE" } },
     AND: andConditions,
   };
 

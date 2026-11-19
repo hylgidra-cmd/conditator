@@ -1,8 +1,14 @@
 import type { Cv, Lang, WorkType } from "@prisma/client";
 import { z } from "zod";
+import { isValidImageDataUrl } from "@/backend/company/logo";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
-import { CV_TEXT_MAX, type CvData, missingFields } from "./schema";
+import {
+  CV_TEXT_MAX,
+  type CvData,
+  missingFields,
+  obyektivkaDataSchema,
+} from "./schema";
 
 // ---------- Saqlash sxemasi (talaba tahrirlagan CV) ----------
 
@@ -23,6 +29,16 @@ const required = (max: number) =>
 
 const list = <T extends z.ZodType>(item: T, max: number) =>
   z.array(item).max(max, { error: "TOO_MANY_ITEMS" });
+
+const photoSchema = z
+  .string()
+  .trim()
+  .max(500_000, { error: "FILE_TOO_LARGE" })
+  .nullable()
+  .optional()
+  .refine((value) => !value || isValidImageDataUrl(value), {
+    error: "FILE_TYPE_NOT_ALLOWED",
+  });
 
 export const WORK_TYPES = [
   "FULL_TIME",
@@ -71,7 +87,11 @@ export const cvSaveSchema = z.object({
       linkedin: text(150).optional(),
       website: text(150).optional(),
     }),
-    photo: text(500_000).optional(),
+    photo: photoSchema,
+    telegram: text(100).optional(),
+    github: text(150).optional(),
+    linkedin: text(150).optional(),
+    website: text(150).optional(),
     goal: text(1000),
     location: text(100),
     education: list(
@@ -117,6 +137,7 @@ export const cvSaveSchema = z.object({
       30,
     ).default([]),
     hobbies: list(required(60), 30).optional(),
+    obyektivka: obyektivkaDataSchema.optional(),
   }),
 });
 
@@ -339,13 +360,14 @@ export async function saveOwnCv(
     const existing = await db.cv.findFirst({
       where: { id: targetCvId, userId },
     });
-    if (existing) {
-      return db.cv.update({
-        where: { id: targetCvId },
-        data: fields,
-        select: STUDENT_CV_SELECT,
-      });
+    if (!existing) {
+      throw new ApiError(404, "NOT_FOUND");
     }
+    return db.cv.update({
+      where: { id: targetCvId },
+      data: fields,
+      select: STUDENT_CV_SELECT,
+    });
   }
 
   const existing = await db.cv.findFirst({
@@ -365,6 +387,18 @@ export async function saveOwnCv(
     data: { userId, isVisible: false, isPaid: false, ...fields },
     select: STUDENT_CV_SELECT,
   });
+}
+
+export async function deleteOwnCv(
+  userId: string,
+  cvId: string,
+): Promise<void> {
+  const deleted = await db.cv.deleteMany({
+    where: { id: cvId, userId },
+  });
+  if (deleted.count === 0) {
+    throw new ApiError(404, "NOT_FOUND");
+  }
 }
 
 export async function setOwnCvVisibility(

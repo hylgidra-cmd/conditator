@@ -30,6 +30,7 @@ export default async function VacancyDetailPage({
           size: true,
           country: true,
           approval: true,
+          user: { select: { status: true } },
         },
       },
     },
@@ -39,6 +40,7 @@ export default async function VacancyDetailPage({
     !vacancy ||
     vacancy.status !== "ACTIVE" ||
     vacancy.company.approval !== "APPROVED" ||
+    vacancy.company.user.status !== "ACTIVE" ||
     (vacancy.expiresAt && vacancy.expiresAt <= new Date())
   ) {
     notFound();

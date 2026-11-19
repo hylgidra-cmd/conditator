@@ -4,16 +4,26 @@ import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
 import { completePayment } from "@/backend/payment/service";
 
-function safeReturnPath(raw: string | null, fallback: string): string {
-  if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return fallback;
-  return raw;
+function safeReturnPath(
+  raw: string | null,
+  reqUrl: string,
+  fallback: string,
+): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) {
+    return fallback;
+  }
+  try {
+    const base = new URL(reqUrl);
+    const resolved = new URL(raw, base);
+    if (resolved.origin !== base.origin) return fallback;
+    return `${resolved.pathname}${resolved.search}`;
+  } catch {
+    return fallback;
+  }
 }
 
 export async function GET(req: Request) {
-  if (
-    process.env.NODE_ENV === "production" &&
-    process.env.ALLOW_TEST_PAYMENTS !== "true"
-  ) {
+  if (process.env.NODE_ENV === "production") {
     return NextResponse.json(
       { error: "TEST_PAYMENTS_DISABLED" },
       { status: 403 },
@@ -29,6 +39,7 @@ export async function GET(req: Request) {
   const paymentId = searchParams.get("paymentId");
   const returnPath = safeReturnPath(
     searchParams.get("returnUrl"),
+    req.url,
     `/${user.locale}/dashboard`,
   );
 

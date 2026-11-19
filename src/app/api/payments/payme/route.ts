@@ -1,7 +1,10 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { db } from "@/backend/db";
+import { readBodyLimited } from "@/backend/http/errors";
 import { completePayment } from "@/backend/payment/service";
+
+const MAX_WEBHOOK_BYTES = 50_000;
 
 function verifyPaymeAuth(req: Request): boolean {
   const secretKey = process.env.PAYME_SECRET_KEY;
@@ -34,7 +37,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const body = await req.json();
+    const raw = await readBodyLimited(req, MAX_WEBHOOK_BYTES);
+    const body = JSON.parse(raw.toString("utf8"));
     const { method, params, id } = body;
 
     if (method === "CheckPerformTransaction") {
@@ -42,7 +46,7 @@ export async function POST(req: Request) {
       const payment = orderId
         ? await db.payment.findUnique({ where: { id: String(orderId) } })
         : null;
-      if (!payment) {
+      if (!payment || payment.provider !== "PAYME") {
         return NextResponse.json({
           error: {
             code: -31050,
@@ -50,6 +54,19 @@ export async function POST(req: Request) {
               uz: "Buyurtma topilmadi",
               ru: "Заказ не найден",
               en: "Order not found",
+            },
+          },
+          id,
+        });
+      }
+      if (payment.status !== "PENDING") {
+        return NextResponse.json({
+          error: {
+            code: -31008,
+            message: {
+              uz: "Tranzaksiyani amalga oshirib bo'lmaydi",
+              ru: "Невозможно выполнить данную операцию",
+              en: "Cannot perform this operation",
             },
           },
           id,
@@ -83,6 +100,40 @@ export async function POST(req: Request) {
           id,
         });
       }
+      const payment = await db.payment.findUnique({
+        where: { id: String(orderId) },
+      });
+      if (!payment || payment.provider !== "PAYME") {
+        return NextResponse.json({
+          error: { code: -31050, message: "Order not found" },
+          id,
+        });
+      }
+      if (
+        params?.amount !== undefined &&
+        Number(params.amount) !== payment.amount * 100
+      ) {
+        return NextResponse.json({
+          error: { code: -31001, message: "Incorrect amount" },
+          id,
+        });
+      }
+      if (payment.status === "COMPLETED") {
+        return NextResponse.json({
+          result: {
+            transaction: payment.externalId ?? paymeTransId,
+            perform_time: payment.updatedAt.getTime(),
+            state: 2,
+          },
+          id,
+        });
+      }
+      if (payment.status !== "PENDING") {
+        return NextResponse.json({
+          error: { code: -31008, message: "Cannot perform operation" },
+          id,
+        });
+      }
       const completed = await completePayment(String(orderId), paymeTransId);
       return NextResponse.json({
         result: {
@@ -97,7 +148,9 @@ export async function POST(req: Request) {
     if (method === "CheckTransaction") {
       const transId = params?.id ? String(params.id) : "";
       const payment = transId
-        ? await db.payment.findFirst({ where: { externalId: transId } })
+        ? await db.payment.findFirst({
+            where: { externalId: transId, provider: "PAYME" },
+          })
         : null;
       if (!payment) {
         return NextResponse.json({

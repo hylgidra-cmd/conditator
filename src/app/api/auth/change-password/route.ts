@@ -3,12 +3,7 @@ import { z } from "zod";
 import { hashPassword, verifyPassword } from "@/backend/auth/password";
 import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
 import { passwordSchema } from "@/backend/auth/schemas";
-import {
-  deleteOtherSessions,
-  getSessionUser,
-  LEGACY_SESSION_COOKIE,
-  SESSION_COOKIE,
-} from "@/backend/auth/session";
+import { createSession, requireRole } from "@/backend/auth/session";
 import { db } from "@/backend/db";
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { clientIp } from "@/backend/http/request";
@@ -23,8 +18,7 @@ const changePasswordSchema = z.object({
 });
 
 export const POST = route(async (request) => {
-  const sessionUser = await getSessionUser(request);
-  if (!sessionUser) throw new ApiError(401, "UNAUTHORIZED");
+  const sessionUser = await requireRole(request);
   rateLimit(`verify:${clientIp(request)}:${sessionUser.id}`, LIMITS.verify);
 
   const { currentPassword, newPassword } = await parseJson(
@@ -46,15 +40,17 @@ export const POST = route(async (request) => {
     throw new ApiError(401, "INVALID_CREDENTIALS");
   }
 
-  await db.user.update({
-    where: { id: user.id },
-    data: { passwordHash: await hashPassword(newPassword) },
-  });
+  const nextHash = await hashPassword(newPassword);
+  // Parol yangilanishi bilan barcha eski sessiyalar bekor qilinadi va yangi sessiya beriladi (token rotation).
+  await db.$transaction([
+    db.user.update({
+      where: { id: user.id },
+      data: { passwordHash: nextHash },
+    }),
+    db.session.deleteMany({ where: { userId: user.id } }),
+  ]);
 
-  const currentToken =
-    request.cookies.get(SESSION_COOKIE)?.value ??
-    request.cookies.get(LEGACY_SESSION_COOKIE)?.value;
-  await deleteOtherSessions(user.id, currentToken);
-
-  return NextResponse.json({ ok: true });
+  const response = NextResponse.json({ ok: true });
+  await createSession(response, user.id);
+  return response;
 });

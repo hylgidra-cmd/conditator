@@ -200,10 +200,16 @@ export async function setSubscription(
 ) {
   const before = await findCompany(companyId);
   const value = until ? endOfDayTashkent(until) : null;
-  const company = await db.company.update({
-    where: { id: companyId },
-    data: { subscriptionUntil: value },
-    select: { id: true, subscriptionUntil: true },
+  const company = await db.$transaction(async (tx) => {
+    const updated = await tx.company.update({
+      where: { id: companyId },
+      data: { subscriptionUntil: value },
+      select: { id: true, subscriptionUntil: true },
+    });
+    if (!value) {
+      await tx.vacancyUnlock.deleteMany({ where: { companyId } });
+    }
+    return updated;
   });
   await writeAdminLog({
     adminId,

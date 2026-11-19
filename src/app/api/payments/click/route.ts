@@ -1,7 +1,10 @@
 import { createHash, timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { db } from "@/backend/db";
+import { readBodyLimited } from "@/backend/http/errors";
 import { completePayment } from "@/backend/payment/service";
+
+const MAX_WEBHOOK_BYTES = 50_000;
 
 /**
  * Click Webhook handler.
@@ -18,7 +21,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const formData = await req.formData();
+    const raw = await readBodyLimited(req, MAX_WEBHOOK_BYTES);
+    const limitedReq = new Request(req.url, {
+      method: "POST",
+      headers: req.headers,
+      body: new Uint8Array(raw),
+    });
+    const formData = await limitedReq.formData();
     const clickTransId = formData.get("click_trans_id")?.toString() ?? "";
     const serviceId = formData.get("service_id")?.toString() ?? "";
     const merchantTransId = formData.get("merchant_trans_id")?.toString() ?? "";
@@ -34,6 +43,14 @@ export async function POST(req: Request) {
       return NextResponse.json({
         error: -8,
         error_note: "Missing required Click parameters",
+      });
+    }
+
+    const expectedServiceId = process.env.CLICK_SERVICE_ID;
+    if (expectedServiceId && serviceId !== expectedServiceId) {
+      return NextResponse.json({
+        error: -8,
+        error_note: "Invalid service_id",
       });
     }
 
@@ -67,7 +84,7 @@ export async function POST(req: Request) {
     const payment = await db.payment.findUnique({
       where: { id: merchantTransId },
     });
-    if (!payment) {
+    if (!payment || payment.provider !== "CLICK") {
       return NextResponse.json({
         error: -5,
         error_note: "Order not found",
@@ -78,6 +95,20 @@ export async function POST(req: Request) {
       return NextResponse.json({
         error: -2,
         error_note: "Incorrect parameter amount",
+      });
+    }
+
+    if (payment.status === "COMPLETED") {
+      return NextResponse.json({
+        error: -4,
+        error_note: "Already paid",
+      });
+    }
+
+    if (payment.status !== "PENDING") {
+      return NextResponse.json({
+        error: -9,
+        error_note: "Transaction cancelled",
       });
     }
 

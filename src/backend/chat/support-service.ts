@@ -52,6 +52,9 @@ export async function listSupportThreadsForUser(userId: string, role: Role) {
   return [thread];
 }
 
+const RECEIPT_TAG_GLOBAL_RE = /\[PAYMENT_RECEIPT:[^\]]*\]/gi;
+const RECEIPT_ID_RE = /\[PAYMENT_RECEIPT:([a-zA-Z0-9_-]+)\]/;
+
 export async function getSupportMessages(
   threadId: string,
   userId: string,
@@ -84,7 +87,32 @@ export async function getSupportMessages(
     data: { readAt: new Date() },
   });
 
-  return messages;
+  const receiptIds = Array.from(
+    new Set(
+      messages
+        .map((m) => RECEIPT_ID_RE.exec(m.text)?.[1])
+        .filter((id): id is string => Boolean(id)),
+    ),
+  );
+
+  const paymentStatusMap = new Map<string, string>();
+  if (receiptIds.length > 0) {
+    const payments = await db.payment.findMany({
+      where: { id: { in: receiptIds }, userId: thread.userId },
+      select: { id: true, status: true },
+    });
+    for (const p of payments) {
+      paymentStatusMap.set(p.id, p.status);
+    }
+  }
+
+  return messages.map((m) => {
+    const rid = RECEIPT_ID_RE.exec(m.text)?.[1];
+    return {
+      ...m,
+      receiptPaymentStatus: rid ? (paymentStatusMap.get(rid) ?? null) : null,
+    };
+  });
 }
 
 export async function sendSupportMessage(params: {
@@ -92,8 +120,12 @@ export async function sendSupportMessage(params: {
   senderId: string;
   senderRole: Role;
   text: string;
+  allowSystemTags?: boolean;
 }) {
-  const cleanText = params.text.trim();
+  const rawText = params.allowSystemTags
+    ? params.text
+    : params.text.replace(RECEIPT_TAG_GLOBAL_RE, "");
+  const cleanText = rawText.trim();
   if (!cleanText) {
     throw new ApiError(400, "VALIDATION");
   }

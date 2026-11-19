@@ -65,9 +65,27 @@ export default async function CompanyStudentsPage({
         isVisible: true,
         savedAt: { not: null },
         user: { status: "ACTIVE" },
+        ...(query
+          ? {
+              OR: [
+                { searchText: { contains: query, mode: "insensitive" } },
+                { title: { contains: query, mode: "insensitive" } },
+                {
+                  AND: [
+                    {
+                      NOT: {
+                        privacy: { path: ["hideAddress"], equals: true },
+                      },
+                    },
+                    { location: { contains: query, mode: "insensitive" } },
+                  ],
+                },
+              ],
+            }
+          : {}),
       },
       orderBy: { savedAt: "desc" },
-      take: 60,
+      take: query ? 80 : 60,
       select: {
         id: true,
         title: true,
@@ -142,21 +160,6 @@ export default async function CompanyStudentsPage({
         isMukammal: quality.isMukammal,
         aiSummary: quality.aiSummary,
       };
-    })
-    .filter((item) => {
-      if (!query) return true;
-      const haystack = [
-        item.fullName,
-        item.title,
-        item.location,
-        item.about,
-        item.aiSummary,
-        ...item.skills,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
-      return haystack.includes(query);
     })
     .sort((a, b) => b.score - a.score);
 

@@ -11,6 +11,8 @@ type Props = {
   onImportSuccess: (result: { cv: AiCvDraft; text: string }) => void;
 };
 
+const BINARY_EXTENSIONS = [".pdf", ".docx", ".doc"];
+
 export function CvImportScreen({
   currentLanguage,
   onBack,
@@ -22,7 +24,7 @@ export function CvImportScreen({
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [manualText, setManualText] = useState("");
-  const [showPasteArea, setShowPasteArea] = useState(false);
+  const [showPasteArea, setShowPasteArea] = useState(true);
   const [importing, setImporting] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -50,13 +52,22 @@ export function CvImportScreen({
   }
 
   function handleFileSelected(file: File) {
+    const lower = file.name.toLowerCase();
+    if (BINARY_EXTENSIONS.some((ext) => lower.endsWith(ext))) {
+      setSelectedFile(null);
+      setShowPasteArea(true);
+      setErrorMsg(
+        "PDF va Word (.docx) fayllardan matnni nusxalab pastdagi maydonga joylang (yoki .txt fayl yuklang) — AI uni to'liq tuzib beradi.",
+      );
+      return;
+    }
     setSelectedFile(file);
     setErrorMsg(null);
   }
 
   async function handleImport() {
     if (!selectedFile && !manualText.trim()) {
-      setErrorMsg("Iltimos, fayl tanlang yoki rezyume matnini kiriting.");
+      setErrorMsg("Iltimos, .txt fayl tanlang yoki rezyume matnini kiriting.");
       return;
     }
 
@@ -67,61 +78,44 @@ export function CvImportScreen({
       let textContent = manualText.trim();
 
       if (selectedFile) {
-        try {
-          const rawText = await selectedFile.text();
-          // Filter readable characters
-          const cleanText = rawText
-            .replace(/[^\x20-\x7E\s\u0400-\u04FF]/g, " ")
-            .trim();
-          if (cleanText.length > 30) {
-            textContent = cleanText;
-          } else {
-            textContent = `${selectedFile.name}\n${textContent}`;
-          }
-        } catch {
-          textContent = selectedFile.name;
+        const rawText = await selectedFile.text();
+        const cleanText = rawText.trim();
+        if (cleanText.length >= 20) {
+          textContent = cleanText;
+        } else if (!textContent) {
+          setErrorMsg(
+            "Fayl ichidan yetarli matn topilmadi. Rezyume matnini pastdagi maydonga nusxalab qo'ying.",
+          );
+          setImporting(false);
+          return;
         }
       }
 
-      if (!textContent) {
-        textContent = selectedFile?.name ?? "Rezyume";
+      if (textContent.length < 20) {
+        setErrorMsg(
+          "Iltimos, kamida 20 ta belgidan iborat rezyume matnini kiriting.",
+        );
+        setImporting(false);
+        return;
       }
 
       const res = await postJson<{ cv: AiCvDraft }>("/api/cv/generate", {
-        text: textContent,
+        text: textContent.slice(0, 3000),
         language: currentLanguage,
       });
 
       if (res.ok && res.data?.cv) {
         onImportSuccess({ cv: res.data.cv, text: textContent });
-      } else {
-        // Fallback with empty template if AI limit is reached
-        onImportSuccess({
-          cv: {
-            goal: null,
-            location: null,
-            education: [],
-            experience: [],
-            skills: [],
-            languages: [],
-            certificates: [],
-          },
-          text: textContent,
-        });
+        return;
       }
+
+      setErrorMsg(
+        res.ok
+          ? "AI javobini qayta ishlab bo'lmadi. Qaytadan urinib ko'ring."
+          : "AI bilan import qilishda xatolik yuz berdi. Matnni tekshirib qayta urinib ko'ring yoki noldan to'ldiring.",
+      );
     } catch {
-      onImportSuccess({
-        cv: {
-          goal: null,
-          location: null,
-          education: [],
-          experience: [],
-          skills: [],
-          languages: [],
-          certificates: [],
-        },
-        text: selectedFile?.name ?? "",
-      });
+      setErrorMsg("Tarmoq xatoligi. Qaytadan urinib ko'ring.");
     } finally {
       setImporting(false);
     }
@@ -143,7 +137,7 @@ export function CvImportScreen({
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 transition-colors ${
+          className={`cursor-pointer rounded-2xl border-2 border-dashed p-6 transition-colors ${
             isDragging
               ? "border-brand bg-brand/5"
               : selectedFile
@@ -155,13 +149,13 @@ export function CvImportScreen({
             type="file"
             ref={fileInputRef}
             onChange={handleFileInputChange}
-            accept=".pdf,.docx,.doc,.txt"
+            accept=".txt,.md,text/plain"
             className="hidden"
           />
 
-          <div className="bg-brand/10 text-brand mx-auto flex h-16 w-16 items-center justify-center rounded-2xl">
+          <div className="bg-brand/10 text-brand mx-auto flex h-14 w-14 items-center justify-center rounded-2xl">
             <svg
-              className="h-8 w-8"
+              className="h-7 w-7"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -175,46 +169,54 @@ export function CvImportScreen({
             </svg>
           </div>
 
-          <div className="mt-4 space-y-1">
+          <div className="mt-3 space-y-1">
             {selectedFile ? (
               <p className="text-foreground text-sm font-bold">
                 {selectedFile.name}
               </p>
             ) : (
-              <button
-                type="button"
-                className="bg-brand text-brand-foreground rounded-xl px-6 py-2 text-sm font-bold shadow hover:opacity-95"
-              >
-                {t("browse")}
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="bg-brand text-brand-foreground rounded-xl px-6 py-2 text-sm font-bold shadow hover:opacity-95"
+                >
+                  {t("browse")}
+                </button>
+                <p className="text-muted pt-1 text-[11px]">
+                  {".txt matn fayli yoki pastdagi maydonga PDF/Word dan nusxalab joylang"}
+                </p>
+              </>
             )}
           </div>
         </div>
 
-        {/* Optional text paste */}
+        {/* Text paste area */}
         <div className="text-left">
           <button
             type="button"
             onClick={() => setShowPasteArea(!showPasteArea)}
-            className="text-brand text-xs font-semibold hover:underline"
+            className="text-brand cursor-pointer text-xs font-semibold hover:underline"
           >
             {showPasteArea
               ? "— Matn maydonini yopish"
-              : "+ Yoki rezyume matnini to'g'ridan-to'g'ri joylang"}
+              : "+ Rezyume matnini to'g'ridan-to'g'ri joylang"}
           </button>
           {showPasteArea && (
             <textarea
-              rows={4}
+              rows={5}
               value={manualText}
-              onChange={(e) => setManualText(e.target.value)}
-              placeholder="O'quv yurti, tajriba, ko'nikmalar matnini shu yerga nusxalab qo'ying..."
+              onChange={(e) => {
+                setManualText(e.target.value);
+                setErrorMsg(null);
+              }}
+              placeholder="PDF yoki Word rezyumengizdagi ism, ta'lim, ish tajribasi va ko'nikmalar matnini shu yerga nusxalab qo'ying..."
               className="border-border bg-surface focus:ring-brand/40 mt-2 w-full rounded-xl border p-3 text-xs outline-none focus:ring-2"
             />
           )}
         </div>
 
         {errorMsg && (
-          <p className="text-xs font-medium text-red-500">{errorMsg}</p>
+          <p className="text-xs font-bold text-red-500">{errorMsg}</p>
         )}
 
         {/* Buttons */}
@@ -222,7 +224,7 @@ export function CvImportScreen({
           <button
             type="button"
             onClick={onBack}
-            className="text-muted hover:text-foreground text-sm font-semibold"
+            className="text-muted hover:text-foreground cursor-pointer text-sm font-semibold"
           >
             {t("back")}
           </button>
@@ -231,9 +233,9 @@ export function CvImportScreen({
             type="button"
             onClick={handleImport}
             disabled={importing}
-            className="bg-brand text-brand-foreground rounded-xl px-6 py-2.5 text-sm font-bold shadow transition-opacity hover:opacity-95 disabled:opacity-60"
+            className="bg-brand text-brand-foreground cursor-pointer rounded-xl px-6 py-2.5 text-sm font-bold shadow transition-opacity hover:opacity-95 disabled:opacity-60"
           >
-            {importing ? "Yuklanmoqda..." : t("importBtn")}
+            {importing ? "AI tahlil qilmoqda..." : t("importBtn")}
           </button>
         </div>
       </div>

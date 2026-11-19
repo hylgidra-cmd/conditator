@@ -5,6 +5,7 @@ import { parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 import { vacancyInputSchema } from "@/backend/vacancy/schema";
 import {
+  deleteVacancy,
   getOwnVacancy,
   updateVacancy,
   vacancyView,
@@ -25,4 +26,11 @@ export const PUT = route<Context>(async (request, { params }) => {
   const input = await parseJson(request, vacancyInputSchema);
   const vacancy = await updateVacancy(company.id, (await params).id, input);
   return NextResponse.json({ vacancy: vacancyView(vacancy) });
+});
+
+export const DELETE = route<Context>(async (request, { params }) => {
+  const { company } = await requireCompany(request);
+  rateLimit(`vacancy:${company.id}`, LIMITS.vacancyWrite);
+  await deleteVacancy(company.id, (await params).id);
+  return NextResponse.json({ ok: true });
 });

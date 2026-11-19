@@ -9,6 +9,8 @@ export const VACANCY_WORK_TYPES = [
   "REMOTE",
   "INTERNSHIP",
 ] as const;
+export const VACANCY_CURRENCIES = ["UZS", "USD"] as const;
+export const VACANCY_EDITABLE_STATUSES = ["ACTIVE", "CLOSED"] as const;
 
 const optionalText = (max: number) =>
   z
@@ -17,6 +19,14 @@ const optionalText = (max: number) =>
     .max(max, { error: "FIELD_TOO_LONG" })
     .nullable()
     .transform((value) => (value ? value : null));
+
+const optionalSalary = z
+  .number({ error: "INVALID_NUMBER" })
+  .int({ error: "INVALID_NUMBER" })
+  .min(0, { error: "INVALID_NUMBER" })
+  .max(1_000_000_000, { error: "INVALID_NUMBER" })
+  .nullable()
+  .optional();
 
 const tags = (itemMax: number, count: number) =>
   z
@@ -61,6 +71,10 @@ export const vacancyInputSchema = z
     workType: z
       .enum(VACANCY_WORK_TYPES, { error: "FIELD_REQUIRED" })
       .nullable(),
+    salaryFrom: optionalSalary,
+    salaryTo: optionalSalary,
+    currency: z.enum(VACANCY_CURRENCIES).optional(),
+    status: z.enum(VACANCY_EDITABLE_STATUSES).optional(),
   })
   .superRefine((value, ctx) => {
     if (!value.title && !value.rawText) {
@@ -68,6 +82,17 @@ export const vacancyInputSchema = z
         code: "custom",
         path: ["title"],
         message: "TITLE_OR_TEXT_REQUIRED",
+      });
+    }
+    if (
+      typeof value.salaryFrom === "number" &&
+      typeof value.salaryTo === "number" &&
+      value.salaryFrom > value.salaryTo
+    ) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["salaryTo"],
+        message: "INVALID_NUMBER",
       });
     }
   });

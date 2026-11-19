@@ -25,11 +25,17 @@ export function companyAccess(
   };
 }
 
-/** Kompaniya roli va uning profili. Profil ro'yxatdan o'tishda yaratiladi; bo'lmasa shu yerda yaratiladi. */
+/** Kompaniya roli va uning profili. Avval mavjud kompaniya yoki jamoa a'zoligi tekshiriladi. */
 export async function requireCompany(
   request: NextRequest,
 ): Promise<{ user: SessionUser; company: Company }> {
   const user = await requireRole(request, "COMPANY");
+  const existing = await db.company.findFirst({
+    where: {
+      OR: [{ userId: user.id }, { members: { some: { userId: user.id } } }],
+    },
+  });
+  if (existing) return { user, company: existing };
   const company = await db.company.upsert({
     where: { userId: user.id },
     create: { userId: user.id },

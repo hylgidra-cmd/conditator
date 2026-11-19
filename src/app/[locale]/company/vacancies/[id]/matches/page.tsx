@@ -1,4 +1,4 @@
-import type { Lang } from "@prisma/client";
+import type { CandidateStageType, Lang } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/frontend/components/ds/motion";
@@ -13,6 +13,15 @@ import { db } from "@/backend/db";
 import { listDecided } from "@/backend/match/decision";
 import { getMatchResults } from "@/backend/match/service";
 import { formatDate } from "@/backend/format-date";
+
+const STAGE_LABELS: Record<CandidateStageType, string> = {
+  NEW: "Yangi",
+  REVIEWING: "Ko'rib chiqilmoqda",
+  LIKED: "Yoqdi",
+  INTERVIEW: "Suhbat",
+  ACCEPTED: "Qabul qilindi",
+  REJECTED: "Rad etildi",
+};
 
 export default async function MatchesPage({
   params,
@@ -38,11 +47,14 @@ export default async function MatchesPage({
   const [initial, decided, applications, stages] = access.canViewCvs
     ? await Promise.all([
         getMatchResults(company, vacancy, locale as Lang),
-        listDecided(vacancy.id),
+        listDecided(vacancy.id, !access.canRunMatching),
         db.vacancyApplication.findMany({
           where: { vacancyId: vacancy.id },
-          include: {
-            student: { select: { id: true, email: true } },
+          select: {
+            id: true,
+            cvId: true,
+            note: true,
+            createdAt: true,
             cv: { select: { id: true, title: true, savedAt: true } },
           },
           orderBy: { createdAt: "desc" },
@@ -113,35 +125,43 @@ export default async function MatchesPage({
               </div>
             ) : (
               <ul className="space-y-3">
-                {applications.map((app) => (
-                  <li
-                    key={app.id}
-                    className="border-line bg-card/90 shadow-soft flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-5 backdrop-blur-md transition-all hover:shadow-md"
-                  >
-                    <div className="min-w-0 space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text text-base font-extrabold">
-                          {app.cv.title}
-                        </span>
-                        {stageMap.has(app.cvId) && (
-                          <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold">
-                            {stageMap.get(app.cvId)}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-subtle text-xs">
-                        {t("appliedAt", { date: formatDate(app.createdAt) })}
-                      </p>
-                    </div>
-
-                    <Link
-                      href={`/company/vacancies/${vacancy.id}/candidates/${app.cvId}`}
-                      className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-2xl px-4 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
+                {applications.map((app) => {
+                  const stage = stageMap.get(app.cvId);
+                  return (
+                    <li
+                      key={app.id}
+                      className="border-line bg-card/90 shadow-soft flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-5 backdrop-blur-md transition-all hover:shadow-md"
                     >
-                      {t("viewApplication")}
-                    </Link>
-                  </li>
-                ))}
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="text-text text-base font-extrabold">
+                            {app.cv.title}
+                          </span>
+                          {stage ? (
+                            <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold">
+                              {STAGE_LABELS[stage]}
+                            </span>
+                          ) : null}
+                        </div>
+                        {app.note ? (
+                          <p className="text-text/85 border-line bg-canvas/70 rounded-xl border px-3 py-2 text-xs leading-relaxed whitespace-pre-line">
+                            {app.note}
+                          </p>
+                        ) : null}
+                        <p className="text-subtle text-xs">
+                          {t("appliedAt", { date: formatDate(app.createdAt) })}
+                        </p>
+                      </div>
+
+                      <Link
+                        href={`/company/vacancies/${vacancy.id}/candidates/${app.cvId}`}
+                        className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover shrink-0 rounded-2xl px-4 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
+                      >
+                        {t("viewApplication")}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </section>

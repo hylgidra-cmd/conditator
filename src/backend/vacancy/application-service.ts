@@ -11,17 +11,31 @@ export async function applyToVacancy(params: {
 }) {
   const vacancy = await db.vacancy.findUnique({
     where: { id: params.vacancyId },
-    include: { company: true },
+    include: {
+      company: {
+        select: {
+          id: true,
+          approval: true,
+          user: { select: { status: true } },
+        },
+      },
+    },
   });
 
-  if (!vacancy) {
+  if (
+    !vacancy ||
+    vacancy.company.approval !== "APPROVED" ||
+    vacancy.company.user.status !== "ACTIVE"
+  ) {
     throw new ApiError(404, "VACANCY_NOT_FOUND");
   }
 
-  if (
-    vacancy.status !== "ACTIVE" ||
-    (vacancy.expiresAt && vacancy.expiresAt < new Date())
-  ) {
+  const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
+  const expired = vacancy.expiresAt
+    ? vacancy.expiresAt < new Date()
+    : vacancy.createdAt < fifteenDaysAgo;
+
+  if (vacancy.status !== "ACTIVE" || expired) {
     throw new ApiError(400, "VACANCY_INACTIVE_OR_EXPIRED");
   }
 
@@ -93,12 +107,29 @@ export async function updateCandidateStage(params: {
   stage: CandidateStageType;
   note?: string;
 }) {
-  const vacancy = await db.vacancy.findFirst({
-    where: { id: params.vacancyId, companyId: params.companyId },
-    select: { id: true },
-  });
+  const [vacancy, accessibleCv] = await Promise.all([
+    db.vacancy.findFirst({
+      where: { id: params.vacancyId, companyId: params.companyId },
+      select: { id: true },
+    }),
+    db.cv.findFirst({
+      where: {
+        id: params.cvId,
+        savedAt: { not: null },
+        user: { status: "ACTIVE" },
+        OR: [
+          { isVisible: true },
+          { applications: { some: { vacancyId: params.vacancyId } } },
+        ],
+      },
+      select: { id: true },
+    }),
+  ]);
   if (!vacancy) {
     throw new ApiError(404, "VACANCY_NOT_FOUND");
+  }
+  if (!accessibleCv) {
+    throw new ApiError(404, "NOT_FOUND");
   }
 
   const stage = await db.candidateStage.upsert({
@@ -143,6 +174,19 @@ export async function toggleCandidateLike(params: {
   companyId: string;
   cvId: string;
 }) {
+  const visibleCv = await db.cv.findFirst({
+    where: {
+      id: params.cvId,
+      isVisible: true,
+      savedAt: { not: null },
+      user: { status: "ACTIVE" },
+    },
+    select: { id: true },
+  });
+  if (!visibleCv) {
+    throw new ApiError(404, "NOT_FOUND");
+  }
+
   const existing = await db.candidateLike.findUnique({
     where: {
       companyId_cvId: {
@@ -153,7 +197,7 @@ export async function toggleCandidateLike(params: {
   });
 
   if (existing) {
-    await db.candidateLike.delete({
+    await db.candidateLike.deleteMany({
       where: { id: existing.id },
     });
     const totalLikes = await db.candidateLike.count({
@@ -162,11 +206,18 @@ export async function toggleCandidateLike(params: {
     return { liked: false, totalLikes };
   }
 
-  await db.candidateLike.create({
-    data: {
+  await db.candidateLike.upsert({
+    where: {
+      companyId_cvId: {
+        companyId: params.companyId,
+        cvId: params.cvId,
+      },
+    },
+    create: {
       companyId: params.companyId,
       cvId: params.cvId,
     },
+    update: {},
   });
 
   const totalLikes = await db.candidateLike.count({

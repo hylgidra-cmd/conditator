@@ -110,6 +110,7 @@ export function CvWorkspace({
       } else setError(result.error);
       return;
     }
+    const wasNew = createNew;
     setCreateNew(false);
     setMeta({
       id: result.data.cv.id,
@@ -121,7 +122,27 @@ export function CvWorkspace({
     setDirty(false);
     setNotice(t("savedNotice"));
     setMode("complete");
-    router.refresh();
+    if (wasNew) {
+      router.replace(`/student/cv?cvId=${encodeURIComponent(result.data.cv.id)}`);
+    } else {
+      router.refresh();
+    }
+  }
+
+  async function deleteCv() {
+    if (!meta.id) return;
+    setError(undefined);
+    const result = await requestJson<{ ok: boolean }>(
+      "DELETE",
+      `/api/cv/me?cvId=${encodeURIComponent(meta.id)}`,
+      {},
+    );
+    if (result.ok) {
+      router.push("/student/applications");
+      router.refresh();
+    } else {
+      setError(result.error);
+    }
   }
 
   async function toggleVisibility(isVisible: boolean) {
@@ -204,9 +225,14 @@ export function CvWorkspace({
         onBackToEdit={() => setMode("builder")}
         onToggleVisibility={toggleVisibility}
         onCreateNew={() => router.push("/student/cv?new=1")}
+        onDeleteCv={deleteCv}
       />
     );
   }
+
+  const previewHref = meta.id
+    ? `/student/cv/preview?cvId=${encodeURIComponent(meta.id)}`
+    : "/student/cv/preview";
 
   // 4-bosqich: Yangi zamonaviy bosqichma-bosqich tuzuvchi (Step Builder + Live A4 preview)
   if (mode === "builder") {
@@ -250,7 +276,7 @@ export function CvWorkspace({
               href="/student/applications"
               className="text-brand text-xs font-bold hover:underline"
             >
-              {t("complete.myApplicationsBtn")} →
+              {t("complete.myApplicationsBtn")} {"→"}
             </Link>
           </div>
         )}
@@ -282,10 +308,12 @@ export function CvWorkspace({
                   onClick={() => setMode("complete")}
                   className="rounded-xl bg-emerald-500/15 px-3 py-1 text-xs font-bold text-emerald-600 hover:bg-emerald-500/25 dark:text-emerald-400"
                 >
-                  ✓ {t("complete.paymentTitle").split("—")[0].trim()} / PDF
+                  {"✓ "}
+                  {t("complete.paymentTitle").split("—")[0].trim()}
+                  {" / PDF"}
                 </button>
                 <Link
-                  href="/student/cv/preview"
+                  href={previewHref}
                   className="text-brand text-xs font-bold underline-offset-2 hover:underline"
                 >
                   {t("previewLink")}
@@ -309,8 +337,12 @@ export function CvWorkspace({
           draft={draft}
           labels={currentLabels}
           saving={saving}
+          cvId={meta.id}
+          savedAt={meta.savedAt}
+          isPaid={meta.isPaid}
           isVisible={meta.isVisible}
           onToggleVisibility={toggleVisibility}
+          onOpenPayment={() => setMode("complete")}
           onChange={(next) => {
             setHandEdited(true);
             change(next);
@@ -394,20 +426,22 @@ export function CvWorkspace({
               <input
                 type="checkbox"
                 checked={meta.isVisible}
-                disabled={!meta.savedAt}
+                disabled={!meta.savedAt || !meta.isPaid}
                 onChange={(event) => toggleVisibility(event.target.checked)}
               />
               <span>
                 {!meta.savedAt
                   ? t("visibility.needSave")
-                  : meta.isVisible
-                    ? t("visibility.visible")
-                    : t("visibility.hidden")}
+                  : !meta.isPaid
+                    ? "Faollashtirish (to'lov) kerak"
+                    : meta.isVisible
+                      ? t("visibility.visible")
+                      : t("visibility.hidden")}
               </span>
             </label>
             {meta.savedAt && !dirty ? (
               <Link
-                href="/student/cv/preview"
+                href={previewHref}
                 className="text-brand text-sm font-semibold underline-offset-2 hover:underline"
               >
                 {t("previewLink")}

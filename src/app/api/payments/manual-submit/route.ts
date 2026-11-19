@@ -2,23 +2,23 @@ import { randomBytes } from "node:crypto";
 import { PaymentProvider, PaymentPurpose, PaymentStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import {
   ensureSupportThread,
   sendSupportMessage,
 } from "@/backend/chat/support-service";
+import { isValidImageDataUrl } from "@/backend/company/logo";
 import { db } from "@/backend/db";
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
+import { getCompanySubscriptionPlan } from "@/backend/payment/plans";
 import {
   CV_CREATION_PRICE_UZS,
   MANUAL_CARD_HOLDER,
   MANUAL_CARD_NUMBER,
   WEEKLY_PASS_PRICE_UZS,
 } from "@/backend/payment/service";
-import { getCompanySubscriptionPlan } from "@/backend/payment/plans";
-
-const DATA_URL_RE = /^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 
 const manualSubmitSchema = z.object({
   purpose: z.nativeEnum(PaymentPurpose),
@@ -28,7 +28,7 @@ const manualSubmitSchema = z.object({
   receiptDataUrl: z
     .string()
     .max(2_500_000)
-    .refine((v) => DATA_URL_RE.test(v), "INVALID_RECEIPT_IMAGE"),
+    .refine((v) => isValidImageDataUrl(v), "INVALID_RECEIPT_IMAGE"),
   note: z.string().trim().max(400).optional(),
 });
 
@@ -41,7 +41,9 @@ const PURPOSE_LABELS: Record<PaymentPurpose, string> = {
 
 export const POST = route(async (request) => {
   const user = await requireRole(request);
-  const input = await parseJson(request, manualSubmitSchema);
+  rateLimit(`manual-pay:${user.id}`, { max: 10, windowMs: 10 * 60_000 });
+  // Skrinshotlar 100 KB dan katta bo'lishi mumkin: 3 MB gacha ruxsat beriladi.
+  const input = await parseJson(request, manualSubmitSchema, 3_000_000);
 
   if (
     (input.purpose === PaymentPurpose.CV_CREATION ||
@@ -69,6 +71,7 @@ export const POST = route(async (request) => {
     companyId = company?.id;
   }
 
+  let verifiedCvId: string | undefined;
   if (input.purpose === PaymentPurpose.CV_CREATION) {
     if (!input.cvId) throw new ApiError(400, "VALIDATION");
     const cv = await db.cv.findFirst({
@@ -76,6 +79,14 @@ export const POST = route(async (request) => {
       select: { id: true },
     });
     if (!cv) throw new ApiError(404, "NOT_FOUND");
+    verifiedCvId = cv.id;
+  } else if (input.cvId && user.role === "STUDENT") {
+    const cv = await db.cv.findFirst({
+      where: { id: input.cvId, userId: user.id },
+      select: { id: true },
+    });
+    if (!cv) throw new ApiError(404, "NOT_FOUND");
+    verifiedCvId = cv.id;
   }
 
   if (input.purpose === PaymentPurpose.VACANCY_UNLOCK || input.vacancyId) {
@@ -107,7 +118,7 @@ export const POST = route(async (request) => {
       userId: user.id,
       companyId,
       vacancyId: input.vacancyId,
-      cvId: input.cvId,
+      cvId: verifiedCvId,
       amount,
       purpose: input.purpose,
       provider: PaymentProvider.CLICK,
@@ -152,6 +163,7 @@ export const POST = route(async (request) => {
     senderId: user.id,
     senderRole: user.role,
     text: supportText,
+    allowSystemTags: true,
   });
 
   return NextResponse.json({

@@ -1,9 +1,9 @@
+import { z } from "zod";
 import type { AiJsonRequest, AiProvider, AiRawResponse } from "./provider";
 import { AiProviderError } from "./provider";
 
 /**
  * Groq Llama 3 provayderi (llama-3.3-70b-versatile).
- * https://console.groq.com orqali mutlaqo bepul API kalit beriladi.
  */
 export class GroqProvider implements AiProvider {
   readonly name = "groq";
@@ -22,6 +22,7 @@ export class GroqProvider implements AiProvider {
       ? request.model
       : this.defaultModel;
     const url = "https://api.groq.com/openai/v1/chat/completions";
+    const jsonSchema = JSON.stringify(z.toJSONSchema(request.schema));
 
     try {
       const res = await fetch(url, {
@@ -30,12 +31,13 @@ export class GroqProvider implements AiProvider {
           "Content-Type": "application/json",
           Authorization: `Bearer ${this.apiKey}`,
         },
+        signal: AbortSignal.timeout(25_000),
         body: JSON.stringify({
           model,
           messages: [
             {
               role: "system",
-              content: `${request.system}\nOutput MUST be valid JSON.`,
+              content: `${request.system}\nOutput MUST be a valid JSON object matching this exact JSON Schema:\n${jsonSchema}`,
             },
             { role: "user", content: request.input },
           ],

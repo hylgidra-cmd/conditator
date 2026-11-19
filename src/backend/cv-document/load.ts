@@ -11,24 +11,28 @@ import type { CvDocumentInput } from "./types";
 export async function loadSavedCvDocument(
   userId: string,
   cvId?: string,
-): Promise<CvDocumentInput | null> {
+): Promise<(CvDocumentInput & { id: string; isPaid: boolean }) | null> {
   const cv = await db.cv.findFirst({
     where: cvId ? { id: cvId, userId } : { userId },
     orderBy: { updatedAt: "desc" },
     select: {
+      id: true,
       data: true,
       language: true,
       workTypes: true,
       savedAt: true,
       templateId: true,
+      isPaid: true,
     },
   });
   if (!cv?.savedAt) return null;
   return {
+    id: cv.id,
     data: cvDataSchema.parse(cv.data),
     language: cv.language,
     workTypes: cv.workTypes,
     templateId: cv.templateId,
+    isPaid: cv.isPaid,
   };
 }
 
@@ -78,12 +82,8 @@ const CYRILLIC: Record<string, string> = {
   і: "i",
 };
 
-/**
- * Yuklab olinadigan fayl nomi, faqat ASCII: "CV-Aziza-Karimova.pdf".
- * (UTF-8 filename* ni ba'zi Chromium versiyalari qabul qilmaydi, shuning uchun ishlatilmaydi.)
- */
-export function pdfContentDisposition(fullName: string | null): string {
-  const name = Array.from(fullName?.trim() ?? "")
+function sanitizeAsciiFilename(fullName: string | null): string {
+  return Array.from(fullName?.trim() ?? "")
     .map((char) => {
       const lower = char.toLowerCase();
       const latin = CYRILLIC[lower];
@@ -98,8 +98,23 @@ export function pdfContentDisposition(fullName: string | null): string {
     .replace(/\s+/g, "-")
     .replace(/[^\w-]/g, "")
     .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+    .replace(/^-|-$/g, "")
+    .slice(0, 60);
+}
+
+/**
+ * Yuklab olinadigan fayl nomi, faqat ASCII: "CV-Aziza-Karimova.pdf".
+ * (UTF-8 filename* ni ba'zi Chromium versiyalari qabul qilmaydi, shuning uchun ishlatilmaydi.)
+ */
+export function pdfContentDisposition(fullName: string | null): string {
+  const name = sanitizeAsciiFilename(fullName);
   return `attachment; filename="${name ? `CV-${name}` : "CV"}.pdf"`;
+}
+
+/** Obyektivka DOCX fayl nomi, faqat ASCII (non-ISO-8859-1 header xatosini oldini oladi). */
+export function docxContentDisposition(fullName: string | null): string {
+  const name = sanitizeAsciiFilename(fullName);
+  return `attachment; filename="${name ? `Obyektivka-${name}` : "Obyektivka"}.docx"`;
 }
 
 /**

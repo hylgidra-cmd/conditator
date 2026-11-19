@@ -93,6 +93,10 @@ export function sanitizeCvData(
     github: shouldHideSocials ? null : data.github,
     linkedin: shouldHideSocials ? null : data.linkedin,
     website: shouldHideSocials ? null : data.website,
+    projects: data.projects?.map((p) => ({
+      ...p,
+      link: shouldHideSocials ? null : p.link,
+    })),
     contact: {
       email: shouldHideEmail
         ? isLocked
@@ -112,7 +116,12 @@ export function sanitizeCvData(
     obyektivka: data.obyektivka
       ? {
           ...data.obyektivka,
+          tugilganSana: isLocked ? null : data.obyektivka.tugilganSana,
           tugilganJoy: shouldHideAddress ? null : data.obyektivka.tugilganJoy,
+          millati: isLocked ? null : data.obyektivka.millati,
+          partiya: isLocked ? null : data.obyektivka.partiya,
+          harbiyUnvon: isLocked ? null : data.obyektivka.harbiyUnvon,
+          deputatlik: isLocked ? null : data.obyektivka.deputatlik,
           uyTelefoni: shouldHidePhone ? null : data.obyektivka.uyTelefoni,
           qarindoshlar:
             isLocked || shouldHideName || shouldHideAddress

@@ -21,6 +21,7 @@ type Message = {
   fileSize?: number | null;
   createdAt: string;
   readAt?: string | null;
+  receiptPaymentStatus?: "PENDING" | "COMPLETED" | "FAILED" | "CANCELLED" | null;
 };
 
 type SupportThreadSummary = {
@@ -185,6 +186,7 @@ export function ChatRoom({
   useEffect(() => {
     if (!activeId) return;
     let isMounted = true;
+    setMessages([]);
 
     const url = activeId.startsWith("support:")
       ? `/api/support/threads/${activeId.slice(8)}/messages`
@@ -205,17 +207,33 @@ export function ChatRoom({
     };
   }, [activeId]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const lastScrolledRef = useRef<{ activeId: string; lastMsgId: string | null }>({
+    activeId: "",
+    lastMsgId: null,
+  });
 
-  // 1-message rule check (applies only to student vacancy chats, not support chat):
-  const lastMessage = messages[messages.length - 1];
+  useEffect(() => {
+    const lastMsgId = messages[messages.length - 1]?.id ?? null;
+    const prev = lastScrolledRef.current;
+    if (
+      prev.activeId !== activeId ||
+      (lastMsgId && lastMsgId !== prev.lastMsgId)
+    ) {
+      lastScrolledRef.current = { activeId, lastMsgId };
+      if (lastMsgId) {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [activeId, messages]);
+
+  // 1-message rule check (applies only to student vacancy chats before company replies once):
+  const studentHasSent = messages.some((m) => m.senderRole === "STUDENT");
+  const companyHasReplied = messages.some((m) => m.senderRole === "COMPANY");
   const isOneMessageRuleBlocked =
     !isSupportActive &&
     currentUserRole === "STUDENT" &&
-    lastMessage &&
-    lastMessage.senderRole === "STUDENT";
+    studentHasSent &&
+    !companyHasReplied;
 
   async function handleSend(e: React.FormEvent) {
     e.preventDefault();
@@ -523,11 +541,11 @@ export function ChatRoom({
                           className="max-h-64 w-auto rounded-xl object-contain"
                         />
                       </a>
-                      {currentUserRole === "ADMIN" ? (
+                      {currentUserRole === "ADMIN" && m.receiptPaymentStatus ? (
                         <div className="rounded-xl bg-white/95 p-2 text-slate-900 shadow-xs">
                           <AdminPaymentRowActions
                             paymentId={receiptPaymentId}
-                            initialStatus="PENDING"
+                            initialStatus={m.receiptPaymentStatus}
                             hasReceipt={false}
                           />
                         </div>

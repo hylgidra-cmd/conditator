@@ -1,18 +1,10 @@
 import { NextResponse } from "next/server";
-import { currentUser } from "@/backend/auth/current-user";
+import { requireRole } from "@/backend/auth/session";
 import { listSupportThreadsForUser } from "@/backend/chat/support-service";
-import { errorResponse } from "@/backend/http/errors";
+import { route } from "@/backend/http/route";
 
-export async function GET(req: Request) {
-  const user = await currentUser();
-  if (!user) {
-    return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-  }
-
-  try {
-    const threads = await listSupportThreadsForUser(user.id, user.role);
-    return NextResponse.json({ threads });
-  } catch (err) {
-    return errorResponse(err, req);
-  }
-}
+export const GET = route(async (request) => {
+  const user = await requireRole(request);
+  const threads = await listSupportThreadsForUser(user.id, user.role);
+  return NextResponse.json({ threads });
+});

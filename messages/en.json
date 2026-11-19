@@ -516,7 +516,7 @@
       "subActive": "AI matching subscription active (until {date})",
       "subInactive": "AI matching subscription inactive",
       "unlockTitle": "Unlock top candidates (80–100% match)",
-      "unlockDesc": "14,999 UZS — unlocks contact details of all top-matched candidates for 15 days.",
+      "unlockDesc": "From 15,000 UZS — unlocks contact details and PDF resumes of all candidates during your subscription.",
       "historyTitle": "Payment history",
       "empty": "No payments yet.",
       "purpose": "Purpose",
@@ -624,7 +624,7 @@
     "viewApplication": "View",
     "lockedBadge": "🔒 Locked (80%+)",
     "unlockBanner": "Contact details and PDF for 80–100% top candidates are locked.",
-    "unlockBtn": "🔓 Unlock for 14,999 UZS (15 days)",
+    "unlockBtn": "🔓 Subscribe (from 15,000 UZS)",
     "unlockedBanner": "🔓 Top candidates (80–100%) are unlocked for this vacancy."
   },
   "Candidate": {

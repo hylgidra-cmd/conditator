@@ -83,8 +83,11 @@ export function matchHash(
     .digest("hex");
 }
 
-function displayInfo(row: CandidateRow) {
-  return { skills: row.skills.slice(0, 12), location: row.location };
+function displayInfo(row: CandidateRow, isLocked: boolean) {
+  return {
+    skills: row.skills.slice(0, 12),
+    location: isLocked || row.hideAddress ? null : row.location,
+  };
 }
 
 /** Zaxira: PostgreSQL da hisoblangan kalit so'z mosligi bo'yicha tartib. AI chaqirilmaydi. */
@@ -123,7 +126,7 @@ function keywordResults(
           matchedTerms: row.matchedTerms,
           decision: decisions.get(row.id) ?? ("NONE" as const),
           stage: stagesMap.get(row.id),
-          ...displayInfo(row),
+          ...displayInfo(row, isLocked),
         },
       };
     })
@@ -218,7 +221,7 @@ function aiOutcome(state: State): MatchOutcome {
         matchedTerms: null,
         decision: match.decision,
         stage: state.stagesMap.get(match.cvId),
-        ...displayInfo(row),
+        ...displayInfo(row, isLocked),
       };
     })
     .filter(

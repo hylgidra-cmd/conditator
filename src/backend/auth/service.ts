@@ -66,7 +66,7 @@ export async function resetPassword(
   input: z.infer<typeof resetSchema>,
 ): Promise<void> {
   const user = await db.user.findUnique({ where: { email: input.email } });
-  if (!user) throw new ApiError(400, "CODE_INVALID");
+  if (!user || user.status !== "ACTIVE") throw new ApiError(400, "CODE_INVALID");
 
   await consumeCode(user.id, "RESET", input.code);
   await db.$transaction([

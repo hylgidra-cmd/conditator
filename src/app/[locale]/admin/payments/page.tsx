@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { AdminPaymentRowActions } from "@/frontend/components/admin/payment-actions";
@@ -8,13 +9,27 @@ import { MANUAL_CARD_HOLDER, MANUAL_CARD_NUMBER } from "@/backend/payment/servic
 
 export const dynamic = "force-dynamic";
 
+const PURPOSE_LABELS: Record<string, string> = {
+  CV_CREATION: "CV yaratish va faollashtirish",
+  CV_ACTIVATION: "CV faollashtirish",
+  WEEKLY_APPLY_PASS: "7 kunlik ariza ruxsatnomasi",
+  VACANCY_UNLOCK: "Kompaniya obunasi",
+  SUBSCRIPTION: "Kompaniya obunasi",
+};
+
 export default async function AdminPaymentsPage() {
   await requireAdminPage();
   const t = await getTranslations("Admin");
 
   const [payments, completedAgg, pendingCount] = await Promise.all([
     db.payment.findMany({
-      include: {
+      select: {
+        id: true,
+        purpose: true,
+        amount: true,
+        status: true,
+        externalId: true,
+        createdAt: true,
         user: { select: { email: true } },
         company: { select: { name: true } },
       },
@@ -28,6 +43,33 @@ export default async function AdminPaymentsPage() {
     }),
     db.payment.count({ where: { status: "PENDING" } }),
   ]);
+
+  const paymentIds = payments.map((p) => p.id);
+  const metaRows =
+    paymentIds.length > 0
+      ? await db.$queryRaw<
+          Array<{
+            id: string;
+            hasReceipt: boolean;
+            note: string | null;
+            planName: string | null;
+            durationDays: number | null;
+          }>
+        >(Prisma.sql`
+          SELECT id,
+            COALESCE(length("transactionDetails"->>'receiptDataUrl') > 0, false) AS "hasReceipt",
+            "transactionDetails"->>'note' AS "note",
+            "transactionDetails"->>'planName' AS "planName",
+            CASE
+              WHEN ("transactionDetails"->>'durationDays') ~ '^[0-9]+$'
+              THEN ("transactionDetails"->>'durationDays')::int
+              ELSE NULL
+            END AS "durationDays"
+          FROM "Payment"
+          WHERE id IN (${Prisma.join(paymentIds)})
+        `)
+      : [];
+  const metaMap = new Map(metaRows.map((row) => [row.id, row]));
 
   const totalRevenue = completedAgg._sum.amount ?? 0;
   const cardSummary = `${MANUAL_CARD_NUMBER} · ${MANUAL_CARD_HOLDER}`;
@@ -103,17 +145,12 @@ export default async function AdminPaymentsPage() {
             </thead>
             <tbody className="divide-line divide-y">
               {payments.map((p) => {
-                const details = p.transactionDetails as {
-                  receiptDataUrl?: string;
-                  note?: string;
-                  planName?: string;
-                  durationDays?: number;
-                } | null;
-                const hasReceipt = Boolean(details?.receiptDataUrl);
+                const details = metaMap.get(p.id);
+                const hasReceipt = Boolean(details?.hasReceipt);
                 const purposeDisplay =
                   details?.planName && details?.durationDays
                     ? `Obuna — ${details.planName} (${details.durationDays} kun)`
-                    : p.purpose;
+                    : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
 
                 return (
                   <tr

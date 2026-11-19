@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { CvPaymentShield } from "@/frontend/components/cv/cv-payment-shield";
 import { CvDocument } from "@/frontend/components/cv-document/cv-document";
 import { ManualCardPaymentBox } from "@/frontend/components/payment/manual-card-payment";
 import type {
@@ -22,6 +23,7 @@ type Props = {
   onBackToEdit: () => void;
   onToggleVisibility: (isVisible: boolean) => Promise<void>;
   onCreateNew: () => void;
+  onDeleteCv?: () => Promise<void>;
 };
 
 export function CvCompleteScreen({
@@ -33,15 +35,23 @@ export function CvCompleteScreen({
   onBackToEdit,
   onToggleVisibility,
   onCreateNew,
+  onDeleteCv,
 }: Props) {
   const t = useTranslations("StudentCv.complete");
   const tCv = useTranslations("StudentCv");
   const [togglingVis, setTogglingVis] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const data = dataFromDraft(draft);
   const pdfUrl = meta.id
     ? `/api/cv/me/pdf?cvId=${encodeURIComponent(meta.id)}`
     : "/api/cv/me/pdf";
+  const docxUrl = meta.id
+    ? `/api/cv/me/docx?cvId=${encodeURIComponent(meta.id)}`
+    : "/api/cv/me/docx";
+  const previewUrl = meta.id
+    ? `/student/cv/preview?cvId=${encodeURIComponent(meta.id)}`
+    : "/student/cv/preview";
 
   async function handleVisibility(checked: boolean) {
     setTogglingVis(true);
@@ -52,13 +62,30 @@ export function CvCompleteScreen({
     }
   }
 
+  async function handleDelete() {
+    if (!onDeleteCv || deleting) return;
+    if (!window.confirm("Ushbu CV ni butunlay o'chirmoqchimisiz?")) return;
+    setDeleting(true);
+    try {
+      await onDeleteCv();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
+  function scrollToPayment() {
+    document
+      .getElementById("cv-payment-section")
+      ?.scrollIntoView({ behavior: "smooth" });
+  }
+
   return (
     <div className="space-y-6">
       {/* Top Success Banner */}
       <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-4 rounded-3xl border p-6 shadow-sm">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/15 text-2xl text-emerald-500">
-            ✓
+            {"✓"}
           </div>
           <div>
             <h2 className="text-foreground text-xl font-black sm:text-2xl">
@@ -72,16 +99,36 @@ export function CvCompleteScreen({
           <button
             type="button"
             onClick={onBackToEdit}
-            className="border-border bg-surface text-foreground hover:bg-muted/20 rounded-xl border px-4 py-2.5 text-xs font-bold transition-colors"
+            className="border-border bg-surface text-foreground hover:bg-muted/20 cursor-pointer rounded-xl border px-4 py-2.5 text-xs font-bold transition-colors"
           >
             {t("backToEdit")}
           </button>
-          <a
-            href={pdfUrl}
-            className="bg-brand text-brand-foreground rounded-xl px-5 py-2.5 text-xs font-bold shadow transition-opacity hover:opacity-95"
-          >
-            {t("downloadPdf")}
-          </a>
+          {meta.isPaid ? (
+            <>
+              <a
+                href={pdfUrl}
+                className="bg-brand text-brand-foreground rounded-xl px-5 py-2.5 text-xs font-bold shadow transition-opacity hover:opacity-95"
+              >
+                {t("downloadPdf")}
+              </a>
+              {draft.templateId === "obyektivka" ? (
+                <a
+                  href={docxUrl}
+                  className="border-primary/40 bg-primary-soft text-primary-text rounded-xl border px-4 py-2.5 text-xs font-bold transition-colors hover:opacity-90"
+                >
+                  {"📄 Word (.docx)"}
+                </a>
+              ) : null}
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={scrollToPayment}
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-5 py-2.5 text-xs font-extrabold transition-all"
+            >
+              {"🔒 PDF / DOCX ochish (5 000 so'm)"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -95,7 +142,10 @@ export function CvCompleteScreen({
         {/* Left Column: Payment, Visibility, Actions & Matching Vacancies */}
         <div className="space-y-6 lg:col-span-7">
           {/* 1. Payment / Activation Card (5 000 so'm) */}
-          <div className="border-border bg-surface space-y-4 rounded-3xl border p-6 shadow-sm">
+          <div
+            id="cv-payment-section"
+            className="border-border bg-surface space-y-4 rounded-3xl border p-6 shadow-sm"
+          >
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="text-foreground text-base font-extrabold">
                 {t("paymentTitle")}
@@ -112,7 +162,9 @@ export function CvCompleteScreen({
             </div>
 
             <p className="text-muted text-xs leading-relaxed">
-              {t("paymentDesc")}
+              {meta.isPaid
+                ? t("paymentDesc")
+                : "To'lov tasdiqlangach, skrinshot va ekran yozib olish cheklovi avtomatik olib tashlanadi, toza PDF/DOCX yuklash va kompaniyalarga ko'rinish ochiladi."}
             </p>
 
             {!meta.isPaid && meta.id && (
@@ -144,26 +196,38 @@ export function CvCompleteScreen({
               />
             </div>
 
-            <div className="border-border/60 flex flex-wrap gap-2.5 border-t pt-4">
-              <Link
-                href="/student/cv/preview"
-                className="border-border bg-surface text-foreground hover:bg-muted/20 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
-              >
-                {t("fullPreview")}
-              </Link>
-              <Link
-                href="/student/applications"
-                className="border-border bg-surface text-foreground hover:bg-muted/20 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
-              >
-                {t("myApplicationsBtn")}
-              </Link>
-              <button
-                type="button"
-                onClick={onCreateNew}
-                className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
-              >
-                {t("createNewCv")}
-              </button>
+            <div className="border-border/60 flex flex-wrap items-center justify-between gap-2.5 border-t pt-4">
+              <div className="flex flex-wrap gap-2.5">
+                <Link
+                  href={previewUrl}
+                  className="border-border bg-surface text-foreground hover:bg-muted/20 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+                >
+                  {t("fullPreview")}
+                </Link>
+                <Link
+                  href="/student/applications"
+                  className="border-border bg-surface text-foreground hover:bg-muted/20 rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+                >
+                  {t("myApplicationsBtn")}
+                </Link>
+                <button
+                  type="button"
+                  onClick={onCreateNew}
+                  className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 cursor-pointer rounded-xl border px-4 py-2 text-xs font-bold transition-colors"
+                >
+                  {t("createNewCv")}
+                </button>
+              </div>
+              {onDeleteCv && meta.id ? (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={deleting}
+                  className="text-danger cursor-pointer rounded-xl border border-red-500/30 bg-red-500/10 px-3.5 py-2 text-xs font-bold transition-colors hover:bg-red-500/20 disabled:opacity-50"
+                >
+                  {deleting ? "O'chirilmoqda..." : "🗑️ CV ni o'chirish"}
+                </button>
+              ) : null}
             </div>
           </div>
 
@@ -177,7 +241,7 @@ export function CvCompleteScreen({
                 href="/vacancies"
                 className="text-brand text-xs font-bold hover:underline"
               >
-                {t("browseAllVacancies")} →
+                {t("browseAllVacancies")} {"→"}
               </Link>
             </div>
 
@@ -234,35 +298,40 @@ export function CvCompleteScreen({
           </div>
         </div>
 
-        {/* Right Column: Compact A4 Paper Preview */}
+        {/* Right Column: Compact A4 Paper Preview wrapped in CvPaymentShield */}
         <div className="hidden lg:col-span-5 lg:block">
           <div className="border-border bg-muted/20 sticky top-20 rounded-3xl border p-4 shadow-sm">
-            <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
-              <div
-                className="flex justify-center"
-                style={{ height: `${1123 * 0.56 + 24}px` }}
-              >
+            <CvPaymentShield
+              isPaid={Boolean(meta.isPaid)}
+              onUnlockClick={scrollToPayment}
+            >
+              <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
                 <div
-                  style={{
-                    width: "794px",
-                    minWidth: "794px",
-                    transform: "scale(0.56)",
-                    transformOrigin: "top center",
-                  }}
-                  className="pt-2"
+                  className="flex justify-center"
+                  style={{ height: `${1123 * 0.56 + 24}px` }}
                 >
-                  <CvDocument
-                    cv={{
-                      data,
-                      language: draft.language as CvDocumentLanguage,
-                      workTypes: draft.workTypes as WorkType[],
-                      templateId: draft.templateId,
+                  <div
+                    style={{
+                      width: "794px",
+                      minWidth: "794px",
+                      transform: "scale(0.56)",
+                      transformOrigin: "top center",
                     }}
-                    labels={labels}
-                  />
+                    className="pt-2"
+                  >
+                    <CvDocument
+                      cv={{
+                        data,
+                        language: draft.language as CvDocumentLanguage,
+                        workTypes: draft.workTypes as WorkType[],
+                        templateId: draft.templateId,
+                      }}
+                      labels={labels}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </CvPaymentShield>
           </div>
         </div>
       </div>

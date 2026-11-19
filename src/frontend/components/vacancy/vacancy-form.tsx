@@ -5,7 +5,11 @@ import { type FormEvent, useState } from "react";
 import { Field, FormAlert, useErrorText } from "@/frontend/components/ui/form";
 import { useRouter } from "@/i18n/navigation";
 import { requestJson } from "@/backend/client/api";
-import { VACANCY_TEXT_MAX, VACANCY_WORK_TYPES } from "@/backend/vacancy/schema";
+import {
+  VACANCY_CURRENCIES,
+  VACANCY_TEXT_MAX,
+  VACANCY_WORK_TYPES,
+} from "@/backend/vacancy/schema";
 import { LocationPickerModal } from "./location-picker-modal";
 
 export type VacancyFormValues = {
@@ -16,6 +20,10 @@ export type VacancyFormValues = {
   minExperienceYears: string;
   location: string;
   workType: string;
+  salaryFrom: string;
+  salaryTo: string;
+  currency: "UZS" | "USD";
+  status: "ACTIVE" | "CLOSED";
 };
 
 export const EMPTY_VACANCY: VacancyFormValues = {
@@ -26,6 +34,10 @@ export const EMPTY_VACANCY: VacancyFormValues = {
   minExperienceYears: "",
   location: "",
   workType: "",
+  salaryFrom: "",
+  salaryTo: "",
+  currency: "UZS",
+  status: "ACTIVE",
 };
 
 const list = (value: string) =>
@@ -48,6 +60,7 @@ export function VacancyForm({
   const router = useRouter();
   const [values, setValues] = useState(initial);
   const [pending, setPending] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string>();
   const [fields, setFields] = useState<Record<string, string>>({});
   const [mapOpen, setMapOpen] = useState(false);
@@ -63,6 +76,8 @@ export function VacancyForm({
     setError(undefined);
     setFields({});
     const years = values.minExperienceYears.trim();
+    const salaryFromRaw = values.salaryFrom.trim();
+    const salaryToRaw = values.salaryTo.trim();
     const body = {
       title: values.title || null,
       rawText: values.rawText || null,
@@ -72,6 +87,10 @@ export function VacancyForm({
       minExperienceYears: years === "" ? null : Number(years),
       location: values.location || null,
       workType: values.workType || null,
+      salaryFrom: salaryFromRaw === "" ? null : Number(salaryFromRaw),
+      salaryTo: salaryToRaw === "" ? null : Number(salaryToRaw),
+      currency: values.currency,
+      ...(vacancyId ? { status: values.status } : {}),
     };
     const result = vacancyId
       ? await requestJson("PUT", `/api/vacancies/${vacancyId}`, body)
@@ -84,6 +103,23 @@ export function VacancyForm({
     }
     setError(result.error);
     setFields(result.fields ?? {});
+  }
+
+  async function onDelete() {
+    if (!vacancyId || deleting || pending) return;
+    if (!window.confirm("Ushbu vakansiyani butunlay o'chirmoqchimisiz?")) {
+      return;
+    }
+    setDeleting(true);
+    setError(undefined);
+    const result = await requestJson("DELETE", `/api/vacancies/${vacancyId}`);
+    setDeleting(false);
+    if (result.ok) {
+      router.push("/company/vacancies");
+      router.refresh();
+      return;
+    }
+    setError(result.error);
   }
 
   return (
@@ -203,26 +239,102 @@ export function VacancyForm({
             </select>
           </div>
         </div>
+
+        {/* Salary Range + Currency */}
+        <div className="border-border/70 grid gap-4 border-t pt-4 sm:grid-cols-3">
+          <Field
+            name="salaryFrom"
+            type="number"
+            min={0}
+            inputMode="numeric"
+            label="Maosh (dan)"
+            placeholder="Masalan: 4000000"
+            value={values.salaryFrom}
+            onChange={set("salaryFrom")}
+            error={errorText(fields.salaryFrom)}
+          />
+          <Field
+            name="salaryTo"
+            type="number"
+            min={0}
+            inputMode="numeric"
+            label="Maosh (gacha)"
+            placeholder="Masalan: 8000000"
+            value={values.salaryTo}
+            onChange={set("salaryTo")}
+            error={errorText(fields.salaryTo)}
+          />
+          <div className="space-y-1">
+            <label htmlFor="currency" className="block text-sm font-medium">
+              {"Valyuta"}
+            </label>
+            <select
+              id="currency"
+              value={values.currency}
+              onChange={set("currency")}
+              className="border-border bg-surface w-full rounded-lg border px-3 py-2"
+            >
+              {VACANCY_CURRENCIES.map((cur) => (
+                <option key={cur} value={cur}>
+                  {cur}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Status toggle on edit */}
+        {vacancyId ? (
+          <div className="border-border/70 border-t pt-4">
+            <label htmlFor="status" className="mb-1 block text-sm font-medium">
+              {"Vakansiya holati"}
+            </label>
+            <select
+              id="status"
+              value={values.status}
+              onChange={set("status")}
+              className="border-border bg-surface w-full rounded-lg border px-3 py-2 sm:max-w-xs"
+            >
+              <option value="ACTIVE">{"Faol (nomzodlarga ko'rinadi)"}</option>
+              <option value="CLOSED">
+                {"Yopilgan (yangi arizalar to'xtatilgan)"}
+              </option>
+            </select>
+          </div>
+        ) : null}
       </fieldset>
 
       <FormAlert>
         {errorText(error === "VALIDATION" ? undefined : error)}
       </FormAlert>
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="submit"
-          disabled={pending}
-          className="bg-brand text-brand-foreground rounded-lg px-5 py-2 font-semibold disabled:opacity-60"
-        >
-          {t("save")}
-        </button>
-        <button
-          type="button"
-          onClick={() => router.push("/company/vacancies")}
-          className="border-border rounded-lg border px-5 py-2 font-medium"
-        >
-          {t("cancel")}
-        </button>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            disabled={pending || deleting}
+            className="bg-brand text-brand-foreground rounded-lg px-5 py-2 font-semibold disabled:opacity-60"
+          >
+            {t("save")}
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/company/vacancies")}
+            className="border-border rounded-lg border px-5 py-2 font-medium"
+          >
+            {t("cancel")}
+          </button>
+        </div>
+
+        {vacancyId ? (
+          <button
+            type="button"
+            disabled={pending || deleting}
+            onClick={onDelete}
+            className="border-red-500/35 bg-danger-soft text-danger hover:bg-red-500/20 cursor-pointer rounded-lg border px-4 py-2 text-sm font-semibold transition disabled:opacity-60"
+          >
+            {deleting ? "O'chirilmoqda..." : "Vakansiyani o'chirish"}
+          </button>
+        ) : null}
       </div>
     </form>
   );

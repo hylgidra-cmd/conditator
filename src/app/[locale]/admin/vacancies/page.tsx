@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
+import { AdminVacancyActions } from "@/frontend/components/admin/vacancy-actions";
 import { Link } from "@/i18n/navigation";
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
@@ -35,7 +36,7 @@ export default async function AdminVacanciesPage() {
   });
 
   return (
-    <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
+    <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
       <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
         <div
           aria-hidden
@@ -67,7 +68,7 @@ export default async function AdminVacanciesPage() {
                 <th className="px-4 py-3.5 font-bold">{t("status")}</th>
                 <th className="px-4 py-3.5 font-bold">{t("applications")}</th>
                 <th className="px-4 py-3.5 font-bold">{t("created")}</th>
-                <th className="px-4 py-3.5 font-bold"></th>
+                <th className="px-4 py-3.5 text-right font-bold"></th>
               </tr>
             </thead>
             <tbody className="divide-line divide-y">
@@ -106,12 +107,18 @@ export default async function AdminVacanciesPage() {
                     {formatDate(v.createdAt)}
                   </td>
                   <td className="px-4 py-3.5 text-right">
-                    <Link
-                      href={`/vacancies/${v.id}`}
-                      className="text-primary-text text-xs font-bold hover:underline"
-                    >
-                      {t("openVacancy")}
-                    </Link>
+                    <div className="flex flex-wrap items-center justify-end gap-2">
+                      <Link
+                        href={`/vacancies/${v.id}`}
+                        className="text-primary-text text-xs font-bold hover:underline"
+                      >
+                        {t("openVacancy")}
+                      </Link>
+                      <AdminVacancyActions
+                        vacancyId={v.id}
+                        initialStatus={v.status}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -87,6 +87,17 @@ export function ManualCardPaymentBox({
   const [error, setError] = useState<string | null>(null);
 
   const isCompanyPlan = purpose === "VACANCY_UNLOCK";
+  const isWeeklyPass = purpose === "WEEKLY_APPLY_PASS";
+  const submittedText = isCompanyPlan
+    ? "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan Kompaniya Obunasi darhol faollashadi va barcha CV kontaktlari hamda PDF lar ochiladi."
+    : isWeeklyPass
+      ? "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan 7 kunlik ariza yuborish ruxsatnomasi darhol faollashadi."
+      : "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan CV darhol faollashadi hamda skrinshot cheklovi olib tashlanadi.";
+  const hintText = isCompanyPlan
+    ? "Admin «Qabul qilindi» tugmasini bosishi bilan tanlangan obuna muddati darhol faollashadi."
+    : isWeeklyPass
+      ? "Admin «Qabul qilindi» tugmasini bosishi bilan 7 kunlik ariza yuborish ruxsatnomasi darhol faollashadi."
+      : "Admin «Qabul qilindi» tugmasini bosishi bilan CV va toza PDF/DOCX yuklab olish darhol faollashadi.";
 
   async function handleCopyCard() {
     try {
@@ -165,9 +176,7 @@ export function ManualCardPaymentBox({
               {`To'lov cheki yuborildi (#${submittedCode})`}
             </h4>
             <p className="text-subtle text-xs leading-relaxed sm:text-sm">
-              {isCompanyPlan
-                ? "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan Kompaniya Obunasi darhol faollashadi va barcha CV kontaktlari hamda PDF lar ochiladi."
-                : "Chek rasmi Qo'llab-quvvatlash bo'limiga va Admin panelga yuborildi. Administrator «Qabul qilindi» tugmasini bosishi bilan CV va xizmat darhol ishga tushadi."}
+              {submittedText}
             </p>
             <div className="pt-2">
               <Link
@@ -249,11 +258,7 @@ export function ManualCardPaymentBox({
               "To'lov cheki (skrinshot) rasmini yuklang — u avtomatik Qo'llab-quvvatlash va Admin panelga yuboriladi:"
             }
           </p>
-          <p className="text-subtle text-[11px]">
-            {isCompanyPlan
-              ? "Admin «Qabul qilindi» tugmasini bosishi bilan tanlangan obuna muddati darhol faollashadi."
-              : "Admin «Qabul qilindi» tugmasini bosishi bilan CV darhol faollashadi."}
-          </p>
+          <p className="text-subtle text-[11px]">{hintText}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-3">

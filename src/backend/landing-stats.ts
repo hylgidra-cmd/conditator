@@ -69,7 +69,7 @@ async function fetchLandingStats(): Promise<LandingStats> {
     const now = new Date();
     const activeVacancyWhere = {
       status: "ACTIVE" as const,
-      company: { approval: "APPROVED" as const },
+      company: { approval: "APPROVED" as const, user: { status: "ACTIVE" as const } },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     };
 
@@ -89,9 +89,15 @@ async function fetchLandingStats(): Promise<LandingStats> {
           user: { status: "ACTIVE" },
         },
       }),
-      db.company.count({ where: { approval: "APPROVED" } }),
+      db.company.count({
+        where: { approval: "APPROVED", user: { status: "ACTIVE" } },
+      }),
       db.company.findMany({
-        where: { approval: "APPROVED", name: { not: null } },
+        where: {
+          approval: "APPROVED",
+          user: { status: "ACTIVE" },
+          name: { not: null },
+        },
         orderBy: { approvedAt: "desc" },
         take: 10,
         select: { id: true, name: true, industry: true, logoPath: true },

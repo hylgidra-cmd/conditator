@@ -1,9 +1,9 @@
+import { z } from "zod";
 import type { AiJsonRequest, AiProvider, AiRawResponse } from "./provider";
 import { AiProviderError } from "./provider";
 
 /**
- * Google Gemini API provayderi (gemini-2.0-flash yoki gemini-1.5-flash).
- * https://aistudio.google.com orqali mutlaqo bepul API kalit olinadi.
+ * Google Gemini API provayderi (gemini-2.5-flash).
  * Native fetch ishlatiladi, hech qanday qo'shimcha og'ir paket talab qilmaydi.
  */
 export class GeminiProvider implements AiProvider {
@@ -23,14 +23,19 @@ export class GeminiProvider implements AiProvider {
       request.model.startsWith("gemini") && request.model !== "gemini-2.0-flash"
         ? request.model
         : this.defaultModel;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${this.apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const jsonSchema = JSON.stringify(z.toJSONSchema(request.schema));
 
-    const promptText = `${request.system}\n\nJSON Schema/Instruction:\nReturn ONLY a valid JSON object matching the requested schema.\n\nInput Data:\n${request.input}`;
+    const promptText = `${request.system}\n\nRequired JSON Schema (return ONLY a valid JSON object matching this exact schema):\n${jsonSchema}\n\nInput Data:\n${request.input}`;
 
     try {
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": this.apiKey,
+        },
+        signal: AbortSignal.timeout(25_000),
         body: JSON.stringify({
           contents: [{ parts: [{ text: promptText }] }],
           generationConfig: {

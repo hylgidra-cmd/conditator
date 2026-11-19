@@ -12,6 +12,7 @@ import { ApiError } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 /** Kompaniya uchun ochiq CV ning PDF i. Ruxsat: GET /api/cv/:id bilan bir xil. */
 export const GET = route<{ params: Promise<{ id: string }> }>(

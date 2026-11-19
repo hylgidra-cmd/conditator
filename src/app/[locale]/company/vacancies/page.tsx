@@ -67,7 +67,34 @@ export default async function VacanciesPage({
       ) : (
         <ul className="space-y-3.5">
           {items.map((vacancy, idx) => {
+            const salaryLabel =
+              vacancy.salaryFrom || vacancy.salaryTo
+                ? [
+                    vacancy.salaryFrom
+                      ? vacancy.salaryFrom.toLocaleString("en-US")
+                      : "",
+                    vacancy.salaryTo
+                      ? `– ${vacancy.salaryTo.toLocaleString("en-US")}`
+                      : "",
+                    vacancy.currency,
+                  ]
+                    .filter(Boolean)
+                    .join(" ")
+                : null;
+            const statusText =
+              vacancy.status === "ACTIVE"
+                ? "Faol"
+                : vacancy.status === "CLOSED"
+                  ? "Yopilgan"
+                  : "Bekor qilingan";
+            const statusClass =
+              vacancy.status === "ACTIVE"
+                ? "border-emerald-500/30 bg-success-soft text-success"
+                : vacancy.status === "CLOSED"
+                  ? "border-line bg-card-cool text-subtle"
+                  : "border-red-500/30 bg-danger-soft text-danger";
             const details = [
+              salaryLabel,
               vacancy.location,
               vacancy.workType ? tWork(vacancy.workType) : null,
               vacancy.minExperienceYears === null
@@ -79,9 +106,16 @@ export default async function VacanciesPage({
                 <Reveal delay={REVEAL_DELAYS[idx % 4]}>
                   <div className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/40 space-y-3 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5">
                     <div className="flex flex-wrap items-start justify-between gap-2">
-                      <h2 className="text-text min-w-0 text-lg font-extrabold break-words">
-                        {vacancy.title}
-                      </h2>
+                      <div className="flex min-w-0 flex-wrap items-center gap-2">
+                        <h2 className="text-text min-w-0 text-lg font-extrabold break-words">
+                          {vacancy.title}
+                        </h2>
+                        <span
+                          className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${statusClass}`}
+                        >
+                          {statusText}
+                        </span>
+                      </div>
                       <span className="text-subtle shrink-0 text-xs font-medium">
                         {t("list.created", {
                           date: formatDate(vacancy.createdAt),

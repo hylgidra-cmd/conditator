@@ -114,9 +114,10 @@ export async function readBodyLimited(
 export async function parseJson<T extends z.ZodType>(
   request: Request,
   schema: T,
+  maxBytes: number = MAX_JSON_BYTES,
 ): Promise<z.infer<T>> {
   // Juda katta so'rov tanasi o'qilmaydi (xotira va CPU ni himoyalash).
-  const raw = await readBodyLimited(request, MAX_JSON_BYTES);
+  const raw = await readBodyLimited(request, maxBytes);
   let body: unknown;
   try {
     body = JSON.parse(raw.toString("utf8"));

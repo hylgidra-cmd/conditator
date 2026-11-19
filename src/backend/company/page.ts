@@ -10,10 +10,17 @@ export async function requireCompanyPage() {
   const locale = await getLocale();
   if (!user) return redirect({ href: "/login", locale });
   if (user.role !== "COMPANY") return redirect({ href: "/account", locale });
-  const company = await db.company.upsert({
-    where: { userId: user.id },
-    create: { userId: user.id },
-    update: {},
+  const existing = await db.company.findFirst({
+    where: {
+      OR: [{ userId: user.id }, { members: { some: { userId: user.id } } }],
+    },
   });
+  const company =
+    existing ??
+    (await db.company.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id },
+      update: {},
+    }));
   return { user, company, locale };
 }

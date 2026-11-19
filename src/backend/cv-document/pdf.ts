@@ -12,12 +12,25 @@ let browser: Promise<Browser> | null = null;
 let active = 0;
 const waiting: (() => void)[] = [];
 
+async function launchChromium(): Promise<Browser> {
+  if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_VERSION) {
+    const sparticuz = (await import("@sparticuz/chromium")).default;
+    const executablePath = await sparticuz.executablePath();
+    return chromium.launch({
+      args: sparticuz.args,
+      executablePath,
+      headless: true,
+    });
+  }
+
+  return chromium.launch({
+    // Docker obrazida Playwright o'rnatgan Chromium; boshqa joyda CHROMIUM_PATH bilan berish mumkin.
+    executablePath: process.env.CHROMIUM_PATH || undefined,
+  });
+}
+
 function getBrowser(): Promise<Browser> {
-  browser ??= chromium
-    .launch({
-      // Docker obrazida Playwright o'rnatgan Chromium; boshqa joyda CHROMIUM_PATH bilan berish mumkin.
-      executablePath: process.env.CHROMIUM_PATH || undefined,
-    })
+  browser ??= launchChromium()
     .then((instance) => {
       instance.on("disconnected", () => {
         browser = null;

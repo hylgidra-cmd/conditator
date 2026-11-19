@@ -28,14 +28,14 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
+              "default-src 'self'; img-src 'self' data: blob: https:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'",
           },
         ],
       },
     ];
   },
-  // Chromium boshqaruvchisi bundle ga kirmaydi; standalone ga node_modules dan ko'chiriladi.
-  serverExternalPackages: ["playwright-core"],
+  // Chromium boshqaruvchisi bundle ga kirmaydi; standalone/Vercel ga node_modules dan olinadi.
+  serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
   // PDF ga joylanadigan shriftlar standalone obrazga ham tushsin.
   outputFileTracingIncludes: {
     "/api/cv/me/pdf": [

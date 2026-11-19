@@ -21,6 +21,7 @@ import {
   normalizeTemplateId,
 } from "@/frontend/components/cv-templates/cv-templates";
 import { PhotoCropperModal } from "./photo-cropper-modal";
+import { CvPaymentShield } from "./cv-payment-shield";
 
 const POPULAR_LANGUAGES = [
   "Qaraqalpaq tili",
@@ -328,8 +329,12 @@ type Props = {
   draft: CvDraft;
   labels: CvDocumentLabels;
   saving: boolean;
+  cvId?: string;
+  savedAt?: string | null;
+  isPaid?: boolean;
   isVisible: boolean;
   onToggleVisibility: (visible: boolean) => void;
+  onOpenPayment?: () => void;
   onChange: (draft: CvDraft) => void;
   onSave: () => void;
   onRestart: () => void;
@@ -339,8 +344,12 @@ export function CvStepBuilder({
   draft,
   labels,
   saving,
+  cvId,
+  savedAt,
+  isPaid = false,
   isVisible,
   onToggleVisibility,
+  onOpenPayment,
   onChange,
   onSave,
   onRestart,
@@ -415,13 +424,17 @@ export function CvStepBuilder({
 
   const data = draft.data;
 
-  // Split full name into first and last
-  const nameParts = (data.fullName || "").split(" ");
-  const firstName = nameParts[0] || "";
-  const lastName = nameParts.slice(1).join(" ") || "";
+  // Split full name into first and last without eating trailing spaces in lastName
+  const rawFullName = data.fullName || "";
+  const firstSpaceIdx = rawFullName.indexOf(" ");
+  const firstName =
+    firstSpaceIdx === -1 ? rawFullName : rawFullName.slice(0, firstSpaceIdx);
+  const lastName =
+    firstSpaceIdx === -1 ? "" : rawFullName.slice(firstSpaceIdx + 1);
 
   function updateName(first: string, last: string) {
-    const full = `${first.trim()} ${last.trim()}`.trim();
+    const cleanFirst = first.replace(/\s+/g, "");
+    const full = last.length > 0 ? `${cleanFirst} ${last}` : cleanFirst;
     onChange({ ...draft, data: { ...data, fullName: full } });
   }
 
@@ -1935,13 +1948,25 @@ export function CvStepBuilder({
                           }
                         </p>
                       </div>
-                      <a
-                        href="/api/cv/me/docx"
-                        download="obyektivka.docx"
-                        className="rounded-xl border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100"
-                      >
-                        {"📄 Word (.docx) yuklash"}
-                      </a>
+                      {savedAt && isPaid ? (
+                        <a
+                          href={
+                            cvId
+                              ? `/api/cv/me/docx?cvId=${encodeURIComponent(cvId)}`
+                              : "/api/cv/me/docx"
+                          }
+                          download="obyektivka.docx"
+                          className="rounded-xl border border-blue-300 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700 hover:bg-blue-100"
+                        >
+                          {"📄 Word (.docx) yuklash"}
+                        </a>
+                      ) : (
+                        <span className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-1.5 text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                          {savedAt
+                            ? "🔒 Word (.docx) to'lovdan so'ng ochiladi"
+                            : "Avval CV ni saqlang va faollashtiring"}
+                        </span>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
@@ -2253,15 +2278,25 @@ export function CvStepBuilder({
                 </div>
 
                 {/* Visibility */}
-                <div className="border-border bg-surface flex items-center justify-between rounded-2xl border p-4">
-                  <span className="text-xs font-bold">
-                    {tCv("visibility.label")}
-                  </span>
+                <div className="border-border bg-surface flex items-center justify-between gap-3 rounded-2xl border p-4">
+                  <div>
+                    <span className="text-xs font-bold">
+                      {tCv("visibility.label")}
+                    </span>
+                    {!savedAt || !isPaid ? (
+                      <p className="text-muted mt-0.5 text-[11px]">
+                        {!savedAt
+                          ? tCv("visibility.needSave")
+                          : "Kompaniyalarga ko'rinishi uchun avval to'lov (5 000 so'm) qiling."}
+                      </p>
+                    ) : null}
+                  </div>
                   <input
                     type="checkbox"
                     checked={isVisible}
+                    disabled={!savedAt || !isPaid}
                     onChange={(e) => onToggleVisibility(e.target.checked)}
-                    className="text-brand focus:ring-brand h-5 w-5 rounded"
+                    className="text-brand focus:ring-brand h-5 w-5 rounded disabled:cursor-not-allowed disabled:opacity-50"
                   />
                 </div>
 
@@ -2279,31 +2314,36 @@ export function CvStepBuilder({
                       {"⛶ Kattalashtirish"}
                     </button>
                   </div>
-                  <div className="border-border bg-surface w-full overflow-hidden rounded-xl border">
-                    <div
-                      className="flex justify-center"
-                      style={{ height: "475px" }}
-                    >
+                  <CvPaymentShield
+                    isPaid={Boolean(isPaid)}
+                    onUnlockClick={savedAt ? onOpenPayment : undefined}
+                  >
+                    <div className="border-border bg-surface w-full overflow-hidden rounded-xl border">
                       <div
-                        style={{
-                          width: "794px",
-                          minWidth: "794px",
-                          transform: "scale(0.41)",
-                          transformOrigin: "top center",
-                        }}
+                        className="flex justify-center"
+                        style={{ height: "475px" }}
                       >
-                        <CvDocument
-                          cv={{
-                            data,
-                            language: draft.language as CvDocumentLanguage,
-                            workTypes: draft.workTypes as WorkType[],
-                            templateId: draft.templateId,
+                        <div
+                          style={{
+                            width: "794px",
+                            minWidth: "794px",
+                            transform: "scale(0.41)",
+                            transformOrigin: "top center",
                           }}
-                          labels={labels}
-                        />
+                        >
+                          <CvDocument
+                            cv={{
+                              data,
+                              language: draft.language as CvDocumentLanguage,
+                              workTypes: draft.workTypes as WorkType[],
+                              templateId: draft.templateId,
+                            }}
+                            labels={labels}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </CvPaymentShield>
                 </div>
               </div>
             )}
@@ -2325,7 +2365,8 @@ export function CvStepBuilder({
                 onClick={() => setFullscreenOpen(true)}
                 className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 rounded-xl border px-3 py-2 text-xs font-bold transition-colors lg:hidden"
               >
-                ⛶ {t("fullscreenPreview")}
+                {"⛶ "}
+                {t("fullscreenPreview")}
               </button>
 
               {currentStep < 6 ? (
@@ -2387,40 +2428,45 @@ export function CvStepBuilder({
                   title={t("fullscreenPreview")}
                   className="bg-surface border-border text-foreground hover:bg-muted/40 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-colors"
                 >
-                  ⛶
+                  {"⛶"}
                 </button>
               </div>
             </div>
 
             {/* A4 Paper Scaled Wrapper (Centered, non-clipped) */}
-            <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
-              <div
-                className="flex justify-center transition-transform duration-200"
-                style={{
-                  height: `${1123 * zoomScale + 32}px`,
-                }}
-              >
+            <CvPaymentShield
+              isPaid={Boolean(isPaid)}
+              onUnlockClick={savedAt ? onOpenPayment : undefined}
+            >
+              <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
                 <div
+                  className="flex justify-center transition-transform duration-200"
                   style={{
-                    width: "794px",
-                    minWidth: "794px",
-                    transform: `scale(${zoomScale})`,
-                    transformOrigin: "top center",
+                    height: `${1123 * zoomScale + 32}px`,
                   }}
-                  className="pt-2"
                 >
-                  <CvDocument
-                    cv={{
-                      data,
-                      language: draft.language as CvDocumentLanguage,
-                      workTypes: draft.workTypes as WorkType[],
-                      templateId: draft.templateId,
+                  <div
+                    style={{
+                      width: "794px",
+                      minWidth: "794px",
+                      transform: `scale(${zoomScale})`,
+                      transformOrigin: "top center",
                     }}
-                    labels={labels}
-                  />
+                    className="pt-2"
+                  >
+                    <CvDocument
+                      cv={{
+                        data,
+                        language: draft.language as CvDocumentLanguage,
+                        workTypes: draft.workTypes as WorkType[],
+                        templateId: draft.templateId,
+                      }}
+                      labels={labels}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            </CvPaymentShield>
           </div>
         </div>
       </div>
@@ -2439,7 +2485,7 @@ export function CvStepBuilder({
                 {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
               </span>
               <span className="bg-brand rounded-full px-2 py-0.5 text-[10px] font-bold text-white">
-                100% A4
+                {"100% A4"}
               </span>
             </div>
             <button
@@ -2447,23 +2493,29 @@ export function CvStepBuilder({
               onClick={() => setFullscreenOpen(false)}
               className="rounded-xl bg-white/10 px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-white/20"
             >
-              ✕ {t("close")}
+              {"✕ "}
+              {t("close")}
             </button>
           </div>
           <div
             className="flex flex-1 items-start justify-center overflow-auto p-2 sm:p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="my-auto rounded-sm bg-white shadow-2xl">
-              <CvDocument
-                cv={{
-                  data,
-                  language: draft.language as CvDocumentLanguage,
-                  workTypes: draft.workTypes as WorkType[],
-                  templateId: draft.templateId,
-                }}
-                labels={labels}
-              />
+            <div className="my-auto rounded-sm bg-white p-2 shadow-2xl">
+              <CvPaymentShield
+                isPaid={Boolean(isPaid)}
+                onUnlockClick={savedAt ? onOpenPayment : undefined}
+              >
+                <CvDocument
+                  cv={{
+                    data,
+                    language: draft.language as CvDocumentLanguage,
+                    workTypes: draft.workTypes as WorkType[],
+                    templateId: draft.templateId,
+                  }}
+                  labels={labels}
+                />
+              </CvPaymentShield>
             </div>
           </div>
         </div>

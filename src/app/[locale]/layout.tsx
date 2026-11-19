@@ -12,8 +12,14 @@ import { SiteFooter } from "@/frontend/components/site-footer";
 import { SiteChrome, SiteMain } from "@/frontend/components/site-chrome";
 import { SiteHeader } from "@/frontend/components/site-header";
 import { ClientMessages } from "@/i18n/client-messages";
-import { routing } from "@/i18n/routing";
+import {
+  CANONICAL_SITE_URL,
+  OG_LOCALE,
+  SEO_KEYWORDS,
+  buildAlternates,
+} from "@/backend/seo";
 import { THEME_COOKIE, THEME_INIT_SCRIPT, parseTheme } from "@/backend/theme";
+import { type Locale, routing } from "@/i18n/routing";
 
 type Props = {
   children: React.ReactNode;
@@ -34,16 +40,60 @@ export const viewport: Viewport = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const validLocale: Locale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
   const t = await getTranslations({
-    locale: hasLocale(routing.locales, locale) ? locale : routing.defaultLocale,
+    locale: validLocale,
     namespace: "Metadata",
   });
+  const title = t("title");
+  const description = t("description");
+  const googleVerification = process.env.GOOGLE_SITE_VERIFICATION?.trim();
+  const yandexVerification = process.env.YANDEX_VERIFICATION?.trim();
+
   return {
+    metadataBase: new URL(CANONICAL_SITE_URL),
+    applicationName: "Candidator",
     title: {
-      default: t("title"),
+      default: title,
       template: "%s — Candidator",
     },
-    description: t("description"),
+    description,
+    keywords: SEO_KEYWORDS[validLocale],
+    alternates: buildAlternates(validLocale, ""),
+    openGraph: {
+      type: "website",
+      siteName: "Candidator",
+      locale: OG_LOCALE[validLocale],
+      url: `${CANONICAL_SITE_URL}/${validLocale}`,
+      title,
+      description,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+    ...(googleVerification || yandexVerification
+      ? {
+          verification: {
+            ...(googleVerification ? { google: googleVerification } : {}),
+            ...(yandexVerification ? { yandex: yandexVerification } : {}),
+          },
+        }
+      : {}),
   };
 }
 

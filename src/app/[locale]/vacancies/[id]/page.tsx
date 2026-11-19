@@ -1,20 +1,122 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { hasLocale } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
 import { getApplyPassStatus } from "@/backend/payment/service";
+import {
+  CANONICAL_SITE_URL,
+  OG_LOCALE,
+  buildAlternates,
+  safeJsonLd,
+} from "@/backend/seo";
 import { Reveal } from "@/frontend/components/ds/motion";
 import { ArrowLeftIcon } from "@/frontend/components/icons";
 import { ApplyModal } from "@/frontend/components/vacancy/apply-modal";
 import { Link } from "@/i18n/navigation";
+import { type Locale, routing } from "@/i18n/routing";
+
+const EMPLOYMENT_TYPE_MAP: Record<string, string> = {
+  FULL_TIME: "FULL_TIME",
+  PART_TIME: "PART_TIME",
+  REMOTE: "FULL_TIME",
+  INTERNSHIP: "INTERN",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}): Promise<Metadata> {
+  const { locale, id } = await params;
+  const validLocale: Locale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
+
+  const vacancy = await db.vacancy.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      title: true,
+      rawText: true,
+      location: true,
+      salaryFrom: true,
+      salaryTo: true,
+      currency: true,
+      skills: true,
+      status: true,
+      expiresAt: true,
+      company: {
+        select: {
+          name: true,
+          approval: true,
+          user: { select: { status: true } },
+        },
+      },
+    },
+  });
+
+  if (
+    !vacancy ||
+    vacancy.status !== "ACTIVE" ||
+    vacancy.company.approval !== "APPROVED" ||
+    vacancy.company.user.status !== "ACTIVE" ||
+    (vacancy.expiresAt && vacancy.expiresAt <= new Date())
+  ) {
+    return { robots: { index: false, follow: false } };
+  }
+
+  const companyName = vacancy.company.name?.trim() || "Candidator";
+  const pageTitle = `${vacancy.title} — ${companyName}`;
+  const salaryPart =
+    vacancy.salaryFrom || vacancy.salaryTo
+      ? `${vacancy.salaryFrom ? vacancy.salaryFrom.toLocaleString("en-US") : ""}${vacancy.salaryTo ? `–${vacancy.salaryTo.toLocaleString("en-US")}` : ""} ${vacancy.currency}`
+      : "";
+  const description = [
+    `${vacancy.title} (${companyName})`,
+    vacancy.location,
+    salaryPart,
+    vacancy.rawText?.replace(/\s+/g, " ").slice(0, 140),
+  ]
+    .filter(Boolean)
+    .join(" · ")
+    .slice(0, 160);
+
+  return {
+    title: pageTitle,
+    description,
+    keywords: [
+      vacancy.title,
+      companyName,
+      "vakansiya",
+      "ish",
+      "Candidator",
+      ...(vacancy.location ? [vacancy.location] : []),
+      ...vacancy.skills.slice(0, 8),
+    ],
+    alternates: buildAlternates(validLocale, `/vacancies/${vacancy.id}`),
+    openGraph: {
+      type: "article",
+      siteName: "Candidator",
+      locale: OG_LOCALE[validLocale],
+      url: `${CANONICAL_SITE_URL}/${validLocale}/vacancies/${vacancy.id}`,
+      title: `${pageTitle} — Candidator`,
+      description,
+    },
+  };
+}
 
 export default async function VacancyDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }) {
-  const { id } = await params;
+  const { locale, id } = await params;
+  const validLocale: Locale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
   const user = await currentUser();
   const t = await getTranslations("VacancyDetail");
 
@@ -102,8 +204,71 @@ export default async function VacancyDetailPage({
     };
   }
 
+  // Google Jobs (Schema.org JobPosting) structured data
+  const companyDisplay = vacancy.company.name?.trim() || "Candidator";
+  const jobPostingLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: vacancy.title,
+    description:
+      vacancy.rawText?.trim() ||
+      `${vacancy.title} — ${companyDisplay}. ${vacancy.skills.join(", ")}`,
+    datePosted: vacancy.createdAt.toISOString(),
+    ...(vacancy.expiresAt
+      ? { validThrough: vacancy.expiresAt.toISOString() }
+      : {}),
+    ...(vacancy.workType
+      ? { employmentType: EMPLOYMENT_TYPE_MAP[vacancy.workType] ?? "FULL_TIME" }
+      : {}),
+    hiringOrganization: {
+      "@type": "Organization",
+      name: companyDisplay,
+      ...(vacancy.company.logoPath
+        ? { logo: `${CANONICAL_SITE_URL}/api/companies/${vacancy.company.id}/logo` }
+        : {}),
+    },
+    ...(vacancy.workType === "REMOTE"
+      ? {
+          jobLocationType: "TELECOMMUTE",
+          applicantLocationRequirements: {
+            "@type": "Country",
+            name: vacancy.company.country || "Uzbekistan",
+          },
+        }
+      : {
+          jobLocation: {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: vacancy.location || "Tashkent",
+              addressCountry: vacancy.company.country || "UZ",
+            },
+          },
+        }),
+    ...(vacancy.salaryFrom || vacancy.salaryTo
+      ? {
+          baseSalary: {
+            "@type": "MonetaryAmount",
+            currency: vacancy.currency || "UZS",
+            value: {
+              "@type": "QuantitativeValue",
+              ...(vacancy.salaryFrom ? { minValue: vacancy.salaryFrom } : {}),
+              ...(vacancy.salaryTo ? { maxValue: vacancy.salaryTo } : {}),
+              unitText: "MONTH",
+            },
+          },
+        }
+      : {}),
+    ...(vacancy.skills.length > 0 ? { skills: vacancy.skills.join(", ") } : {}),
+    url: `${CANONICAL_SITE_URL}/${validLocale}/vacancies/${vacancy.id}`,
+  };
+
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jobPostingLd) }}
+      />
       {/* Back button */}
       <Reveal>
         <div>

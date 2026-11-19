@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { Prisma, VacancyStatus, WorkType } from "@prisma/client";
+import { hasLocale } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
+import {
+  CANONICAL_SITE_URL,
+  OG_LOCALE,
+  SEO_KEYWORDS,
+  buildAlternates,
+} from "@/backend/seo";
 import {
   AUDIENCE_KEYS,
   type AudienceProfile,
@@ -21,10 +28,37 @@ import {
   SparkIcon,
 } from "@/frontend/components/icons";
 import { Link, redirect } from "@/i18n/navigation";
+import { type Locale, routing } from "@/i18n/routing";
 
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Header");
-  return { title: t("jobs") };
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const validLocale: Locale = hasLocale(routing.locales, locale)
+    ? locale
+    : routing.defaultLocale;
+  const t = await getTranslations({
+    locale: validLocale,
+    namespace: "VacanciesList",
+  });
+  const title = t("title");
+  const description = t("description");
+  return {
+    title,
+    description,
+    keywords: SEO_KEYWORDS[validLocale],
+    alternates: buildAlternates(validLocale, "/vacancies"),
+    openGraph: {
+      type: "website",
+      siteName: "Candidator",
+      locale: OG_LOCALE[validLocale],
+      url: `${CANONICAL_SITE_URL}/${validLocale}/vacancies`,
+      title: `${title} — Candidator`,
+      description,
+    },
+  };
 }
 
 const REVEAL_DELAYS = [0, 75, 150, 225] as const;

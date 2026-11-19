@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { getLandingStats } from "@/backend/landing-stats";
+import { CANONICAL_SITE_URL, safeJsonLd } from "@/backend/seo";
+import { EMAIL, TELEGRAM_URL } from "@/backend/site";
 import { DualCta } from "@/frontend/components/landing/dual-cta";
 import { Hero } from "@/frontend/components/landing/hero";
 import { Partners } from "@/frontend/components/landing/partners";
@@ -20,8 +22,43 @@ export default async function HomePage({ params }: Props) {
 
   const stats = await getLandingStats();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": `${CANONICAL_SITE_URL}/#organization`,
+        name: "Candidator",
+        url: CANONICAL_SITE_URL,
+        email: EMAIL,
+        sameAs: [TELEGRAM_URL],
+      },
+      {
+        "@type": "WebSite",
+        "@id": `${CANONICAL_SITE_URL}/#website`,
+        name: "Candidator",
+        alternateName: ["Candidator UZ", "Candidator Vakansiyalar"],
+        url: CANONICAL_SITE_URL,
+        inLanguage: ["uz", "kk", "ru", "en"],
+        publisher: { "@id": `${CANONICAL_SITE_URL}/#organization` },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: {
+            "@type": "EntryPoint",
+            urlTemplate: `${CANONICAL_SITE_URL}/${locale}/vacancies?q={search_term_string}`,
+          },
+          "query-input": "required name=search_term_string",
+        },
+      },
+    ],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
+      />
       <Hero stats={stats} />
       <Partners stats={stats} />
       <PromoShowcase stats={stats} />

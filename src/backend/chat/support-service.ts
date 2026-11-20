@@ -1,7 +1,7 @@
+import { Prisma, Role } from "@prisma/client";
 import { isValidImageDataUrl } from "@/backend/company/logo";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
-import { Role } from "@prisma/client";
 
 const RECEIPT_TAG_GLOBAL_RE = /\[PAYMENT_RECEIPT:[^\]]*\]/gi;
 const RECEIPT_ID_RE = /\[PAYMENT_RECEIPT:([a-zA-Z0-9_-]+)\]/;
@@ -9,25 +9,64 @@ const SUPPORT_IMAGE_TAG_GLOBAL_RE = /\[SUPPORT_IMAGE:[^\]]*\]/gi;
 const SUPPORT_IMAGE_DATA_RE =
   /\[SUPPORT_IMAGE:(data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/=]+)\]/;
 
+/** Siqilgan mobil skrinshot/rasmlar uchun maksimal Base64 uzunligi (~900 KB fayl). */
+export const MAX_SUPPORT_IMAGE_DATA_URL_LEN = 1_250_000;
+const MAX_SUPPORT_THREADS = 100;
+const MAX_SUPPORT_MESSAGES = 120;
+
 export function extractSupportImageDataUrl(text: string): string | null {
   return SUPPORT_IMAGE_DATA_RE.exec(text)?.[1] ?? null;
 }
 
-function summarizeSupportText(text: string): string {
-  const hasReceipt = RECEIPT_ID_RE.test(text);
-  const hasImage = SUPPORT_IMAGE_DATA_RE.test(text);
-  const cleaned = text
-    .replace(RECEIPT_TAG_GLOBAL_RE, "")
-    .replace(SUPPORT_IMAGE_TAG_GLOBAL_RE, "")
-    .trim();
+function summarizeCleanSupportText(cleanText: string, hasImage: boolean): string {
+  const hasReceipt = RECEIPT_ID_RE.test(cleanText);
+  const cleaned = cleanText.replace(RECEIPT_TAG_GLOBAL_RE, "").trim();
   if (cleaned) return cleaned;
   if (hasReceipt) return "💳 To'lov cheki yuborildi";
   if (hasImage) return "📷 Rasm yuborildi";
   return "";
 }
 
-function stripSupportImageTag(text: string): string {
-  return text.replace(SUPPORT_IMAGE_TAG_GLOBAL_RE, "").trim();
+type LatestSupportMsgRow = {
+  id: string;
+  threadId: string;
+  senderId: string;
+  senderRole: Role;
+  cleanText: string;
+  hasImage: boolean;
+  readAt: Date | null;
+  createdAt: Date;
+};
+
+/**
+ * Har bir support thread uchun faqat oxirgi 1 ta xabarni PostgreSQL ichida
+ * [SUPPORT_IMAGE:...] Base64 qismini olib tashlagan holda oladi (TOAST rasm tarmoqqa chiqmaydi).
+ */
+async function loadLatestSupportMessages(
+  threadIds: string[],
+): Promise<Map<string, LatestSupportMsgRow>> {
+  const map = new Map<string, LatestSupportMsgRow>();
+  if (threadIds.length === 0) return map;
+
+  const rows = await db.$queryRaw<LatestSupportMsgRow[]>(Prisma.sql`
+    SELECT DISTINCT ON ("threadId")
+      id,
+      "threadId",
+      "senderId",
+      "senderRole",
+      btrim(regexp_replace(text, '\\[SUPPORT_IMAGE:[^\\]]*\\]', '', 'gi')) AS "cleanText",
+      (position('[SUPPORT_IMAGE:data:image/' in text) > 0) AS "hasImage",
+      "readAt",
+      "createdAt"
+    FROM "SupportMessage"
+    WHERE "threadId" IN (${Prisma.join(threadIds)})
+    ORDER BY "threadId", "createdAt" DESC
+  `);
+
+  for (const row of rows) {
+    map.set(row.threadId, row);
+  }
+  return map;
 }
 
 export async function ensureSupportThread(userId: string) {
@@ -44,18 +83,27 @@ export async function ensureSupportThread(userId: string) {
           company: { select: { name: true } },
         },
       },
-      messages: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-      },
     },
   });
+
+  const latestMap = await loadLatestSupportMessages([thread.id]);
+  const latest = latestMap.get(thread.id);
+
   return {
     ...thread,
-    messages: thread.messages.map((m) => ({
-      ...m,
-      text: summarizeSupportText(m.text),
-    })),
+    messages: latest
+      ? [
+          {
+            id: latest.id,
+            threadId: latest.threadId,
+            senderId: latest.senderId,
+            senderRole: latest.senderRole,
+            text: summarizeCleanSupportText(latest.cleanText, latest.hasImage),
+            readAt: latest.readAt,
+            createdAt: latest.createdAt,
+          },
+        ]
+      : [],
   };
 }
 
@@ -74,20 +122,35 @@ export async function listSupportThreadsForUser(userId: string, role: Role) {
             company: { select: { name: true } },
           },
         },
-        messages: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-        },
       },
       orderBy: { updatedAt: "desc" },
+      take: MAX_SUPPORT_THREADS,
     });
-    return threads.map((t) => ({
-      ...t,
-      messages: t.messages.map((m) => ({
-        ...m,
-        text: summarizeSupportText(m.text),
-      })),
-    }));
+
+    const latestMap = await loadLatestSupportMessages(threads.map((t) => t.id));
+
+    return threads.map((t) => {
+      const latest = latestMap.get(t.id);
+      return {
+        ...t,
+        messages: latest
+          ? [
+              {
+                id: latest.id,
+                threadId: latest.threadId,
+                senderId: latest.senderId,
+                senderRole: latest.senderRole,
+                text: summarizeCleanSupportText(
+                  latest.cleanText,
+                  latest.hasImage,
+                ),
+                readAt: latest.readAt,
+                createdAt: latest.createdAt,
+              },
+            ]
+          : [],
+      };
+    });
   }
 
   const thread = await ensureSupportThread(userId);
@@ -112,24 +175,41 @@ export async function getSupportMessages(
     throw new ApiError(403, "FORBIDDEN");
   }
 
-  const messages = await db.supportMessage.findMany({
-    where: { threadId },
-    orderBy: { createdAt: "asc" },
-  });
+  // Oxirgi 120 ta xabarni PostgreSQL ichida Base64 rasmsiz olamiz (har pollingda megabaytlar o'qilmaydi).
+  const rawDesc = await db.$queryRaw<LatestSupportMsgRow[]>(Prisma.sql`
+    SELECT
+      id,
+      "threadId",
+      "senderId",
+      "senderRole",
+      btrim(regexp_replace(text, '\\[SUPPORT_IMAGE:[^\\]]*\\]', '', 'gi')) AS "cleanText",
+      (position('[SUPPORT_IMAGE:data:image/' in text) > 0) AS "hasImage",
+      "readAt",
+      "createdAt"
+    FROM "SupportMessage"
+    WHERE "threadId" = ${threadId}
+    ORDER BY "createdAt" DESC
+    LIMIT ${MAX_SUPPORT_MESSAGES}
+  `);
+  const messages = rawDesc.reverse();
 
-  await db.supportMessage.updateMany({
-    where: {
-      threadId,
-      senderId: { not: userId },
-      readAt: null,
-    },
-    data: { readAt: new Date() },
-  });
+  // Faqat haqiqatan o'qilmagan xabar bor bo'lsagina UPDATE yuboramiz (99% ortiqcha DB yozuvni yo'qotadi).
+  const hasUnread = messages.some((m) => m.senderId !== userId && !m.readAt);
+  if (hasUnread) {
+    await db.supportMessage.updateMany({
+      where: {
+        threadId,
+        senderId: { not: userId },
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
+  }
 
   const receiptIds = Array.from(
     new Set(
       messages
-        .map((m) => RECEIPT_ID_RE.exec(m.text)?.[1])
+        .map((m) => RECEIPT_ID_RE.exec(m.cleanText)?.[1])
         .filter((id): id is string => Boolean(id)),
     ),
   );
@@ -146,12 +226,16 @@ export async function getSupportMessages(
   }
 
   return messages.map((m) => {
-    const rid = RECEIPT_ID_RE.exec(m.text)?.[1];
-    const hasImage = SUPPORT_IMAGE_DATA_RE.test(m.text);
+    const rid = RECEIPT_ID_RE.exec(m.cleanText)?.[1];
     return {
-      ...m,
-      text: hasImage ? stripSupportImageTag(m.text) : m.text,
-      imageUrl: hasImage ? `/api/support/messages/${m.id}/image` : null,
+      id: m.id,
+      threadId: m.threadId,
+      senderId: m.senderId,
+      senderRole: m.senderRole,
+      text: m.cleanText,
+      readAt: m.readAt,
+      createdAt: m.createdAt,
+      imageUrl: m.hasImage ? `/api/support/messages/${m.id}/image` : null,
       receiptPaymentStatus: rid ? (paymentStatusMap.get(rid) ?? null) : null,
     };
   });
@@ -176,7 +260,7 @@ export async function sendSupportMessage(params: {
   let validatedImage: string | null = null;
   if (params.imageDataUrl) {
     if (
-      params.imageDataUrl.length > 2_500_000 ||
+      params.imageDataUrl.length > MAX_SUPPORT_IMAGE_DATA_URL_LEN ||
       !isValidImageDataUrl(params.imageDataUrl)
     ) {
       throw new ApiError(400, "FILE_TYPE_NOT_ALLOWED");

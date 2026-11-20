@@ -53,7 +53,7 @@ export const POST = route(async (request) => {
   );
   const saved = await db.company.update({
     where: { id: company.id },
-    data: { logoPath: name },
+    data: { logoPath: name, hasLogo: true },
   });
   await removeLogo(company.logoPath);
   return NextResponse.json({ company: publicCompany(saved) });
@@ -63,7 +63,7 @@ export const DELETE = route(async (request) => {
   const { company } = await requireCompany(request);
   const saved = await db.company.update({
     where: { id: company.id },
-    data: { logoPath: null },
+    data: { logoPath: null, hasLogo: false },
   });
   await removeLogo(company.logoPath);
   return NextResponse.json({ company: publicCompany(saved) });

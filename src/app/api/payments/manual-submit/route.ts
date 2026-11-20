@@ -27,7 +27,7 @@ const manualSubmitSchema = z.object({
   vacancyId: z.string().min(1).max(64).optional(),
   receiptDataUrl: z
     .string()
-    .max(2_500_000)
+    .max(1_250_000)
     .refine((v) => isValidImageDataUrl(v), "INVALID_RECEIPT_IMAGE"),
   note: z.string().trim().max(400).optional(),
 });
@@ -42,8 +42,8 @@ const PURPOSE_LABELS: Record<PaymentPurpose, string> = {
 export const POST = route(async (request) => {
   const user = await requireRole(request);
   rateLimit(`manual-pay:${user.id}`, { max: 10, windowMs: 10 * 60_000 });
-  // Skrinshotlar 100 KB dan katta bo'lishi mumkin: 3 MB gacha ruxsat beriladi.
-  const input = await parseJson(request, manualSubmitSchema, 3_000_000);
+  // Siqilgan mobil chek rasmlari (~100-350 KB) uchun yetarli, baza diskini to'ldirmaslik uchun 1.5 MB chegara.
+  const input = await parseJson(request, manualSubmitSchema, 1_500_000);
 
   if (
     (input.purpose === PaymentPurpose.CV_CREATION ||

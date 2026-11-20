@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import {
   cvSaveSchema,
@@ -17,12 +18,14 @@ export const GET = route(async (request) => {
 
 export const PUT = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
+  rateLimit(`cv-write:${user.id}`, LIMITS.cvWrite);
   const input = await parseJson(request, cvSaveSchema, 700_000);
   return NextResponse.json({ cv: await saveOwnCv(user.id, input) });
 });
 
 export const DELETE = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
+  rateLimit(`cv-write:${user.id}`, LIMITS.cvWrite);
   const cvId = request.nextUrl.searchParams.get("cvId")?.trim();
   if (!cvId) throw new ApiError(400, "VALIDATION");
   await deleteOwnCv(user.id, cvId);

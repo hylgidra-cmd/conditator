@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import { getConversationMessages, sendMessage } from "@/backend/chat/service";
 import { parseJson } from "@/backend/http/errors";
@@ -24,6 +25,7 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
 export const POST = route<{ params: Promise<{ id: string }> }>(
   async (request, context) => {
     const user = await requireRole(request);
+    rateLimit(`chat-msg:${user.id}`, LIMITS.chatSend);
     const { id: conversationId } = await context.params;
     const body = await parseJson(request, sendMessageSchema);
 

@@ -135,7 +135,7 @@ export default async function VacancyDetailPage({
         select: {
           id: true,
           name: true,
-          logoPath: true,
+          hasLogo: true,
           industry: true,
           size: true,
           country: true,
@@ -183,6 +183,7 @@ export default async function VacancyDetailPage({
         where: { userId: user.id, savedAt: { not: null } },
         select: { id: true, title: true, savedAt: true, isPaid: true },
         orderBy: { updatedAt: "desc" },
+        take: 20,
       }),
       db.vacancyApplication.findFirst({
         where: { vacancyId: vacancy.id, studentId: user.id },
@@ -231,7 +232,7 @@ export default async function VacancyDetailPage({
     hiringOrganization: {
       "@type": "Organization",
       name: companyDisplay,
-      ...(vacancy.company.logoPath
+      ...(vacancy.company.hasLogo
         ? { logo: `${CANONICAL_SITE_URL}/api/companies/${vacancy.company.id}/logo` }
         : {}),
     },

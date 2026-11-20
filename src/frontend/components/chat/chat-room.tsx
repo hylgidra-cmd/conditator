@@ -53,7 +53,7 @@ type ConversationSummary = {
     id: string;
     userId?: string;
     name: string | null;
-    logoPath: string | null;
+    hasLogo?: boolean;
   };
   vacancy?: { id: string; title: string } | null;
   studentCvId?: string | null;
@@ -167,72 +167,107 @@ export function ChatRoom({
     }
   }, [activeId]);
 
-  // Keep conversations and support threads fresh
+  // Keep conversations and support threads fresh (pause when tab is hidden)
   useEffect(() => {
     let isMounted = true;
+    let inFlight = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const scheduleNext = () => {
+      if (!isMounted) return;
+      if (timer) clearTimeout(timer);
+      if (typeof document !== "undefined" && document.hidden) return;
+      timer = setTimeout(() => {
+        void refreshAll();
+      }, 12_000);
+    };
 
     async function refreshAll() {
-      const [convRes, supRes] = await Promise.all([
-        currentUserRole === "ADMIN" || supportOnly
-          ? Promise.resolve(null)
-          : getJson<{ conversations: ConversationSummary[] }>(
-              "/api/chat/conversations",
-            ),
-        getJson<{
-          threads: Array<{
-            id: string;
-            updatedAt: string;
-            user: {
+      if (!isMounted || inFlight) return;
+      if (typeof document !== "undefined" && document.hidden) return;
+      inFlight = true;
+      try {
+        const [convRes, supRes] = await Promise.all([
+          currentUserRole === "ADMIN" || supportOnly
+            ? Promise.resolve(null)
+            : getJson<{ conversations: ConversationSummary[] }>(
+                "/api/chat/conversations",
+              ),
+          getJson<{
+            threads: Array<{
               id: string;
-              email: string;
-              role: Role;
-              company?: { name: string | null } | null;
-            };
-            messages: Message[];
-          }>;
-        }>("/api/support/threads"),
-      ]);
+              updatedAt: string;
+              user: {
+                id: string;
+                email: string;
+                role: Role;
+                company?: { name: string | null } | null;
+              };
+              messages: Message[];
+            }>;
+          }>("/api/support/threads"),
+        ]);
 
-      if (!isMounted) return;
-      if (convRes && convRes.ok) {
-        setConversations(convRes.data.conversations);
-      }
-      if (supRes.ok) {
-        const mapped: SupportThreadSummary[] = supRes.data.threads.map(
-          (st) => ({
-            id: st.id,
-            updatedAt: st.updatedAt,
-            user: {
-              id: st.user.id,
-              email: st.user.email,
-              role: st.user.role,
-              companyName: st.user.company?.name ?? null,
-            },
-            messages: st.messages,
-          }),
-        );
-        setSupportThreads(mapped);
-        setActiveId(
-          (prev) =>
-            prev ||
-            (convRes && convRes.ok ? convRes.data.conversations[0]?.id : "") ||
-            (mapped[0] ? `support:${mapped[0].id}` : ""),
-        );
+        if (!isMounted) return;
+        if (convRes && convRes.ok) {
+          setConversations(convRes.data.conversations);
+        }
+        if (supRes.ok) {
+          const mapped: SupportThreadSummary[] = supRes.data.threads.map(
+            (st) => ({
+              id: st.id,
+              updatedAt: st.updatedAt,
+              user: {
+                id: st.user.id,
+                email: st.user.email,
+                role: st.user.role,
+                companyName: st.user.company?.name ?? null,
+              },
+              messages: st.messages,
+            }),
+          );
+          setSupportThreads(mapped);
+          setActiveId(
+            (prev) =>
+              prev ||
+              (convRes && convRes.ok
+                ? convRes.data.conversations[0]?.id
+                : "") ||
+              (mapped[0] ? `support:${mapped[0].id}` : ""),
+          );
+        }
+      } finally {
+        inFlight = false;
+        scheduleNext();
       }
     }
 
-    refreshAll();
-    const interval = setInterval(refreshAll, 5000);
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        void refreshAll();
+      } else if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    scheduleNext();
+    document.addEventListener("visibilitychange", onVisibilityChange);
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [currentUserRole, supportOnly]);
 
-  // Load messages whenever active conversation/support thread changes
+  // Load messages whenever active conversation/support thread changes (adaptive & visibility-aware)
   useEffect(() => {
     if (!activeId) return;
     let isMounted = true;
+    let inFlight = false;
+    let idlePolls = 0;
+    let lastSig = "";
+    let timer: ReturnType<typeof setTimeout> | null = null;
     setMessages([]);
     setAttachedImage(null);
     setAttachedImageName("");
@@ -242,18 +277,55 @@ export function ChatRoom({
       ? `/api/support/threads/${activeId.slice(8)}/messages`
       : `/api/chat/conversations/${activeId}/messages`;
 
+    const scheduleNext = () => {
+      if (!isMounted) return;
+      if (timer) clearTimeout(timer);
+      if (typeof document !== "undefined" && document.hidden) return;
+      const delayMs = idlePolls >= 3 ? 12_000 : 5_000;
+      timer = setTimeout(() => {
+        void load();
+      }, delayMs);
+    };
+
     async function load() {
-      const res = await getJson<{ messages: Message[] }>(url);
-      if (res.ok && isMounted) {
-        setMessages(res.data.messages);
+      if (!isMounted || inFlight) return;
+      if (typeof document !== "undefined" && document.hidden) return;
+      inFlight = true;
+      try {
+        const res = await getJson<{ messages: Message[] }>(url);
+        if (res.ok && isMounted) {
+          const list = res.data.messages;
+          const sig = `${list.length}:${list[list.length - 1]?.id ?? ""}:${list[list.length - 1]?.receiptPaymentStatus ?? ""}`;
+          if (sig !== lastSig) {
+            lastSig = sig;
+            idlePolls = 0;
+            setMessages(list);
+          } else {
+            idlePolls = Math.min(idlePolls + 1, 10);
+          }
+        }
+      } finally {
+        inFlight = false;
+        scheduleNext();
       }
     }
 
-    load();
-    const interval = setInterval(load, 4000); // Poll every 4 seconds
+    const onVisibilityChange = () => {
+      if (!document.hidden) {
+        idlePolls = 0;
+        void load();
+      } else if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    };
+
+    void load();
+    document.addEventListener("visibilitychange", onVisibilityChange);
     return () => {
       isMounted = false;
-      clearInterval(interval);
+      if (timer) clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [activeId]);
 

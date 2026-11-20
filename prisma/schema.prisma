@@ -168,6 +168,7 @@ model Session {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([expiresAt])
 }
 
 /// Email tasdiqlash va parol tiklash kodlari. Kodning o'zi hech qachon saqlanmaydi.
@@ -184,6 +185,7 @@ model EmailCode {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, purpose])
+  @@index([expiresAt])
 }
 
 // ---------- Talaba & CV ----------
@@ -221,7 +223,9 @@ model Cv {
   payments     Payment[]
 
   @@index([userId])
+  @@index([userId, updatedAt])
   @@index([isVisible, language])
+  @@index([isVisible, savedAt])
   @@index([skills], type: Gin)
   @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "Cv_searchText_trgm_idx")
 }
@@ -237,6 +241,7 @@ model Company {
   size              String? /// xodimlar soni oralig'i, masalan "11-50"
   contactPerson     String?
   logoPath          String?
+  hasLogo           Boolean   @default(false) /// logoPath base64 ni o'qimasdan bor-yo'qligini tez tekshirish uchun
   approval          Approval  @default(PENDING)
   approvedAt        DateTime?
   subscriptionUntil DateTime? /// obuna faol = subscriptionUntil > hozir
@@ -254,6 +259,8 @@ model Company {
   payments      Payment[]
 
   @@index([approval])
+  @@index([approval, createdAt])
+  @@index([approval, approvedAt])
 }
 
 /// Kompaniya CV ni (ism va aloqa bilan) ochgan har bir holat. Ommaviy yig'ishni kuzatish uchun.
@@ -300,6 +307,9 @@ model Vacancy {
 
   @@index([companyId, createdAt])
   @@index([status])
+  @@index([status, createdAt])
+  @@index([status, updatedAt])
+  @@index([status, expiresAt])
 }
 
 /// Saralash natijasi. hash = xesh(talab + CV versiyasi): o'zgarmagan bo'lsa AI qayta chaqirilmaydi.
@@ -341,6 +351,8 @@ model VacancyApplication {
   @@unique([vacancyId, cvId])
   @@index([vacancyId, status])
   @@index([studentId])
+  @@index([studentId, createdAt])
+  @@index([cvId])
 }
 
 model CandidateLike {
@@ -428,6 +440,7 @@ model ChatMessage {
   sender       User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([conversationId, createdAt])
+  @@index([conversationId, readAt])
 }
 
 model Complaint {
@@ -472,6 +485,9 @@ model Payment {
   cv      Cv?      @relation(fields: [cvId], references: [id], onDelete: SetNull)
 
   @@index([userId, status])
+  @@index([status, createdAt])
+  @@index([companyId, createdAt])
+  @@index([createdAt])
   @@index([externalId])
 }
 
@@ -489,6 +505,7 @@ model VacancyUnlock {
 
   @@unique([vacancyId, companyId])
   @@index([expiresAt])
+  @@index([companyId, expiresAt])
 }
 
 // ---------- Bildirishnomalar ----------
@@ -591,4 +608,5 @@ model SupportMessage {
   sender User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
 
   @@index([threadId, createdAt])
+  @@index([threadId, readAt])
 }

@@ -17,6 +17,10 @@ export const LIMITS = {
   companyCvView: { max: 300, windowMs: 60 * 60_000 },
   logoUpload: { max: 20, windowMs: 60 * 60_000 },
   vacancyWrite: { max: 60, windowMs: 60 * 60_000 },
+  vacancyApply: { max: 40, windowMs: 60 * 60_000 },
+  cvWrite: { max: 60, windowMs: 60 * 60_000 },
+  chatSend: { max: 60, windowMs: 60_000 },
+  complaintCreate: { max: 10, windowMs: 60 * 60_000 },
   matchRun: { max: 30, windowMs: 60 * 60_000 },
   adminWrite: { max: 300, windowMs: 60 * 60_000 },
 } as const;

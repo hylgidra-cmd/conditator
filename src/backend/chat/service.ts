@@ -1,9 +1,11 @@
+import { ComplaintStatus, ConversationStatus, Prisma, Role } from "@prisma/client";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
-import { ComplaintStatus, ConversationStatus, Role } from "@prisma/client";
 
 export const MAX_ATTACHMENT_BYTES = 5 * 1024 * 1024; // 5 MB
+const MAX_CONVERSATIONS = 60;
+const MAX_CHAT_MESSAGES = 120;
 
 async function assertConversationParticipant(
   conversation: { studentId: string; companyId: string },
@@ -44,11 +46,11 @@ export async function sendMessage(params: {
 
   const conversation = await db.conversation.findUnique({
     where: { id: params.conversationId },
-    include: {
-      messages: {
-        select: { senderRole: true },
-        orderBy: { createdAt: "asc" },
-      },
+    select: {
+      id: true,
+      studentId: true,
+      companyId: true,
+      status: true,
     },
   });
 
@@ -62,15 +64,25 @@ export async function sendMessage(params: {
 
   await assertConversationParticipant(conversation, params.senderId);
 
-  // 1-xabar qoidasi: faqat kompaniya hali umuman javob bermagan bo'lsa, talaba ketma-ket xabar yubora olmaydi.
+  // 1-xabar qoidasi: barcha xabarlarni yuklamasdan tezkor mavjudlik (EXISTS) tekshiruvi.
   if (params.senderRole === Role.STUDENT) {
-    const companyHasReplied = conversation.messages.some(
-      (m) => m.senderRole === Role.COMPANY,
-    );
-    const studentHasSent = conversation.messages.some(
-      (m) => m.senderRole === Role.STUDENT,
-    );
-    if (!companyHasReplied && studentHasSent) {
+    const [companyMsg, studentMsg] = await Promise.all([
+      db.chatMessage.findFirst({
+        where: {
+          conversationId: params.conversationId,
+          senderRole: Role.COMPANY,
+        },
+        select: { id: true },
+      }),
+      db.chatMessage.findFirst({
+        where: {
+          conversationId: params.conversationId,
+          senderRole: Role.STUDENT,
+        },
+        select: { id: true },
+      }),
+    ]);
+    if (!companyMsg && studentMsg) {
       throw new ApiError(403, "ONE_MESSAGE_RULE_AWAIT_REPLY");
     }
   }
@@ -109,6 +121,7 @@ export async function getConversationMessages(
 ) {
   const conversation = await db.conversation.findUnique({
     where: { id: conversationId },
+    select: { id: true, studentId: true, companyId: true },
   });
 
   if (!conversation) {
@@ -117,20 +130,25 @@ export async function getConversationMessages(
 
   await assertConversationParticipant(conversation, userId);
 
-  const messages = await db.chatMessage.findMany({
+  const messagesDesc = await db.chatMessage.findMany({
     where: { conversationId },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
+    take: MAX_CHAT_MESSAGES,
   });
+  const messages = messagesDesc.reverse();
 
-  // Mark unread incoming messages as read
-  await db.chatMessage.updateMany({
-    where: {
-      conversationId,
-      senderId: { not: userId },
-      readAt: null,
-    },
-    data: { readAt: new Date() },
-  });
+  // Faqat o'qilmagan kiruvchi xabar bo'lsagina UPDATE yuboramiz.
+  const hasUnread = messages.some((m) => m.senderId !== userId && !m.readAt);
+  if (hasUnread) {
+    await db.chatMessage.updateMany({
+      where: {
+        conversationId,
+        senderId: { not: userId },
+        readAt: null,
+      },
+      data: { readAt: new Date() },
+    });
+  }
 
   return messages;
 }
@@ -141,7 +159,7 @@ export async function listUserConversations(userId: string, role: Role) {
       where: { studentId: userId },
       include: {
         company: {
-          select: { id: true, userId: true, name: true, logoPath: true },
+          select: { id: true, userId: true, name: true, hasLogo: true },
         },
         vacancy: { select: { id: true, title: true } },
         messages: {
@@ -150,6 +168,7 @@ export async function listUserConversations(userId: string, role: Role) {
         },
       },
       orderBy: { updatedAt: "desc" },
+      take: MAX_CONVERSATIONS,
     });
     return rows.map((r) => ({ ...r, studentName: null as string | null }));
   }
@@ -158,6 +177,7 @@ export async function listUserConversations(userId: string, role: Role) {
     where: {
       OR: [{ userId }, { members: { some: { userId } } }],
     },
+    select: { id: true },
   });
   if (!company) return [];
 
@@ -166,7 +186,7 @@ export async function listUserConversations(userId: string, role: Role) {
       where: { companyId: company.id },
       include: {
         company: {
-          select: { id: true, userId: true, name: true, logoPath: true },
+          select: { id: true, userId: true, name: true, hasLogo: true },
         },
         vacancy: { select: { id: true, title: true } },
         messages: {
@@ -175,32 +195,51 @@ export async function listUserConversations(userId: string, role: Role) {
         },
       },
       orderBy: { updatedAt: "desc" },
+      take: MAX_CONVERSATIONS,
     }),
     isCompanySubscribedOrUnlocked(company.id),
   ]);
 
-  const cvIds = rows
-    .map((r) => r.studentCvId)
-    .filter((id): id is string => Boolean(id));
+  const cvIds = Array.from(
+    new Set(
+      rows
+        .map((r) => r.studentCvId)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  );
 
+  // To'liq Cv.data (ichida Base64 rasm bor!) o'rniga faqat fullName va hideName ni olamiz.
   const cvs =
     cvIds.length > 0
-      ? await db.cv.findMany({
-          where: { id: { in: cvIds } },
-          select: { id: true, title: true, data: true, privacy: true },
-        })
+      ? await db.$queryRaw<
+          Array<{
+            id: string;
+            title: string;
+            fullName: string | null;
+            hideName: boolean;
+          }>
+        >(Prisma.sql`
+          SELECT
+            id,
+            title,
+            data->>'fullName' AS "fullName",
+            COALESCE((privacy->>'hideName')::boolean, false) AS "hideName"
+          FROM "Cv"
+          WHERE id IN (${Prisma.join(cvIds)})
+        `)
       : [];
 
   const cvNameMap = new Map(
     cvs.map((c) => {
       if (!hasActiveSubscription) {
-        return [c.id, c.title ? `${c.title} (qulflangan)` : "Nomzod (qulflangan)"];
+        return [
+          c.id,
+          c.title ? `${c.title} (qulflangan)` : "Nomzod (qulflangan)",
+        ];
       }
-      const data = c.data as { fullName?: string } | null;
-      const privacy = c.privacy as { hideName?: boolean } | null;
-      const name = privacy?.hideName
+      const name = c.hideName
         ? c.title || "Nomzod"
-        : data?.fullName || c.title || "Nomzod";
+        : c.fullName || c.title || "Nomzod";
       return [c.id, name];
     }),
   );
@@ -292,7 +331,9 @@ export async function createComplaint(params: {
     }
     await assertConversationParticipant(conv, params.reporterId);
     resolvedReportedUserId =
-      conv.studentId === params.reporterId ? conv.company.userId : conv.studentId;
+      conv.studentId === params.reporterId
+        ? conv.company.userId
+        : conv.studentId;
   } else {
     if (resolvedReportedUserId === params.reporterId) {
       throw new ApiError(400, "VALIDATION");

@@ -33,7 +33,7 @@ export function publicCompany(company: Company) {
     industry: company.industry,
     size: company.size,
     contactPerson: company.contactPerson,
-    hasLogo: company.logoPath !== null,
+    hasLogo: company.hasLogo || company.logoPath !== null,
     approval: company.approval,
     subscriptionUntil: company.subscriptionUntil?.toISOString() ?? null,
   };

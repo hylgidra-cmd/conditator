@@ -3,6 +3,7 @@ import { z } from "zod";
 import { rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import {
+  MAX_SUPPORT_IMAGE_DATA_URL_LEN,
   getSupportMessages,
   sendSupportMessage,
 } from "@/backend/chat/support-service";
@@ -15,7 +16,7 @@ const supportMsgSchema = z
     text: z.string().trim().max(4000).optional(),
     imageDataUrl: z
       .string()
-      .max(2_500_000)
+      .max(MAX_SUPPORT_IMAGE_DATA_URL_LEN)
       .refine((v) => isValidImageDataUrl(v), "FILE_TYPE_NOT_ALLOWED")
       .optional(),
   })
@@ -40,7 +41,7 @@ export const POST = route<{ params: Promise<{ id: string }> }>(
     const { text, imageDataUrl } = await parseJson(
       request,
       supportMsgSchema,
-      3_000_000,
+      1_500_000,
     );
 
     const message = await sendSupportMessage({

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import { createComplaint } from "@/backend/chat/service";
 import { parseJson } from "@/backend/http/errors";
@@ -14,6 +15,7 @@ const complaintSchema = z.object({
 
 export const POST = route(async (request) => {
   const user = await requireRole(request);
+  rateLimit(`complaint:${user.id}`, LIMITS.complaintCreate);
   const body = await parseJson(request, complaintSchema);
 
   const complaint = await createComplaint({

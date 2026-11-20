@@ -59,7 +59,7 @@ export default async function CompanyStudentsPage({
   }
 
   const now = new Date();
-  const [cvs, companyMatches, hasActiveAbuna] = await Promise.all([
+  const [cvs, hasActiveAbuna] = await Promise.all([
     db.cv.findMany({
       where: {
         isVisible: true,
@@ -98,15 +98,21 @@ export default async function CompanyStudentsPage({
         privacy: true,
       },
     }),
-    db.match.findMany({
-      where: {
-        vacancy: { companyId: company.id },
-      },
-      select: { cvId: true, score: true, reason: true },
-      orderBy: { score: "desc" },
-    }),
     isCompanySubscribedOrUnlocked(company.id),
   ]);
+
+  const cvIds = cvs.map((c) => c.id);
+  const companyMatches =
+    cvIds.length > 0
+      ? await db.match.findMany({
+          where: {
+            vacancy: { companyId: company.id },
+            cvId: { in: cvIds },
+          },
+          select: { cvId: true, score: true, reason: true },
+          orderBy: { score: "desc" },
+        })
+      : [];
 
   const bestMatchByCv = new Map<string, { score: number; reason: string }>();
   for (const m of companyMatches) {

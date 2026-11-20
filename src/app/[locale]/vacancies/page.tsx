@@ -178,7 +178,7 @@ export default async function PublicVacanciesPage({
           select: {
             id: true,
             name: true,
-            logoPath: true,
+            hasLogo: true,
             industry: true,
             approval: true,
           },
@@ -188,18 +188,22 @@ export default async function PublicVacanciesPage({
       take: 60,
     }),
     user?.role === "STUDENT"
-      ? db.cv.findMany({
-          where: { userId: user.id, savedAt: { not: null } },
-          select: {
-            title: true,
-            skills: true,
-            searchText: true,
-            location: true,
-            workTypes: true,
-            data: true,
-          },
-          orderBy: { updatedAt: "desc" },
-        })
+      ? db.$queryRaw<
+          Array<{
+            title: string;
+            skills: string[];
+            searchText: string;
+            location: string | null;
+            workTypes: WorkType[];
+            goal: string | null;
+          }>
+        >(Prisma.sql`
+          SELECT title, skills, "searchText", location, "workTypes", data->>'goal' AS goal
+          FROM "Cv"
+          WHERE "userId" = ${user.id} AND "savedAt" IS NOT NULL
+          ORDER BY "updatedAt" DESC
+          LIMIT 10
+        `)
       : Promise.resolve([]),
   ]);
 
@@ -209,7 +213,7 @@ export default async function PublicVacanciesPage({
   const hasStudentCv = studentCvs.length > 0;
   const primaryCvTitle =
     studentCvs.find((c) => c.title.trim())?.title.trim() ||
-    (studentCvs[0]?.data as { goal?: string } | null)?.goal?.trim() ||
+    studentCvs[0]?.goal?.trim() ||
     "CV";
 
   let audienceProfile: AudienceProfile | null = null;
@@ -231,8 +235,7 @@ export default async function PublicVacanciesPage({
 
     for (const cv of studentCvs) {
       if (cv.title) titles.push(cv.title);
-      const dataObj = cv.data as { goal?: string | null } | null;
-      if (dataObj?.goal) titles.push(dataObj.goal);
+      if (cv.goal) titles.push(cv.goal);
       skills.push(...cv.skills);
       if (cv.searchText) searchTexts.push(cv.searchText);
       if (cv.location) locations.push(cv.location);
@@ -297,7 +300,7 @@ export default async function PublicVacanciesPage({
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex min-w-0 items-start gap-3.5">
-              {vacancy.company.logoPath ? (
+              {vacancy.company.hasLogo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={`/api/companies/${vacancy.company.id}/logo`}

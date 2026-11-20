@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 import { db } from "@/backend/db";
 
@@ -39,15 +40,6 @@ export type LandingStats = {
   featuredVacancies: FeaturedVacancy[];
 };
 
-const CATEGORY_KEYWORDS: Record<CategoryKey, RegExp> = {
-  marketing: /marketing|smm|seo|target|reklama|copywrit/i,
-  design: /ui\/?ux|figma|product design|dizayn|design/i,
-  pm: /project|product|scrum|agile|loyiha|joybar|manager|menejer/i,
-  business: /business|biznes|konsalting|consult|sales|sotuv|hr|finance|moliya/i,
-  graphic: /graphic|grafik|illustrator|photoshop|motion|brand|brend/i,
-  web: /web|frontend|backend|fullstack|react|next|node|python|java|dev|dastur|baǵdarlama/i,
-};
-
 const EMPTY_STATS: LandingStats = {
   activeVacancies: 0,
   visibleCvs: 0,
@@ -69,16 +61,21 @@ async function fetchLandingStats(): Promise<LandingStats> {
     const now = new Date();
     const activeVacancyWhere = {
       status: "ACTIVE" as const,
-      company: { approval: "APPROVED" as const, user: { status: "ACTIVE" as const } },
+      company: {
+        approval: "APPROVED" as const,
+        user: { status: "ACTIVE" as const },
+      },
       OR: [{ expiresAt: null }, { expiresAt: { gt: now } }],
     };
 
+    // Barcha faol vakansiyalarni Node xotirasiga tortmasdan SQL ichida bitta so'rovda sanaymiz
+    // va kompaniya logotipi Base64 matni o'rniga 1-baytli hasLogo bayrog'ini o'qiymiz.
     const [
       activeVacancies,
       visibleCvs,
       approvedCompanies,
       companyRows,
-      vacancies,
+      categoryRows,
       featuredRows,
     ] = await Promise.all([
       db.vacancy.count({ where: activeVacancyWhere }),
@@ -100,12 +97,33 @@ async function fetchLandingStats(): Promise<LandingStats> {
         },
         orderBy: { approvedAt: "desc" },
         take: 10,
-        select: { id: true, name: true, industry: true, logoPath: true },
+        select: { id: true, name: true, industry: true, hasLogo: true },
       }),
-      db.vacancy.findMany({
-        where: activeVacancyWhere,
-        select: { title: true, skills: true },
-      }),
+      db.$queryRaw<
+        Array<{
+          marketing: number;
+          design: number;
+          pm: number;
+          business: number;
+          graphic: number;
+          web: number;
+        }>
+      >(Prisma.sql`
+        SELECT
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'marketing|smm|seo|target|reklama|copywrit')::int AS marketing,
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'ui/?ux|figma|product design|dizayn|design')::int AS design,
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'project|product|scrum|agile|loyiha|joybar|manager|menejer')::int AS pm,
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'business|biznes|konsalting|consult|sales|sotuv|hr|finance|moliya')::int AS business,
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'graphic|grafik|illustrator|photoshop|motion|brand|brend')::int AS graphic,
+          COUNT(*) FILTER (WHERE (v.title || ' ' || array_to_string(v.skills, ' ')) ~* 'web|frontend|backend|fullstack|react|next|node|python|java|dev|dastur|baǵdarlama')::int AS web
+        FROM "Vacancy" v
+        JOIN "Company" c ON c.id = v."companyId"
+        JOIN "User" u ON u.id = c."userId"
+        WHERE v.status = 'ACTIVE'
+          AND c.approval = 'APPROVED'
+          AND u.status = 'ACTIVE'
+          AND (v."expiresAt" IS NULL OR v."expiresAt" > ${now})
+      `),
       db.vacancy.findMany({
         where: activeVacancyWhere,
         orderBy: { createdAt: "desc" },
@@ -120,29 +138,21 @@ async function fetchLandingStats(): Promise<LandingStats> {
           currency: true,
           skills: true,
           company: {
-            select: { id: true, name: true, industry: true, logoPath: true },
+            select: { id: true, name: true, industry: true, hasLogo: true },
           },
         },
       }),
     ]);
 
+    const cat = categoryRows[0];
     const categoryCounts: Record<CategoryKey, number> = {
-      marketing: 0,
-      design: 0,
-      pm: 0,
-      business: 0,
-      graphic: 0,
-      web: 0,
+      marketing: cat?.marketing ?? 0,
+      design: cat?.design ?? 0,
+      pm: cat?.pm ?? 0,
+      business: cat?.business ?? 0,
+      graphic: cat?.graphic ?? 0,
+      web: cat?.web ?? 0,
     };
-
-    for (const v of vacancies) {
-      const haystack = `${v.title} ${v.skills.join(" ")}`;
-      (Object.keys(CATEGORY_KEYWORDS) as CategoryKey[]).forEach((key) => {
-        if (CATEGORY_KEYWORDS[key].test(haystack)) {
-          categoryCounts[key] += 1;
-        }
-      });
-    }
 
     return {
       activeVacancies,
@@ -156,14 +166,14 @@ async function fetchLandingStats(): Promise<LandingStats> {
             id: string;
             name: string;
             industry: string | null;
-            logoPath: string | null;
+            hasLogo: boolean;
           } => Boolean(c.name?.trim()),
         )
         .map((c) => ({
           id: c.id,
           name: c.name.trim(),
           industry: c.industry,
-          hasLogo: Boolean(c.logoPath),
+          hasLogo: c.hasLogo,
         })),
       categoryCounts,
       featuredVacancies: featuredRows.map((v) => ({
@@ -172,7 +182,7 @@ async function fetchLandingStats(): Promise<LandingStats> {
         companyId: v.company.id,
         companyName:
           v.company.name?.trim() || v.company.industry?.trim() || "CANDIDATOR",
-        hasLogo: Boolean(v.company.logoPath),
+        hasLogo: v.company.hasLogo,
         location: v.location,
         workType: v.workType,
         salaryFrom: v.salaryFrom,
@@ -190,6 +200,6 @@ async function fetchLandingStats(): Promise<LandingStats> {
 /** Bosh sahifa uchun bazadan real statistika (60 soniya keshlanadi). */
 export const getLandingStats = unstable_cache(
   fetchLandingStats,
-  ["landing-stats-v4"],
+  ["landing-stats-v5"],
   { revalidate: 60 },
 );

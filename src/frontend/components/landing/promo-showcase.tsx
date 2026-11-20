@@ -1,3 +1,4 @@
+import { Prisma, type WorkType } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
@@ -17,24 +18,25 @@ export async function PromoShowcase({ stats }: { stats: LandingStats }) {
 
   let rankedVacancies = stats.featuredVacancies;
   if (user?.role === "STUDENT" && stats.featuredVacancies.length > 1) {
-    const cvs = await db.cv.findMany({
-      where: { userId: user.id, savedAt: { not: null } },
-      select: {
-        title: true,
-        skills: true,
-        searchText: true,
-        location: true,
-        workTypes: true,
-        data: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+    const cvs = await db.$queryRaw<
+      Array<{
+        title: string;
+        skills: string[];
+        searchText: string;
+        location: string | null;
+        workTypes: WorkType[];
+        goal: string | null;
+      }>
+    >(Prisma.sql`
+      SELECT title, skills, "searchText", location, "workTypes", data->>'goal' AS goal
+      FROM "Cv"
+      WHERE "userId" = ${user.id} AND "savedAt" IS NOT NULL
+      ORDER BY "updatedAt" DESC
+      LIMIT 10
+    `);
     if (cvs.length > 0) {
       const titles = cvs
-        .flatMap((c) => [
-          c.title,
-          (c.data as { goal?: string | null } | null)?.goal ?? "",
-        ])
+        .flatMap((c) => [c.title, c.goal ?? ""])
         .filter(Boolean);
       const ranked = rankVacanciesForAudience(
         stats.featuredVacancies.map((v) => ({

@@ -57,6 +57,14 @@ export async function generateMetadata({
       url: `${CANONICAL_SITE_URL}/${validLocale}/vacancies`,
       title: `${title} — Candidator`,
       description,
+      images: [
+        {
+          url: `${CANONICAL_SITE_URL}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: "Candidator",
+        },
+      ],
     },
   };
 }

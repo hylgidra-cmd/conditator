@@ -30,6 +30,7 @@ export default async function HomePage({ params }: Props) {
         "@id": `${CANONICAL_SITE_URL}/#organization`,
         name: "Candidator",
         url: CANONICAL_SITE_URL,
+        logo: `${CANONICAL_SITE_URL}/logo-512.png`,
         email: EMAIL,
         sameAs: [TELEGRAM_URL],
       },

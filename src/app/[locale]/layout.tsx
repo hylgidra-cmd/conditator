@@ -61,6 +61,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     description,
     keywords: SEO_KEYWORDS[validLocale],
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/logo-512.png", sizes: "512x512", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+      shortcut: ["/favicon.ico"],
+    },
     alternates: buildAlternates(validLocale, ""),
     openGraph: {
       type: "website",
@@ -69,11 +79,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${CANONICAL_SITE_URL}/${validLocale}`,
       title,
       description,
+      images: [
+        {
+          url: `${CANONICAL_SITE_URL}/og-image.png`,
+          width: 1200,
+          height: 630,
+          alt: "Candidator",
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [`${CANONICAL_SITE_URL}/og-image.png`],
     },
     robots: {
       index: true,

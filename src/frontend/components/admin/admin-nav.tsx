@@ -6,6 +6,7 @@ const ITEMS = [
   { href: "/admin/users", key: "users" },
   { href: "/admin/companies", key: "companies" },
   { href: "/admin/vacancies", key: "vacancies" },
+  { href: "/admin/readiness", key: "readiness" },
   { href: "/admin/complaints", key: "complaints" },
   { href: "/admin/payments", key: "payments" },
   { href: "/admin/support", key: "support" },

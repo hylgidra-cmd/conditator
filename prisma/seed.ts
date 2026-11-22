@@ -2,8 +2,11 @@
 // Admin email va paroli faqat .env dan olinadi (ADMIN_EMAIL, ADMIN_PASSWORD), kodda yo'q.
 // Ishga tushirish: npm run db:seed (Docker'da migrate xizmati avtomatik bajaradi).
 import { PrismaClient } from "@prisma/client";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { z } from "zod";
 import { hashPassword } from "../src/backend/auth/password";
+import { PERSONALITY_QUESTIONS } from "./personality-questions";
 
 const db = new PrismaClient();
 
@@ -12,6 +15,7 @@ const adminPassword = z.string().min(12, "kamida 12 belgi bo'lishi kerak");
 
 const DEFAULT_SETTINGS: Record<string, string> = {
   monthlyAiLimitUsd: process.env.AI_MONTHLY_LIMIT_USD ?? "50",
+  personalityRetakeDays: "30",
 };
 
 async function seedSettings() {
@@ -27,6 +31,12 @@ async function seedSettings() {
 }
 
 async function seedAdmin() {
+  if (
+    (await db.user.count({ where: { role: "ADMIN", status: "ACTIVE" } })) > 0
+  ) {
+    console.log("Faol admin mavjud: seed parol yoki rolni o'zgartirmadi.");
+    return;
+  }
   if (!process.env.ADMIN_EMAIL && !process.env.ADMIN_PASSWORD) {
     console.warn(
       "ADMIN_EMAIL va ADMIN_PASSWORD .env da yo'q: admin yaratilmadi.",
@@ -43,14 +53,10 @@ async function seedAdmin() {
   if (existing) {
     // Parol ataylab qayta yozilmaydi: seed qayta ishga tushganda admin o'zgartirgan parol saqlanib qoladi.
     // Shuning uchun admin yaratilgach ADMIN_PASSWORD ni .env dan o'chirish mumkin.
-    if (existing.role !== "ADMIN" || existing.status !== "ACTIVE") {
-      await db.user.update({
-        where: { email },
-        data: { role: "ADMIN", status: "ACTIVE" },
-      });
-      console.log(`Admin huquqi berildi: ${email}`);
-      return;
-    }
+    if (existing.role !== "ADMIN" || existing.status !== "ACTIVE")
+      throw new Error(
+        "Admin email boshqa akkauntga tegishli yoki admin bloklangan",
+      );
     console.log(`Admin allaqachon mavjud: ${email}`);
     return;
   }
@@ -472,10 +478,121 @@ async function seedDemoStudents() {
 async function main() {
   await seedSettings();
   await seedAdmin();
-  if (process.env.SEED_DEMO === "true") {
+  await seedPersonalityAndProfessions();
+  if (
+    process.env.NODE_ENV !== "production" &&
+    process.env.SEED_DEMO === "true"
+  ) {
     await seedDemoUsers();
     await seedDemoCompaniesAndVacancies();
     await seedDemoStudents();
+  }
+}
+
+async function seedPersonalityAndProfessions() {
+  const scales = ["MIND", "ENERGY", "NATURE", "TACTICS", "IDENTITY"] as const;
+  for (const [scaleIndex, scale] of scales.entries()) {
+    for (const [index, words] of PERSONALITY_QUESTIONS[scale].entries()) {
+      const id = `v1-${scale.toLowerCase()}-${String(index + 1).padStart(2, "0")}`;
+      await db.personalityQuestion.upsert({
+        where: { id },
+        create: {
+          id,
+          scale,
+          direction: index % 2 === 0 ? 1 : -1,
+          textUz: words[0],
+          textKk: words[1],
+          textRu: words[2],
+          textEn: words[3],
+          sort: index * 5 + scaleIndex,
+          version: 1,
+        },
+        update: {},
+      });
+    }
+  }
+  const typeLetters = ["I", "E"].flatMap((mind) =>
+    ["N", "S"].flatMap((energy) =>
+      ["T", "F"].flatMap((nature) =>
+        ["J", "P"].map((tactics) => `${mind}${energy}${nature}${tactics}`),
+      ),
+    ),
+  );
+  for (const code of typeLetters) {
+    const group =
+      code[1] === "N"
+        ? code[2] === "T"
+          ? "NT"
+          : "NF"
+        : code[3] === "J"
+          ? "SJ"
+          : "SP";
+    await db.personalityType.upsert({
+      where: { code },
+      create: {
+        code,
+        group,
+        titleUz: `${code} tipi`,
+        titleKk: `${code} tipi`,
+        titleRu: `Тип ${code}`,
+        titleEn: `${code} type`,
+        descriptionUz:
+          "Bu profil o'zini baholash javoblariga asoslanadi; kasbga yaroqlilik xulosasi emas.",
+        descriptionKk:
+          "Bul profil ózin baǵalaw juwaplarına tiykarlanadı; kásipke jaraylılıq juwmaǵı emes.",
+        descriptionRu:
+          "Профиль основан на самооценке; это не заключение о пригодности к профессии.",
+        descriptionEn:
+          "This profile reflects self-reported answers, not job suitability.",
+      },
+      update: {},
+    });
+  }
+  const areas = JSON.parse(
+    readFileSync(join(__dirname, "profession-seed.json"), "utf8"),
+  ) as Array<{
+    area: string;
+    professions: string[];
+    educationFields: string[];
+  }>;
+  for (const [areaIndex, area] of areas.entries()) {
+    const parentId = `area-${String(areaIndex + 1).padStart(2, "0")}`;
+    await db.profession.upsert({
+      where: { id: parentId },
+      create: {
+        id: parentId,
+        nameUz: area.area,
+        nameKk: area.area,
+        nameRu: area.area,
+        nameEn: area.area,
+        keywords: [],
+        educationFields: area.educationFields,
+        sort: areaIndex,
+      },
+      update: {},
+    });
+    for (const [index, name] of area.professions.entries()) {
+      const id = `${parentId}-job-${String(index + 1).padStart(2, "0")}`;
+      await db.profession.upsert({
+        where: { id },
+        create: {
+          id,
+          parentId,
+          nameUz: name,
+          nameKk: name,
+          nameRu: name,
+          nameEn: name,
+          keywords: name
+            .toLowerCase()
+            .split(/\s*\/\s*|\s+va\s+|\s*,\s*/)
+            .map((s) => s.trim())
+            .filter(Boolean),
+          educationFields: [],
+          sort: index,
+        },
+        update: {},
+      });
+    }
   }
 }
 

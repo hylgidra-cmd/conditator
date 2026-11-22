@@ -1,0 +1,330 @@
+[
+  {
+    "area": "Ta'lim",
+    "professions": [
+      "Ingliz tili o'qituvchisi",
+      "Rus tili o'qituvchisi",
+      "O'zbek / qoraqalpoq tili o'qituvchisi",
+      "Boshqa xorijiy til o'qituvchisi (nemis, turk, xitoy)",
+      "Matematika o'qituvchisi",
+      "Tabiiy fanlar o'qituvchisi (fizika, kimyo, biologiya)",
+      "Tarix / geografiya o'qituvchisi",
+      "Boshlang'ich sinf o'qituvchisi",
+      "Tarbiyachi / enaga",
+      "Logoped / defektolog",
+      "IT kurs o'qituvchisi / mentor",
+      "Psixolog",
+      "Metodist / tyutor"
+    ],
+    "educationFields": [
+      "Filologiya va tillarni o'qitish (ingliz, nemis, o'zbek)",
+      "Xorijiy til va adabiyoti: ingliz tili",
+      "Matematika",
+      "Fizika",
+      "Kimyo",
+      "Biologiya",
+      "Tarix",
+      "Geografiya",
+      "Psixologiya",
+      "Milliy g'oya, ma'naviyat asoslari va huquq ta'limi"
+    ]
+  },
+  {
+    "area": "Savdo va mijozlar bilan ishlash",
+    "professions": [
+      "Sotuvchi-konsultant",
+      "Kassir",
+      "Sotuv menejeri",
+      "Savdo agenti / supervayzer",
+      "Call-markaz operatori",
+      "Merchandayzer",
+      "Marketpleys menejeri",
+      "Ko'chmas mulk agenti"
+    ],
+    "educationFields": ["Marketing"]
+  },
+  {
+    "area": "Ofis va ma'muriy ish",
+    "professions": [
+      "Administrator / resepshn",
+      "Ofis operatori / kompyuter operatori",
+      "Kotib / rahbar yordamchisi",
+      "Ofis menejeri",
+      "Tarjimon",
+      "Ish yurituvchi / arxivchi"
+    ],
+    "educationFields": [
+      "Tarjima nazariyasi va amaliyoti: ingliz tili",
+      "Kompyuter lingvistikasi"
+    ]
+  },
+  {
+    "area": "Rahbarlik va menejment",
+    "professions": [
+      "Rahbar / direktor",
+      "Loyiha menejeri",
+      "Filial yoki bo'lim boshlig'i",
+      "Xo'jalik bo'limi menejeri"
+    ],
+    "educationFields": [
+      "Menejment",
+      "Kommunal infratuzilmani tashkil etish va boshqarish"
+    ]
+  },
+  {
+    "area": "IT va raqamli texnologiyalar",
+    "professions": [
+      "Dasturchi",
+      "Tizim / tarmoq administratori",
+      "Tester",
+      "Ma'lumotlar tahlilchisi",
+      "Axborot xavfsizligi mutaxassisi",
+      "Texnik yordam mutaxassisi",
+      "Grafik / 3D dizayner",
+      "Onlayn / frilans ishchi"
+    ],
+    "educationFields": [
+      "Amaliy matematika",
+      "Sun'iy intellekt",
+      "Axborot xavfsizligi",
+      "Statistika"
+    ]
+  },
+  {
+    "area": "Marketing, SMM va media",
+    "professions": [
+      "SMM / mobilograf / targetolog",
+      "Marketolog",
+      "Kopirayter / muharrir",
+      "Jurnalist",
+      "Videooperator / montajchi",
+      "Fotograf",
+      "PR menejer"
+    ],
+    "educationFields": [
+      "Jurnalistika",
+      "Axborot xizmati va jamoatchilik bilan aloqalar",
+      "Noshirlik ishi",
+      "Marketing"
+    ]
+  },
+  {
+    "area": "Moliya va buxgalteriya",
+    "professions": [
+      "Buxgalter",
+      "Iqtisodchi",
+      "Moliyaviy tahlilchi",
+      "Kredit mutaxassisi",
+      "Auditor",
+      "Soliq mutaxassisi"
+    ],
+    "educationFields": [
+      "Buxgalteriya hisobi",
+      "Iqtisodiyot",
+      "Moliya va moliyaviy texnologiyalar",
+      "Soliqlar va soliqqa tortish",
+      "Statistika"
+    ]
+  },
+  {
+    "area": "Huquq",
+    "professions": ["Yurist / yuriskonsult", "Komplayens mutaxassisi"],
+    "educationFields": ["Yurisprudensiya"]
+  },
+  {
+    "area": "Kadrlar (HR)",
+    "professions": [
+      "HR / rekruter",
+      "Kadrlar bo'limi mutaxassisi",
+      "Biznes-trener"
+    ],
+    "educationFields": []
+  },
+  {
+    "area": "Tibbiyot va farmatsevtika",
+    "professions": [
+      "Hamshira",
+      "Shifokor",
+      "Farmatsevt",
+      "Laborant",
+      "Sanitar"
+    ],
+    "educationFields": []
+  },
+  {
+    "area": "Qurilish va arxitektura",
+    "professions": [
+      "Arxitektor",
+      "Quruvchi muhandis",
+      "Prorab",
+      "Geodezist",
+      "Smetachi muhandis",
+      "Betonchi / g'isht teruvchi",
+      "Bo'yoqchi / suvoqchi / pardozchi",
+      "Interyer / landshaft dizayneri"
+    ],
+    "educationFields": [
+      "Arxitektura",
+      "Arxitektura yodgorliklari rekonstruksiyasi va restavratsiyasi",
+      "Qurilish muhandisligi",
+      "Yo'l muhandisligi",
+      "Gidrotexnika va geotexnika muhandisligi",
+      "Muhandislik kommunikatsiyalari qurilish va ekspluatatsiyasi",
+      "Qurilish materiallari, buyumlari va konstruksiyalarini ishlab chiqarish",
+      "Geodeziya va geoinformatika",
+      "Dizayn: interyer dizayni",
+      "Dizayn: landshaft dizayni"
+    ]
+  },
+  {
+    "area": "Ishchi kasblar va hunarmandlar",
+    "professions": [
+      "Temirchi va payvandchi",
+      "Elektrik / elektromontajchi",
+      "Chilangar / santexnik",
+      "Duradgor / yog'och ustasi",
+      "Tokar / frezerchi",
+      "Avtomexanik / avtoslesar",
+      "Texnika ta'mirlash ustasi",
+      "Tikuvchi / bichuvchi",
+      "Yuk tashuvchi / omborchi",
+      "Qadoqlovchi",
+      "Avtoyuvuvchi"
+    ],
+    "educationFields": []
+  },
+  {
+    "area": "Ishlab chiqarish va muhandislik",
+    "professions": [
+      "Texnolog",
+      "Sifat nazoratchisi",
+      "Elektr / energetika muhandisi",
+      "Mexanik muhandis",
+      "Mehnat muhofazasi muhandisi",
+      "Neft-gaz operatori / texnigi",
+      "CNC stanok operatori",
+      "Metrolog"
+    ],
+    "educationFields": [
+      "Elektr muhandisligi",
+      "Energetika muhandisligi",
+      "Qayta tiklanuvchi energiya manbalari",
+      "Kimyo muhandisligi",
+      "Neft va gaz ishi",
+      "Neft va neft-gazni qayta ishlash texnologiyasi",
+      "Gazni chuqur qayta ishlash texnologiyasi",
+      "Oziq-ovqat texnologiyasi",
+      "Yengil sanoat muhandisligi",
+      "Texnologik mashinalar va jihozlar",
+      "Metrologiya va standartlashtirish"
+    ]
+  },
+  {
+    "area": "Qishloq xo'jaligi va ekologiya",
+    "professions": [
+      "Agronom",
+      "Zootexnik",
+      "Veterinar",
+      "Ekolog",
+      "Geolog",
+      "Meteorolog"
+    ],
+    "educationFields": [
+      "Agrokimyo va tuproqshunoslik",
+      "Dorivor o'simliklarni yetishtirish va qayta ishlash texnologiyasi",
+      "Ekologiya va atrof-muhit muhofazasi",
+      "Meteorologiya va iqlimshunoslik",
+      "Geologiya",
+      "Geografiya",
+      "Biologiya"
+    ]
+  },
+  {
+    "area": "Transport va logistika",
+    "professions": [
+      "Haydovchi / kuryer",
+      "Dispetcher",
+      "Logist",
+      "Ombor mudiri"
+    ],
+    "educationFields": ["Logistika", "Yo'l harakatini tashkil etish"]
+  },
+  {
+    "area": "Turizm, mehmonxona va ovqatlanish",
+    "professions": [
+      "Oshpaz / novvoy / qandolatchi",
+      "Ofitsiant / barista",
+      "Oshxona yordamchisi",
+      "Restoran menejeri",
+      "Turizm menejeri",
+      "Mehmonxona administratori"
+    ],
+    "educationFields": ["Turizm va mehmondo'stlik"]
+  },
+  {
+    "area": "Go'zallik va sport",
+    "professions": [
+      "Sartarosh",
+      "Kosmetolog",
+      "Manikyur ustasi",
+      "Massajchi",
+      "Sport / fitnes murabbiyi"
+    ],
+    "educationFields": [
+      "Jismoniy madaniyat",
+      "Adaptiv jismoniy tarbiya va sport",
+      "Sport faoliyati (basketbol, futbol, kurash, qo'l to'pi, voleybol)"
+    ]
+  },
+  {
+    "area": "San'at va madaniyat",
+    "professions": [
+      "Xonanda / musiqachi",
+      "Rassom",
+      "Libos dizayneri",
+      "Kulol / amaliy san'at ustasi",
+      "Madaniyat muassasasi xodimi",
+      "Aktyor / animator"
+    ],
+    "educationFields": [
+      "Vokal san'ati (an'anaviy, estrada)",
+      "Cholg'u ijrochiligi: xalq cholg'ulari",
+      "Rangtasvir: dastgohli",
+      "Amaliy san'at: badiiy kulolchilik",
+      "Dizayn: libos va gazlamalar",
+      "Madaniyatshunoslik"
+    ]
+  },
+  {
+    "area": "Xizmat ko'rsatish va xavfsizlik",
+    "professions": [
+      "Farrosh / uy yordamchisi",
+      "Qorovul / qo'riqchi",
+      "Florist",
+      "Hovli supuruvchi"
+    ],
+    "educationFields": []
+  },
+  {
+    "area": "Fan va ijtimoiy fanlar",
+    "professions": [
+      "Ilmiy xodim",
+      "Sotsiolog",
+      "Siyosatshunos",
+      "Arxeolog",
+      "Faylasuf / tarixchi"
+    ],
+    "educationFields": [
+      "Falsafa",
+      "Sotsiologiya",
+      "Siyosatshunoslik",
+      "Arxeologiya",
+      "Tarix"
+    ]
+  },
+  {
+    "area": "Boshqa",
+    "professions": ["Boshqa (admin qo'lda o'tkazadi)"],
+    "educationFields": []
+  }
+]

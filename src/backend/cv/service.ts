@@ -3,6 +3,7 @@ import { z } from "zod";
 import { isValidImageDataUrl } from "@/backend/company/logo";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
+import { activeResult } from "@/backend/personality/service";
 import {
   CV_TEXT_MAX,
   type CvData,
@@ -280,9 +281,8 @@ export async function getMatchingVacanciesForCv(
     take: 50,
   });
 
-  const { scoreVacancyForAudience } = await import(
-    "@/backend/vacancy/audience-match"
-  );
+  const { scoreVacancyForAudience } =
+    await import("@/backend/vacancy/audience-match");
   const profile = {
     titles: [cvTitle ?? "", cvData.goal ?? ""].filter(Boolean),
     skills: cvData.skills,
@@ -331,6 +331,7 @@ export async function saveOwnCv(
   input: CvSaveInput,
   cvId?: string,
 ): Promise<StudentCv> {
+  if (!(await activeResult(userId))) throw new ApiError(403, "FORBIDDEN");
   const targetCvId = cvId ?? input.cvId;
   const data: CvData = input.data;
   const fields = {
@@ -389,10 +390,7 @@ export async function saveOwnCv(
   });
 }
 
-export async function deleteOwnCv(
-  userId: string,
-  cvId: string,
-): Promise<void> {
+export async function deleteOwnCv(userId: string, cvId: string): Promise<void> {
   const deleted = await db.cv.deleteMany({
     where: { id: cvId, userId },
   });

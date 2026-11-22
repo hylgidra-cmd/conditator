@@ -646,6 +646,7 @@
       "users": "Foydalanuvchilar",
       "companies": "Kompaniyalar",
       "vacancies": "Vakansiyalar",
+      "readiness": "Kasbga yaroqlilik",
       "support": "Qoʻllab-quvvatlash",
       "complaints": "Shikoyatlar",
       "payments": "Toʻlovlar"
@@ -692,7 +693,13 @@
           "SUBSCRIPTION_SET": "Obuna {to} gacha: {target}",
           "SUBSCRIPTION_OFF": "Obuna oʻchirildi: {target}",
           "AI_LIMIT_SET": "AI oylik limiti: {to} $",
-          "RESOLVE_COMPLAINT": "Shikoyat koʻrib chiqildi: {target}"
+          "RESOLVE_COMPLAINT": "Shikoyat koʻrib chiqildi: {target}",
+          "PERSONALITY_INVALIDATE": "Test natijasi bekor qilindi: {target}",
+          "PERSONALITY_QUESTION_EDIT": "Test savoli o‘zgartirildi: {target}",
+          "PERSONALITY_TYPE_EDIT": "Tip tavsifi o‘zgartirildi: {target}",
+          "PERSONALITY_SETTING_EDIT": "Test sozlamasi o‘zgartirildi: {target}",
+          "PROFESSION_EDIT": "Kasb papkasi o‘zgartirildi: {target}",
+          "USER_PROFESSION_EDIT": "Talabaning kasbi o‘zgartirildi: {target}"
         }
       }
     },

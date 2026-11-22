@@ -6,6 +6,15 @@ import { canonicalLanguage, foldText, locationMatches } from "./normalize";
 export const MAX_CANDIDATES = 30;
 /** SQL dan olinadigan qatorlar chegarasi (oldindan tartiblangan). Til va joylashuv filtri shundan keyin. */
 const SQL_ROW_CAP = 3000;
+
+export type CandidateReadinessFilter = {
+  professionId?: string;
+  personalityGroup?: string;
+  typeCode?: string;
+  language?: string;
+  languageBand?: string;
+  experienceBand?: string;
+};
 const MAX_TERMS = 40;
 
 // Kalit so'z sifatida olinmaydigan umumiy so'zlar (4 til).
@@ -137,6 +146,7 @@ export async function filterCandidates(
     Vacancy,
     "title" | "rawText" | "skills" | "languages" | "location" | "workType"
   >,
+  filters: CandidateReadinessFilter = {},
 ): Promise<{
   candidates: CandidateRow[];
   stats: FilterStats;
@@ -147,13 +157,57 @@ export async function filterCandidates(
     ...new Set(vacancy.skills.map((skill) => skill.trim().toLowerCase())),
   ];
   const workType: WorkType | null = vacancy.workType;
+  const hasProfileFilter = Boolean(
+    filters.professionId ||
+    filters.personalityGroup ||
+    filters.typeCode ||
+    filters.languageBand ||
+    filters.experienceBand,
+  );
+  const extraUserWhere = {
+    status: "ACTIVE" as const,
+    role: "STUDENT" as const,
+    ...(hasProfileFilter
+      ? {
+          readinessProfiles: {
+            some: {
+              ...(filters.professionId
+                ? { professionId: filters.professionId }
+                : {}),
+              ...(filters.personalityGroup
+                ? { personalityGroup: filters.personalityGroup }
+                : {}),
+              ...(filters.typeCode ? { typeCode: filters.typeCode } : {}),
+              ...(filters.languageBand
+                ? { languageBand: filters.languageBand }
+                : {}),
+              ...(filters.experienceBand
+                ? { experienceBand: filters.experienceBand }
+                : {}),
+            },
+          },
+        }
+      : {}),
+    ...(filters.language
+      ? {
+          userLanguages: {
+            some: {
+              language: {
+                contains: filters.language.toLowerCase(),
+                mode: "insensitive" as const,
+              },
+            },
+          },
+        }
+      : {}),
+  };
 
   const [visible, rows] = await Promise.all([
     db.cv.count({
       where: {
         isVisible: true,
         savedAt: { not: null },
-        user: { status: "ACTIVE", role: "STUDENT" },
+        user: extraUserWhere,
       },
     }),
     db.$queryRaw<
@@ -168,6 +222,18 @@ export async function filterCandidates(
       JOIN "User" u ON u.id = c."userId"
       WHERE c."isVisible" AND c."savedAt" IS NOT NULL
         AND u.status = 'ACTIVE' AND u.role = 'STUDENT'
+        AND (${hasProfileFilter}::boolean = false OR EXISTS (
+          SELECT 1 FROM "ReadinessProfile" rp WHERE rp."userId" = u.id
+          AND (${filters.professionId ?? null}::text IS NULL OR rp."professionId" = ${filters.professionId ?? null})
+          AND (${filters.personalityGroup ?? null}::text IS NULL OR rp."personalityGroup" = ${filters.personalityGroup ?? null})
+          AND (${filters.typeCode ?? null}::text IS NULL OR rp."typeCode" = ${filters.typeCode ?? null})
+          AND (${filters.languageBand ?? null}::text IS NULL OR rp."languageBand" = ${filters.languageBand ?? null})
+          AND (${filters.experienceBand ?? null}::text IS NULL OR rp."experienceBand" = ${filters.experienceBand ?? null})
+        ))
+        AND (${filters.language ?? null}::text IS NULL OR EXISTS (
+          SELECT 1 FROM "UserLanguage" ul WHERE ul."userId" = u.id
+          AND ul.language ILIKE '%' || ${filters.language ?? ""} || '%'
+        ))
         AND (${workType}::text IS NULL OR cardinality(c."workTypes") = 0
              OR ${workType}::text::"WorkType" = ANY(c."workTypes"))
       ORDER BY "skillHits" DESC, cardinality(ARRAY(SELECT t FROM unnest(${terms}::text[]) AS t WHERE strpos(c."searchText", t) > 0)) DESC,

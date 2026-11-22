@@ -646,6 +646,7 @@
       "users": "Пользователи",
       "companies": "Компании",
       "vacancies": "Вакансии",
+      "readiness": "Профиль кандидатов",
       "support": "Поддержка",
       "complaints": "Жалобы",
       "payments": "Платежи"
@@ -692,7 +693,13 @@
           "SUBSCRIPTION_SET": "Подписка до {to}: {target}",
           "SUBSCRIPTION_OFF": "Подписка отключена: {target}",
           "AI_LIMIT_SET": "Месячный лимит ИИ: {to} $",
-          "RESOLVE_COMPLAINT": "Жалоба рассмотрена: {target}"
+          "RESOLVE_COMPLAINT": "Жалоба рассмотрена: {target}",
+          "PERSONALITY_INVALIDATE": "Результат теста отменён: {target}",
+          "PERSONALITY_QUESTION_EDIT": "Вопрос теста изменён: {target}",
+          "PERSONALITY_TYPE_EDIT": "Описание типа изменено: {target}",
+          "PERSONALITY_SETTING_EDIT": "Настройка теста изменена: {target}",
+          "PROFESSION_EDIT": "Папка профессии изменена: {target}",
+          "USER_PROFESSION_EDIT": "Профессия студента изменена: {target}"
         }
       }
     },

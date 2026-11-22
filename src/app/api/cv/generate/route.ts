@@ -7,6 +7,7 @@ import { CV_TEXT_MAX } from "@/backend/cv/schema";
 import { requireRole } from "@/backend/auth/session";
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
+import { activeResult } from "@/backend/personality/service";
 
 const bodySchema = z.object({
   text: z
@@ -28,6 +29,7 @@ const bodySchema = z.object({
  */
 export const POST = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
+  if (!(await activeResult(user.id))) throw new ApiError(403, "FORBIDDEN");
   rateLimit(`cv-generate:${user.id}`, LIMITS.cvGenerate);
   const input = await parseJson(request, bodySchema);
 

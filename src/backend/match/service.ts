@@ -19,6 +19,7 @@ import { db } from "@/backend/db";
 import { isVacancyUnlocked } from "@/backend/payment/service";
 import {
   type CandidateRow,
+  type CandidateReadinessFilter,
   type FilterStats,
   filterCandidates,
 } from "./candidates";
@@ -46,6 +47,16 @@ export type MatchItem = {
   /** Kompaniya qarori: "Tanlandi" / "Mos emas". */
   decision: MatchDecision;
   stage?: CandidateStageType;
+  personality?: {
+    typeCode: string;
+    identity: string;
+    group: string;
+    mindPct: number;
+    energyPct: number;
+    naturePct: number;
+    tacticsPct: number;
+    identityPct: number;
+  } | null;
 };
 
 export type MatchOutcome = {
@@ -136,8 +147,12 @@ function keywordResults(
     .map(({ item }) => item);
 }
 
-async function loadState(vacancy: Vacancy, locale: Lang) {
-  const { candidates, stats, terms } = await filterCandidates(vacancy);
+async function loadState(
+  vacancy: Vacancy,
+  locale: Lang,
+  filters: CandidateReadinessFilter = {},
+) {
+  const { candidates, stats, terms } = await filterCandidates(vacancy, filters);
   const hashes = new Map(
     candidates.map((row) => [row.id, matchHash(vacancy, row, locale)]),
   );
@@ -266,8 +281,9 @@ export async function getMatchResults(
   company: Company,
   vacancy: Vacancy,
   locale: Lang,
+  filters: CandidateReadinessFilter = {},
 ): Promise<MatchOutcome> {
-  const state = await loadState(vacancy, locale);
+  const state = await loadState(vacancy, locale, filters);
   if (!companyAccess(company).canRunMatching)
     return fallbackOutcome(state, "NO_SUBSCRIPTION");
   return aiOutcome(state);
@@ -332,7 +348,7 @@ async function scoreStale(
 const running = new Map<string, Promise<MatchOutcome>>();
 
 export function isMatchingRunning(vacancyId: string): boolean {
-  return running.has(vacancyId);
+  return [...running.keys()].some((key) => key.startsWith(`${vacancyId}:`));
 }
 
 /**
@@ -344,20 +360,21 @@ export function runMatching(params: {
   vacancy: Vacancy;
   locale: Lang;
   userId: string;
+  filters?: CandidateReadinessFilter;
 }): Promise<MatchOutcome> {
-  const key = params.vacancy.id;
+  const key = `${params.vacancy.id}:${JSON.stringify(params.filters ?? {})}`;
   const existing = running.get(key);
   if (existing) return existing;
 
   const task = (async () => {
-    const { company, vacancy, locale, userId } = params;
-    const state = await loadState(vacancy, locale);
+    const { company, vacancy, locale, userId, filters } = params;
+    const state = await loadState(vacancy, locale, filters);
     if (!companyAccess(company).canRunMatching)
       return fallbackOutcome(state, "NO_SUBSCRIPTION");
     if (state.stale.length === 0) return aiOutcome(state);
 
     const failure = await scoreStale(state, vacancy, locale, userId);
-    const after = await loadState(vacancy, locale);
+    const after = await loadState(vacancy, locale, filters);
     return failure ? fallbackOutcome(after, failure) : aiOutcome(after);
   })().finally(() => running.delete(key));
 

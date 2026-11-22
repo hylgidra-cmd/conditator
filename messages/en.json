@@ -646,6 +646,7 @@
       "users": "Users",
       "companies": "Companies",
       "vacancies": "Vacancies",
+      "readiness": "Candidate readiness",
       "support": "Support",
       "complaints": "Complaints",
       "payments": "Payments"
@@ -692,7 +693,13 @@
           "SUBSCRIPTION_SET": "Subscription until {to}: {target}",
           "SUBSCRIPTION_OFF": "Subscription turned off: {target}",
           "AI_LIMIT_SET": "Monthly AI limit: {to} $",
-          "RESOLVE_COMPLAINT": "Complaint resolved: {target}"
+          "RESOLVE_COMPLAINT": "Complaint resolved: {target}",
+          "PERSONALITY_INVALIDATE": "Test result invalidated: {target}",
+          "PERSONALITY_QUESTION_EDIT": "Test question changed: {target}",
+          "PERSONALITY_TYPE_EDIT": "Type description changed: {target}",
+          "PERSONALITY_SETTING_EDIT": "Test setting changed: {target}",
+          "PROFESSION_EDIT": "Profession folder changed: {target}",
+          "USER_PROFESSION_EDIT": "Student profession changed: {target}"
         }
       }
     },

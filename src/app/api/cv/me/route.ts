@@ -9,6 +9,7 @@ import {
 } from "@/backend/cv/service";
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
+import { rebuildReadiness } from "@/backend/readiness/service";
 
 /** Talabaning o'z CV si. Boshqa talabaning CV siga yo'l yo'q: faqat sessiyadagi foydalanuvchi. */
 export const GET = route(async (request) => {
@@ -20,7 +21,9 @@ export const PUT = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
   rateLimit(`cv-write:${user.id}`, LIMITS.cvWrite);
   const input = await parseJson(request, cvSaveSchema, 700_000);
-  return NextResponse.json({ cv: await saveOwnCv(user.id, input) });
+  const cv = await saveOwnCv(user.id, input);
+  await rebuildReadiness(user.id);
+  return NextResponse.json({ cv });
 });
 
 export const DELETE = route(async (request) => {
@@ -29,5 +32,6 @@ export const DELETE = route(async (request) => {
   const cvId = request.nextUrl.searchParams.get("cvId")?.trim();
   if (!cvId) throw new ApiError(400, "VALIDATION");
   await deleteOwnCv(user.id, cvId);
+  await rebuildReadiness(user.id);
   return NextResponse.json({ ok: true });
 });

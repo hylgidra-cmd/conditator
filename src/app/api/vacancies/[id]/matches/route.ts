@@ -4,6 +4,10 @@ import { requireApprovedCompany } from "@/backend/company/access";
 import { route } from "@/backend/http/route";
 import { getMatchResults } from "@/backend/match/service";
 import { getOwnVacancy } from "@/backend/vacancy/service";
+import {
+  attachCompanyPersonality,
+  parseCompanyFilters,
+} from "@/backend/readiness/company";
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -14,5 +18,10 @@ export const GET = route<Context>(async (request, { params }) => {
   const { company } = await requireApprovedCompany(request);
   const vacancy = await getOwnVacancy(company.id, (await params).id);
   const locale = localeSchema.parse(request.nextUrl.searchParams.get("locale"));
-  return NextResponse.json(await getMatchResults(company, vacancy, locale));
+  const filters = parseCompanyFilters(request.nextUrl.searchParams);
+  return NextResponse.json(
+    await attachCompanyPersonality(
+      await getMatchResults(company, vacancy, locale, filters),
+    ),
+  );
 });

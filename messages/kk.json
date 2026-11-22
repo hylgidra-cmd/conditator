@@ -646,6 +646,7 @@
       "users": "Paydalanıwshılar",
       "companies": "Kompaniyalar",
       "vacancies": "Vakansiyalar",
+      "readiness": "Kásipke tayarlıq",
       "support": "Qollap-quwatlaw",
       "complaints": "Shaǵımlar",
       "payments": "Tólemler"
@@ -692,7 +693,13 @@
           "SUBSCRIPTION_SET": "Jazılıw {to} ge shekem: {target}",
           "SUBSCRIPTION_OFF": "Jazılıw óshirildi: {target}",
           "AI_LIMIT_SET": "AI aylıq limiti: {to} $",
-          "RESOLVE_COMPLAINT": "Shaǵım kórip shıǵıldı: {target}"
+          "RESOLVE_COMPLAINT": "Shaǵım kórip shıǵıldı: {target}",
+          "PERSONALITY_INVALIDATE": "Test nátiyjesi biykarlandı: {target}",
+          "PERSONALITY_QUESTION_EDIT": "Test sorawı ózgertildi: {target}",
+          "PERSONALITY_TYPE_EDIT": "Tip táriypi ózgertildi: {target}",
+          "PERSONALITY_SETTING_EDIT": "Test sazlaması ózgertildi: {target}",
+          "PROFESSION_EDIT": "Kásip papkası ózgertildi: {target}",
+          "USER_PROFESSION_EDIT": "Student kásibi ózgertildi: {target}"
         }
       }
     },

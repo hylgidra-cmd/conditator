@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import type { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { requireCompanyPage } from "@/backend/company/page";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { evaluateCvQuality } from "@/backend/cv/quality";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
+import { personalityGroup } from "@/backend/personality/score";
 import { formatDate } from "@/backend/format-date";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
 import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
@@ -24,18 +26,78 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const REVEAL_DELAYS = [0, 75, 150, 225] as const;
+const readinessLabels = {
+  jobs: "Barcha kasblar",
+  groups: "Barcha guruhlar",
+  languages: "Barcha til darajalari",
+  experience: "Barcha tajriba",
+  filter: "Filtrlash",
+  languageBands: [
+    ["NATIVE_ONLY", "0"],
+    ["ONE", "1"],
+    ["TWO_PLUS", "2+"],
+  ] as const,
+  experienceBands: [
+    ["NONE", "0"],
+    ["UNDER_1", "<1"],
+    ["ONE_TO_THREE", "1–3"],
+    ["OVER_3", "3+"],
+  ] as const,
+};
+const personalitySummary = (item: {
+  typeCode: string;
+  identity: string;
+  mindPct: number;
+  energyPct: number;
+  naturePct: number;
+  tacticsPct: number;
+  identityPct: number;
+}) =>
+  `${personalityGroup(item.typeCode)} · ${item.typeCode}-${item.identity} · M ${item.mindPct}% · E ${item.energyPct}% · N ${item.naturePct}% · T ${item.tacticsPct}% · I ${item.identityPct}%`;
 
 export default async function CompanyStudentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; tier?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    tier?: string;
+    professionId?: string;
+    personalityGroup?: string;
+    typeCode?: string;
+    language?: string;
+    languageBand?: string;
+    experienceBand?: string;
+  }>;
 }) {
   const { company } = await requireCompanyPage();
   const t = await getTranslations("Company");
   const tStudents = await getTranslations("CompanyStudents");
   const tWork = await getTranslations("StudentCv.workTypes");
-  const { q, tier = "all" } = await searchParams;
+  const {
+    q,
+    tier = "all",
+    professionId,
+    personalityGroup,
+    typeCode,
+    language,
+    languageBand,
+    experienceBand,
+  } = await searchParams;
   const query = q?.trim().toLowerCase() ?? "";
+  const readinessCriteria: Prisma.ReadinessProfileWhereInput = {
+    ...(professionId ? { professionId } : {}),
+    ...(personalityGroup ? { personalityGroup } : {}),
+    ...(typeCode ? { typeCode } : {}),
+    ...(languageBand ? { languageBand } : {}),
+    ...(experienceBand ? { experienceBand } : {}),
+  };
+  const hasReadinessFilter = Boolean(
+    professionId ||
+    personalityGroup ||
+    typeCode ||
+    languageBand ||
+    experienceBand,
+  );
 
   if (company.approval !== "APPROVED") {
     return (
@@ -59,12 +121,29 @@ export default async function CompanyStudentsPage({
   }
 
   const now = new Date();
-  const [cvs, hasActiveAbuna] = await Promise.all([
+  const [cvs, hasActiveAbuna, professions] = await Promise.all([
     db.cv.findMany({
       where: {
         isVisible: true,
         savedAt: { not: null },
-        user: { status: "ACTIVE" },
+        user: {
+          status: "ACTIVE",
+          ...(hasReadinessFilter
+            ? { readinessProfiles: { some: readinessCriteria } }
+            : {}),
+          ...(language
+            ? {
+                userLanguages: {
+                  some: {
+                    language: {
+                      contains: language.toLowerCase(),
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              }
+            : {}),
+        },
         ...(query
           ? {
               OR: [
@@ -88,6 +167,7 @@ export default async function CompanyStudentsPage({
       take: query ? 80 : 60,
       select: {
         id: true,
+        userId: true,
         title: true,
         location: true,
         workTypes: true,
@@ -96,9 +176,32 @@ export default async function CompanyStudentsPage({
         savedAt: true,
         data: true,
         privacy: true,
+        user: {
+          select: {
+            personalityResults: {
+              where: { archivedAt: null, invalidatedAt: null },
+              take: 1,
+              orderBy: { createdAt: "desc" },
+              select: {
+                typeCode: true,
+                identity: true,
+                mindPct: true,
+                energyPct: true,
+                naturePct: true,
+                tacticsPct: true,
+                identityPct: true,
+              },
+            },
+          },
+        },
       },
     }),
     isCompanySubscribedOrUnlocked(company.id),
+    db.profession.findMany({
+      where: { parentId: { not: null }, isActive: true },
+      orderBy: { nameUz: "asc" },
+      select: { id: true, nameUz: true },
+    }),
   ]);
 
   const cvIds = cvs.map((c) => c.id);
@@ -165,6 +268,7 @@ export default async function CompanyStudentsPage({
         score: quality.score,
         isMukammal: quality.isMukammal,
         aiSummary: quality.aiSummary,
+        personality: cv.user.personalityResults[0] ?? null,
       };
     })
     .sort((a, b) => b.score - a.score);
@@ -188,6 +292,23 @@ export default async function CompanyStudentsPage({
   const tabStandardLabel = `📄 Standart CV lar <80% (${openCount})`;
   const openDetailsLabel = "Profilni ko'rish";
   const unlockBtnLabel = "🔓 Obuna olish";
+  const activeFilters = new URLSearchParams();
+  for (const [key, value] of Object.entries({
+    q,
+    professionId,
+    personalityGroup,
+    typeCode,
+    language,
+    languageBand,
+    experienceBand,
+  })) {
+    if (value) activeFilters.set(key, value);
+  }
+  const tabHref = (nextTier: string) => {
+    const next = new URLSearchParams(activeFilters);
+    if (nextTier !== "all") next.set("tier", nextTier);
+    return `/company/students${next.size ? `?${next.toString()}` : ""}`;
+  };
 
   return (
     <div className="page-x font-ui space-y-6 py-8 sm:py-12">
@@ -229,7 +350,7 @@ export default async function CompanyStudentsPage({
                 name="q"
                 defaultValue={q ?? ""}
                 placeholder={tStudents("searchPlaceholder")}
-                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm outline-none transition-colors"
+                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm transition-colors outline-none"
               />
             </div>
             <button
@@ -241,10 +362,84 @@ export default async function CompanyStudentsPage({
             </button>
           </form>
 
+          <form
+            method="get"
+            className="relative z-10 mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-6"
+          >
+            {q && <input type="hidden" name="q" value={q} />}
+            <select
+              name="professionId"
+              defaultValue={professionId ?? ""}
+              className="border-line rounded-xl border p-2 text-xs"
+              aria-label="Kasb"
+            >
+              <option value="">{readinessLabels.jobs}</option>
+              {professions.map((profession) => (
+                <option key={profession.id} value={profession.id}>
+                  {profession.nameUz}
+                </option>
+              ))}
+            </select>
+            <select
+              name="personalityGroup"
+              defaultValue={personalityGroup ?? ""}
+              className="border-line rounded-xl border p-2 text-xs"
+              aria-label="Guruh"
+            >
+              <option value="">{readinessLabels.groups}</option>
+              {["NT", "NF", "SJ", "SP"].map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+            <input
+              name="typeCode"
+              defaultValue={typeCode ?? ""}
+              placeholder="Tip"
+              className="border-line rounded-xl border p-2 text-xs"
+            />
+            <input
+              name="language"
+              defaultValue={language ?? ""}
+              placeholder="Til"
+              className="border-line rounded-xl border p-2 text-xs"
+            />
+            <select
+              name="languageBand"
+              defaultValue={languageBand ?? ""}
+              className="border-line rounded-xl border p-2 text-xs"
+              aria-label="Til darajasi"
+            >
+              <option value="">{readinessLabels.languages}</option>
+              {readinessLabels.languageBands.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <select
+              name="experienceBand"
+              defaultValue={experienceBand ?? ""}
+              className="border-line rounded-xl border p-2 text-xs"
+              aria-label="Tajriba"
+            >
+              <option value="">{readinessLabels.experience}</option>
+              {readinessLabels.experienceBands.map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <button className="bg-primary text-on-primary rounded-xl px-3 py-2 text-xs">
+              {readinessLabels.filter}
+            </button>
+          </form>
+
           {/* Filter Tabs: All / Mukammal (80-100%) / Standard (<80%) */}
           <div className="relative z-10 mt-5 flex flex-wrap gap-2">
             <Link
-              href={`/company/students${q ? `?q=${encodeURIComponent(q)}` : ""}`}
+              href={tabHref("all")}
               className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
                 tier === "all"
                   ? "bg-primary text-on-primary shadow-primary"
@@ -254,7 +449,7 @@ export default async function CompanyStudentsPage({
               {tabAllLabel}
             </Link>
             <Link
-              href={`/company/students?tier=mukammal${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+              href={tabHref("mukammal")}
               className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
                 tier === "mukammal"
                   ? "bg-primary text-on-primary shadow-primary"
@@ -264,7 +459,7 @@ export default async function CompanyStudentsPage({
               {tabMukammalLabel}
             </Link>
             <Link
-              href={`/company/students?tier=open${q ? `&q=${encodeURIComponent(q)}` : ""}`}
+              href={tabHref("open")}
               className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
                 tier === "open"
                   ? "bg-primary text-on-primary shadow-primary"
@@ -345,6 +540,12 @@ export default async function CompanyStudentsPage({
                           </p>
                         ) : null}
                       </div>
+
+                      {item.personality && (
+                        <div className="border-line rounded-xl border p-2 text-xs">
+                          {personalitySummary(item.personality)}
+                        </div>
+                      )}
 
                       <div className="border-primary/20 bg-primary-soft/45 text-text rounded-2xl border px-3 py-2 text-xs leading-relaxed">
                         {item.aiSummary}

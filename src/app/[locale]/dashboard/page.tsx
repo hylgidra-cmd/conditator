@@ -4,6 +4,7 @@ import { redirect } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
 import { currentUser } from "@/backend/auth/current-user";
+import { activeResult } from "@/backend/personality/service";
 
 type Props = { params: Promise<{ locale: string }> };
 
@@ -17,6 +18,8 @@ export default async function DashboardIndex({ params }: Props) {
   }
 
   if (user.role === "STUDENT") {
+    if (!(await activeResult(user.id)))
+      return redirect({ href: "/student/personality", locale });
     return redirect({ href: "/student/cv", locale });
   }
   if (user.role === "COMPANY") {

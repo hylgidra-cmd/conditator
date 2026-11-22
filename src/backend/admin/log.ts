@@ -5,7 +5,17 @@ import { db } from "@/backend/db";
 export function writeAdminLog(entry: {
   adminId: string;
   action: AdminAction;
-  targetType: "User" | "Company" | "Setting" | "Payment" | "Complaint" | "Vacancy";
+  targetType:
+    | "User"
+    | "Company"
+    | "Setting"
+    | "Payment"
+    | "Complaint"
+    | "Vacancy"
+    | "PersonalityResult"
+    | "PersonalityQuestion"
+    | "PersonalityType"
+    | "Profession";
   targetId: string;
   details?: Prisma.InputJsonObject;
 }) {

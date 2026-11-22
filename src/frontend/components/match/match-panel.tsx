@@ -7,6 +7,7 @@ import { FormAlert, useErrorText } from "@/frontend/components/ui/form";
 import { Link } from "@/i18n/navigation";
 import { postJson } from "@/backend/client/api";
 import type { MatchOutcome } from "@/backend/match/service";
+import type { CandidateReadinessFilter } from "@/backend/match/candidates";
 import { DecisionBadge } from "./decision-badge";
 
 /** Shundan kam natija bo'lsa, sababi (filtr statistikasi) ko'rsatiladi. */
@@ -22,9 +23,11 @@ function scoreTone(score: number) {
 export function MatchPanel({
   vacancyId,
   initial,
+  filters,
 }: {
   vacancyId: string;
   initial: MatchOutcome;
+  filters?: CandidateReadinessFilter;
 }) {
   const t = useTranslations("Matches");
   const locale = useLocale();
@@ -41,7 +44,7 @@ export function MatchPanel({
     setError(undefined);
     const result = await postJson<MatchOutcome>(
       `/api/vacancies/${vacancyId}/match`,
-      { locale },
+      { locale, filters },
     );
     setRunning(false);
     if (result.ok) setOutcome(result.data);
@@ -153,7 +156,7 @@ export function MatchPanel({
               </button>
             </div>
           ) : outcome.isVacancyUnlocked ? (
-            <div className="border-emerald-500/30 bg-success-soft text-success rounded-2xl border px-4 py-3 text-sm font-medium">
+            <div className="bg-success-soft text-success rounded-2xl border border-emerald-500/30 px-4 py-3 text-sm font-medium">
               {t("unlockedBanner")}
             </div>
           ) : null}
@@ -190,6 +193,11 @@ export function MatchPanel({
                         })
                       : t("noTerms"))}
                 </p>
+                {item.personality && (
+                  <p className="text-muted text-xs">
+                    {`${item.personality.typeCode}-${item.personality.identity} · ${item.personality.group} · M ${item.personality.mindPct}% · E ${item.personality.energyPct}% · N ${item.personality.naturePct}% · T ${item.personality.tacticsPct}% · I ${item.personality.identityPct}%`}
+                  </p>
+                )}
                 {item.location ? (
                   <p className="text-muted text-sm">
                     {t("location", { location: item.location })}

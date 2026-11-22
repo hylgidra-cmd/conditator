@@ -16,6 +16,7 @@ import {
 import { CvWorkspace } from "@/frontend/components/cv/cv-workspace";
 import { redirect } from "@/i18n/navigation";
 import { currentUser } from "@/backend/auth/current-user";
+import { activeResult } from "@/backend/personality/service";
 import { cvDataSchema } from "@/backend/cv/schema";
 import {
   getMatchingVacanciesForCv,
@@ -37,6 +38,8 @@ export default async function StudentCvPage({
   const locale = await getLocale();
   if (!user) return redirect({ href: "/login", locale });
   if (user.role !== "STUDENT") return redirect({ href: "/account", locale });
+  if (!(await activeResult(user.id)))
+    return redirect({ href: "/student/personality", locale });
 
   const { cvId, new: newParam, payment } = await searchParams;
   const isNew = newParam === "1";

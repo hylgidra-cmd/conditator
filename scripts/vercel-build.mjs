@@ -1,5 +1,5 @@
 // Vercel build: baza bo'lsa migratsiya, baza mustahkamlash indekslari va seed, keyin next build.
-// Baza yo'q yoki ulanib bo'lmasa ham build to'xtamaydi: ogohlantirish yoziladi, sayt baribir chiqadi.
+// Sxema va boshlang'ich test savollari bo'lmasa yangi sahifalar ishlamaydi.
 import { spawnSync } from "node:child_process";
 
 function run(command) {
@@ -8,21 +8,20 @@ function run(command) {
 }
 
 if (!process.env.DATABASE_URL) {
-  console.warn(
-    "OGOHLANTIRISH: DATABASE_URL yo'q, migratsiya va seed o'tkazib yuborildi. Vercel → Settings → Environment Variables ga qo'shing.",
-  );
+  console.error("DATABASE_URL yo'q: deploy to'xtatildi.");
+  process.exit(1);
 } else {
   const migrated = run("npx prisma migrate deploy");
   if (!migrated) {
-    console.warn(
-      "OGOHLANTIRISH: prisma migrate deploy o'tmadi — xavfsiz sxema sinxronlash (sync-db-hardening) ishga tushiriladi.",
-    );
+    console.error("prisma migrate deploy o'tmadi: deploy to'xtatildi.");
+    process.exit(1);
   }
   if (!run("node scripts/sync-db-hardening.mjs")) {
     console.warn("OGOHLANTIRISH: sync-db-hardening bajarilmadi.");
   }
-  if (migrated && !run("npx prisma db seed")) {
-    console.warn("OGOHLANTIRISH: seed bajarilmadi (yuqoridagi xatoni ko'ring).");
+  if (!run("npx prisma db seed")) {
+    console.error("seed bajarilmadi: deploy to'xtatildi.");
+    process.exit(1);
   }
 }
 

@@ -6,10 +6,17 @@ import { parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 import { runMatching } from "@/backend/match/service";
 import { getOwnVacancy } from "@/backend/vacancy/service";
+import {
+  attachCompanyPersonality,
+  companyFiltersSchema,
+} from "@/backend/readiness/company";
 
 type Context = { params: Promise<{ id: string }> };
 
-const bodySchema = z.object({ locale: z.enum(["kk", "uz", "ru", "en"]) });
+const bodySchema = z.object({
+  locale: z.enum(["kk", "uz", "ru", "en"]),
+  filters: companyFiltersSchema.optional(),
+});
 
 /**
  * Saralash / yangilash. Faqat tasdiqlangan kompaniya va faqat o'z talabi.
@@ -18,13 +25,14 @@ const bodySchema = z.object({ locale: z.enum(["kk", "uz", "ru", "en"]) });
 export const POST = route<Context>(async (request, { params }) => {
   const { user, company } = await requireApprovedCompany(request);
   const vacancy = await getOwnVacancy(company.id, (await params).id);
-  const { locale } = await parseJson(request, bodySchema);
+  const { locale, filters } = await parseJson(request, bodySchema);
   rateLimit(`match:${company.id}`, LIMITS.matchRun);
   const outcome = await runMatching({
     company,
     vacancy,
     locale,
     userId: user.id,
+    filters,
   });
-  return NextResponse.json(outcome);
+  return NextResponse.json(await attachCompanyPersonality(outcome));
 });

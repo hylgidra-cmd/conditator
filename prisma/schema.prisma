@@ -152,6 +152,11 @@ model User {
   reportedComplaints Complaint[]          @relation("ReportedUser")
   supportThread      SupportThread?
   supportMessages    SupportMessage[]
+  personalityResults PersonalityResult[]
+  personalityDraft   PersonalityDraft?
+  professionLinks    UserProfession[]
+  readinessProfiles  ReadinessProfile[]
+  userLanguages      UserLanguage[]
 
   @@index([role, status])
 }
@@ -228,6 +233,147 @@ model Cv {
   @@index([isVisible, savedAt])
   @@index([skills], type: Gin)
   @@index([searchText(ops: raw("gin_trgm_ops"))], type: Gin, map: "Cv_searchText_trgm_idx")
+}
+
+enum PersonalityScale {
+  MIND
+  ENERGY
+  NATURE
+  TACTICS
+  IDENTITY
+}
+
+enum ProfessionSource {
+  AUTO
+  ADMIN
+  STUDENT
+  ADMIN_EXCLUDED
+}
+
+model PersonalityQuestion {
+  id        String @id
+  scale     PersonalityScale
+  direction Int
+  textKk    String
+  textUz    String
+  textRu    String
+  textEn    String
+  sort      Int
+  isActive  Boolean @default(true)
+  version   Int @default(1)
+  answers   PersonalityAnswer[]
+
+  @@index([version, isActive, sort])
+}
+
+model PersonalityDraft {
+  userId    String @id
+  answers   Json @default("{}")
+  version   Int @default(1)
+  updatedAt DateTime @updatedAt
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PersonalityResult {
+  id          String @id @default(cuid())
+  userId      String
+  typeCode    String
+  identity    String
+  mindPct     Int
+  energyPct   Int
+  naturePct   Int
+  tacticsPct  Int
+  identityPct Int
+  version     Int
+  consentAt   DateTime
+  createdAt   DateTime @default(now())
+  archivedAt  DateTime?
+  invalidatedAt DateTime?
+  invalidationReason String?
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answers     PersonalityAnswer[]
+
+  @@index([userId, archivedAt, createdAt])
+}
+
+model PersonalityAnswer {
+  resultId   String
+  questionId String
+  value      Int
+  result     PersonalityResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  question   PersonalityQuestion @relation(fields: [questionId], references: [id])
+
+  @@id([resultId, questionId])
+}
+
+model PersonalityType {
+  code String @id
+  group String
+  titleKk String
+  titleUz String
+  titleRu String
+  titleEn String
+  descriptionKk String
+  descriptionUz String
+  descriptionRu String
+  descriptionEn String
+}
+
+model Profession {
+  id String @id @default(cuid())
+  parentId String?
+  nameKk String
+  nameUz String
+  nameRu String
+  nameEn String
+  keywords String[]
+  educationFields String[]
+  isActive Boolean @default(true)
+  sort Int @default(0)
+  parent Profession? @relation("ProfessionTree", fields: [parentId], references: [id])
+  children Profession[] @relation("ProfessionTree")
+  users UserProfession[]
+  readiness ReadinessProfile[]
+
+  @@index([parentId, isActive, sort])
+}
+
+model UserProfession {
+  userId String
+  professionId String
+  source ProfessionSource
+  confidence Int @default(100)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profession Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, professionId])
+}
+
+model UserLanguage {
+  userId String
+  language String
+  level Int
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, language])
+}
+
+model ReadinessProfile {
+  userId String
+  professionId String
+  personalityGroup String
+  typeCode String
+  languageBand String
+  experienceBand String
+  hasInternship Boolean @default(false)
+  readinessScore Int
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profession Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, professionId])
+  @@index([professionId, personalityGroup, typeCode])
+  @@index([languageBand, experienceBand])
 }
 
 // ---------- Kompaniya ----------
@@ -555,6 +701,12 @@ enum AdminAction {
   SUBSCRIPTION_OFF
   AI_LIMIT_SET
   RESOLVE_COMPLAINT
+  PERSONALITY_INVALIDATE
+  PERSONALITY_QUESTION_EDIT
+  PERSONALITY_TYPE_EDIT
+  PERSONALITY_SETTING_EDIT
+  PROFESSION_EDIT
+  USER_PROFESSION_EDIT
 }
 
 /// Admin harakatlari jurnali. Admin o'chirilsa ham yozuv qoladi (adminId bo'shatiladi).

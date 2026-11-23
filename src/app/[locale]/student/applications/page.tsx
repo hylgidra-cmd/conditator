@@ -66,11 +66,7 @@ export default async function StudentApplicationsPage() {
     <div className="page-x font-ui space-y-8 py-8 sm:py-12">
       {/* Header + Stats Bento */}
       <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
+        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <div>
               <h1 className="text-h2 text-text font-extrabold tracking-tight">
@@ -113,7 +109,7 @@ export default async function StudentApplicationsPage() {
         <h2 className="text-text text-lg font-extrabold">{t("cvsSection")}</h2>
         {cvs.length === 0 ? (
           <Reveal>
-            <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+            <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
               <ResumeIcon size={28} className="text-subtle mx-auto mb-3" />
               <p className="text-subtle text-sm">{t("noCvs")}</p>
               <Link
@@ -128,7 +124,7 @@ export default async function StudentApplicationsPage() {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {cvs.map((cv, idx) => (
               <Reveal key={cv.id} delay={REVEAL_DELAYS[idx % 4]}>
-                <div className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/45 flex h-full flex-col justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1">
+                <div className="border-line bg-card shadow-soft hover:shadow-soft hover:border-primary/45 flex h-full flex-col justify-between gap-4 rounded-2xl border p-5 transition-all duration-300">
                   <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="text-text text-base font-extrabold">
@@ -186,7 +182,7 @@ export default async function StudentApplicationsPage() {
                     ) : (
                       <Link
                         href={`/student/cv?cvId=${cv.id}`}
-                        className="border-amber-500/35 bg-warning-soft text-warning hover:bg-amber-500/20 rounded-xl border px-3.5 py-2 text-xs font-bold transition-colors"
+                        className="bg-warning-soft text-warning rounded-xl border border-amber-500/35 px-3.5 py-2 text-xs font-bold transition-colors hover:bg-amber-500/20"
                       >
                         {payCvLabel}
                       </Link>
@@ -206,7 +202,7 @@ export default async function StudentApplicationsPage() {
         </h2>
         {applications.length === 0 ? (
           <Reveal>
-            <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+            <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
               <p className="text-subtle text-sm">{t("noApplications")}</p>
               <Link
                 href="/vacancies"
@@ -220,7 +216,7 @@ export default async function StudentApplicationsPage() {
           <div className="grid gap-3.5">
             {applications.map((app, idx) => (
               <Reveal key={app.id} delay={REVEAL_DELAYS[idx % 4]}>
-                <div className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/40 flex flex-wrap items-center justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5">
+                <div className="border-line bg-card shadow-soft hover:shadow-soft hover:border-primary/40 flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-5 transition-all duration-300">
                   <div className="space-y-1.5">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-subtle text-xs font-bold uppercase">
@@ -228,8 +224,7 @@ export default async function StudentApplicationsPage() {
                       </span>
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
-                          STATUS_BADGE[app.status] ??
-                          "bg-card-cool text-text"
+                          STATUS_BADGE[app.status] ?? "bg-card-cool text-text"
                         }`}
                       >
                         {t(`statuses.${app.status}` as "statuses.SUBMITTED")}

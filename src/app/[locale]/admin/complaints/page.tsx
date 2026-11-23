@@ -22,11 +22,7 @@ export default async function AdminComplaintsPage() {
 
   return (
     <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
-      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-        <div
-          aria-hidden
-          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-        />
+      <div className="border-line bg-card shadow-soft relative space-y-4 overflow-hidden rounded-2xl border p-6 sm:p-8">
         <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
           {t("complaints.title")}
         </h1>
@@ -36,11 +32,11 @@ export default async function AdminComplaintsPage() {
       </div>
 
       {complaints.length === 0 ? (
-        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
+        <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
           <p className="text-subtle text-sm">{t("complaints.empty")}</p>
         </div>
       ) : (
-        <div className="border-line bg-card/90 shadow-soft overflow-x-auto rounded-3xl border backdrop-blur-md">
+        <div className="border-line bg-card shadow-soft overflow-x-auto rounded-2xl border">
           <table className="w-full text-left text-sm">
             <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
               <tr>

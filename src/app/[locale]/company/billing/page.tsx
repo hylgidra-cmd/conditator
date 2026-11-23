@@ -94,11 +94,7 @@ export default async function CompanyBillingPage() {
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
+        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-h2 text-text font-extrabold tracking-tight">
               {t("title")}
@@ -117,10 +113,10 @@ export default async function CompanyBillingPage() {
       <Reveal delay={75}>
         <section className="grid gap-4 sm:grid-cols-2">
           <div
-            className={`space-y-2 rounded-3xl border p-6 backdrop-blur-md ${
+            className={`space-y-2 rounded-2xl border p-6 ${
               hasActiveAbuna
-                ? "border-emerald-500/30 bg-success-soft text-success"
-                : "border-line bg-card/90 text-text shadow-soft"
+                ? "bg-success-soft text-success border-emerald-500/30"
+                : "border-line bg-card text-text shadow-soft"
             }`}
           >
             <p className="text-sm font-bold">
@@ -134,7 +130,7 @@ export default async function CompanyBillingPage() {
                 : t("subInactive")}
             </p>
           </div>
-          <div className="border-line bg-card/90 shadow-soft space-y-2 rounded-3xl border p-6 backdrop-blur-md">
+          <div className="border-line bg-card shadow-soft space-y-2 rounded-2xl border p-6">
             <h2 className="text-text font-extrabold">{variantExplainTitle}</h2>
             <p className="text-subtle text-sm leading-relaxed">
               {variantExplainDesc}
@@ -144,7 +140,7 @@ export default async function CompanyBillingPage() {
       </Reveal>
 
       <Reveal delay={150}>
-        <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
+        <section className="border-line bg-card shadow-soft space-y-5 rounded-2xl border p-6">
           <div className="space-y-1">
             <h2 className="text-text text-lg font-extrabold">
               {buyAbunaTitle}
@@ -158,7 +154,7 @@ export default async function CompanyBillingPage() {
       </Reveal>
 
       <Reveal delay={225}>
-        <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
+        <section className="border-line bg-card shadow-soft space-y-4 rounded-2xl border p-6">
           <h2 className="text-text text-lg font-extrabold">
             {t("historyTitle")}
           </h2>

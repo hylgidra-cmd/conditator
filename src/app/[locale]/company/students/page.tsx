@@ -102,7 +102,7 @@ export default async function CompanyStudentsPage({
   if (company.approval !== "APPROVED") {
     return (
       <div className="page-x font-ui max-w-3xl space-y-6 py-8 sm:py-12">
-        <div className="border-line bg-card/85 shadow-float flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-6 backdrop-blur-xl">
+        <div className="border-line bg-card shadow-soft flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-6">
           <h1 className="text-h2 text-text font-extrabold tracking-tight">
             {tStudents("title")}
           </h1>
@@ -113,7 +113,7 @@ export default async function CompanyStudentsPage({
             {t("title")}
           </Link>
         </div>
-        <div className="border-primary/30 bg-primary-soft/80 text-text rounded-3xl border p-6 text-sm font-medium backdrop-blur-md">
+        <div className="border-primary/30 bg-primary-soft/80 text-text rounded-2xl border p-6 text-sm font-medium">
           {t(`status.${company.approval}`)}
         </div>
       </div>
@@ -313,11 +313,7 @@ export default async function CompanyStudentsPage({
   return (
     <div className="page-x font-ui space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
+        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <div>
               <h1 className="text-h2 text-text font-extrabold tracking-tight">
@@ -483,7 +479,7 @@ export default async function CompanyStudentsPage({
 
       {items.length === 0 ? (
         <Reveal>
-          <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-md">
+          <div className="border-line bg-card shadow-soft rounded-2xl border p-12 text-center">
             <UsersIcon size={30} className="text-subtle mx-auto mb-3" />
             <p className="text-subtle text-sm font-medium">
               {tStudents("empty")}
@@ -505,7 +501,7 @@ export default async function CompanyStudentsPage({
               <li key={item.id}>
                 <Reveal delay={REVEAL_DELAYS[idx % 4]} className="h-full">
                   <div
-                    className={`bg-card/90 shadow-soft hover:shadow-float flex h-full flex-col justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 ${
+                    className={`bg-card shadow-soft hover:shadow-soft flex h-full flex-col justify-between gap-4 rounded-2xl border p-5 transition-all duration-300 ${
                       item.isMukammal
                         ? "border-primary/45 hover:border-primary"
                         : "border-line hover:border-primary/40"

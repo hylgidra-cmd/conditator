@@ -233,7 +233,9 @@ export default async function VacancyDetailPage({
       "@type": "Organization",
       name: companyDisplay,
       ...(vacancy.company.hasLogo
-        ? { logo: `${CANONICAL_SITE_URL}/api/companies/${vacancy.company.id}/logo` }
+        ? {
+            logo: `${CANONICAL_SITE_URL}/api/companies/${vacancy.company.id}/logo`,
+          }
         : {}),
     },
     ...(vacancy.workType === "REMOTE"
@@ -283,7 +285,7 @@ export default async function VacancyDetailPage({
         <div>
           <Link
             href="/vacancies"
-            className="border-line bg-card/85 text-text hover:border-primary inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-xs font-bold backdrop-blur-md transition-colors"
+            className="border-line bg-card text-text hover:border-primary inline-flex items-center gap-2 rounded-2xl border px-4 py-2 text-xs font-bold transition-colors"
           >
             <ArrowLeftIcon size={14} />
             {t("back")}
@@ -293,12 +295,7 @@ export default async function VacancyDetailPage({
 
       {/* Main Vacancy Card */}
       <Reveal delay={75}>
-        <div className="border-line bg-card/90 shadow-float relative space-y-6 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
-
+        <div className="border-line bg-card shadow-soft relative space-y-6 overflow-hidden rounded-2xl border p-6 sm:p-8">
           <div className="border-line relative z-10 flex flex-wrap items-start justify-between gap-4 border-b pb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2">
@@ -318,7 +315,9 @@ export default async function VacancyDetailPage({
               <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
                 {vacancy.workType && (
                   <span className="bg-primary/10 text-primary rounded-full px-3 py-1 font-bold">
-                    {t(`workTypes.${vacancy.workType}` as "workTypes.FULL_TIME")}
+                    {t(
+                      `workTypes.${vacancy.workType}` as "workTypes.FULL_TIME",
+                    )}
                   </span>
                 )}
                 {vacancy.location && (

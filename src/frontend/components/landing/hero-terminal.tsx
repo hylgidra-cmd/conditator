@@ -40,12 +40,12 @@ export function HeroSearch({
   }
 
   return (
-    <div className="mt-8 w-full max-w-2xl space-y-3.5">
+    <div className="mt-9 w-full max-w-2xl space-y-3.5">
       <form
         onSubmit={onSubmit}
-        className="border-line bg-card shadow-float focus-within:border-primary flex items-center gap-2 rounded-2xl border p-2 transition-all"
+        className="border-line bg-card focus-within:border-primary flex items-center gap-2 rounded-xl border p-1.5 transition-colors"
       >
-        <span className="bg-primary-soft text-primary-text ml-1 inline-flex size-10 shrink-0 items-center justify-center rounded-xl">
+        <span className="text-primary-text ml-1 inline-flex size-10 shrink-0 items-center justify-center">
           <SearchIcon size={18} />
         </span>
         <input
@@ -58,19 +58,19 @@ export function HeroSearch({
         />
         <button
           type="submit"
-          className="shrink-0 cursor-pointer rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-3 text-xs font-extrabold text-white shadow-[0_10px_24px_-6px_rgb(5,150,105,0.55)] transition-all hover:brightness-105 active:scale-[0.98] sm:text-sm"
+          className="bg-primary text-on-primary hover:bg-primary-hover shrink-0 cursor-pointer rounded-lg px-5 py-3 text-xs font-bold transition-colors sm:text-sm"
         >
           {buttonLabel}
         </button>
       </form>
 
-      <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+      <div className="flex flex-wrap items-center gap-2 text-xs">
         <span className="text-subtle font-semibold">{quickLabel}</span>
         {tags.map((tag) => (
           <Link
             key={tag}
             href={`/vacancies?q=${encodeURIComponent(tag)}`}
-            className="border-line bg-card text-text hover:border-primary hover:bg-primary-soft hover:text-primary-text rounded-full border px-3.5 py-1 font-bold shadow-2xs transition-all hover:-translate-y-0.5"
+            className="border-line bg-card text-subtle hover:border-primary hover:text-primary-text rounded-md border px-2.5 py-1 font-semibold transition-colors"
           >
             {tag}
           </Link>
@@ -211,7 +211,9 @@ export function HeroTerminal({
             key={tab}
             className="ds-slide-in flex items-center justify-between text-xs font-bold"
           >
-            <span className="text-emerald-100/80">{activeItem.metricLabel}</span>
+            <span className="text-emerald-100/80">
+              {activeItem.metricLabel}
+            </span>
             <span className="text-lg font-black text-emerald-300 tabular-nums">
               <AnimatedNumber value={activeItem.count} />
             </span>

@@ -31,10 +31,10 @@ export function NavLinks({
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "font-ui inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm whitespace-nowrap transition-all duration-200",
+              "font-ui inline-flex min-h-10 items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm whitespace-nowrap transition-colors duration-200",
               active
-                ? "bg-gradient-to-r from-emerald-600 to-teal-500 font-bold text-white shadow-[0_6px_18px_-4px_rgb(5,150,105,0.5)]"
-                : "text-text/80 hover:bg-card hover:text-primary-text font-semibold",
+                ? "bg-primary-soft text-primary-text font-bold"
+                : "text-subtle hover:bg-card-cool hover:text-text font-semibold",
               FOCUS_RING,
             )}
           >

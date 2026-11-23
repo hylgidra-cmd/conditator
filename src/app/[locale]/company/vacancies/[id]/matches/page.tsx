@@ -179,11 +179,7 @@ export default async function MatchesPage({
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
+        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
           <div className="relative z-10 space-y-3">
             <Link
               href="/company/vacancies"
@@ -201,7 +197,7 @@ export default async function MatchesPage({
 
       {/* Tabs */}
       <Reveal delay={75}>
-        <div className="border-line bg-card/70 inline-flex rounded-2xl border p-1.5 backdrop-blur-md">
+        <div className="border-line bg-card inline-flex rounded-2xl border p-1.5">
           <Link
             href={tabHref("matches")}
             className={`rounded-xl px-4 py-2 text-xs font-bold transition-all ${
@@ -305,7 +301,7 @@ export default async function MatchesPage({
         <Reveal delay={150}>
           <section className="space-y-4">
             {applications.length === 0 ? (
-              <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-md">
+              <div className="border-line bg-card shadow-soft rounded-2xl border p-12 text-center">
                 <p className="text-subtle text-sm">{t("applicationsEmpty")}</p>
               </div>
             ) : (
@@ -315,7 +311,7 @@ export default async function MatchesPage({
                   return (
                     <li
                       key={app.id}
-                      className="border-line bg-card/90 shadow-soft flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-5 backdrop-blur-md transition-all hover:shadow-md"
+                      className="border-line bg-card shadow-soft flex flex-wrap items-center justify-between gap-3 rounded-2xl border p-5 transition-all hover:shadow-md"
                     >
                       <div className="min-w-0 flex-1 space-y-1.5">
                         <div className="flex flex-wrap items-center gap-2">
@@ -369,7 +365,7 @@ export default async function MatchesPage({
               </FormAlert>
             )}
             {decided.length > 0 ? (
-              <section className="border-line bg-card/90 shadow-soft space-y-3 rounded-3xl border p-6 backdrop-blur-md">
+              <section className="border-line bg-card shadow-soft space-y-3 rounded-2xl border p-6">
                 <h2 className="text-text text-lg font-extrabold">
                   {t("decided")}
                 </h2>

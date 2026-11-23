@@ -21,6 +21,11 @@ const copy = {
     intro:
       "60 ta fikrga o'zingizga mos javobni tanlang. Bu kasbga yaroqlilik hukmi emas.",
     progress: "Javob berilgan",
+    section: "Bo‘lim",
+    scaleLow: "Umuman qo‘shilmayman",
+    scaleMiddle: "Betarafman",
+    scaleHigh: "To‘liq qo‘shilaman",
+    pageComplete: "Bu bo‘limdagi barcha savollarga javob berildi",
     previous: "Oldingi",
     next: "Keyingi",
     save: "Saqlash",
@@ -44,6 +49,11 @@ const copy = {
     intro:
       "60 pikirge ózińizge sáykes juwaptı tańlań. Bul kásipke jaraylılıq húkimi emes.",
     progress: "Juwap berilgen",
+    section: "Bólim",
+    scaleLow: "Ulıwma qosılmayman",
+    scaleMiddle: "Biytárepman",
+    scaleHigh: "Tolıq qosılaman",
+    pageComplete: "Bul bólimdegi barlıq sorawlarǵa juwap berildi",
     previous: "Aldınǵı",
     next: "Keyingi",
     save: "Saqlaw",
@@ -67,6 +77,11 @@ const copy = {
     intro:
       "Ответьте на 60 утверждений. Это не заключение о пригодности к профессии.",
     progress: "Ответов",
+    section: "Раздел",
+    scaleLow: "Совсем не согласен",
+    scaleMiddle: "Нейтрально",
+    scaleHigh: "Полностью согласен",
+    pageComplete: "На все вопросы раздела даны ответы",
     previous: "Назад",
     next: "Далее",
     save: "Сохранить",
@@ -90,6 +105,11 @@ const copy = {
     intro:
       "Answer 60 statements about yourself. This is not a job suitability verdict.",
     progress: "Answered",
+    section: "Section",
+    scaleLow: "Strongly disagree",
+    scaleMiddle: "Neutral",
+    scaleHigh: "Strongly agree",
+    pageComplete: "All questions in this section are answered",
     previous: "Previous",
     next: "Next",
     save: "Save",
@@ -132,6 +152,9 @@ export function PersonalityTest({
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
   const answered = Object.keys(answers).length;
+  const pageAnswered = questions
+    .slice(page * 10, page * 10 + 10)
+    .filter((question) => answers[question.id] !== undefined).length;
   const eligible =
     !result ||
     Date.now() - new Date(result.createdAt).getTime() >= retakeDays * 86400000;
@@ -205,12 +228,19 @@ export function PersonalityTest({
   }
   if (result && !eligible)
     return (
-      <main className="mx-auto max-w-3xl space-y-6 px-4 py-12">
-        <h1 className="text-3xl font-bold">
-          {t.result}: {result.typeCode}-{result.identity}
-        </h1>
-        <p className="text-muted">{t.intro}</p>
-        <div className="space-y-3">
+      <main className="page-x mx-auto max-w-5xl space-y-6 py-8 sm:py-12">
+        <header className="border-line bg-card shadow-soft rounded-3xl border p-6 sm:p-9">
+          <span className="bg-primary-soft text-primary-text inline-flex rounded-full px-3 py-1 text-xs font-bold">
+            {t.result}
+          </span>
+          <h1 className="text-text mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">
+            {result.typeCode}-{result.identity}
+          </h1>
+          <p className="text-subtle mt-3 max-w-2xl text-sm leading-relaxed sm:text-base">
+            {t.intro}
+          </p>
+        </header>
+        <div className="grid gap-4 sm:grid-cols-2">
           {(
             [
               result.mindPct,
@@ -220,63 +250,107 @@ export function PersonalityTest({
               result.identityPct,
             ] as number[]
           ).map((value, index) => (
-            <div key={index}>
-              <div className="flex justify-between">
+            <div
+              key={index}
+              className="border-line bg-card shadow-soft rounded-2xl border p-5"
+            >
+              <div className="text-text mb-4 flex justify-between gap-3 text-sm font-bold">
                 <span>{t.labels[index]}</span>
-                <span>{value}%</span>
+                <span className="text-primary-text">{value}%</span>
               </div>
-              <div className="bg-line h-2 rounded-full">
+              <div className="bg-line h-2.5 overflow-hidden rounded-full">
                 <div
-                  className="bg-primary h-2 rounded-full"
+                  className="bg-primary h-full rounded-full"
                   style={{ width: `${value}%` }}
                 />
               </div>
             </div>
           ))}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
           <button
-            className="bg-primary text-on-primary rounded-xl px-5 py-3"
+            className="bg-primary text-on-primary rounded-xl px-5 py-3 text-sm font-bold"
             onClick={() => router.push("/student/cv")}
           >
             {t.continue}
           </button>
           <button
-            className="border-line rounded-xl border px-5 py-3"
+            className="border-line text-text rounded-xl border px-5 py-3 text-sm font-bold"
             disabled={busy}
             onClick={remove}
           >
             {t.delete}
           </button>
         </div>
-        <p className="text-muted text-sm">
+        <p className="text-subtle text-sm">
           {t.retakeWait.replace("30", String(retakeDays))}
         </p>
       </main>
     );
   return (
-    <main className="mx-auto max-w-3xl space-y-6 px-4 py-10">
-      <h1 className="text-3xl font-bold">{t.title}</h1>
-      <p className="text-muted">{t.intro}</p>
-      <p>
-        {t.progress}: {answered}/60
-      </p>
-      <div className="space-y-5">
+    <main className="page-x mx-auto max-w-6xl space-y-7 py-8 sm:py-12">
+      <header className="border-line bg-card shadow-soft relative overflow-hidden rounded-3xl border p-6 sm:p-9">
+        <div className="bg-primary/8 pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full blur-3xl" />
+        <div className="relative flex flex-wrap items-start justify-between gap-6">
+          <div className="max-w-2xl space-y-3">
+            <span className="bg-primary-soft text-primary-text inline-flex rounded-full px-3 py-1 text-xs font-bold tracking-wide">
+              {t.section} {page + 1} / 6
+            </span>
+            <h1 className="text-text text-3xl font-extrabold tracking-tight sm:text-4xl">
+              {t.title}
+            </h1>
+            <p className="text-subtle max-w-xl text-sm leading-relaxed sm:text-base">
+              {t.intro}
+            </p>
+          </div>
+          <div className="border-primary/20 bg-primary-soft/60 flex min-w-32 flex-col rounded-2xl border px-5 py-4 text-center">
+            <span className="text-primary-text text-2xl font-extrabold">
+              {answered}
+              <span className="text-base font-medium"> / 60</span>
+            </span>
+            <span className="text-subtle text-xs font-semibold">
+              {t.progress}
+            </span>
+          </div>
+        </div>
+        <div className="bg-line relative mt-7 h-2 overflow-hidden rounded-full">
+          <div
+            className="bg-primary h-full rounded-full transition-all duration-300"
+            style={{ width: `${(answered / 60) * 100}%` }}
+          />
+        </div>
+      </header>
+
+      <div className="border-line bg-card/80 flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold sm:px-6">
+        <span className="text-subtle">{t.scaleLow}</span>
+        <span className="text-subtle">{t.scaleMiddle}</span>
+        <span className="text-primary-text">{t.scaleHigh}</span>
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-2 lg:gap-5">
         {questions.slice(page * 10, page * 10 + 10).map((question, index) => (
           <fieldset
             key={question.id}
-            className="border-line rounded-2xl border p-4"
+            className={`bg-card shadow-soft rounded-2xl border p-5 transition-colors sm:p-6 ${
+              answers[question.id] === undefined
+                ? "border-line"
+                : "border-primary/40"
+            }`}
           >
-            <legend className="px-2 font-medium">
-              {page * 10 + index + 1}. {question.text}
-            </legend>
-            <div className="flex justify-between gap-1">
+            <legend className="sr-only">{question.text}</legend>
+            <div className="mb-5 flex items-start gap-3">
+              <span className="bg-primary-soft text-primary-text flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold">
+                {page * 10 + index + 1}
+              </span>
+              <p className="text-text min-h-12 pt-1 text-sm leading-relaxed font-semibold sm:text-base">
+                {question.text}
+              </p>
+            </div>
+            <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
               {[-3, -2, -1, 0, 1, 2, 3].map((value) => (
-                <label
-                  key={value}
-                  className="flex min-w-8 flex-col items-center gap-1 text-sm"
-                >
+                <label key={value} className="cursor-pointer">
                   <input
+                    className="peer sr-only"
                     type="radio"
                     name={question.id}
                     value={value}
@@ -285,16 +359,20 @@ export function PersonalityTest({
                       setAnswers((prev) => ({ ...prev, [question.id]: value }))
                     }
                   />
-                  {value}
+                  <span className="border-line bg-canvas text-subtle hover:border-primary/50 hover:text-primary-text peer-checked:border-primary peer-checked:bg-primary peer-checked:text-on-primary peer-focus-visible:ring-primary/50 flex min-h-11 items-center justify-center rounded-xl border text-sm font-bold transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2">
+                    {value > 0 ? `+${value}` : value}
+                  </span>
                 </label>
               ))}
             </div>
           </fieldset>
         ))}
       </div>
+
       {page === 5 && (
-        <label className="flex gap-3">
+        <label className="border-line bg-card flex cursor-pointer items-start gap-3 rounded-2xl border p-5 text-sm leading-relaxed">
           <input
+            className="accent-primary mt-1 h-4 w-4 shrink-0"
             type="checkbox"
             checked={consent}
             onChange={(event) => setConsent(event.target.checked)}
@@ -302,49 +380,58 @@ export function PersonalityTest({
           {t.consent}
         </label>
       )}
-      {message && <p role="status">{message}</p>}
-      <div className="flex flex-wrap gap-3">
-        {page > 0 && (
+      {message && (
+        <p className="text-primary-text text-sm font-semibold" role="status">
+          {message}
+        </p>
+      )}
+      <div className="border-line bg-card shadow-soft flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-4 sm:p-5">
+        <span className="text-subtle text-sm font-medium">
+          {pageAnswered === 10 ? t.pageComplete : `${pageAnswered} / 10`}
+        </span>
+        <div className="flex flex-wrap gap-3">
+          {page > 0 && (
+            <button
+              className="border-line text-text hover:border-primary rounded-xl border px-5 py-3 text-sm font-bold transition-colors"
+              onClick={() => setPage((value) => value - 1)}
+            >
+              {t.previous}
+            </button>
+          )}
           <button
-            className="border-line rounded-xl border px-5 py-3"
-            onClick={() => setPage((value) => value - 1)}
-          >
-            {t.previous}
-          </button>
-        )}
-        <button
-          className="border-line rounded-xl border px-5 py-3"
-          disabled={busy}
-          onClick={save}
-        >
-          {t.save}
-        </button>
-        {page < 5 ? (
-          <button
-            className="bg-primary text-on-primary rounded-xl px-5 py-3"
+            className="border-line text-text hover:border-primary rounded-xl border px-5 py-3 text-sm font-bold transition-colors disabled:opacity-50"
             disabled={busy}
-            onClick={nextPage}
+            onClick={save}
           >
-            {t.next}
+            {t.save}
           </button>
-        ) : (
-          <button
-            className="bg-primary text-on-primary rounded-xl px-5 py-3"
-            disabled={busy || !eligible}
-            onClick={finish}
-          >
-            {t.finish}
-          </button>
-        )}
-        {result && (
-          <button
-            className="border-line rounded-xl border px-5 py-3"
-            disabled={busy}
-            onClick={remove}
-          >
-            {t.delete}
-          </button>
-        )}
+          {page < 5 ? (
+            <button
+              className="bg-primary text-on-primary rounded-xl px-6 py-3 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-50"
+              disabled={busy}
+              onClick={nextPage}
+            >
+              {t.next}
+            </button>
+          ) : (
+            <button
+              className="bg-primary text-on-primary rounded-xl px-6 py-3 text-sm font-bold transition-opacity hover:opacity-90 disabled:opacity-50"
+              disabled={busy || !eligible}
+              onClick={finish}
+            >
+              {t.finish}
+            </button>
+          )}
+          {result && (
+            <button
+              className="border-line text-text rounded-xl border px-5 py-3 text-sm font-bold"
+              disabled={busy}
+              onClick={remove}
+            >
+              {t.delete}
+            </button>
+          )}
+        </div>
       </div>
     </main>
   );

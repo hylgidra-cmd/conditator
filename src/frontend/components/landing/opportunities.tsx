@@ -27,16 +27,6 @@ export async function Opportunities({ stats }: { stats: LandingStats }) {
     INTERNSHIP: work("INTERNSHIP"),
   };
   const number = new Intl.NumberFormat(locale === "kk" ? "uz-UZ" : locale);
-  const tzPartners = [
-    { name: "QMU (KarSU)", logo: "/partners/karsu.webp", q: "QMU" },
-    { name: "IT Park", logo: "/partners/it-park.webp", q: "IT Park" },
-  ];
-  const partnerLogoFor = (companyName: string): string | null => {
-    const lower = companyName.toLowerCase();
-    if (/qmu|karsu|qdu|universitet/.test(lower)) return "/partners/karsu.webp";
-    if (/it[\s-]*park/.test(lower)) return "/partners/it-park.webp";
-    return null;
-  };
   const steps = [
     { label: t("discover"), Icon: SearchIcon, href: "/vacancies" },
     { label: t("profile"), Icon: GraduationCapIcon, href: "/student/cv" },
@@ -51,55 +41,7 @@ export async function Opportunities({ stats }: { stats: LandingStats }) {
         aria-labelledby="opportunities-title"
       >
         <div className={styles.heading}>
-          <div className={styles.headingLeft}>
-            <h2 id="opportunities-title">{t("recent")}</h2>
-            <div className={styles.partnerPills}>
-              {tzPartners.map((partner) => (
-                <Link
-                  key={partner.name}
-                  href={`/vacancies?q=${encodeURIComponent(partner.q)}`}
-                  className={styles.partnerPill}
-                >
-                  <Image
-                    src={partner.logo}
-                    width={22}
-                    height={22}
-                    alt=""
-                    unoptimized
-                  />
-                  <span>{partner.name}</span>
-                </Link>
-              ))}
-              {stats.approvedCompanyList
-                .filter(
-                  (c) =>
-                    !/qmu|karsu|qdu|it[\s-]*park/i.test(c.name),
-                )
-                .slice(0, 4)
-                .map((company) => (
-                  <Link
-                    key={company.id}
-                    href={`/vacancies?q=${encodeURIComponent(company.name)}`}
-                    className={styles.partnerPill}
-                  >
-                    {company.hasLogo ? (
-                      <Image
-                        src={`/api/companies/${company.id}/logo`}
-                        width={22}
-                        height={22}
-                        alt=""
-                        unoptimized
-                      />
-                    ) : (
-                      <span className={styles.partnerInitial} aria-hidden>
-                        {company.name.slice(0, 1)}
-                      </span>
-                    )}
-                    <span>{company.name}</span>
-                  </Link>
-                ))}
-            </div>
-          </div>
+          <h2 id="opportunities-title">{t("recent")}</h2>
           <Link href="/vacancies">
             {t("viewAll")} <ArrowRightIcon size={14} />
           </Link>
@@ -110,7 +52,6 @@ export async function Opportunities({ stats }: { stats: LandingStats }) {
               .filter((value): value is number => value !== null)
               .map((value) => number.format(value))
               .join(" – ");
-            const staticLogo = partnerLogoFor(job.companyName);
             return (
               <Link
                 key={job.id}
@@ -122,14 +63,6 @@ export async function Opportunities({ stats }: { stats: LandingStats }) {
                     {job.hasLogo ? (
                       <Image
                         src={`/api/companies/${job.companyId}/logo`}
-                        width={30}
-                        height={30}
-                        alt=""
-                        unoptimized
-                      />
-                    ) : staticLogo ? (
-                      <Image
-                        src={staticLogo}
                         width={30}
                         height={30}
                         alt=""

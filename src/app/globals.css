@@ -192,7 +192,8 @@
     0 0 0 1px var(--ds-edge), 0 2px 6px rgb(var(--ds-shadow-color) / 0.06),
     0 14px 32px -10px rgb(var(--ds-shadow-color) / 0.12);
   --shadow-float:
-    0 0 0 1px var(--ds-edge), 0 8px 20px -4px rgb(var(--ds-shadow-color) / 0.08),
+    0 0 0 1px var(--ds-edge),
+    0 8px 20px -4px rgb(var(--ds-shadow-color) / 0.08),
     0 28px 60px -16px rgb(5 150 105 / 0.16);
   --shadow-primary: 0 12px 30px -8px rgb(5 150 105 / 0.45);
 
@@ -524,4 +525,189 @@ body {
     #6ee7b7 50%,
     #2dd4bf 100%
   );
+}
+/* Landing illustration and motion */
+.orbit-hero {
+  background:
+    radial-gradient(
+      ellipse at 75% 40%,
+      color-mix(in srgb, var(--ds-primary) 14%, transparent) 0%,
+      transparent 48%
+    ),
+    var(--ds-bg);
+}
+.orbit-art {
+  animation: orbit-float 7s ease-in-out infinite;
+}
+.orbit-content {
+  background: var(--ds-bg);
+}
+.orbit-kicker {
+  color: var(--ds-primary-text);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.orbit-title {
+  color: var(--ds-text);
+  font-size: clamp(1.8rem, 3vw, 2.7rem);
+  line-height: 1.12;
+  font-weight: 850;
+  letter-spacing: -0.035em;
+}
+.orbit-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ds-primary-text);
+  font-size: 0.85rem;
+  font-weight: 750;
+}
+.orbit-job {
+  display: block;
+  border: 1px solid var(--ds-line);
+  border-radius: 1.1rem;
+  background: var(--ds-surface);
+  padding: 1.35rem;
+  box-shadow: 0 12px 32px rgb(0 40 25 / 0.06);
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.orbit-job:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px rgb(0 40 25 / 0.12);
+}
+.orbit-job-icon,
+.orbit-step-icon {
+  display: inline-flex;
+  width: 2.6rem;
+  height: 2.6rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.8rem;
+  background: var(--ds-primary-soft);
+  color: var(--ds-primary-text);
+}
+.orbit-role {
+  display: grid;
+  align-items: center;
+  gap: 2.5rem;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border: 1px solid var(--ds-line);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(
+      ellipse at 90% 30%,
+      color-mix(in srgb, var(--ds-primary) 14%, transparent),
+      transparent 50%
+    ),
+    var(--ds-surface);
+}
+.orbit-role-1 {
+  background:
+    radial-gradient(
+      ellipse at 10% 70%,
+      color-mix(in srgb, var(--ds-primary) 13%, transparent),
+      transparent 55%
+    ),
+    var(--ds-surface);
+}
+.orbit-step {
+  min-height: 8rem;
+  padding: 1rem;
+  color: var(--ds-text);
+  border: 1px solid var(--ds-line);
+  border-radius: 1rem;
+  background: var(--ds-surface);
+  box-shadow: 0 8px 24px rgb(0 35 20 / 0.07);
+  transition: transform 0.2s;
+}
+.orbit-step:hover {
+  transform: translateY(-4px);
+}
+.orbit-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  background: linear-gradient(110deg, #0a9c67, #00563b);
+  padding: 0.8rem 1.2rem;
+  color: white;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+.orbit-feature-band {
+  display: grid;
+  gap: 2rem;
+  border: 1px solid var(--ds-line);
+  border-radius: 1.5rem;
+  background: var(--ds-surface);
+  padding: clamp(1.5rem, 4vw, 3rem);
+}
+.orbit-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--ds-muted);
+  font-size: 0.8rem;
+}
+.orbit-metric strong {
+  color: var(--ds-primary-text);
+  font-size: 2rem;
+}
+.orbit-final {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  border-radius: 1.5rem;
+  padding: clamp(2rem, 5vw, 4rem);
+  color: white;
+  background:
+    radial-gradient(ellipse at 85% 30%, #19c68d 0%, transparent 40%),
+    linear-gradient(110deg, #003e2e, #007250);
+}
+.orbit-final-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid #ffffff80;
+  border-radius: 999px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition: background 0.2s;
+}
+.orbit-final-link:hover {
+  background: #ffffff24;
+}
+@media (min-width: 1024px) {
+  .orbit-role,
+  .orbit-feature-band {
+    grid-template-columns: 1fr 1.15fr;
+  }
+  .orbit-role-1 > :first-child {
+    order: 2;
+  }
+}
+@keyframes orbit-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-art {
+    animation: none;
+  }
+  .orbit-job,
+  .orbit-step {
+    transition: none;
+  }
 }

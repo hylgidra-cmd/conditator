@@ -1196,6 +1196,19 @@
       "name5": "Behruz Tursunov",
       "role5": "Dizayner, Ándijan",
       "quote5": "Profilimdi toltırdım hám kóp ótpey jumıs beriwshilerden intervyuǵa shaqırıw kele basladı."
+    },
+    "referenceHero": {
+      "badge": "Ózbekstannıń karyera platforması",
+      "title": "Talabalar hám jumıs beriwshiler bir platformada",
+      "description": "Ózbekstanda jumıs tabıń, qábiletli kadrlardı tańlań hám karyerańızdı rawajlandırıń.",
+      "findJob": "Jumıs tabıw",
+      "hireTalent": "Kadr tabıw",
+      "students": "Talabalar",
+      "employers": "Jumıs beriwshiler",
+      "ecosystem": "Bir ekosistema",
+      "search": "Jumıs, kompaniya yamasa kónlikpe",
+      "location": "Jaylasıw",
+      "country": "Ózbekstan"
     }
   },
   "Dashboard": {

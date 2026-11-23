@@ -1196,6 +1196,19 @@
       "name5": "Behruz Tursunov",
       "role5": "Designer, Andijan",
       "quote5": "I filled in my profile and soon employers started inviting me to interviews."
+    },
+    "referenceHero": {
+      "badge": "Uzbekistan’s career platform",
+      "title": "Students and employers connected for real careers",
+      "description": "A modern talent ecosystem to find opportunities, grow skills and build the next generation of Uzbekistan.",
+      "findJob": "Find a job",
+      "hireTalent": "Hire talent",
+      "students": "Students",
+      "employers": "Employers",
+      "ecosystem": "One ecosystem",
+      "search": "Job, company or skill",
+      "location": "Location",
+      "country": "Uzbekistan"
     }
   },
   "Dashboard": {

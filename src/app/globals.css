@@ -966,3 +966,19 @@ body:has(.orbit-hero) footer {
     animation: none;
   }
 }
+
+/* Match the landing header to the compact hero composition. */
+body:has(.orbit-hero) header nav {
+  border: 0;
+  background: transparent;
+  gap: 0.5rem;
+}
+body:has(.orbit-hero) header nav a[aria-current="page"] {
+  background: transparent;
+  color: var(--ds-primary-text);
+  box-shadow: none;
+}
+body:has(.orbit-hero) header nav a {
+  font-size: 0.8rem;
+  padding-inline: 0.75rem;
+}

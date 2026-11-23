@@ -22,21 +22,27 @@ export function HeroSearch({
   buttonLabel,
   quickLabel,
   tags,
+  locationLabel,
+  countryLabel,
 }: {
   placeholder: string;
   buttonLabel: string;
   quickLabel: string;
   tags: string[];
+  locationLabel?: string;
+  countryLabel?: string;
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [location, setLocation] = useState("");
 
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const trimmed = query.trim();
-    router.push(
-      trimmed ? `/vacancies?q=${encodeURIComponent(trimmed)}` : "/vacancies",
-    );
+    const params = new URLSearchParams();
+    if (trimmed) params.set("q", trimmed);
+    if (location) params.set("location", location);
+    router.push(params.size ? `/vacancies?${params}` : "/vacancies");
   }
 
   return (
@@ -56,6 +62,18 @@ export function HeroSearch({
           aria-label={placeholder}
           className="text-text placeholder:text-subtle min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm font-medium outline-none sm:text-base"
         />
+        {locationLabel && (
+          <select
+            aria-label={locationLabel}
+            value={location}
+            onChange={(event) => setLocation(event.target.value)}
+          >
+            <option value="">{countryLabel}</option>
+            <option value="Nukus">Nukus</option>
+            <option value="Tashkent">Tashkent</option>
+            <option value="Samarkand">Samarkand</option>
+          </select>
+        )}
         <button
           type="submit"
           className="shrink-0 cursor-pointer rounded-xl bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 px-6 py-3 text-xs font-extrabold text-white shadow-[0_10px_24px_-6px_rgb(5,150,105,0.55)] transition-all hover:brightness-105 active:scale-[0.98] sm:text-sm"
@@ -211,7 +229,9 @@ export function HeroTerminal({
             key={tab}
             className="ds-slide-in flex items-center justify-between text-xs font-bold"
           >
-            <span className="text-emerald-100/80">{activeItem.metricLabel}</span>
+            <span className="text-emerald-100/80">
+              {activeItem.metricLabel}
+            </span>
             <span className="text-lg font-black text-emerald-300 tabular-nums">
               <AnimatedNumber value={activeItem.count} />
             </span>

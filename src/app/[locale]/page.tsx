@@ -56,7 +56,7 @@ export default async function HomePage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
       />
-      <Hero stats={stats} />
+      <Hero />
       <OrbitContent stats={stats} />
     </>
   );

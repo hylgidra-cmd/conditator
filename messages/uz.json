@@ -1196,6 +1196,19 @@
       "name5": "Behruz Tursunov",
       "role5": "Dizayner, Andijon",
       "quote5": "Profilimni toʻldirdim va koʻp oʻtmay ish beruvchilardan suhbatga taklif kela boshladi."
+    },
+    "referenceHero": {
+      "badge": "O‘zbekistonning karyera platformasi",
+      "title": "Talabalar va ish beruvchilar bir platformada",
+      "description": "O‘zbekistonda ish toping, iste’dodli kadrlarni tanlang va karyerangizni rivojlantiring.",
+      "findJob": "Ish topish",
+      "hireTalent": "Xodim topish",
+      "students": "Talabalar",
+      "employers": "Ish beruvchilar",
+      "ecosystem": "Bir ekotizim",
+      "search": "Ish, kompaniya yoki ko‘nikma",
+      "location": "Joylashuv",
+      "country": "O‘zbekiston"
     }
   },
   "Dashboard": {

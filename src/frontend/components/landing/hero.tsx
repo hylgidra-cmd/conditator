@@ -1,60 +1,61 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
-import type { LandingStats } from "@/backend/landing-stats";
-import { ButtonLink } from "@/frontend/components/ds/button";
-import { Reveal } from "@/frontend/components/ds/motion";
+import { Link } from "@/i18n/navigation";
+import {
+  BriefcaseIcon,
+  UserIcon,
+  SparkIcon,
+} from "@/frontend/components/icons";
 import { HeroSearch } from "./hero-terminal";
+import styles from "./hero.module.css";
 
-export async function Hero({ stats }: { stats: LandingStats }) {
-  const t = await getTranslations("Landing.hero");
+export async function Hero() {
+  const [t, hero] = await Promise.all([
+    getTranslations("Landing.referenceHero"),
+    getTranslations("Landing.hero"),
+  ]);
   return (
     <section
-      className="orbit-hero font-ui relative overflow-hidden"
+      className={`orbit-hero ${styles.hero}`}
       aria-labelledby="hero-title"
     >
-      <div className="page-x relative">
-        <div className="grid items-center gap-4 pt-12 lg:grid-cols-[.9fr_1.1fr] lg:pt-20">
-          <Reveal immediate>
-            <div className="relative z-10">
-              <span className="text-primary-text text-xs font-extrabold tracking-[.18em] uppercase">
-                {t("badge")}
-              </span>
-              <h1
-                id="hero-title"
-                className="text-text mt-5 max-w-[16ch] text-5xl leading-[1.04] font-black tracking-tight sm:text-6xl lg:text-7xl"
-              >
-                {t("title")}
-              </h1>
-              <p className="text-subtle mt-5 max-w-xl text-lg leading-relaxed">
-                {t("text")}
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <ButtonLink href="/vacancies" size="lg" arrow>
-                  {t("secondaryCta")}
-                </ButtonLink>
-                <ButtonLink href="/register" size="lg" variant="outline">
-                  {t("cta")}
-                </ButtonLink>
-              </div>
-              <div className="text-subtle mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
-                <span>
-                  {stats.activeVacancies} · {t("liveVacancies")}
-                </span>
-                <span>
-                  {stats.approvedCompanies} · {t("liveCompanies")}
-                </span>
-              </div>
+      <div aria-hidden className={styles.ribbonLeft} />
+      <div aria-hidden className={styles.ribbonRight} />
+      <div className={styles.inner}>
+        <div className={styles.stage}>
+          <div className={styles.copy}>
+            <p className={styles.eyebrow}>{t("badge")}</p>
+            <h1 id="hero-title">{t("title")}</h1>
+            <p className={styles.description}>{t("description")}</p>
+            <div className={styles.actions}>
+              <Link href="/vacancies">
+                {t("findJob")} <span aria-hidden>→</span>
+              </Link>
+              <Link href="/register?role=COMPANY">{t("hireTalent")}</Link>
             </div>
-          </Reveal>
-          <div className="orbit-art relative mx-auto w-full max-w-3xl">
+            <div className={styles.audience}>
+              <Link href="/register?role=STUDENT">
+                <UserIcon size={17} />
+                {t("students")}
+              </Link>
+              <Link href="/register?role=COMPANY">
+                <BriefcaseIcon size={17} />
+                {t("employers")}
+              </Link>
+              <Link href="/#showcase">
+                <SparkIcon size={17} />
+                {t("ecosystem")}
+              </Link>
+            </div>
+          </div>
+          <div className={styles.art}>
             <Image
-              src="/orbit-hero.webp"
-              width={604}
-              height={293}
+              src="/hero-people.png"
               alt=""
+              width={1802}
+              height={873}
               priority
-              sizes="(min-width: 1024px) 55vw, 100vw"
-              className="orbit-scene h-auto w-full"
+              sizes="(min-width: 800px) 65vw, 100vw"
             />
             <div aria-hidden className="orbit-track">
               <i />
@@ -62,12 +63,20 @@ export async function Hero({ stats }: { stats: LandingStats }) {
             </div>
           </div>
         </div>
-        <div className="relative z-10 mx-auto max-w-4xl pb-12">
+        <div className={styles.search}>
           <HeroSearch
-            placeholder={t("searchPlaceholder")}
-            buttonLabel={t("searchButton")}
-            quickLabel={t("quickLabel")}
-            tags={[t("tag1"), t("tag2"), t("tag3"), t("tag4"), t("tag5")]}
+            placeholder={t("search")}
+            buttonLabel={hero("searchButton")}
+            quickLabel={hero("quickLabel")}
+            tags={[
+              hero("tag1"),
+              hero("tag2"),
+              hero("tag3"),
+              hero("tag4"),
+              hero("tag5"),
+            ]}
+            locationLabel={t("location")}
+            countryLabel={t("country")}
           />
         </div>
       </div>

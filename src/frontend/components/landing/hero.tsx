@@ -48,14 +48,18 @@ export async function Hero({ stats }: { stats: LandingStats }) {
           </Reveal>
           <div className="orbit-art relative mx-auto w-full max-w-3xl">
             <Image
-              src="/career-orbit.png"
-              width={1752}
-              height={897}
+              src="/orbit-hero.webp"
+              width={604}
+              height={293}
               alt=""
               priority
               sizes="(min-width: 1024px) 55vw, 100vw"
-              className="h-auto w-full"
+              className="orbit-scene h-auto w-full"
             />
+            <div aria-hidden className="orbit-track">
+              <i />
+              <i />
+            </div>
           </div>
         </div>
         <div className="relative z-10 mx-auto max-w-4xl pb-12">

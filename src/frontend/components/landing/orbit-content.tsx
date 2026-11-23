@@ -11,12 +11,11 @@ import {
 import { Reveal } from "@/frontend/components/ds/motion";
 
 export async function OrbitContent({ stats }: { stats: LandingStats }) {
-  const [jobs, show, cta, detail, promo] = await Promise.all([
+  const [jobs, show, cta, detail] = await Promise.all([
     getTranslations("Landing.liveJobs"),
     getTranslations("Landing.showcase"),
     getTranslations("Landing.ctaBand"),
     getTranslations("VacancyDetail.workTypes"),
-    getTranslations("Landing.promo"),
   ]);
   const types: Record<string, string> = {
     FULL_TIME: detail("FULL_TIME"),
@@ -56,7 +55,7 @@ export async function OrbitContent({ stats }: { stats: LandingStats }) {
   ];
   return (
     <div className="orbit-content font-ui">
-      <section className="page-x py-14 sm:py-20" id="companies">
+      <section className="page-x py-8" id="companies">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -88,7 +87,16 @@ export async function OrbitContent({ stats }: { stats: LandingStats }) {
                   .filter(Boolean)
                   .join(" · ")}
               </p>
-              <span className="orbit-text-link mt-6">
+              <p className="text-text mt-3 text-sm">
+                {[job.salaryFrom, job.salaryTo]
+                  .filter((value) => value !== null)
+                  .map((value) => value?.toLocaleString("uz-UZ"))
+                  .join(" – ")}{" "}
+                {job.salaryFrom !== null || job.salaryTo !== null
+                  ? job.currency
+                  : jobs("negotiable")}
+              </p>
+              <span className="orbit-text-link mt-4">
                 {jobs("applyBtn")} <ArrowRightIcon size={16} />
               </span>
             </Link>
@@ -98,7 +106,7 @@ export async function OrbitContent({ stats }: { stats: LandingStats }) {
           )}
         </div>
       </section>
-      <section id="showcase" className="page-x space-y-4 pb-16">
+      <section id="showcase" className="page-x orbit-stories">
         {roles.map(({ badge, title, desc, steps, href, action, Icon }, i) => (
           <Reveal key={badge}>
             <div className={`orbit-role orbit-role-${i}`}>
@@ -132,12 +140,23 @@ export async function OrbitContent({ stats }: { stats: LandingStats }) {
           </Reveal>
         ))}
       </section>
-      <section id="categories" className="page-x pb-16">
+      <section id="categories" className="page-x py-7">
         <div className="orbit-feature-band">
           <div>
-            <span className="orbit-kicker">{promo("badge")}</span>
-            <h2 className="orbit-title mt-3">{promo("title")}</h2>
-            <p className="text-subtle mt-3">{promo("subtitle")}</p>
+            <h2 className="orbit-title mt-3">{show("title")}</h2>
+            <div className="orbit-benefits">
+              {[
+                show("studentPipelineTitle"),
+                show("companyPipelineTitle"),
+                show("langTitle"),
+                show("privacyTitle"),
+              ].map((label) => (
+                <div key={label}>
+                  <SparkIcon size={20} />
+                  <strong>{label}</strong>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             {[
@@ -153,7 +172,7 @@ export async function OrbitContent({ stats }: { stats: LandingStats }) {
           </div>
         </div>
       </section>
-      <section id="profile" className="page-x pb-20">
+      <section id="profile" className="page-x pb-6">
         <div className="orbit-final">
           <div>
             <span className="text-sm font-bold tracking-widest uppercase">

@@ -711,3 +711,258 @@ body {
     transition: none;
   }
 }
+.orbit-hero,
+.orbit-content {
+  background: var(--ds-surface-cool);
+}
+.orbit-art {
+  animation: none;
+  isolation: isolate;
+}
+.orbit-scene {
+  mask-image:
+    linear-gradient(90deg, transparent, #000 8%, #000 96%, transparent),
+    linear-gradient(transparent, #000 7%, #000 92%, transparent);
+  mask-composite: intersect;
+}
+.orbit-track {
+  position: absolute;
+  inset: 47% 4% 9% 4%;
+  transform: rotate(-12deg) scaleY(0.33);
+  pointer-events: none;
+}
+.orbit-track i {
+  position: absolute;
+  inset: -35% 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 20deg,
+    transparent 0 25%,
+    #ffec92 32%,
+    #fff 34%,
+    transparent 35% 76%,
+    #1bda98 80%,
+    white 83%,
+    transparent 84%
+  );
+  mask: radial-gradient(
+    ellipse,
+    transparent 68%,
+    black 69% 70%,
+    transparent 71%
+  );
+  animation: orbit-spin 5s linear infinite;
+}
+.orbit-track i + i {
+  inset: -55% 9%;
+  animation-duration: 8s;
+  animation-direction: reverse;
+}
+@keyframes orbit-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.orbit-role {
+  position: relative;
+  display: grid;
+  gap: 1rem;
+  border: 0;
+  border-radius: 0;
+  padding: 2rem max(2%, 1rem);
+  background-color: var(--ds-surface);
+  overflow: hidden;
+}
+.orbit-role:before,
+.orbit-final:before {
+  content: "";
+  display: block;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.orbit-role-0:before {
+  background-image: url(/orbit-student.webp);
+}
+.orbit-role-1:before {
+  background-image: url(/orbit-employer.webp);
+}
+.orbit-role:before {
+  min-height: 145px;
+  border-radius: 1rem;
+}
+.orbit-stories {
+  display: grid;
+  gap: 0.25rem;
+}
+.orbit-step {
+  min-height: 0;
+  padding: 0.8rem;
+}
+.orbit-role .orbit-title {
+  font-size: clamp(1.35rem, 2.8vw, 2rem);
+}
+.orbit-feature-band {
+  display: block;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.orbit-feature-band h2 {
+  text-align: center;
+}
+.orbit-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: 1.5rem;
+  margin: 1.6rem 0;
+}
+.orbit-benefits > div {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+  font-size: 0.9rem;
+}
+.orbit-benefits svg {
+  color: var(--ds-primary-text);
+  flex: none;
+}
+.orbit-feature-band > div:last-child {
+  position: relative;
+  background: var(--ds-tinted-bg);
+  border-radius: 1rem;
+  align-items: center;
+  padding: 1.25rem;
+}
+.orbit-final {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  gap: 1rem;
+  background: #04553d;
+}
+.orbit-final:before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 0 50%;
+  background-image: url(/orbit-banner.webp);
+  mask-image: linear-gradient(to right, transparent, #000 22%);
+}
+.orbit-final > div {
+  max-width: 50%;
+}
+@media (min-width: 800px) {
+  .orbit-role-0 {
+    grid-template-columns: 28% 1fr;
+  }
+  .orbit-role-0:before {
+    grid-row: span 2;
+    height: 100%;
+    margin: -2rem 0 -2rem -2rem;
+    min-height: calc(100% + 4rem);
+    border-radius: 0;
+  }
+  .orbit-role-1 {
+    grid-template-columns: 1fr 0.85fr 33%;
+  }
+  .orbit-role-1:before {
+    grid-column: 3;
+    grid-row: 1;
+    height: 100%;
+  }
+  .orbit-role-1 > :first-child {
+    order: 0;
+  }
+  .orbit-role-1 > div:last-child {
+    grid-template-columns: 1fr 1fr;
+  }
+  .orbit-feature-band > div:last-child {
+    padding-left: 26%;
+    background-image: url(/orbit-map.webp);
+    background-repeat: no-repeat;
+    background-position: 2% center;
+    background-size: auto 85%;
+  }
+}
+@media (max-width: 799px) {
+  .orbit-final:before {
+    inset: 0;
+    opacity: 0.25;
+  }
+  .orbit-final > div {
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-track i {
+    animation: none;
+  }
+}
+@property --orbit-phase {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+.orbit-track i {
+  background: conic-gradient(
+    from var(--orbit-phase),
+    transparent 0 25%,
+    #ffe297 32%,
+    white 34%,
+    transparent 35% 76%,
+    #1adb99 80%,
+    white 83%,
+    transparent 84%
+  );
+  animation-name: orbit-light;
+}
+@keyframes orbit-light {
+  to {
+    --orbit-phase: 360deg;
+  }
+}
+body:has(.orbit-hero) header {
+  padding: 0;
+  background: var(--ds-surface-cool);
+}
+body:has(.orbit-hero) header > div {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+body:has(.orbit-hero) footer {
+  --ds-on-night: var(--ds-text);
+  --ds-night: var(--ds-surface-cool);
+  background: var(--ds-surface-cool);
+  color: var(--ds-text);
+}
+.orbit-hero form {
+  width: 100%;
+}
+.orbit-hero .max-w-2xl:has(> form) {
+  margin-inline: auto;
+}
+.orbit-art:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 76% 63%, #fff 0 1px, transparent 4px);
+  animation: orbit-glint 3s ease-in-out infinite alternate;
+}
+@keyframes orbit-glint {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orbit-art:after,
+  .orbit-track i {
+    animation: none;
+  }
+}

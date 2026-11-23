@@ -2,7 +2,7 @@ import { cn } from "./cn";
 
 /**
  * Candidator Neo-Editorial Emerald logotipi:
- * Zumrad-Feruza (Emerald → Teal) squircle nishoni ichida "C" va galstuk ramzi.
+ * 3D oltiburchak/kub (Hexagon Cube) ichida oq "C" ramzi (2 va 4-rasm shabloniga mos).
  */
 export function LogoMark({
   className,
@@ -20,52 +20,55 @@ export function LogoMark({
     >
       <defs>
         <linearGradient
-          id="candidator-emerald-bg"
-          x1="0"
-          y1="0"
-          x2="100"
-          y2="100"
+          id="candidator-hex-top"
+          x1="15"
+          y1="8"
+          x2="85"
+          y2="52"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#062C22" />
-          <stop offset="55%" stopColor="#047857" />
-          <stop offset="100%" stopColor="#0D9488" />
+          <stop offset="0%" stopColor="#34D399" />
+          <stop offset="100%" stopColor="#10B981" />
         </linearGradient>
         <linearGradient
-          id="candidator-tie-grad"
-          x1="40"
-          y1="28"
-          x2="58"
-          y2="82"
+          id="candidator-hex-left"
+          x1="12"
+          y1="26"
+          x2="50"
+          y2="92"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset="0%" stopColor="#6EE7B7" />
-          <stop offset="55%" stopColor="#34D399" />
-          <stop offset="100%" stopColor="#FBBF24" />
+          <stop offset="0%" stopColor="#10B981" />
+          <stop offset="100%" stopColor="#047857" />
+        </linearGradient>
+        <linearGradient
+          id="candidator-hex-right"
+          x1="50"
+          y1="48"
+          x2="88"
+          y2="92"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0%" stopColor="#059669" />
+          <stop offset="100%" stopColor="#064E3B" />
         </linearGradient>
       </defs>
-      <rect
-        x="4"
-        y="4"
-        width="92"
-        height="92"
-        rx="26"
-        fill="url(#candidator-emerald-bg)"
-      />
-      {/* "C" harfi */}
+      {/* 3D Hexagon Cube C */}
       <path
-        d="M 73 27 A 33 33 0 1 0 73 73 L 64 64 A 21 21 0 1 1 64 36 Z"
-        fill="#FFFFFF"
+        d="M50 7 L86 28 L69 38 L50 27 L31 38 L31 62 L50 73 L69 62 L86 72 L50 93 L14 72 L14 28 Z"
+        fill="url(#candidator-hex-left)"
       />
-      {/* Galstuk tuguni */}
       <path
-        d="M 44 33 Q 44 32 45 32 L 53 32 Q 54 32 54 33 L 53 41 Q 53 42 52 42 L 46 42 Q 45 42 45 41 Z"
-        fill="url(#candidator-tie-grad)"
+        d="M50 7 L86 28 L69 38 L50 27 L14 28 Z"
+        fill="url(#candidator-hex-top)"
       />
-      {/* Galstuk asosiy qismi */}
       <path
-        d="M 45.5 43.5 L 52.5 43.5 L 57 69 L 49 80 L 41 69 Z"
-        fill="url(#candidator-tie-grad)"
+        d="M14 28 L31 38 L31 62 L14 72 Z"
+        fill="url(#candidator-hex-left)"
+      />
+      <path
+        d="M50 73 L69 62 L86 72 L50 93 L14 72 L31 62 Z"
+        fill="url(#candidator-hex-right)"
       />
     </svg>
   );

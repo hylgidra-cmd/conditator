@@ -25,10 +25,10 @@ export async function SiteHeader() {
     : 0;
 
   const sections = [
-    { href: "/", label: t("home") },
+    { href: "/#showcase", label: t("students") },
+    { href: "/#employers", label: t("companies") },
     { href: "/vacancies", label: t("jobs") },
-    { href: "/#showcase", label: t("howItWorks") },
-    { href: "/#companies", label: t("companies") },
+    { href: "/#categories", label: t("howItWorks") },
   ];
 
   const roleLinks = user
@@ -68,8 +68,8 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="font-ui sticky top-0 z-40 px-3 pt-3 sm:px-6">
-      <div className="border-line bg-card/90 shadow-float mx-auto relative flex h-16 max-w-[86rem] items-center gap-3 rounded-2xl border px-4 backdrop-blur-xl transition-all sm:px-6">
+    <header className="font-ui sticky top-0 z-40 w-full bg-[#f6f5f2]/92 backdrop-blur-md dark:bg-[#101b17]/92">
+      <div className="relative flex h-16 w-full items-center gap-4 px-4 transition-all sm:px-8 lg:px-12">
         <Link
           href="/"
           aria-label={t("homeAria")}
@@ -81,7 +81,7 @@ export async function SiteHeader() {
 
         <nav
           aria-label={t("mainNav")}
-          className="border-line bg-card-cool/80 mx-auto hidden items-center gap-1 rounded-full border p-1 lg:flex"
+          className="mx-auto hidden items-center gap-2 lg:flex"
         >
           <NavLinks
             items={user ? roleLinks : sections}
@@ -89,26 +89,34 @@ export async function SiteHeader() {
           />
         </nav>
 
-        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 lg:ml-0">
+        <div className="ml-auto flex items-center gap-2 sm:gap-2.5 lg:ml-0">
           <LocaleSwitcher />
-          <span className="hidden sm:block">{themeToggle}</span>
           {user ? (
             <span className="hidden lg:block">
               <LogoutButton
-                className={buttonClass({ variant: "outline", size: "sm" })}
+                className={cn(
+                  buttonClass({ variant: "outline", size: "sm" }),
+                  "!rounded-full !px-5",
+                )}
               />
             </span>
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
+            <div className="hidden items-center gap-2.5 sm:flex">
               <Link
                 href="/login"
-                className={buttonClass({ variant: "outline", size: "sm" })}
+                className={cn(
+                  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex h-9 items-center justify-center rounded-full border bg-white/80 px-5 text-xs font-bold transition-all dark:bg-white/10 dark:text-white",
+                  FOCUS_RING,
+                )}
               >
                 {t("login")}
               </Link>
               <Link
                 href="/register"
-                className={buttonClass({ variant: "primary", size: "sm" })}
+                className={cn(
+                  "inline-flex h-9 items-center justify-center rounded-full bg-gradient-to-r from-[#0e8f5d] to-[#045238] px-5 text-xs font-bold text-white shadow-[0_6px_14px_rgb(6,95,67,0.22)] transition-all hover:brightness-110",
+                  FOCUS_RING,
+                )}
               >
                 {t("register")}
               </Link>

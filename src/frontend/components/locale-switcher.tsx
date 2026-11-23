@@ -42,15 +42,31 @@ export function LocaleSwitcher() {
         aria-label={t("current", { locale: t(current) })}
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "border-line/70 bg-card/60 text-subtle hover:border-primary/40 hover:text-text flex h-9 cursor-pointer items-center gap-1.5 rounded-xl border px-2.5 text-xs font-bold uppercase transition-all",
+          "text-text/80 hover:text-primary-text flex h-9 cursor-pointer items-center gap-1.5 rounded-full px-2.5 text-xs font-bold uppercase transition-colors",
           FOCUS_RING,
         )}
       >
-        {current}
         <svg
           aria-hidden
-          width="12"
-          height="12"
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.9"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-text/75 shrink-0"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+          <path d="M2 12h20" />
+        </svg>
+        <span>{current}</span>
+        <svg
+          aria-hidden
+          width="11"
+          height="11"
           viewBox="0 0 12 12"
           className={cn("transition-transform duration-200", open && "rotate-180")}
         >
@@ -58,7 +74,7 @@ export function LocaleSwitcher() {
             d="M3 4.5 6 7.5 9 4.5"
             fill="none"
             stroke="currentColor"
-            strokeWidth="1.6"
+            strokeWidth="1.7"
           />
         </svg>
       </button>

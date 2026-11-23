@@ -1,197 +1,276 @@
+import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import type { LandingStats } from "@/backend/landing-stats";
 import { Link } from "@/i18n/navigation";
 import {
   ArrowRightIcon,
   BriefcaseIcon,
-  SparkIcon,
-  UserIcon,
-  FileTextIcon,
+  ChartIcon,
+  CheckIcon,
+  LayersIcon,
+  ShieldCheckIcon,
+  UsersIcon,
+  ZapIcon,
 } from "@/frontend/components/icons";
-import { Reveal } from "@/frontend/components/ds/motion";
+import { AnimatedNumber, Reveal } from "@/frontend/components/ds/motion";
+import { Opportunities } from "./opportunities";
+import styles from "./orbit-content.module.css";
 
 export async function OrbitContent({ stats }: { stats: LandingStats }) {
-  const [jobs, show, cta, detail] = await Promise.all([
-    getTranslations("Landing.liveJobs"),
-    getTranslations("Landing.showcase"),
-    getTranslations("Landing.ctaBand"),
-    getTranslations("VacancyDetail.workTypes"),
-  ]);
-  const types: Record<string, string> = {
-    FULL_TIME: detail("FULL_TIME"),
-    PART_TIME: detail("PART_TIME"),
-    REMOTE: detail("REMOTE"),
-    INTERNSHIP: detail("INTERNSHIP"),
-  };
-  const roles = [
+  const t = await getTranslations("Landing.opportunities");
+
+  const defaultCandidates = [
     {
-      badge: cta("studentBadge"),
-      title: cta("studentTitle"),
-      desc: cta("studentDesc"),
-      steps: [
-        show("studentStep1"),
-        show("studentStep2"),
-        show("studentStep3"),
-        show("studentStep4"),
-      ],
-      href: "/register?role=STUDENT",
-      action: cta("studentPrimary"),
-      Icon: UserIcon,
+      id: "sample-1",
+      name: t("sample1Name"),
+      role: t("sample1Role"),
+      matchScore: 97,
     },
     {
-      badge: cta("companyBadge"),
-      title: cta("companyTitle"),
-      desc: cta("companyDesc"),
-      steps: [
-        show("companyStep1"),
-        show("companyStep2"),
-        show("companyStep3"),
-        show("companyStep4"),
-      ],
-      href: "/register?role=COMPANY",
-      action: cta("companyPrimary"),
-      Icon: BriefcaseIcon,
+      id: "sample-2",
+      name: t("sample2Name"),
+      role: t("sample2Role"),
+      matchScore: 95,
+    },
+    {
+      id: "sample-3",
+      name: t("sample3Name"),
+      role: t("sample3Role"),
+      matchScore: 93,
     },
   ];
+
+  const defaultAvatars = [
+    "/images/avatar-young-man.webp",
+    "/images/avatar-woman-blazer.webp",
+    "/images/avatar-man-beige-blazer.webp",
+  ];
+
+  const candidateCards = [0, 1, 2].map((idx) => {
+    const item = stats.candidatePreviews[idx] ?? defaultCandidates[idx];
+    return {
+      ...item,
+      avatar: defaultAvatars[idx] ?? defaultAvatars[0],
+    };
+  });
+
+  const whyItems = [
+    {
+      title: t("why1Title"),
+      desc: t("why1Desc"),
+      Icon: ZapIcon,
+    },
+    {
+      title: t("why2Title"),
+      desc: t("why2Desc"),
+      Icon: LayersIcon,
+    },
+    {
+      title: t("why3Title"),
+      desc: t("why3Desc"),
+      Icon: UsersIcon,
+    },
+    {
+      title: t("why4Title"),
+      desc: t("why4Desc"),
+      Icon: ShieldCheckIcon,
+    },
+  ];
+
+  const statItems = [
+    {
+      value: stats.visibleCvs,
+      suffix: "+",
+      label: t("statStudents"),
+      Icon: UsersIcon,
+    },
+    {
+      value: stats.approvedCompanies,
+      suffix: "+",
+      label: t("statEmployers"),
+      Icon: BriefcaseIcon,
+    },
+    {
+      value: stats.activeVacancies,
+      suffix: "+",
+      label: t("statVacancies"),
+      Icon: BriefcaseIcon,
+    },
+    {
+      value: stats.hiredRate,
+      suffix: "%",
+      label: t("statHired"),
+      Icon: ChartIcon,
+    },
+  ];
+
   return (
     <div className="orbit-content font-ui">
-      <section className="page-x py-8" id="companies">
+      <Opportunities stats={stats} />
+
+      {/* 3-rasm: FOR EMPLOYERS — Find and hire ready talent */}
+      <section
+        id="employers"
+        className={styles.employerWrap}
+        aria-labelledby="employer-section-title"
+      >
         <Reveal>
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <span className="orbit-kicker">{jobs("badge")}</span>
-              <h2 className="orbit-title mt-3">{jobs("title")}</h2>
-              <p className="text-subtle mt-3 max-w-2xl">{jobs("subtitle")}</p>
+          <div className={styles.employerBand}>
+            <div aria-hidden className={styles.employerRibbonLeft} />
+            <div className={styles.employerCopy}>
+              <p className={styles.eyebrow}>{t("forEmployers")}</p>
+              <h2 id="employer-section-title">{t("employerTitle")}</h2>
+              <p className={styles.employerDesc}>{t("employerDesc")}</p>
+              <Link
+                href="/register?role=COMPANY"
+                className={styles.employerCta}
+              >
+                {t("employerCta")} <ArrowRightIcon size={15} />
+              </Link>
             </div>
-            <Link href="/vacancies" className="orbit-text-link">
-              {jobs("viewAll")} <ArrowRightIcon size={17} />
-            </Link>
+
+            <div className={styles.candidateStack}>
+              {candidateCards.map((cand, index) => (
+                <div
+                  key={cand.id}
+                  className={`${styles.candidateCard} ${
+                    index === 0
+                      ? styles.candidateTop
+                      : index === 1
+                        ? styles.candidateMid
+                        : styles.candidateBot
+                  }`}
+                >
+                  <span className={styles.candidateAvatar} aria-hidden>
+                    <Image
+                      src={cand.avatar}
+                      alt=""
+                      width={38}
+                      height={38}
+                    />
+                  </span>
+                  <div className={styles.candidateInfo}>
+                    <strong>{cand.name}</strong>
+                    <span>{cand.role}</span>
+                  </div>
+                  <span className={styles.matchPill}>
+                    <span className={styles.matchCheck} aria-hidden>
+                      <CheckIcon size={11} />
+                    </span>
+                    {index === 0
+                      ? t("matchBadge", { score: cand.matchScore })
+                      : `${cand.matchScore}%`}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.employerVisual} aria-hidden>
+              <Image
+                src="/orbit-employer.webp"
+                alt=""
+                fill
+                sizes="(min-width: 900px) 38vw, 100vw"
+              />
+            </div>
           </div>
         </Reveal>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.featuredVacancies.slice(0, 4).map((job) => (
-            <Link
-              href={`/vacancies/${job.id}`}
-              key={job.id}
-              className="orbit-job group"
-            >
-              <span className="orbit-job-icon">
-                <BriefcaseIcon size={20} />
-              </span>
-              <p className="text-subtle mt-4 text-sm font-semibold">
-                {job.companyName}
-              </p>
-              <h3 className="text-text mt-2 text-lg font-bold">{job.title}</h3>
-              <p className="text-subtle mt-3 text-sm">
-                {[job.location, job.workType ? types[job.workType] : null]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-              <p className="text-text mt-3 text-sm">
-                {[job.salaryFrom, job.salaryTo]
-                  .filter((value) => value !== null)
-                  .map((value) => value?.toLocaleString("uz-UZ"))
-                  .join(" – ")}{" "}
-                {job.salaryFrom !== null || job.salaryTo !== null
-                  ? job.currency
-                  : jobs("negotiable")}
-              </p>
-              <span className="orbit-text-link mt-4">
-                {jobs("applyBtn")} <ArrowRightIcon size={16} />
-              </span>
-            </Link>
-          ))}
-          {stats.featuredVacancies.length === 0 && (
-            <p className="text-subtle">{jobs("empty")}</p>
-          )}
-        </div>
       </section>
-      <section id="showcase" className="page-x orbit-stories">
-        {roles.map(({ badge, title, desc, steps, href, action, Icon }, i) => (
-          <Reveal key={badge}>
-            <div className={`orbit-role orbit-role-${i}`}>
-              <div>
-                <span className="orbit-kicker">{badge}</span>
-                <h2 className="orbit-title mt-4">{title}</h2>
-                <p className="text-subtle mt-4 max-w-xl leading-relaxed">
-                  {desc}
-                </p>
-                <Link href={href} className="orbit-cta mt-6">
-                  {action} <ArrowRightIcon size={17} />
-                </Link>
+
+      {/* 3–4-rasm: Why CANDIDATOR + 4 ustun + Xarita va 4 ko'rsatkich */}
+      <section
+        id="categories"
+        className={styles.whySection}
+        aria-labelledby="why-candidator-title"
+      >
+        <Reveal>
+          <h2 id="why-candidator-title" className={styles.whyHeading}>
+            {t("whyTitle")}
+          </h2>
+
+          <div className={styles.whyGrid}>
+            {whyItems.map(({ title, desc, Icon }) => (
+              <div key={title} className={styles.whyItem}>
+                <span className={styles.whyIcon} aria-hidden>
+                  <Icon size={21} />
+                </span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{desc}</p>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {steps.map((step, n) => (
-                  <div key={step} className="orbit-step">
-                    <span className="orbit-step-icon">
-                      {n === 0 ? (
-                        <Icon size={20} />
-                      ) : n === 1 ? (
-                        <FileTextIcon size={20} />
-                      ) : (
-                        <SparkIcon size={20} />
-                      )}
-                    </span>
-                    <span className="mt-5 block text-sm font-bold">{step}</span>
-                  </div>
-                ))}
-              </div>
+            ))}
+          </div>
+
+          <div className={styles.statsBar}>
+            <div className={styles.statsMap} aria-hidden>
+              <Image
+                src="/orbit-map.webp"
+                alt=""
+                width={318}
+                height={120}
+                className={styles.mapImg}
+              />
+              <span className={styles.mapPulse} />
             </div>
-          </Reveal>
-        ))}
-      </section>
-      <section id="categories" className="page-x py-7">
-        <div className="orbit-feature-band">
-          <div>
-            <h2 className="orbit-title mt-3">{show("title")}</h2>
-            <div className="orbit-benefits">
-              {[
-                show("studentPipelineTitle"),
-                show("companyPipelineTitle"),
-                show("langTitle"),
-                show("privacyTitle"),
-              ].map((label) => (
-                <div key={label}>
-                  <SparkIcon size={20} />
-                  <strong>{label}</strong>
+
+            <div className={styles.statsGrid}>
+              {statItems.map(({ value, suffix, label, Icon }) => (
+                <div key={label} className={styles.statBox}>
+                  <span className={styles.statIcon} aria-hidden>
+                    <Icon size={18} />
+                  </span>
+                  <strong className={styles.statValue}>
+                    <AnimatedNumber value={value} suffix={suffix} />
+                  </strong>
+                  <span className={styles.statLabel}>{label}</span>
                 </div>
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {[
-              [stats.activeVacancies, show("liveVacancies")],
-              [stats.visibleCvs, show("liveCvs")],
-              [stats.approvedCompanies, show("liveCompanies")],
-            ].map(([value, label]) => (
-              <div key={label} className="orbit-metric">
-                <strong>{value}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        </Reveal>
       </section>
-      <section id="profile" className="page-x pb-6">
-        <div className="orbit-final">
-          <div>
-            <span className="text-sm font-bold tracking-widest uppercase">
-              {show("badge")}
-            </span>
-            <h2 className="mt-4 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">
-              {show("title")}
-            </h2>
-            <p className="mt-3 max-w-xl text-white/80">{show("subtitle")}</p>
+
+      {/* 4-rasm: Join Uzbekistan's talent ecosystem */}
+      <section
+        id="profile"
+        className={styles.joinSection}
+        aria-labelledby="join-ecosystem-title"
+      >
+        <Reveal>
+          <div className={styles.joinBanner}>
+            <div className={styles.joinArt} aria-hidden>
+              <Image
+                src="/orbit-banner.webp"
+                alt=""
+                fill
+                sizes="(min-width: 800px) 55vw, 100vw"
+              />
+              <div className={styles.joinOrbitRing}>
+                <i />
+              </div>
+            </div>
+
+            <div className={styles.joinCopy}>
+              <h2 id="join-ecosystem-title">{t("joinTitle")}</h2>
+              <p>{t("joinSubtitle")}</p>
+              <div className={styles.joinActions}>
+                <Link
+                  href="/register?role=STUDENT"
+                  className={styles.joinBtnPrimary}
+                >
+                  {t("joinStudent")} <ArrowRightIcon size={15} />
+                </Link>
+                <Link
+                  href="/register?role=COMPANY"
+                  className={styles.joinBtnSecondary}
+                >
+                  {t("joinEmployer")} <ArrowRightIcon size={15} />
+                </Link>
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Link className="orbit-final-link" href="/register?role=STUDENT">
-              {cta("studentPrimary")} <ArrowRightIcon size={17} />
-            </Link>
-            <Link className="orbit-final-link" href="/register?role=COMPANY">
-              {cta("companyPrimary")} <ArrowRightIcon size={17} />
-            </Link>
-          </div>
-        </div>
+        </Reveal>
       </section>
     </div>
   );

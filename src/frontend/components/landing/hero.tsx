@@ -3,8 +3,8 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import {
   BriefcaseIcon,
-  UserIcon,
-  SparkIcon,
+  GraduationCapIcon,
+  NetworkIcon,
 } from "@/frontend/components/icons";
 import { HeroSearch } from "./hero-terminal";
 import styles from "./hero.module.css";
@@ -35,7 +35,7 @@ export async function Hero() {
             </div>
             <div className={styles.audience}>
               <Link href="/register?role=STUDENT">
-                <UserIcon size={17} />
+                <GraduationCapIcon size={17} />
                 {t("students")}
               </Link>
               <Link href="/register?role=COMPANY">
@@ -43,12 +43,12 @@ export async function Hero() {
                 {t("employers")}
               </Link>
               <Link href="/#showcase">
-                <SparkIcon size={17} />
+                <NetworkIcon size={17} />
                 {t("ecosystem")}
               </Link>
             </div>
           </div>
-          <div className={styles.art}>
+          <div className={`orbit-art ${styles.art}`}>
             <Image
               src="/hero-people.png"
               alt=""

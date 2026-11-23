@@ -63,16 +63,35 @@ export function HeroSearch({
           className="text-text placeholder:text-subtle min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm font-medium outline-none sm:text-base"
         />
         {locationLabel && (
-          <select
-            aria-label={locationLabel}
-            value={location}
-            onChange={(event) => setLocation(event.target.value)}
-          >
-            <option value="">{countryLabel}</option>
-            <option value="Nukus">Nukus</option>
-            <option value="Tashkent">Tashkent</option>
-            <option value="Samarkand">Samarkand</option>
-          </select>
+          <div className="border-line/70 flex shrink-0 items-center gap-1.5 border-l pl-3">
+            <span className="text-primary-text inline-flex shrink-0 items-center">
+              <svg
+                aria-hidden
+                focusable="false"
+                width={15}
+                height={15}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+            </span>
+            <select
+              aria-label={locationLabel}
+              value={location}
+              onChange={(event) => setLocation(event.target.value)}
+            >
+              <option value="">{countryLabel}</option>
+              <option value="Nukus">Nukus</option>
+              <option value="Tashkent">Tashkent</option>
+              <option value="Samarkand">Samarkand</option>
+            </select>
+          </div>
         )}
         <button
           type="submit"

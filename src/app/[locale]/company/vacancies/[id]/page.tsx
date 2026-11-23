@@ -26,7 +26,11 @@ export default async function EditVacancyPage({
   return (
     <div className="page-x font-ui max-w-3xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
+        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+          <div
+            aria-hidden
+            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+          />
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-h2 text-text font-extrabold tracking-tight">
               {t("form.editTitle")}
@@ -42,7 +46,7 @@ export default async function EditVacancyPage({
         </div>
       </Reveal>
       <Reveal delay={75}>
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-6">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-6 backdrop-blur-md">
           <VacancyForm
             initial={formValuesFrom(vacancyView(vacancy))}
             vacancyId={vacancy.id}

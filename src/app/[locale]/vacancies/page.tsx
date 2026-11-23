@@ -260,7 +260,10 @@ export default async function PublicVacanciesPage({
     matchedItems.length > 0 &&
     otherItems.length > 0;
 
-  function renderVacancyCard(item: (typeof ranked)[number], idx: number) {
+  function renderVacancyCard(
+    item: (typeof ranked)[number],
+    idx: number,
+  ) {
     const { vacancy, isAudienceMatch, matchScore } = item;
     const salaryLabel =
       vacancy.salaryFrom || vacancy.salaryTo
@@ -289,9 +292,9 @@ export default async function PublicVacanciesPage({
         <Link
           href={`/vacancies/${vacancy.id}`}
           className={cn(
-            "bg-card shadow-soft hover:shadow-float group relative block overflow-hidden rounded-xl border p-6 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5",
+            "bg-card shadow-soft hover:shadow-float group relative block overflow-hidden rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1",
             isAudienceMatch && sortMode !== "latest"
-              ? "border-primary/55"
+              ? "border-emerald-500/55 ring-1 ring-emerald-500/20"
               : "border-line hover:border-primary/45",
           )}
         >
@@ -307,7 +310,7 @@ export default async function PublicVacanciesPage({
               ) : (
                 <span
                   aria-hidden
-                  className="bg-primary text-on-primary inline-flex size-12 shrink-0 items-center justify-center rounded-xl text-base font-bold"
+                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 text-base font-black text-white shadow-sm"
                 >
                   {companyInitial}
                 </span>
@@ -323,7 +326,7 @@ export default async function PublicVacanciesPage({
                     </span>
                   ) : null}
                   {isAudienceMatch && sortMode !== "latest" ? (
-                    <span className="border-primary/30 bg-primary-soft text-primary-text inline-flex items-center gap-1 rounded-md border px-2.5 py-0.5 text-[11px] font-bold">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/35 bg-emerald-500/12 px-2.5 py-0.5 text-[11px] font-extrabold text-emerald-700 dark:text-emerald-300">
                       <CheckIcon size={12} />
                       {t("matchBadge", { score: matchScore })}
                     </span>
@@ -407,7 +410,11 @@ export default async function PublicVacanciesPage({
     <div className="page-x font-ui space-y-8 py-8 sm:py-12">
       {/* Page Header, Search Form & Audience-Matching Filter Bar */}
       <Reveal>
-        <div className="border-line bg-card relative overflow-hidden rounded-xl border p-6 sm:p-8">
+        <div className="border-line bg-card shadow-float relative overflow-hidden rounded-3xl border p-6 sm:p-8">
+          <div
+            aria-hidden
+            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+          />
           <div className="relative z-10 flex flex-wrap items-end justify-between gap-4">
             <div className="space-y-2">
               <h1 className="text-h2 text-text font-black tracking-tight">
@@ -419,7 +426,7 @@ export default async function PublicVacanciesPage({
             </div>
 
             {/* Sort Order Switcher (Matched First vs Only Matched vs Latest) */}
-            <div className="border-line bg-card-cool inline-flex flex-wrap items-center gap-1 rounded-lg border p-1">
+            <div className="border-line bg-card-cool inline-flex flex-wrap items-center gap-1 rounded-2xl border p-1">
               <span className="text-subtle px-2.5 text-xs font-bold">
                 {t("sortLabel")}
               </span>
@@ -438,7 +445,7 @@ export default async function PublicVacanciesPage({
                     className={cn(
                       "rounded-xl px-3 py-1.5 text-xs font-extrabold transition-all",
                       active
-                        ? "bg-primary text-on-primary"
+                        ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
                         : "text-subtle hover:text-text",
                     )}
                   >
@@ -470,7 +477,7 @@ export default async function PublicVacanciesPage({
                 name="q"
                 defaultValue={q ?? ""}
                 placeholder={t("searchPlaceholder")}
-                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm transition-colors outline-none"
+                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm outline-none transition-colors"
               />
             </div>
 
@@ -484,7 +491,7 @@ export default async function PublicVacanciesPage({
                 name="location"
                 defaultValue={location ?? ""}
                 placeholder={t("locationPlaceholder")}
-                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm transition-colors outline-none"
+                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm outline-none transition-colors"
               />
             </div>
 
@@ -495,13 +502,13 @@ export default async function PublicVacanciesPage({
               step={500000}
               defaultValue={minSalary ?? ""}
               placeholder={t("minSalaryPlaceholder")}
-              className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border px-4 py-2.5 text-sm transition-colors outline-none"
+              className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border px-4 py-2.5 text-sm outline-none transition-colors"
             />
 
             <select
               name="workType"
               defaultValue={workType ?? ""}
-              className="border-line bg-canvas text-text focus:border-primary w-full rounded-2xl border px-4 py-2.5 text-sm transition-colors outline-none"
+              className="border-line bg-canvas text-text focus:border-primary w-full rounded-2xl border px-4 py-2.5 text-sm outline-none transition-colors"
             >
               <option value="">{t("allWorkTypes")}</option>
               <option value="FULL_TIME">{t("workTypes.FULL_TIME")}</option>
@@ -512,7 +519,7 @@ export default async function PublicVacanciesPage({
 
             <button
               type="submit"
-              className="bg-primary text-on-primary hover:bg-primary-hover inline-flex items-center justify-center gap-2 rounded-lg px-6 py-2.5 text-sm font-bold transition-colors"
+              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-2.5 text-sm font-bold transition-all active:scale-[0.98]"
             >
               <SearchIcon size={16} />
               {t("search")}
@@ -535,7 +542,7 @@ export default async function PublicVacanciesPage({
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-extrabold transition-all",
                   !explicitAudience && !disableCvMatch
-                    ? "border-primary bg-primary text-on-primary"
+                    ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
                     : "border-line bg-card-cool text-text hover:border-primary",
                 )}
               >
@@ -551,7 +558,7 @@ export default async function PublicVacanciesPage({
               className={cn(
                 "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
                 (!hasStudentCv && !explicitAudience) || disableCvMatch
-                  ? "border-primary bg-primary text-on-primary"
+                  ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
                   : "border-line bg-card-cool text-subtle hover:border-primary hover:text-text",
               )}
             >
@@ -570,7 +577,7 @@ export default async function PublicVacanciesPage({
                   className={cn(
                     "rounded-full border px-3.5 py-1.5 text-xs font-bold transition-all",
                     active
-                      ? "border-primary bg-primary text-on-primary"
+                      ? "border-emerald-600 bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
                       : "border-line bg-card-cool text-text hover:border-primary hover:text-primary-text",
                   )}
                 >
@@ -585,7 +592,7 @@ export default async function PublicVacanciesPage({
       {/* Vacancies List: Audience-Matched First, Remaining Below ("qalgani izine tusedi") */}
       {ranked.length === 0 ? (
         <Reveal>
-          <div className="border-line bg-card rounded-xl border p-12 text-center">
+          <div className="border-line bg-card shadow-soft rounded-3xl border p-12 text-center">
             <BriefcaseIcon size={32} className="text-subtle mx-auto mb-3" />
             <p className="text-subtle text-base font-medium">{t("empty")}</p>
           </div>
@@ -596,7 +603,7 @@ export default async function PublicVacanciesPage({
           <section className="space-y-4">
             <div className="border-primary/35 bg-primary-soft/60 flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-5 py-3.5">
               <div className="flex items-center gap-3">
-                <span className="bg-primary text-on-primary inline-flex size-9 shrink-0 items-center justify-center rounded-lg">
+                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-600 to-teal-600 text-white shadow-xs">
                   <SparkIcon size={18} />
                 </span>
                 <div>

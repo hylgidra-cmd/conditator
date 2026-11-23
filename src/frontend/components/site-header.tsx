@@ -12,7 +12,7 @@ import { ActivePageBadge, NavLinks } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
 const THEME_BUTTON = cn(
-  "text-text hover:bg-card-cool inline-flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors",
+  "bg-card-cool border-line text-text hover:bg-primary-soft hover:border-primary/40 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors",
   FOCUS_RING,
 );
 
@@ -68,8 +68,8 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="border-line bg-card/95 font-ui sticky top-0 z-40 border-b backdrop-blur-xl">
-      <div className="page-x relative flex h-18 items-center gap-3">
+    <header className="font-ui sticky top-0 z-40 px-3 pt-3 sm:px-6">
+      <div className="border-line bg-card/90 shadow-float mx-auto relative flex h-16 max-w-[86rem] items-center gap-3 rounded-2xl border px-4 backdrop-blur-xl transition-all sm:px-6">
         <Link
           href="/"
           aria-label={t("homeAria")}
@@ -81,7 +81,7 @@ export async function SiteHeader() {
 
         <nav
           aria-label={t("mainNav")}
-          className="mx-auto hidden items-center gap-1 lg:flex"
+          className="border-line bg-card-cool/80 mx-auto hidden items-center gap-1 rounded-full border p-1 lg:flex"
         >
           <NavLinks
             items={user ? roleLinks : sections}
@@ -130,19 +130,13 @@ export async function SiteHeader() {
                   <>
                     <Link
                       href="/login"
-                      className={buttonClass({
-                        variant: "outline",
-                        size: "sm",
-                      })}
+                      className={buttonClass({ variant: "outline", size: "sm" })}
                     >
                       {t("login")}
                     </Link>
                     <Link
                       href="/register"
-                      className={buttonClass({
-                        variant: "primary",
-                        size: "sm",
-                      })}
+                      className={buttonClass({ variant: "primary", size: "sm" })}
                     >
                       {t("register")}
                     </Link>

@@ -5,10 +5,7 @@ import { AdminPaymentRowActions } from "@/frontend/components/admin/payment-acti
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { formatDateTime } from "@/backend/format-date";
-import {
-  MANUAL_CARD_HOLDER,
-  MANUAL_CARD_NUMBER,
-} from "@/backend/payment/service";
+import { MANUAL_CARD_HOLDER, MANUAL_CARD_NUMBER } from "@/backend/payment/service";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +76,11 @@ export default async function AdminPaymentsPage() {
 
   return (
     <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
-      <div className="border-line bg-card shadow-soft relative space-y-4 overflow-hidden rounded-2xl border p-6 sm:p-8">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-h2 text-text font-extrabold tracking-tight">
@@ -94,7 +95,7 @@ export default async function AdminPaymentsPage() {
       </div>
 
       <section className="grid gap-4 sm:grid-cols-3">
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-5">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
           <p className="text-subtle text-xs font-semibold">
             {t("payments.totalRevenue")}
           </p>
@@ -102,7 +103,7 @@ export default async function AdminPaymentsPage() {
             {totalRevenue.toLocaleString("en-US")}
           </p>
         </div>
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-5">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
           <p className="text-subtle text-xs font-semibold">
             {t("payments.completedCount")}
           </p>
@@ -110,7 +111,7 @@ export default async function AdminPaymentsPage() {
             {completedAgg._count._all}
           </p>
         </div>
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-5">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-5 backdrop-blur-md">
           <p className="text-subtle text-xs font-semibold">
             {t("payments.pendingCount")}
           </p>
@@ -121,7 +122,7 @@ export default async function AdminPaymentsPage() {
       </section>
 
       {payments.length === 0 ? (
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
           <p className="text-subtle text-sm">{t("payments.empty")}</p>
         </div>
       ) : (
@@ -140,7 +141,7 @@ export default async function AdminPaymentsPage() {
               return (
                 <li
                   key={p.id}
-                  className="border-line bg-card shadow-soft space-y-3 rounded-2xl border p-4"
+                  className="border-line bg-card/90 shadow-soft space-y-3 rounded-3xl border p-4 backdrop-blur-md"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
@@ -182,7 +183,7 @@ export default async function AdminPaymentsPage() {
           </ul>
 
           {/* Desktop table */}
-          <div className="border-line bg-card shadow-soft hidden overflow-x-auto rounded-2xl border md:block">
+          <div className="border-line bg-card/90 shadow-soft hidden overflow-x-auto rounded-3xl border backdrop-blur-md md:block">
             <table className="w-full text-left text-sm">
               <thead className="border-line bg-canvas/60 text-subtle border-b text-xs uppercase">
                 <tr>

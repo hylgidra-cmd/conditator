@@ -110,7 +110,7 @@ export default async function CompanyStudentCvPage({
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
-      <div className="border-line bg-card shadow-soft space-y-4 rounded-2xl border p-6">
+      <div className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-xl">
         <div className="flex flex-wrap items-center justify-between gap-3">
           {backLink}
           {mukammalBadge ? (
@@ -152,14 +152,14 @@ export default async function CompanyStudentCvPage({
         </div>
 
         {quality ? (
-          <div className="border-primary/25 bg-primary-soft/60 text-text rounded-2xl border p-3.5 text-xs leading-relaxed font-medium">
+          <div className="border-primary/25 bg-primary-soft/60 text-text rounded-2xl border p-3.5 text-xs font-medium leading-relaxed">
             {quality.aiSummary}
           </div>
         ) : null}
       </div>
 
       {isLocked ? (
-        <div className="rounded-2xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-5 text-white shadow-lg">
+        <div className="rounded-3xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-5 text-white shadow-lg">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="max-w-xl space-y-1">
               <h2 className="text-sm font-black text-white sm:text-base">
@@ -174,7 +174,7 @@ export default async function CompanyStudentCvPage({
         </div>
       ) : null}
 
-      <div className="border-line overflow-hidden rounded-2xl border bg-white p-6 shadow-sm sm:p-[16mm]">
+      <div className="border-line overflow-hidden rounded-3xl border bg-white p-6 shadow-sm sm:p-[16mm]">
         <CvDocument cv={cv} labels={labels} />
       </div>
     </div>

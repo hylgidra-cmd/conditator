@@ -44,7 +44,11 @@ export default async function CompanyPage() {
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card relative overflow-hidden rounded-xl border p-6 sm:p-8">
+        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+          <div
+            aria-hidden
+            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+          />
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-h2 text-text font-extrabold tracking-tight">
               {t("title")}
@@ -65,7 +69,7 @@ export default async function CompanyPage() {
               </Link>
               <Link
                 href="/company/vacancies"
-                className="bg-primary text-on-primary hover:bg-primary-hover rounded-lg px-5 py-2.5 text-xs font-bold transition-colors"
+                className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-2xl px-5 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
               >
                 {t("vacanciesLink")}
               </Link>
@@ -77,7 +81,7 @@ export default async function CompanyPage() {
       {/* Prominent Company Subscription Purchase Banner */}
       {!hasActiveAbuna ? (
         <Reveal delay={75}>
-          <section className="career-closing relative overflow-hidden rounded-xl border border-white/10 p-6 text-white">
+          <section className="relative overflow-hidden rounded-3xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-6 text-white shadow-[0_20px_50px_-15px_rgb(5,24,18,0.55)]">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="max-w-xl space-y-1.5">
                 <h2 className="text-base font-black text-white sm:text-lg">
@@ -88,7 +92,10 @@ export default async function CompanyPage() {
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-2.5">
-                <CompanySubscribeButton variant="dark" label={buySubBtnLabel} />
+                <CompanySubscribeButton
+                  variant="dark"
+                  label={buySubBtnLabel}
+                />
                 <Link
                   href="/company/billing"
                   className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs font-extrabold text-white transition-colors hover:bg-white/20"
@@ -102,7 +109,7 @@ export default async function CompanyPage() {
       ) : null}
 
       <Reveal delay={75}>
-        <section className="border-line bg-card space-y-3.5 rounded-xl border p-6">
+        <section className="border-line bg-card/90 shadow-soft space-y-3.5 rounded-3xl border p-6 backdrop-blur-md">
           <h2 className="text-text text-lg font-extrabold">
             {t("status.title")}
           </h2>

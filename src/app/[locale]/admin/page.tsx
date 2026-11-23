@@ -35,7 +35,11 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
-      <div className="border-line bg-card relative space-y-4 overflow-hidden rounded-xl border p-6 sm:p-8">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
         <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
           {t("title")}
         </h1>
@@ -50,7 +54,7 @@ export default async function AdminDashboardPage() {
           {tiles.map(([key, value]) => (
             <div
               key={key}
-              className="border-line bg-card hover:border-primary/40 rounded-xl border p-5 transition-colors"
+              className="border-line bg-card/90 shadow-soft hover:border-primary/40 rounded-3xl border p-5 backdrop-blur-md transition-colors"
             >
               <dt className="text-subtle text-xs font-semibold">
                 {t(`stats.${key}`)}
@@ -63,7 +67,7 @@ export default async function AdminDashboardPage() {
         </dl>
       </section>
 
-      <section className="border-line bg-card space-y-5 rounded-xl border p-6">
+      <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
         <div>
           <h2 className="text-text text-lg font-extrabold">{t("ai.title")}</h2>
           <p className="text-subtle text-xs">
@@ -118,7 +122,7 @@ export default async function AdminDashboardPage() {
         <AiLimitForm initial={ai.limitUsd} />
       </section>
 
-      <section className="border-line bg-card space-y-4 rounded-xl border p-6">
+      <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">
         <h2 className="text-text text-lg font-extrabold">{t("logs.title")}</h2>
         {logs.length === 0 ? (
           <p className="text-subtle text-sm">{t("logs.empty")}</p>

@@ -44,7 +44,7 @@ export default async function VacanciesPage({
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card shadow-soft flex flex-wrap items-center justify-between gap-4 rounded-2xl border p-6 sm:p-7">
+        <div className="border-line bg-card/85 shadow-float flex flex-wrap items-center justify-between gap-4 rounded-3xl border p-6 backdrop-blur-xl sm:p-7">
           <h1 className="text-h2 text-text font-extrabold tracking-tight">
             {t("title")}
           </h1>
@@ -60,7 +60,7 @@ export default async function VacanciesPage({
 
       {items.length === 0 ? (
         <Reveal>
-          <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
+          <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
             <p className="text-subtle text-sm font-medium">{t("list.empty")}</p>
           </div>
         </Reveal>
@@ -104,7 +104,7 @@ export default async function VacanciesPage({
             return (
               <li key={vacancy.id}>
                 <Reveal delay={REVEAL_DELAYS[idx % 4]}>
-                  <div className="border-line bg-card shadow-soft hover:shadow-soft hover:border-primary/40 space-y-3 rounded-2xl border p-5 transition-all duration-300">
+                  <div className="border-line bg-card/90 shadow-soft hover:shadow-float hover:border-primary/40 space-y-3 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="flex min-w-0 flex-wrap items-center gap-2">
                         <h2 className="text-text min-w-0 text-lg font-extrabold break-words">

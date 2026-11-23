@@ -29,7 +29,11 @@ export default async function AdminCompaniesPage({
 
   return (
     <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
-      <div className="border-line bg-card shadow-soft relative space-y-4 overflow-hidden rounded-2xl border p-6 sm:p-8">
+      <div className="border-line bg-card/85 shadow-float relative space-y-4 overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
+        <div
+          aria-hidden
+          className="bg-primary/15 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
+        />
         <h1 className="text-h2 text-text relative z-10 font-extrabold tracking-tight">
           {t("title")}
         </h1>
@@ -40,7 +44,7 @@ export default async function AdminCompaniesPage({
 
       <form
         method="get"
-        className="border-line bg-card shadow-soft flex flex-wrap items-end gap-3 rounded-2xl border p-5"
+        className="border-line bg-card/90 shadow-soft flex flex-wrap items-end gap-3 rounded-3xl border p-5 backdrop-blur-md"
       >
         <div className="min-w-48 flex-1 space-y-1.5">
           <label htmlFor="q" className="text-text block text-xs font-bold">
@@ -94,7 +98,7 @@ export default async function AdminCompaniesPage({
         {tUsers("total", { count: total })}
       </p>
       {items.length === 0 ? (
-        <div className="border-line bg-card shadow-soft rounded-2xl border p-10 text-center">
+        <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-10 text-center backdrop-blur-md">
           <p className="text-subtle text-sm">{tUsers("empty")}</p>
         </div>
       ) : (
@@ -112,7 +116,7 @@ export default async function AdminCompaniesPage({
             return (
               <li
                 key={company.id}
-                className="border-line bg-card shadow-soft hover:border-primary/40 space-y-3 rounded-2xl border p-6 transition-colors"
+                className="border-line bg-card/90 shadow-soft hover:border-primary/40 space-y-3 rounded-3xl border p-6 backdrop-blur-md transition-colors"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div className="min-w-0">

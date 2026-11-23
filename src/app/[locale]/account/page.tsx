@@ -79,7 +79,7 @@ export default async function AccountPage() {
   );
   const companySubActive = Boolean(
     account.company?.subscriptionUntil &&
-    account.company.subscriptionUntil > now,
+      account.company.subscriptionUntil > now,
   );
 
   const latestCvData = account.cvs[0]?.data as { fullName?: string } | null;
@@ -94,7 +94,7 @@ export default async function AccountPage() {
   return (
     <div className="page-x font-ui max-w-5xl space-y-6 py-8 sm:py-12">
       <Reveal>
-        <div className="border-line bg-card shadow-soft relative overflow-hidden rounded-2xl border p-6 sm:p-8">
+        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
           <div
             aria-hidden
             className="bg-primary/12 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
@@ -110,7 +110,7 @@ export default async function AccountPage() {
                     {t(`roles.${account.role}`)}
                   </span>
                   {account.emailVerifiedAt ? (
-                    <span className="bg-success-soft text-success inline-flex items-center gap-1 rounded-full border border-emerald-500/30 px-2.5 py-0.5 text-xs font-semibold">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-emerald-500/30 bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
                       <CheckIcon size={12} />
                       {t("verified")}
                     </span>
@@ -139,7 +139,7 @@ export default async function AccountPage() {
 
       <div className="grid gap-6 lg:grid-cols-12">
         <Reveal delay={75} className="lg:col-span-7">
-          <section className="border-line bg-card shadow-soft h-full space-y-5 rounded-2xl border p-6">
+          <section className="border-line bg-card/90 shadow-soft h-full space-y-5 rounded-3xl border p-6 backdrop-blur-md">
             <div className="flex items-center gap-2.5">
               <div className="bg-primary/10 text-primary flex size-9 items-center justify-center rounded-xl">
                 <UserIcon size={18} />
@@ -190,8 +190,8 @@ export default async function AccountPage() {
                   <span
                     className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-bold ${
                       account.status === "ACTIVE"
-                        ? "bg-success-soft text-success border-emerald-500/30"
-                        : "bg-danger-soft text-danger border-red-500/30"
+                        ? "border-emerald-500/30 bg-success-soft text-success"
+                        : "border-red-500/30 bg-danger-soft text-danger"
                     }`}
                   >
                     {account.status === "ACTIVE"
@@ -224,7 +224,7 @@ export default async function AccountPage() {
         </Reveal>
 
         <Reveal delay={150} className="lg:col-span-5">
-          <section className="border-line bg-card shadow-soft h-full space-y-5 rounded-2xl border p-6">
+          <section className="border-line bg-card/90 shadow-soft h-full space-y-5 rounded-3xl border p-6 backdrop-blur-md">
             {account.role === "STUDENT" ? (
               <>
                 <div className="flex items-center gap-2.5">
@@ -258,7 +258,7 @@ export default async function AccountPage() {
                 <div
                   className={`rounded-2xl border p-4 ${
                     applyPassActive
-                      ? "bg-success-soft text-success border-emerald-500/30"
+                      ? "border-emerald-500/30 bg-success-soft text-success"
                       : "border-line bg-card-cool/50 text-subtle"
                   }`}
                 >
@@ -304,7 +304,7 @@ export default async function AccountPage() {
                 <div
                   className={`rounded-2xl border p-4 ${
                     companySubActive
-                      ? "bg-success-soft text-success border-emerald-500/30"
+                      ? "border-emerald-500/30 bg-success-soft text-success"
                       : "border-line bg-card-cool/50 text-subtle"
                   }`}
                 >
@@ -330,7 +330,7 @@ export default async function AccountPage() {
             )}
 
             <div className="space-y-2.5 pt-1">
-              <p className="text-subtle text-xs font-bold tracking-wider uppercase">
+              <p className="text-subtle text-xs font-bold uppercase tracking-wider">
                 {t("quickActions")}
               </p>
 

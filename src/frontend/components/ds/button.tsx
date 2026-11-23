@@ -8,10 +8,10 @@ export type ButtonSize = "sm" | "md" | "lg";
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-on-primary hover:bg-primary-hover shadow-primary active:translate-y-px",
+    "bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-500 text-white shadow-[0_10px_26px_-8px_rgb(5,150,105,0.58)] hover:brightness-105 active:translate-y-px",
   dark: "bg-ink text-on-ink hover:bg-ink-hover active:translate-y-px shadow-soft",
   outline:
-    "border border-line bg-card text-text hover:border-primary/60 hover:bg-card-cool",
+    "border border-line bg-card/90 text-text backdrop-blur-md hover:border-primary/60 hover:bg-card-cool",
   ghost: "text-text hover:bg-card-cool",
   soft: "bg-primary-soft text-primary-text hover:brightness-105 border border-primary/25",
 };
@@ -133,8 +133,7 @@ export function IconButton({
         FOCUS_RING,
         tone === "primary" &&
           "bg-primary text-on-primary hover:bg-primary-hover shadow-primary",
-        tone === "surface" &&
-          "bg-card text-text shadow-soft hover:bg-card-cool",
+        tone === "surface" && "bg-card text-text shadow-soft hover:bg-card-cool",
         tone === "dark" && "bg-ink text-on-ink hover:bg-ink-hover",
         size === "sm" && "size-9",
         size === "md" && "size-12",

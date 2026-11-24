@@ -80,7 +80,7 @@ export function MatchPanel({
               onClick={() => setShowCardModal(true)}
               className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-4 py-2 text-xs font-extrabold transition-colors"
             >
-              {"🔓 Obuna sotib olish (15 000 so'mdan)"}
+              {"🔓 Obuna sotib olish (14 900 so'm)"}
             </button>
           )}
         </div>
@@ -152,7 +152,7 @@ export function MatchPanel({
                 onClick={() => setShowCardModal(true)}
                 className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover cursor-pointer rounded-xl px-5 py-2.5 text-xs font-extrabold transition-colors"
               >
-                {"🔓 Obuna sotib olish (15 000 so'mdan)"}
+                {"🔓 Obuna sotib olish (14 900 so'm)"}
               </button>
             </div>
           ) : outcome.isVacancyUnlocked ? (
@@ -177,13 +177,26 @@ export function MatchPanel({
                         {t("lockedBadge")}
                       </span>
                     ) : null}
+                    {item.personality?.isPersonalityMatch ? (
+                      <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                        {"Xarakteri mos"}
+                      </span>
+                    ) : null}
                   </div>
-                  <span
-                    className={`rounded-full px-3 py-1 text-sm font-bold ${scoreTone(item.score)}`}
-                    title={mode === "ai" ? t("scoreAi") : t("scoreKeyword")}
-                  >
-                    {t("score", { score: item.score })}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    {item.personality?.personalityMatchPct !== null &&
+                    item.personality?.personalityMatchPct !== undefined ? (
+                      <span className="border-line bg-canvas text-text rounded-full border px-2.5 py-1 text-xs font-bold">
+                        {`Xarakter mosligi: ${item.personality.personalityMatchPct}%`}
+                      </span>
+                    ) : null}
+                    <span
+                      className={`rounded-full px-3 py-1 text-sm font-bold ${scoreTone(item.score)}`}
+                      title={mode === "ai" ? t("scoreAi") : t("scoreKeyword")}
+                    >
+                      {t("score", { score: item.score })}
+                    </span>
+                  </div>
                 </div>
                 <p className="text-sm">
                   {item.reason ??
@@ -193,9 +206,9 @@ export function MatchPanel({
                         })
                       : t("noTerms"))}
                 </p>
-                {item.personality && (
-                  <p className="text-muted text-xs">
-                    {`${item.personality.typeCode}-${item.personality.identity} · ${item.personality.group} · M ${item.personality.mindPct}% · E ${item.personality.energyPct}% · N ${item.personality.naturePct}% · T ${item.personality.tacticsPct}% · I ${item.personality.identityPct}%`}
+                {item.personality && item.personality.typeName && (
+                  <p className="text-muted text-xs font-medium">
+                    {`${item.personality.typeName} · ${item.personality.groupName}`}
                   </p>
                 )}
                 {item.location ? (

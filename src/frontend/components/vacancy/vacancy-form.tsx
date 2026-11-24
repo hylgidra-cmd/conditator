@@ -11,6 +11,7 @@ import {
   VACANCY_WORK_TYPES,
 } from "@/backend/vacancy/schema";
 import { LocationPickerModal } from "./location-picker-modal";
+import { VacancyPersonalityPicker } from "./vacancy-personality-picker";
 
 export type VacancyFormValues = {
   title: string;
@@ -24,6 +25,9 @@ export type VacancyFormValues = {
   salaryTo: string;
   currency: "UZS" | "USD";
   status: "ACTIVE" | "CLOSED";
+  professionId?: string | null;
+  wantedTypes?: string[];
+  wantedGroups?: string[];
 };
 
 export const EMPTY_VACANCY: VacancyFormValues = {
@@ -38,6 +42,9 @@ export const EMPTY_VACANCY: VacancyFormValues = {
   salaryTo: "",
   currency: "UZS",
   status: "ACTIVE",
+  professionId: null,
+  wantedTypes: [],
+  wantedGroups: [],
 };
 
 const list = (value: string) =>
@@ -90,6 +97,9 @@ export function VacancyForm({
       salaryFrom: salaryFromRaw === "" ? null : Number(salaryFromRaw),
       salaryTo: salaryToRaw === "" ? null : Number(salaryToRaw),
       currency: values.currency,
+      professionId: values.professionId ?? null,
+      wantedTypes: values.wantedTypes ?? [],
+      wantedGroups: values.wantedGroups ?? [],
       ...(vacancyId ? { status: values.status } : {}),
     };
     const result = vacancyId
@@ -282,6 +292,21 @@ export function VacancyForm({
             </select>
           </div>
         </div>
+
+        {/* Qanday odam kerak? (shaxsiyat talabi) */}
+        <VacancyPersonalityPicker
+          professionId={values.professionId ?? null}
+          wantedTypes={values.wantedTypes ?? []}
+          wantedGroups={values.wantedGroups ?? []}
+          onChange={(next) =>
+            setValues((current) => ({
+              ...current,
+              professionId: next.professionId,
+              wantedTypes: next.wantedTypes,
+              wantedGroups: next.wantedGroups,
+            }))
+          }
+        />
 
         {/* Status toggle on edit */}
         {vacancyId ? (

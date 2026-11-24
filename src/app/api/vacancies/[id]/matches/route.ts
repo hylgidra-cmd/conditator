@@ -19,9 +19,13 @@ export const GET = route<Context>(async (request, { params }) => {
   const vacancy = await getOwnVacancy(company.id, (await params).id);
   const locale = localeSchema.parse(request.nextUrl.searchParams.get("locale"));
   const filters = parseCompanyFilters(request.nextUrl.searchParams);
+  const onlyPersonalityMatch =
+    request.nextUrl.searchParams.get("onlyPersonalityMatch") === "1" ||
+    request.nextUrl.searchParams.get("onlyPersonalityMatch") === "true";
   return NextResponse.json(
     await attachCompanyPersonality(
       await getMatchResults(company, vacancy, locale, filters),
+      { vacancy, locale, onlyPersonalityMatch },
     ),
   );
 });

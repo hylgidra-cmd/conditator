@@ -48,14 +48,16 @@ export type MatchItem = {
   decision: MatchDecision;
   stage?: CandidateStageType;
   personality?: {
-    typeCode: string;
-    identity: string;
+    typeName: string;
+    groupName: string;
     group: string;
     mindPct: number;
     energyPct: number;
     naturePct: number;
     tacticsPct: number;
     identityPct: number;
+    personalityMatchPct: number | null;
+    isPersonalityMatch: boolean;
   } | null;
 };
 

@@ -2,6 +2,7 @@ import "server-only";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
+import { getActivePersonalityProfile } from "@/backend/personality/service";
 import type { CvDocumentInput } from "./types";
 
 /**
@@ -17,6 +18,7 @@ export async function loadSavedCvDocument(
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
+      userId: true,
       data: true,
       language: true,
       workTypes: true,
@@ -26,6 +28,7 @@ export async function loadSavedCvDocument(
     },
   });
   if (!cv?.savedAt) return null;
+  const personality = await getActivePersonalityProfile(cv.userId, cv.language);
   return {
     id: cv.id,
     data: cvDataSchema.parse(cv.data),
@@ -33,6 +36,7 @@ export async function loadSavedCvDocument(
     workTypes: cv.workTypes,
     templateId: cv.templateId,
     isPaid: cv.isPaid,
+    personality,
   };
 }
 
@@ -135,6 +139,7 @@ export async function loadVisibleCvDocument(
     },
     select: {
       id: true,
+      userId: true,
       data: true,
       language: true,
       workTypes: true,
@@ -150,6 +155,7 @@ export async function loadVisibleCvDocument(
     isLocked: options?.isLocked,
     isOwnerOrAdmin: options?.isOwnerOrAdmin,
   });
+  const personality = await getActivePersonalityProfile(cv.userId, cv.language);
 
   return {
     id: cv.id,
@@ -157,5 +163,6 @@ export async function loadVisibleCvDocument(
     language: cv.language,
     workTypes: cv.workTypes,
     templateId: cv.templateId,
+    personality,
   };
 }

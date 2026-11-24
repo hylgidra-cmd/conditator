@@ -60,5 +60,7 @@ export function adaptCvDocumentToTemplateData(
     })),
     hobbies: data.hobbies || [],
     obyektivka: data.obyektivka,
+    personality: cv.personality ?? null,
+    language: cv.language,
   };
 }

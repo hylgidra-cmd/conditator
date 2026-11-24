@@ -102,7 +102,7 @@ export default async function CompanyStudentCvPage({
       ? `🌟 Mukammal CV (${quality.score}%)`
       : `📄 AI bahosi: ${quality.score}%`
     : null;
-  const lockedPdfLabel = "🔓 Obuna sotib olish (15 000 so'mdan)";
+  const lockedPdfLabel = "🔓 Obuna sotib olish (14 900 so'm)";
   const lockedBannerTitle =
     "🔒 Nomzodning F.I.Sh, kontaktlari va PDF rezyumesi qulflangan";
   const lockedBannerDesc =

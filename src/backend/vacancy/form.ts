@@ -19,5 +19,8 @@ export function formValuesFrom(vacancy: VacancyView): VacancyFormValues {
     salaryTo: vacancy.salaryTo === null ? "" : String(vacancy.salaryTo),
     currency: vacancy.currency === "USD" ? "USD" : "UZS",
     status: vacancy.status === "CLOSED" ? "CLOSED" : "ACTIVE",
+    professionId: vacancy.professionId ?? null,
+    wantedTypes: vacancy.wantedTypes ?? [],
+    wantedGroups: vacancy.wantedGroups ?? [],
   };
 }

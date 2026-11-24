@@ -75,6 +75,15 @@ export const vacancyInputSchema = z
     salaryTo: optionalSalary,
     currency: z.enum(VACANCY_CURRENCIES).optional(),
     status: z.enum(VACANCY_EDITABLE_STATUSES).optional(),
+    professionId: z.string().trim().max(100).nullable().optional(),
+    wantedTypes: z
+      .array(z.string().regex(/^[IE][NS][TF][JP]$/))
+      .max(16)
+      .optional(),
+    wantedGroups: z
+      .array(z.enum(["NT", "NF", "SJ", "SP"]))
+      .max(4)
+      .optional(),
   })
   .superRefine((value, ctx) => {
     if (!value.title && !value.rawText) {

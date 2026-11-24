@@ -6,7 +6,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
 import { hashPassword } from "../src/backend/auth/password";
+import { PERSONALITY_TYPE_CATALOG } from "../src/backend/personality/catalog";
 import { PERSONALITY_QUESTIONS } from "./personality-questions";
+import { PERSONALITY_CHOICE_QUESTIONS } from "./personality-choice-questions";
 
 const db = new PrismaClient();
 
@@ -16,6 +18,8 @@ const adminPassword = z.string().min(12, "kamida 12 belgi bo'lishi kerak");
 const DEFAULT_SETTINGS: Record<string, string> = {
   monthlyAiLimitUsd: process.env.AI_MONTHLY_LIMIT_USD ?? "50",
   personalityRetakeDays: "30",
+  personalityQuestionsPerTest: "20",
+  personalityMatchWeightPct: "10",
 };
 
 async function seedSettings() {
@@ -491,63 +495,93 @@ async function main() {
 
 async function seedPersonalityAndProfessions() {
   const scales = ["MIND", "ENERGY", "NATURE", "TACTICS", "IDENTITY"] as const;
-  for (const [scaleIndex, scale] of scales.entries()) {
-    for (const [index, words] of PERSONALITY_QUESTIONS[scale].entries()) {
-      const id = `v1-${scale.toLowerCase()}-${String(index + 1).padStart(2, "0")}`;
-      await db.personalityQuestion.upsert({
-        where: { id },
-        create: {
-          id,
-          scale,
-          direction: index % 2 === 0 ? 1 : -1,
-          textUz: words[0],
-          textKk: words[1],
-          textRu: words[2],
-          textEn: words[3],
-          sort: index * 5 + scaleIndex,
-          version: 1,
+  const statementRows = scales.flatMap((scale, scaleIndex) =>
+    PERSONALITY_QUESTIONS[scale].map((words, index) => ({
+      id: `v1-${scale.toLowerCase()}-${String(index + 1).padStart(2, "0")}`,
+      scale,
+      type: "STATEMENT" as const,
+      direction: index % 2 === 0 ? 1 : -1,
+      textUz: words[0],
+      textKk: words[1],
+      textRu: words[2],
+      textEn: words[3],
+      sort: index * 5 + scaleIndex,
+      version: 1,
+    })),
+  );
+  const choiceRows = PERSONALITY_CHOICE_QUESTIONS.map((item, idx) => ({
+    id: item.id,
+    scale: item.scale,
+    type: "CHOICE" as const,
+    direction: item.direction,
+    textUz: item.prompt[0],
+    textKk: item.prompt[1],
+    textRu: item.prompt[2],
+    textEn: item.prompt[3],
+    optionAUz: item.optionA[0],
+    optionAKk: item.optionA[1],
+    optionARu: item.optionA[2],
+    optionAEn: item.optionA[3],
+    optionBUz: item.optionB[0],
+    optionBKk: item.optionB[1],
+    optionBRu: item.optionB[2],
+    optionBEn: item.optionB[3],
+    sort: 100 + idx,
+    version: 1,
+  }));
+  await db.personalityQuestion.createMany({
+    data: [...statementRows, ...choiceRows],
+    skipDuplicates: true,
+  });
+
+  const existingTypes = await db.personalityType.findMany();
+  const existingTypeMap = new Map(existingTypes.map((t) => [t.code, t]));
+  for (const item of PERSONALITY_TYPE_CATALOG) {
+    const existing = existingTypeMap.get(item.code);
+    const isOldPlaceholder =
+      existing &&
+      (existing.titleUz === `${item.code} tipi` || existing.strengthsUz === "");
+    if (!existing) {
+      await db.personalityType.create({
+        data: {
+          code: item.code,
+          group: item.group,
+          titleUz: item.title.uz,
+          titleKk: item.title.kk,
+          titleRu: item.title.ru,
+          titleEn: item.title.en,
+          strengthsUz: item.strengths.uz,
+          strengthsKk: item.strengths.kk,
+          strengthsRu: item.strengths.ru,
+          strengthsEn: item.strengths.en,
+          descriptionUz: item.description.uz,
+          descriptionKk: item.description.kk,
+          descriptionRu: item.description.ru,
+          descriptionEn: item.description.en,
         },
-        update: {},
+      });
+    } else if (isOldPlaceholder) {
+      await db.personalityType.update({
+        where: { code: item.code },
+        data: {
+          group: item.group,
+          titleUz: item.title.uz,
+          titleKk: item.title.kk,
+          titleRu: item.title.ru,
+          titleEn: item.title.en,
+          strengthsUz: item.strengths.uz,
+          strengthsKk: item.strengths.kk,
+          strengthsRu: item.strengths.ru,
+          strengthsEn: item.strengths.en,
+          descriptionUz: item.description.uz,
+          descriptionKk: item.description.kk,
+          descriptionRu: item.description.ru,
+          descriptionEn: item.description.en,
+        },
       });
     }
   }
-  const typeLetters = ["I", "E"].flatMap((mind) =>
-    ["N", "S"].flatMap((energy) =>
-      ["T", "F"].flatMap((nature) =>
-        ["J", "P"].map((tactics) => `${mind}${energy}${nature}${tactics}`),
-      ),
-    ),
-  );
-  for (const code of typeLetters) {
-    const group =
-      code[1] === "N"
-        ? code[2] === "T"
-          ? "NT"
-          : "NF"
-        : code[3] === "J"
-          ? "SJ"
-          : "SP";
-    await db.personalityType.upsert({
-      where: { code },
-      create: {
-        code,
-        group,
-        titleUz: `${code} tipi`,
-        titleKk: `${code} tipi`,
-        titleRu: `Тип ${code}`,
-        titleEn: `${code} type`,
-        descriptionUz:
-          "Bu profil o'zini baholash javoblariga asoslanadi; kasbga yaroqlilik xulosasi emas.",
-        descriptionKk:
-          "Bul profil ózin baǵalaw juwaplarına tiykarlanadı; kásipke jaraylılıq juwmaǵı emes.",
-        descriptionRu:
-          "Профиль основан на самооценке; это не заключение о пригодности к профессии.",
-        descriptionEn:
-          "This profile reflects self-reported answers, not job suitability.",
-      },
-      update: {},
-    });
-  }
+
   const areas = JSON.parse(
     readFileSync(join(__dirname, "profession-seed.json"), "utf8"),
   ) as Array<{
@@ -555,45 +589,91 @@ async function seedPersonalityAndProfessions() {
     professions: string[];
     educationFields: string[];
   }>;
+  const areaRows = areas.map((area, areaIndex) => ({
+    id: `area-${String(areaIndex + 1).padStart(2, "0")}`,
+    nameUz: area.area,
+    nameKk: area.area,
+    nameRu: area.area,
+    nameEn: area.area,
+    keywords: [] as string[],
+    educationFields: area.educationFields,
+    sort: areaIndex,
+  }));
+  await db.profession.createMany({ data: areaRows, skipDuplicates: true });
+
+  const jobRows: Array<{
+    id: string;
+    parentId: string;
+    nameUz: string;
+    nameKk: string;
+    nameRu: string;
+    nameEn: string;
+    keywords: string[];
+    educationFields: string[];
+    sort: number;
+  }> = [];
+  const suggestionRows: Array<{ professionId: string; typeCodes: string[] }> =
+    [];
   for (const [areaIndex, area] of areas.entries()) {
     const parentId = `area-${String(areaIndex + 1).padStart(2, "0")}`;
-    await db.profession.upsert({
-      where: { id: parentId },
-      create: {
-        id: parentId,
-        nameUz: area.area,
-        nameKk: area.area,
-        nameRu: area.area,
-        nameEn: area.area,
-        keywords: [],
-        educationFields: area.educationFields,
-        sort: areaIndex,
-      },
-      update: {},
-    });
     for (const [index, name] of area.professions.entries()) {
       const id = `${parentId}-job-${String(index + 1).padStart(2, "0")}`;
-      await db.profession.upsert({
-        where: { id },
-        create: {
-          id,
-          parentId,
-          nameUz: name,
-          nameKk: name,
-          nameRu: name,
-          nameEn: name,
-          keywords: name
-            .toLowerCase()
-            .split(/\s*\/\s*|\s+va\s+|\s*,\s*/)
-            .map((s) => s.trim())
-            .filter(Boolean),
-          educationFields: [],
-          sort: index,
-        },
-        update: {},
+      jobRows.push({
+        id,
+        parentId,
+        nameUz: name,
+        nameKk: name,
+        nameRu: name,
+        nameEn: name,
+        keywords: name
+          .toLowerCase()
+          .split(/\s*\/\s*|\s+va\s+|\s*,\s*/)
+          .map((s) => s.trim())
+          .filter(Boolean),
+        educationFields: [],
+        sort: index,
       });
+      const suggested = defaultTypesForProfession(name, area.area);
+      if (suggested.length > 0) {
+        suggestionRows.push({ professionId: id, typeCodes: suggested });
+      }
     }
   }
+  await db.profession.createMany({ data: jobRows, skipDuplicates: true });
+  await db.professionTypeSuggestion.createMany({
+    data: suggestionRows,
+    skipDuplicates: true,
+  });
+  console.log(
+    `Shaxsiyat banki (${statementRows.length} gap + ${choiceRows.length} tanlov), 16 tip va ${suggestionRows.length} kasb tavsiyasi tayyor.`,
+  );
+}
+
+function defaultTypesForProfession(name: string, area: string): string[] {
+  const text = `${name} ${area}`.toLowerCase();
+  if (/sotuv|savdo|kassir|mijoz|call|operator/.test(text))
+    return ["ESFP", "ESTP", "ESFJ"];
+  if (/buxgalter|moliya|audit|soliq|bank|iqtisod|hujjat|kadr/.test(text))
+    return ["ISTJ", "ISFJ", "ESTJ"];
+  if (/dasturchi|backend|frontend|mobile|devops|qa|data|it|axborot|tizim/.test(text))
+    return ["INTP", "INTJ", "ISTP"];
+  if (/dizayn|ui|ux|grafik|smm|marketing|reklama|kontent|foto|video/.test(text))
+    return ["ENFP", "INFP", "ISFP"];
+  if (/o'qituv|pedagog|ta'lim|psixolog|hr|murabbiy|tarbiyachi/.test(text))
+    return ["ENFJ", "INFJ", "ESFJ"];
+  if (/tibbiyot|shifokor|hamshira|farmatsevt|stomatolog/.test(text))
+    return ["ISFJ", "INFJ", "ISTJ"];
+  if (/menejer|rahbar|direktor|boshqar|loyiha|koordinator|admin/.test(text))
+    return ["ENTJ", "ESTJ", "ENFJ"];
+  if (/logistika|haydovchi|kuryer|ombor|yetkazib/.test(text))
+    return ["ESTP", "ISTP", "ESTJ"];
+  if (/qurilish|muhandis|texnik|elektrik|payvand|temir|mexanik|ta'mir|ishlab chiqar/.test(text))
+    return ["ISTP", "ESTJ", "ISTJ"];
+  if (/oshpaz|qandolatchi|sartarosh|go'zallik|tikuvchi|hunarmand|mehmonxona/.test(text))
+    return ["ISFP", "ESFP", "ESFJ"];
+  if (/huquq|yurist|advokat|tahlil|tadqiqot|ilmiy/.test(text))
+    return ["INTJ", "INTP", "ISTJ"];
+  return ["ISTJ", "ESFJ", "ENTP"];
 }
 
 main()

@@ -29,6 +29,9 @@ export function vacancyView(vacancy: Vacancy) {
     salaryTo: vacancy.salaryTo,
     currency: vacancy.currency,
     status: vacancy.status,
+    professionId: vacancy.professionId,
+    wantedTypes: vacancy.wantedTypes,
+    wantedGroups: vacancy.wantedGroups,
     expiresAt: vacancy.expiresAt?.toISOString() ?? null,
     createdAt: vacancy.createdAt.toISOString(),
     updatedAt: vacancy.updatedAt.toISOString(),
@@ -58,6 +61,15 @@ function toData(input: VacancyInput) {
     ...(input.salaryTo !== undefined ? { salaryTo: input.salaryTo } : {}),
     ...(input.currency !== undefined ? { currency: input.currency } : {}),
     ...(input.status !== undefined ? { status: input.status } : {}),
+    ...(input.professionId !== undefined
+      ? { professionId: input.professionId || null }
+      : {}),
+    ...(input.wantedTypes !== undefined
+      ? { wantedTypes: [...new Set(input.wantedTypes)] }
+      : {}),
+    ...(input.wantedGroups !== undefined
+      ? { wantedGroups: [...new Set(input.wantedGroups)] }
+      : {}),
   };
 }
 

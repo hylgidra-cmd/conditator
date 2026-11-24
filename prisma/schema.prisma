@@ -154,6 +154,7 @@ model User {
   supportMessages    SupportMessage[]
   personalityResults PersonalityResult[]
   personalityDraft   PersonalityDraft?
+  personalityAttempts PersonalityAttempt[]
   professionLinks    UserProfession[]
   readinessProfiles  ReadinessProfile[]
   userLanguages      UserLanguage[]
@@ -244,6 +245,17 @@ enum PersonalityScale {
   IDENTITY
 }
 
+enum PersonalityQuestionType {
+  STATEMENT
+  CHOICE
+}
+
+enum PersonalityAttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
 enum ProfessionSource {
   AUTO
   ADMIN
@@ -252,19 +264,45 @@ enum ProfessionSource {
 }
 
 model PersonalityQuestion {
-  id        String @id
+  id        String                  @id
   scale     PersonalityScale
+  type      PersonalityQuestionType @default(STATEMENT)
   direction Int
   textKk    String
   textUz    String
   textRu    String
   textEn    String
+  optionAKk String?
+  optionAUz String?
+  optionARu String?
+  optionAEn String?
+  optionBKk String?
+  optionBUz String?
+  optionBRu String?
+  optionBEn String?
   sort      Int
-  isActive  Boolean @default(true)
-  version   Int @default(1)
+  isActive  Boolean                 @default(true)
+  version   Int                     @default(1)
   answers   PersonalityAnswer[]
 
   @@index([version, isActive, sort])
+  @@index([scale, type, isActive])
+}
+
+model PersonalityAttempt {
+  id          String                   @id @default(cuid())
+  userId      String
+  questionIds String[]
+  answers     Json                     @default("{}")
+  status      PersonalityAttemptStatus @default(IN_PROGRESS)
+  startedAt   DateTime                 @default(now())
+  finishedAt  DateTime?
+  updatedAt   DateTime                 @updatedAt
+  user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  result      PersonalityResult?
+
+  @@index([userId, status, startedAt])
+  @@index([userId, startedAt])
 }
 
 model PersonalityDraft {
@@ -276,23 +314,25 @@ model PersonalityDraft {
 }
 
 model PersonalityResult {
-  id          String @id @default(cuid())
-  userId      String
-  typeCode    String
-  identity    String
-  mindPct     Int
-  energyPct   Int
-  naturePct   Int
-  tacticsPct  Int
-  identityPct Int
-  version     Int
-  consentAt   DateTime
-  createdAt   DateTime @default(now())
-  archivedAt  DateTime?
-  invalidatedAt DateTime?
+  id                 String              @id @default(cuid())
+  userId             String
+  attemptId          String?             @unique
+  typeCode           String
+  identity           String
+  mindPct            Int
+  energyPct          Int
+  naturePct          Int
+  tacticsPct         Int
+  identityPct        Int
+  version            Int
+  consentAt          DateTime
+  createdAt          DateTime            @default(now())
+  archivedAt         DateTime?
+  invalidatedAt      DateTime?
   invalidationReason String?
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  answers     PersonalityAnswer[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attempt            PersonalityAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+  answers            PersonalityAnswer[]
 
   @@index([userId, archivedAt, createdAt])
 }
@@ -300,20 +340,26 @@ model PersonalityResult {
 model PersonalityAnswer {
   resultId   String
   questionId String
+  attemptId  String?
   value      Int
-  result     PersonalityResult @relation(fields: [resultId], references: [id], onDelete: Cascade)
+  choice     String?
+  result     PersonalityResult   @relation(fields: [resultId], references: [id], onDelete: Cascade)
   question   PersonalityQuestion @relation(fields: [questionId], references: [id])
 
   @@id([resultId, questionId])
 }
 
 model PersonalityType {
-  code String @id
-  group String
-  titleKk String
-  titleUz String
-  titleRu String
-  titleEn String
+  code          String @id
+  group         String
+  titleKk       String
+  titleUz       String
+  titleRu       String
+  titleEn       String
+  strengthsKk   String @default("")
+  strengthsUz   String @default("")
+  strengthsRu   String @default("")
+  strengthsEn   String @default("")
   descriptionKk String
   descriptionUz String
   descriptionRu String
@@ -321,22 +367,37 @@ model PersonalityType {
 }
 
 model Profession {
-  id String @id @default(cuid())
-  parentId String?
-  nameKk String
-  nameUz String
-  nameRu String
-  nameEn String
-  keywords String[]
+  id              String                    @id @default(cuid())
+  parentId        String?
+  nameKk          String
+  nameUz          String
+  nameRu          String
+  nameEn          String
+  keywords        String[]
   educationFields String[]
-  isActive Boolean @default(true)
-  sort Int @default(0)
-  parent Profession? @relation("ProfessionTree", fields: [parentId], references: [id])
-  children Profession[] @relation("ProfessionTree")
-  users UserProfession[]
-  readiness ReadinessProfile[]
+  isActive        Boolean                   @default(true)
+  sort            Int                       @default(0)
+  parent          Profession?               @relation("ProfessionTree", fields: [parentId], references: [id])
+  children        Profession[]              @relation("ProfessionTree")
+  users           UserProfession[]
+  readiness       ReadinessProfile[]
+  vacancies       Vacancy[]
+  typeSuggestion  ProfessionTypeSuggestion?
 
   @@index([parentId, isActive, sort])
+}
+
+model ProfessionTypeSuggestion {
+  professionId String     @id
+  typeCodes    String[]   @default([])
+  updatedAt    DateTime   @updatedAt
+  profession   Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+}
+
+model CompanyStatsSnapshot {
+  id        String   @id @default("latest")
+  payload   Json
+  updatedAt DateTime @updatedAt
 }
 
 model UserProfession {
@@ -404,6 +465,7 @@ model Company {
   unlocks       VacancyUnlock[]
   conversations Conversation[]
   payments      Payment[]
+  typeTemplates CompanyTypeTemplate[]
 
   @@index([approval])
   @@index([approval, createdAt])
@@ -439,6 +501,9 @@ model Vacancy {
   salaryTo           Int?
   currency           String        @default("UZS")
   education          String?
+  professionId       String?
+  wantedTypes        String[]      @default([])
+  wantedGroups       String[]      @default([])
   status             VacancyStatus @default(ACTIVE)
   closeReason        String?
   expiresAt          DateTime?
@@ -446,6 +511,7 @@ model Vacancy {
   updatedAt          DateTime      @updatedAt
 
   company        Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  profession     Profession?          @relation(fields: [professionId], references: [id], onDelete: SetNull)
   matches        Match[]
   applications   VacancyApplication[]
   stages         CandidateStage[]
@@ -547,6 +613,19 @@ model CompanyMember {
 
   @@unique([companyId, userId])
   @@index([userId])
+}
+
+model CompanyTypeTemplate {
+  id           String   @id @default(cuid())
+  companyId    String
+  name         String
+  wantedTypes  String[] @default([])
+  wantedGroups String[] @default([])
+  createdAt    DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
 }
 
 // ---------- Chat va Shikoyatlar ----------

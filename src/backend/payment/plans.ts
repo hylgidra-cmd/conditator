@@ -16,7 +16,7 @@ export const COMPANY_SUBSCRIPTION_PLANS: readonly CompanySubscriptionPlan[] = [
     id: "START_7",
     name: "Start",
     days: 7,
-    priceUzs: 15_000,
+    priceUzs: 14_900,
     badge: "Tezkor",
     tagline: "1 hafta davomida tezkor xodim topish uchun",
     features: [

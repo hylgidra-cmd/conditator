@@ -235,6 +235,8 @@ export interface RawCvTemplateData {
   languages?: Array<string | { name: string; level?: unknown }>;
   hobbies?: Array<string | { name?: string }>;
   obyektivka?: import("@/backend/cv/schema").ObyektivkaData;
+  personality?: import("@/backend/cv-document/types").CvPersonalityBlock | null;
+  language?: string;
 }
 
 function norm(d: RawCvTemplateData | undefined) {
@@ -279,6 +281,8 @@ function norm(d: RawCvTemplateData | undefined) {
       typeof h === "string" ? h : h.name || "",
     ),
     obyektivka: d.obyektivka,
+    personality: d.personality ?? null,
+    language: d.language || "uz",
   };
 }
 
@@ -575,9 +579,56 @@ function ctx(
             "</div>"
           : `<p class="inl">${d.hobbies.map(esc).join(" · ")}</p>`,
     ct: (m: string) => contacts(d, m),
+    pers: () => renderPersonalityBlock(d.personality, d.language),
     photoUrl: d.photo,
     raw: d,
   };
+}
+
+function renderPersonalityBlock(
+  p: import("@/backend/cv-document/types").CvPersonalityBlock | null | undefined,
+  lang: string,
+): string {
+  if (!p) return "";
+  const isKk = lang === "kk";
+  const isRu = lang === "ru";
+  const isEn = lang === "en";
+  const headingPrefix = isKk
+    ? "Jeke qásiyet"
+    : isRu
+      ? "Личность"
+      : isEn
+        ? "Personality"
+        : "Shaxsiyat";
+  const strengthsLbl = isKk
+    ? "Qaysı jumıslarda kúshli"
+    : isRu
+      ? "В каких задачах силён"
+      : isEn
+        ? "Strongest in"
+        : "Qaysi ishlarda kuchli";
+  const footerPrefix = isKk
+    ? "Candidator jeke qásiyet testi"
+    : isRu
+      ? "Тест личности Candidator"
+      : isEn
+        ? "Candidator personality test"
+        : "Candidator shaxsiyat testi";
+
+  const dt = new Date(p.createdAt);
+  const dd = String(dt.getDate()).padStart(2, "0");
+  const mm = String(dt.getMonth() + 1).padStart(2, "0");
+  const yyyy = dt.getFullYear();
+  const dateStr = isNaN(dt.getTime()) ? "" : `, ${dd}.${mm}.${yyyy}`;
+
+  const barsHtml = p.scales
+    .map((bar) => {
+      const pos = Math.max(4, Math.min(96, bar.rightPct));
+      return `<div class="cv-pers-row"><div class="cv-pers-lbls"><span>${esc(bar.leftLabel)}</span><span>${esc(bar.rightLabel)}</span></div><div class="cv-pers-track"><i class="cv-pers-fill" style="width:${pos}%"></i><b class="cv-pers-dot" style="left:${pos}%"></b></div></div>`;
+    })
+    .join("");
+
+  return `<section class="s cv-pers"><h3 class="s-t">${esc(headingPrefix)}: ${esc(p.typeName)} <span class="cv-pers-grp">(${esc(p.groupName)})</span></h3><div class="s-b"><p class="cv-pers-desc">${esc(p.description)}</p>${p.strengths ? `<p class="cv-pers-str"><strong>${esc(strengthsLbl)}:</strong> ${esc(p.strengths)}</p>` : ""}<div class="cv-pers-bars">${barsHtml}</div><div class="cv-pers-foot">${esc(footerPrefix)}${esc(dateStr)}</div></div></section>`;
 }
 
 /* ------------------------------------------------------------------ */
@@ -598,7 +649,7 @@ T["modern-1"] = (c, L = c.L) => `
   </aside>
   <main>
     <header><h1>${c.name}</h1><div class="pos">${c.pos}</div></header>
-    ${sec(L.about, c.sum())}
+    ${sec(L.about, c.sum())}${c.pers()}
     ${sec(L.experience, c.exp("tl"))}
     ${sec(L.education, c.edu("tl"))}
     ${sec(L.projects, c.prj())}
@@ -615,7 +666,7 @@ T["modern-2"] = (c, L = c.L) => {
   ${cts ? `<div class="cbar">${cts}</div>` : ""}
   <div class="cols">
     <main>
-      ${sec(L.about, c.sum())}
+      ${sec(L.about, c.sum())}${c.pers()}
       ${sec(L.experience, c.exp())}
       ${sec(L.projects, c.prj())}
     </main>
@@ -634,7 +685,7 @@ T["modern-2"] = (c, L = c.L) => {
 T["modern-3"] = (c, L = c.L) => `
 <div class="cv cv-m3">
   <header class="hd">${c.ph}<h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("iconsInline")}</header>
-  ${c.sum()}
+  ${c.sum()}${c.pers()}
   ${sec(L.experience, c.exp("row tl"))}
   ${sec(L.projects, c.prj("row"))}
   <div class="grid2">
@@ -648,7 +699,7 @@ T["modern-4"] = (c, L = c.L) => `
 <div class="cv cv-m4">
   <main>
     <header><h1>${c.name2}</h1><div class="pos">${c.pos}</div><div class="ln"></div></header>
-    ${sec(L.about, c.sum())}
+    ${sec(L.about, c.sum())}${c.pers()}
     ${sec(L.experience, c.exp())}
     ${sec(L.education, c.edu())}
     ${sec(L.projects, c.prj())}
@@ -672,7 +723,7 @@ T["modern-5"] = (c, L = c.L) => `
   </header>
   <div class="body">
     <div>
-      ${sec(L.about, c.sum())}
+      ${sec(L.about, c.sum())}${c.pers()}
       ${sec(L.experience, c.exp())}
       ${sec(L.projects, c.prj())}
     </div>
@@ -690,7 +741,7 @@ T["modern-5"] = (c, L = c.L) => `
 T["classic-1"] = (c, L = c.L) => `
 <div class="cv cv-c1">
   <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
-  ${sec(L.about, c.sum())}
+  ${sec(L.about, c.sum())}${c.pers()}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
@@ -712,7 +763,7 @@ T["classic-2"] = (c, L = c.L) => `
     ${sec(L.hobbies, c.hb())}
   </aside>
   <main>
-    ${sec(L.about, c.sum())}
+    ${sec(L.about, c.sum())}${c.pers()}
     ${sec(L.experience, c.exp())}
     ${sec(L.education, c.edu())}
     ${sec(L.projects, c.prj())}
@@ -730,7 +781,7 @@ T["classic-3"] = (c, L = c.L) => `
   <div class="strip"></div>
   <div class="body">
     <main>
-      ${sec(L.about, c.sum())}
+      ${sec(L.about, c.sum())}${c.pers()}
       ${sec(L.experience, c.exp())}
       ${sec(L.projects, c.prj())}
     </main>
@@ -751,7 +802,7 @@ T["classic-4"] = (c, L = c.L) => `
     <div><h1>${c.name}</h1><div class="pos">${c.pos}</div></div>
     ${c.ct("lines")}
   </header>
-  ${sec(L.about, c.sum())}
+  ${sec(L.about, c.sum())}${c.pers()}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
@@ -771,7 +822,7 @@ T["classic-5"] = (c, L = c.L) => `
       <div class="orn"><span>&#10070;</span></div>
       ${c.ct("text")}
     </header>
-    ${c.sum()}
+    ${c.sum()}${c.pers()}
     <div class="body">
       <div>
         ${sec(L.experience, c.exp())}
@@ -792,7 +843,7 @@ T["classic-5"] = (c, L = c.L) => `
 T["minimal-1"] = (c, L = c.L) => `
 <div class="cv cv-n1">
   <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
-  ${sec(L.about, c.sum())}
+  ${sec(L.about, c.sum())}${c.pers()}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
@@ -810,7 +861,7 @@ T["minimal-2"] = (c, L = c.L) => `
     ${c.hasPhoto ? c.ph : ""}
   </header>
   ${sec(L.contact, c.ct("lines"))}
-  ${sec(L.about, c.sum())}
+  ${sec(L.about, c.sum())}${c.pers()}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.projects, c.prj())}
@@ -826,7 +877,7 @@ T["minimal-3"] = (c, L = c.L) => `
   <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div></header>
   <div class="body">
     <main>
-      ${sec(L.about, c.sum())}
+      ${sec(L.about, c.sum())}${c.pers()}
       ${sec(L.experience, c.exp())}
       ${sec(L.projects, c.prj())}
     </main>
@@ -850,7 +901,7 @@ T["minimal-4"] = (c, L = c.L) => `
   </header>
   <div class="body">
     <main>
-      ${sec(L.about, c.sum())}
+      ${sec(L.about, c.sum())}${c.pers()}
       ${sec(L.experience, c.exp())}
       ${sec(L.projects, c.prj())}
     </main>
@@ -868,7 +919,7 @@ T["minimal-4"] = (c, L = c.L) => `
 T["minimal-5"] = (c, L = c.L) => `
 <div class="cv cv-n5">
   <header class="hd"><h1>${c.name}</h1><div class="pos">${c.pos}</div>${c.ct("text")}</header>
-  ${sec(L.about, c.sum())}
+  ${sec(L.about, c.sum())}${c.pers()}
   ${sec(L.experience, c.exp())}
   ${sec(L.education, c.edu())}
   ${sec(L.skills, c.sk("cols"))}
@@ -1275,6 +1326,18 @@ export const CV_TEMPLATES_CSS = `
 .cv-ob .ob-tbl{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
 .cv-ob .ob-tbl th,.cv-ob .ob-tbl td{border:1px solid #555;padding:5px 6px;vertical-align:top;min-height:28px;height:28px}
 .cv-ob .ob-tbl th{font-weight:700;text-align:center}
+
+.cv-pers{break-inside:avoid}
+.cv-pers-grp{font-weight:500;opacity:.75;font-size:.9em}
+.cv-pers-desc{margin:0 0 6px;font-size:12px;line-height:1.45}
+.cv-pers-str{margin:0 0 8px;font-size:11.5px;line-height:1.4}
+.cv-pers-bars{display:grid;gap:5px;margin-bottom:6px}
+.cv-pers-row{display:grid;gap:2px}
+.cv-pers-lbls{display:flex;justify-content:space-between;gap:8px;font-size:10px;opacity:.85}
+.cv-pers-track{position:relative;height:5px;background:#e5e7eb;border-radius:999px}
+.cv-pers-fill{position:absolute;left:0;top:0;bottom:0;background:#10b981;opacity:.35;border-radius:999px}
+.cv-pers-dot{position:absolute;top:50%;width:8px;height:8px;background:#059669;border-radius:999px;transform:translate(-50%,-50%)}
+.cv-pers-foot{font-size:9.5px;opacity:.65;margin-top:4px}
 
 @media print{
   @page{size:A4;margin:0}

@@ -17,6 +17,13 @@ import {
   attachCompanyPersonality,
   parseCompanyFilters,
 } from "@/backend/readiness/company";
+import {
+  computePersonalityMatchPct,
+  getLocaleKey,
+  PERSONALITY_GROUPS,
+  PERSONALITY_TYPE_CATALOG,
+  type PersonalityGroupCode,
+} from "@/backend/personality/catalog";
 
 const STAGE_LABELS: Record<CandidateStageType, string> = {
   NEW: "Yangi",
@@ -29,6 +36,8 @@ const STAGE_LABELS: Record<CandidateStageType, string> = {
 const filterLabels = {
   jobs: "Barcha kasblar",
   groups: "Barcha guruhlar",
+  types: "Barcha tiplar",
+  onlyPersonalityMatch: "Faqat xarakteri mos",
   languages: "Barcha tillar",
   experience: "Barcha tajriba",
   filter: "Filtrlash",
@@ -58,9 +67,11 @@ export default async function MatchesPage({
     language?: string;
     languageBand?: string;
     experienceBand?: string;
+    onlyPersonalityMatch?: string;
   }>;
 }) {
   const { company, locale } = await requireCompanyPage();
+  const langKey = getLocaleKey(locale);
   const t = await getTranslations("Matches");
   const tStatus = await getTranslations("Company.status");
   const { id } = await params;
@@ -97,11 +108,19 @@ export default async function MatchesPage({
 
   // Tasdiqlanmagan kompaniya natijalarni ko'rmaydi (API ham 403 qaytaradi).
   const access = companyAccess(company);
+  const hasWantedPersonality =
+    vacancy.wantedTypes.length > 0 || vacancy.wantedGroups.length > 0;
+  const onlyPersonalityMatch = search.onlyPersonalityMatch === "1";
   const [initial, decided, applications, stages, professions] =
     access.canViewCvs
       ? await Promise.all([
           getMatchResults(company, vacancy, locale as Lang, filters).then(
-            attachCompanyPersonality,
+            (outcome) =>
+              attachCompanyPersonality(outcome, {
+                vacancy,
+                locale: langKey,
+                onlyPersonalityMatch,
+              }),
           ),
           listDecided(vacancy.id, !access.canRunMatching),
           db.vacancyApplication.findMany({
@@ -159,7 +178,23 @@ export default async function MatchesPage({
               cvId: true,
               note: true,
               createdAt: true,
-              cv: { select: { id: true, title: true, savedAt: true } },
+              cv: {
+                select: {
+                  id: true,
+                  title: true,
+                  savedAt: true,
+                  user: {
+                    select: {
+                      personalityResults: {
+                        where: { archivedAt: null, invalidatedAt: null },
+                        orderBy: { createdAt: "desc" },
+                        take: 1,
+                        select: { typeCode: true },
+                      },
+                    },
+                  },
+                },
+              },
             },
             orderBy: { createdAt: "desc" },
           }),
@@ -175,6 +210,37 @@ export default async function MatchesPage({
       : [null, [], [], [], []];
 
   const stageMap = new Map(stages.map((s) => [s.cvId, s.stage]));
+  const personalityMatchBadge = "Xarakteri mos";
+  const personalityMatchPctPrefix = "Xarakter mosligi";
+  const enrichedApplications = applications
+    .map((app) => {
+      const code = app.cv.user.personalityResults[0]?.typeCode ?? null;
+      const pMatch = hasWantedPersonality
+        ? computePersonalityMatchPct(
+            code,
+            vacancy.wantedTypes,
+            vacancy.wantedGroups,
+          )
+        : null;
+      const typeInfo = code
+        ? PERSONALITY_TYPE_CATALOG.find((item) => item.code === code)
+        : null;
+      return {
+        ...app,
+        personalityTypeName: typeInfo?.title[langKey] ?? null,
+        personalityMatchPct: pMatch ? pMatch.matchPct : null,
+        personalityMatchLabel: pMatch
+          ? `${personalityMatchPctPrefix}: ${pMatch.matchPct}%`
+          : null,
+        isPersonalityMatch: Boolean(pMatch?.isExactMatch),
+      };
+    })
+    .filter((app) => !onlyPersonalityMatch || !hasWantedPersonality || app.isPersonalityMatch)
+    .sort(
+      (a, b) =>
+        Number(b.isPersonalityMatch) - Number(a.isPersonalityMatch) ||
+        (b.personalityMatchPct ?? 0) - (a.personalityMatchPct ?? 0),
+    );
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -248,21 +314,42 @@ export default async function MatchesPage({
             name="personalityGroup"
             defaultValue={filters.personalityGroup ?? ""}
             className="border-line rounded-xl border p-2"
-            aria-label="Guruh"
+            aria-label="Xarakter guruhi"
           >
             <option value="">{filterLabels.groups}</option>
-            {["NT", "NF", "SJ", "SP"].map((group) => (
-              <option key={group} value={group}>
-                {group}
+            {(["NT", "NF", "SJ", "SP"] as PersonalityGroupCode[]).map(
+              (group) => (
+                <option key={group} value={group}>
+                  {PERSONALITY_GROUPS[group].name[langKey]}
+                </option>
+              ),
+            )}
+          </select>
+          <select
+            name="typeCode"
+            defaultValue={filters.typeCode ?? ""}
+            className="border-line rounded-xl border p-2"
+            aria-label="Xarakter tipi"
+          >
+            <option value="">{filterLabels.types}</option>
+            {PERSONALITY_TYPE_CATALOG.map((item) => (
+              <option key={item.code} value={item.code}>
+                {item.title[langKey]}
               </option>
             ))}
           </select>
-          <input
-            name="typeCode"
-            defaultValue={filters.typeCode ?? ""}
-            placeholder="Tip"
-            className="border-line rounded-xl border p-2"
-          />
+          {hasWantedPersonality && (
+            <label className="border-line flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold">
+              <input
+                type="checkbox"
+                name="onlyPersonalityMatch"
+                value="1"
+                defaultChecked={onlyPersonalityMatch}
+                className="accent-primary h-4 w-4"
+              />
+              <span>{filterLabels.onlyPersonalityMatch}</span>
+            </label>
+          )}
           <input
             name="language"
             defaultValue={filters.language ?? ""}
@@ -304,13 +391,13 @@ export default async function MatchesPage({
       {tab === "applications" ? (
         <Reveal delay={150}>
           <section className="space-y-4">
-            {applications.length === 0 ? (
+            {enrichedApplications.length === 0 ? (
               <div className="border-line bg-card/90 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-md">
                 <p className="text-subtle text-sm">{t("applicationsEmpty")}</p>
               </div>
             ) : (
               <ul className="space-y-3">
-                {applications.map((app) => {
+                {enrichedApplications.map((app) => {
                   const stage = stageMap.get(app.cvId);
                   return (
                     <li
@@ -322,6 +409,21 @@ export default async function MatchesPage({
                           <span className="text-text text-base font-extrabold">
                             {app.cv.title}
                           </span>
+                          {app.personalityTypeName ? (
+                            <span className="border-line bg-canvas text-subtle rounded-full border px-2.5 py-0.5 text-xs font-semibold">
+                              {app.personalityTypeName}
+                            </span>
+                          ) : null}
+                          {app.isPersonalityMatch ? (
+                            <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                              {personalityMatchBadge}
+                            </span>
+                          ) : null}
+                          {app.personalityMatchLabel ? (
+                            <span className="border-line bg-canvas text-text rounded-full border px-2.5 py-0.5 text-xs font-bold">
+                              {app.personalityMatchLabel}
+                            </span>
+                          ) : null}
                           {stage ? (
                             <span className="bg-primary/10 text-primary rounded-full px-2.5 py-0.5 text-xs font-bold">
                               {STAGE_LABELS[stage]}

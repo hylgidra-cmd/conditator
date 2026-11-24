@@ -33,12 +33,13 @@ export default async function CompanyPage() {
     (await isCompanySubscribedOrUnlocked(company.id));
 
   const studentsLinkLabel = "Nomzodlar bazasi (CV lar)";
+  const statsLinkLabel = "Statistika";
   const subscribeCtaTitle =
     "Nomzodlarning kontaktlari va PDF rezyumelarini ko'rish uchun Obuna oling";
   const subscribeCtaDesc =
-    "Obunasiz barcha nomzodlarning mutaxassisligi, ko'nikmalari va AI bahosini (%) ko'rasiz. Obuna sotib olishingiz bilan (15 000 so'mdan) telefon, Telegram, email, PDF yuklash va chat to'liq ochiladi.";
+    "Obunasiz barcha nomzodlarning mutaxassisligi, ko'nikmalari va AI bahosini (%) ko'rasiz. Obuna sotib olishingiz bilan (14 900 so'm) telefon, Telegram, email, PDF yuklash va chat to'liq ochiladi.";
   const allPlansLinkLabel = "Barcha tariflar →";
-  const buySubBtnLabel = "🔓 Obuna sotib olish (15 000 so'mdan)";
+  const buySubBtnLabel = "🔓 Obuna sotib olish (14 900 so'm)";
   const extendSubBtnLabel = "✨ Obunani uzaytirish";
 
   return (
@@ -60,6 +61,12 @@ export default async function CompanyPage() {
               >
                 <UsersIcon size={14} />
                 {studentsLinkLabel}
+              </Link>
+              <Link
+                href="/company/stats"
+                className="border-line bg-canvas text-text hover:border-primary inline-flex items-center gap-1.5 rounded-2xl border px-4 py-2.5 text-xs font-bold transition-colors"
+              >
+                {statsLinkLabel}
               </Link>
               <Link
                 href="/company/billing"

@@ -34,5 +34,7 @@ export const POST = route<Context>(async (request, { params }) => {
     userId: user.id,
     filters,
   });
-  return NextResponse.json(await attachCompanyPersonality(outcome));
+  return NextResponse.json(
+    await attachCompanyPersonality(outcome, { vacancy, locale }),
+  );
 });

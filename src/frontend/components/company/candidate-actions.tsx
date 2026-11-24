@@ -99,7 +99,7 @@ export function CandidateActions({
               onClick={() => setShowUnlockModal(true)}
               className="cursor-pointer rounded-2xl bg-gradient-to-r from-emerald-400 to-teal-300 px-5 py-2.5 text-xs font-black text-slate-950 shadow-lg transition-all hover:brightness-105 sm:text-sm"
             >
-              {"🔓 Obuna sotib olish (15 000 so'mdan)"}
+              {"🔓 Obuna sotib olish (14 900 so'm)"}
             </button>
           </div>
         </div>

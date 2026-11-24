@@ -99,7 +99,7 @@ export function StudentsSubscriptionBar({
             >
               {hasActiveAbuna
                 ? "Faol obunangiz bilan barcha CV larning to'liq ismi, telefon raqami, Telegram, emaili va PDF hujjatlarini cheksiz ko'rishingiz hamda yuklab olishingiz mumkin."
-                : "Hozir siz barcha nomzodlarning mutaxassisligi, ko'nikmalari, hududi va AI bahosini (%) ko'rib turibsiz. Obuna sotib olishingiz bilan (15 000 so'mdan) barcha kontaktlar, PDF yuklash va chat darhol ochiladi."}
+                : "Hozir siz barcha nomzodlarning mutaxassisligi, ko'nikmalari, hududi va AI bahosini (%) ko'rib turibsiz. Obuna sotib olishingiz bilan (14 900 so'm) barcha kontaktlar, PDF yuklash va chat darhol ochiladi."}
             </p>
 
             <div className="flex flex-wrap items-center gap-2 pt-1 text-xs font-bold">
@@ -155,7 +155,7 @@ export function StudentsSubscriptionBar({
             >
               {hasActiveAbuna
                 ? "✨ Obunani uzaytirish"
-                : "🔓 Obuna sotib olish (15 000 so'mdan)"}
+                : "🔓 Obuna sotib olish (14 900 so'm)"}
             </button>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { Prisma, VacancyStatus } from "@prisma/client";
+import { refreshCompanyStatsSnapshot } from "@/backend/company/stats";
 import { db } from "@/backend/db";
 
 /**
@@ -61,6 +62,11 @@ export async function runFifteenDaysCron() {
         AND "transactionDetails"::jsonb ? 'receiptDataUrl'
     `),
   ]);
+
+  // 3. Kompaniya statistika snapshotini kechasi yangilash
+  await refreshCompanyStatsSnapshot().catch((err) => {
+    console.error("Stats snapshot refresh error:", err);
+  });
 
   return {
     closedVacanciesCount: closedVacancies.count,

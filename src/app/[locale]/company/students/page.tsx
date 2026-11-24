@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { requireCompanyPage } from "@/backend/company/page";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { evaluateCvQuality } from "@/backend/cv/quality";
@@ -200,9 +200,29 @@ export default async function CompanyStudentsPage({
     db.profession.findMany({
       where: { parentId: { not: null }, isActive: true },
       orderBy: { nameUz: "asc" },
-      select: { id: true, nameUz: true },
+      select: {
+        id: true,
+        nameKk: true,
+        nameUz: true,
+        nameRu: true,
+        nameEn: true,
+      },
     }),
   ]);
+  const locale = await getLocale();
+  const profName = (p: {
+    nameKk: string;
+    nameUz: string;
+    nameRu: string;
+    nameEn: string;
+  }) =>
+    locale === "kk"
+      ? p.nameKk
+      : locale === "ru"
+        ? p.nameRu
+        : locale === "en"
+          ? p.nameEn
+          : p.nameUz;
 
   const cvIds = cvs.map((c) => c.id);
   const companyMatches =
@@ -376,7 +396,7 @@ export default async function CompanyStudentsPage({
               <option value="">{readinessLabels.jobs}</option>
               {professions.map((profession) => (
                 <option key={profession.id} value={profession.id}>
-                  {profession.nameUz}
+                  {profName(profession)}
                 </option>
               ))}
             </select>

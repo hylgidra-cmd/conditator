@@ -46,7 +46,11 @@
     "myApplications": "Applications",
     "support": "Support",
     "supportAction": "Open support chat",
-    "categories": "Categories"
+    "categories": "Categories",
+    "navStudents": "Students",
+    "navEmployers": "Employers",
+    "navVacancies": "Vacancies",
+    "navDiscover": "Discover"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -72,7 +76,19 @@
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
     "rights": "© {year} CANDIDATOR. All rights reserved.",
-    "credit": "Website developed by DENJI."
+    "credit": "Website developed by DENJI.",
+    "shortTagline": "Students. Employers. Careers. Uzbekistan.",
+    "platformTitle": "Platform",
+    "resourcesTitle": "Resources",
+    "actionsTitle": "Company & Access",
+    "navStudents": "Students",
+    "navEmployers": "Employers",
+    "navVacancies": "Vacancies",
+    "navDiscover": "Discover",
+    "supportLink": "Support center",
+    "cvLink": "CV builder",
+    "personalityLink": "Personality test",
+    "postVacancyLink": "Post vacancy"
   },
   "NotFound": {
     "title": "Page not found",
@@ -540,7 +556,12 @@
       "candidates": "Candidates",
       "decisions": "Selected: {selected} · Not a fit: {rejected}",
       "applicationsCount": "Applications: {count}",
-      "viewApplications": "View applications"
+      "viewApplications": "View applications",
+      "status": {
+        "ACTIVE": "Active",
+        "CLOSED": "Closed",
+        "CANCELLED": "Cancelled"
+      }
     },
     "pagination": {
       "prev": "Previous",
@@ -579,7 +600,8 @@
         "notSelected": "Click a point on the map",
         "confirm": "Confirm",
         "close": "Close"
-      }
+      },
+      "deleteConfirm": "Are you sure you want to permanently delete this vacancy?"
     }
   },
   "Matches": {
@@ -789,7 +811,16 @@
       "provider": "Provider",
       "amount": "Amount",
       "status": "Status",
-      "date": "Date"
+      "date": "Date",
+      "currency": "UZS",
+      "subscriptionLabel": "Subscription — {plan} ({days} days)",
+      "purposes": {
+        "CV_CREATION": "CV creation and activation",
+        "CV_ACTIVATION": "CV activation",
+        "WEEKLY_APPLY_PASS": "7-day application pass",
+        "VACANCY_UNLOCK": "Company subscription",
+        "SUBSCRIPTION": "Company subscription"
+      }
     }
   },
   "Theme": {
@@ -1198,7 +1229,7 @@
       "quote5": "I filled in my profile and soon employers started inviting me to interviews."
     },
     "referenceHero": {
-      "badge": "Uzbekistan’s career platform",
+      "badge": "Uzbekistan's career platform",
       "title": "Students and employers connected for real careers",
       "description": "A modern talent ecosystem to find opportunities, grow skills and build the next generation of Uzbekistan.",
       "findJob": "Find a job",
@@ -1208,7 +1239,21 @@
       "ecosystem": "One ecosystem",
       "search": "Job, company or skill",
       "location": "Location",
-      "country": "Uzbekistan"
+      "country": "Uzbekistan",
+      "searchButton": "Search",
+      "popularLabel": "Popular:",
+      "tagInternship": "Internship",
+      "tagIt": "IT",
+      "tagMarketing": "Marketing",
+      "tagFinance": "Finance",
+      "tagEngineering": "Engineering",
+      "cityTashkent": "Tashkent",
+      "cityNukus": "Nukus",
+      "citySamarkand": "Samarkand",
+      "cityBukhara": "Bukhara",
+      "cityFergana": "Fergana",
+      "cityAndijan": "Andijan",
+      "cityNamangan": "Namangan"
     },
     "opportunities": {
       "recent": "Recent vacancies",
@@ -1249,6 +1294,82 @@
       "joinSubtitle": "Create your account and take the next step in your career.",
       "joinStudent": "I’m a student",
       "joinEmployer": "I’m an employer"
+    },
+    "vacanciesSection": {
+      "title": "Recent job opportunities",
+      "viewAll": "View all jobs",
+      "applyBtn": "Apply",
+      "salaryNegotiable": "Salary negotiable",
+      "fallbackCompany": "Verified employer",
+      "bookmarkSave": "Save vacancy",
+      "bookmarkSaved": "Saved",
+      "emptyTitle": "No published vacancies right now",
+      "emptyDesc": "As soon as verified employers publish roles, they will appear here.",
+      "emptyCta": "Browse vacancies",
+      "errorTitle": "Could not load vacancies",
+      "errorDesc": "Please check your connection and try again.",
+      "errorRetry": "Retry"
+    },
+    "studentJourney": {
+      "eyebrow": "STUDENT JOURNEY",
+      "title": "From learning to a great career",
+      "subtitle": "A clear and supportive path to gain skills, experience and get hired.",
+      "cta": "Start your journey",
+      "pauseTrack": "Pause motion",
+      "resumeTrack": "Resume motion",
+      "step1Title": "Discover opportunities",
+      "step1Desc": "Browse active internships and roles",
+      "step2Title": "Build your skills",
+      "step2Desc": "Complete personality and readiness profile",
+      "step3Title": "Grow your profile",
+      "step3Desc": "Create an AI-powered CV and PDF",
+      "step4Title": "Get hired",
+      "step4Desc": "Track applications and interview invites"
+    },
+    "employerSection": {
+      "title": "Build a team that moves forward",
+      "subtitle": "Share your opportunity, discover relevant talent, and start the right conversation.",
+      "cta": "For employers",
+      "towerAlt": "CANDIDATOR employer tower",
+      "vacancyCardLabel": "Vacancy document",
+      "folderLabel": "Candidate archive"
+    },
+    "howItWorks": {
+      "title": "How CANDIDATOR works",
+      "studentsHeading": "For students",
+      "studentsSubtitle": "Turn your potential into real opportunities.",
+      "s1Title": "Create profile",
+      "s1Desc": "Build CV studio",
+      "s2Title": "Explore jobs",
+      "s2Desc": "Filter open roles",
+      "s3Title": "Apply",
+      "s3Desc": "Send applications",
+      "employersHeading": "For employers",
+      "employersSubtitle": "Find and hire the right talent, faster.",
+      "e1Title": "Post a vacancy",
+      "e1Desc": "Publish open role",
+      "e2Title": "Review profiles",
+      "e2Desc": "Browse students",
+      "e3Title": "Connect",
+      "e3Desc": "Open direct chat",
+      "stepBadge": "Step {current}",
+      "completedBadge": "Completed",
+      "liveVacancies": "{count} live jobs",
+      "liveProfiles": "{count} public CVs",
+      "liveApplications": "{count} applications",
+      "liveChats": "{count} active chats",
+      "actionStudent1": "Create CV",
+      "actionStudent2": "Browse jobs",
+      "actionStudent3": "Apply now",
+      "actionEmployer1": "Post vacancy",
+      "actionEmployer2": "Browse talent",
+      "actionEmployer3": "Open chat"
+    },
+    "finalCta": {
+      "title": "Join Uzbekistan's talent ecosystem",
+      "subtitle": "Create your account and take the next step in your career.",
+      "studentBtn": "I'm a student",
+      "employerBtn": "I'm an employer"
     }
   },
   "Dashboard": {
@@ -1588,7 +1709,10 @@
     "matchedSectionTitle": "Top priority — vacancies matching your profile ({count})",
     "matchedSectionDesc": "Vacancies from companies matching your CV or selected profession appear first, followed by all other openings.",
     "otherSectionTitle": "All other open vacancies ({count})",
-    "matchBadge": "Match: {score}%"
+    "matchBadge": "Match: {score}%",
+    "bookmarkSave": "Save vacancy",
+    "bookmarkSaved": "Saved",
+    "savedFilter": "Saved ({count})"
   },
   "VacancyDetail": {
     "back": "← Back to all vacancies",
@@ -1643,6 +1767,14 @@
       "INTERESTED": "Interested",
       "ACCEPTED": "Accepted",
       "REJECTED": "Rejected"
-    }
+    },
+    "payToUnlock": "Unlock with payment"
+  },
+  "ErrorBoundary": {
+    "eyebrow": "Unexpected error",
+    "title": "Something went wrong loading this page",
+    "description": "Try reloading this view or return to the homepage.",
+    "retry": "Try again",
+    "home": "Go home"
   }
 }

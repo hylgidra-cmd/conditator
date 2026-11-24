@@ -8,7 +8,11 @@ import { routing } from "@/i18n/routing";
 import { cn, FOCUS_RING } from "./ds/cn";
 
 /** Ixcham til menyusi: klik tashqarisida va Esc bosilganda animatsiya bilan yopiladi. */
-export function LocaleSwitcher() {
+export function LocaleSwitcher({
+  direction = "down",
+}: {
+  direction?: "down" | "up";
+}) {
   const t = useTranslations("LocaleSwitcher");
   const pathname = usePathname();
   const current = useLocale();
@@ -82,7 +86,10 @@ export function LocaleSwitcher() {
       {open && (
         <nav
           aria-label={t("label")}
-          className="ds-modal-panel border-line bg-card/95 shadow-float absolute right-0 z-50 mt-2 flex min-w-44 flex-col gap-0.5 rounded-2xl border p-1.5 backdrop-blur-xl"
+          className={cn(
+            "ds-modal-panel border-line bg-card/95 shadow-float absolute right-0 z-50 flex min-w-44 flex-col gap-0.5 rounded-2xl border p-1.5 backdrop-blur-xl",
+            direction === "up" ? "bottom-full mb-2" : "top-full mt-2",
+          )}
         >
           {routing.locales.map((locale) => {
             const active = locale === current;

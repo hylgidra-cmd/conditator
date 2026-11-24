@@ -46,7 +46,11 @@
     "myApplications": "Arzalarım",
     "support": "Qollap-quwatlaw",
     "supportAction": "Járdem chatın ashıw",
-    "categories": "Baǵdarlar"
+    "categories": "Baǵdarlar",
+    "navStudents": "Studentler",
+    "navEmployers": "Jumıs beriwshiler",
+    "navVacancies": "Vakansiyalar",
+    "navDiscover": "Kózden keshiriw"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -72,7 +76,19 @@
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
     "rights": "© {year} CANDIDATOR. Barlıq huqıqlar qorǵalǵan.",
-    "credit": "Sayt DENJI tárepinen islep shıǵılǵan."
+    "credit": "Sayt DENJI tárepinen islep shıǵılǵan.",
+    "shortTagline": "Studentler. Jumıs beriwshiler. Karyera. Ózbekstan.",
+    "platformTitle": "Platforma",
+    "resourcesTitle": "Imkaniyatlar",
+    "actionsTitle": "Ámeller",
+    "navStudents": "Studentler",
+    "navEmployers": "Jumıs beriwshiler",
+    "navVacancies": "Vakansiyalar",
+    "navDiscover": "Qalay isleydi",
+    "supportLink": "Qollap-quwatlaw",
+    "cvLink": "CV jaratıw",
+    "personalityLink": "Shaxsiyat testi",
+    "postVacancyLink": "Vakansiya jaylastırıw"
   },
   "NotFound": {
     "title": "Bet tabılmadı",
@@ -540,7 +556,12 @@
       "candidates": "Kandidatlar",
       "decisions": "Tańlandı: {selected} · Sáykes emes: {rejected}",
       "applicationsCount": "Arzalar: {count}",
-      "viewApplications": "Arzalardı kóriw"
+      "viewApplications": "Arzalardı kóriw",
+      "status": {
+        "ACTIVE": "Belsendi",
+        "CLOSED": "Jabılǵan",
+        "CANCELLED": "Biykar etilgen"
+      }
     },
     "pagination": {
       "prev": "Aldıńǵı",
@@ -579,7 +600,8 @@
         "notSelected": "Kartadan noqat tańlań",
         "confirm": "Tańlaw",
         "close": "Jabıw"
-      }
+      },
+      "deleteConfirm": "Bul vakansiyanı tolıq óshirmekshimisiz?"
     }
   },
   "Matches": {
@@ -789,7 +811,16 @@
       "provider": "Sistema",
       "amount": "Summa",
       "status": "Jaǵday",
-      "date": "Sáne"
+      "date": "Sáne",
+      "currency": "swm",
+      "subscriptionLabel": "Jazılıw — {plan} ({days} kún)",
+      "purposes": {
+        "CV_CREATION": "CV jaratıw hám belsendi etiw",
+        "CV_ACTIVATION": "CV belsendi etiw",
+        "WEEKLY_APPLY_PASS": "7 kúnlik arza ruxsatnaması",
+        "VACANCY_UNLOCK": "Kompaniya jazılıwı",
+        "SUBSCRIPTION": "Kompaniya jazılıwı"
+      }
     }
   },
   "Theme": {
@@ -1199,16 +1230,30 @@
     },
     "referenceHero": {
       "badge": "Ózbekstannıń karyera platforması",
-      "title": "Talabalar hám jumıs beriwshiler bir platformada",
-      "description": "Ózbekstanda jumıs tabıń, qábiletli kadrlardı tańlań hám karyerańızdı rawajlandırıń.",
+      "title": "Studentler hám jumıs beriwshiler haqıyqıy karyera ushın birikken",
+      "description": "Imkaniyatlar tabıw, kónlikpelerdi rawajlandırıw hám Ózbekstannıń jańa áwlad qánigelerin qáliplestiriw ushın zamanagóy ekotizim.",
       "findJob": "Jumıs tabıw",
-      "hireTalent": "Kadr tabıw",
-      "students": "Talabalar",
+      "hireTalent": "Kadr tańlaw",
+      "students": "Studentler",
       "employers": "Jumıs beriwshiler",
-      "ecosystem": "Bir ekosistema",
-      "search": "Jumıs, kompaniya yamasa kónlikpe",
+      "ecosystem": "Bir ekotizim",
+      "search": "Lawazım, kompaniya yamasa kónlikpe",
       "location": "Jaylasıw",
-      "country": "Ózbekstan"
+      "country": "Ózbekstan",
+      "searchButton": "Izlew",
+      "popularLabel": "Kóp izlenetuǵın:",
+      "tagInternship": "Ámeliyat",
+      "tagIt": "IT",
+      "tagMarketing": "Marketing",
+      "tagFinance": "Qarjı",
+      "tagEngineering": "Injeneriya",
+      "cityTashkent": "Tashkent",
+      "cityNukus": "Nókis",
+      "citySamarkand": "Samarqand",
+      "cityBukhara": "Buxara",
+      "cityFergana": "Ferǵana",
+      "cityAndijan": "Ándijan",
+      "cityNamangan": "Namangan"
     },
     "opportunities": {
       "recent": "Sońǵı vakansiyalar",
@@ -1249,6 +1294,82 @@
       "joinSubtitle": "Akkaunt jaratıń hám karyerańızda keyingi qádemdi taslań.",
       "joinStudent": "Men talabaman",
       "joinEmployer": "Men jumıs beriwshimen"
+    },
+    "vacanciesSection": {
+      "title": "Sońǵı jumıs imkaniyatları",
+      "viewAll": "Barlıq vakansiyalar",
+      "applyBtn": "Arza jiberiw",
+      "salaryNegotiable": "Aylıq kelisiledi",
+      "fallbackCompany": "Tastıyqlanǵan jumıs beriwshi",
+      "bookmarkSave": "Vakansiyanı saqlaw",
+      "bookmarkSaved": "Saqlanǵan",
+      "emptyTitle": "Házirshe belsendi vakansiyalar jaylastırılmaǵan",
+      "emptyDesc": "Jumıs beriwshiler jańa usınıslardı qosqanda bul jerde kórinedi.",
+      "emptyCta": "Vakansiyalar betine ótiw",
+      "errorTitle": "Vakansiyalardı júklep bolmadı",
+      "errorDesc": "Server menen baylanıstı tekserip qayta urınıp kóriń.",
+      "errorRetry": "Qayta júklew"
+    },
+    "studentJourney": {
+      "eyebrow": "STUDENT JOLÍ",
+      "title": "Oqıwdan tabıslı karyeraǵa shekem",
+      "subtitle": "Kónlikpe asırıw, tájiriybe jıynaw hám jumısqa kiriw ushın anıq hám qolaylı jol.",
+      "cta": "Joldı baslaw",
+      "pauseTrack": "Háreketti toqtatıw",
+      "resumeTrack": "Háreketti dawam etiw",
+      "step1Title": "Imkaniyatlardı ashıń",
+      "step1Desc": "Belsendi ámeliyat hám vakansiyalar",
+      "step2Title": "Kónlikpelerińizdi bahalań",
+      "step2Desc": "Shaxsiyat hám kásipke tayarlıq testi",
+      "step3Title": "Profilińizdi kúsheytiń",
+      "step3Desc": "AI járdeminde professional CV dúziw",
+      "step4Title": "Jumısqa usınıs alıń",
+      "step4Desc": "Arzalar jaǵdayın real waqıtta baqlań"
+    },
+    "employerSection": {
+      "title": "Aldıǵa umtılǵan jámáát qırıń",
+      "subtitle": "Vakansiyańızdı jaylastırıń, sáykes talapkerlerdi kóriń hám tuwrı sáwbetti baslań.",
+      "cta": "Jumıs beriwshiler ushın",
+      "towerAlt": "CANDIDATOR kompaniya imaratı",
+      "vacancyCardLabel": "Vakansiya hújjeti",
+      "folderLabel": "Talapkerler papkası"
+    },
+    "howItWorks": {
+      "title": "CANDIDATOR qalay isleydi",
+      "studentsHeading": "Studentler ushın",
+      "studentsSubtitle": "Potencialıńızdı haqıyqıy imkaniyatlarǵa aylandırıń.",
+      "s1Title": "Profil jaratıń",
+      "s1Desc": "AI menen CV dúziń",
+      "s2Title": "Jumıslardı kóriń",
+      "s2Desc": "Baǵdar boyınsha izlew",
+      "s3Title": "Arza jiberiń",
+      "s3Desc": "Tez tapsırıw",
+      "employersHeading": "Jumıs beriwshiler ushın",
+      "employersSubtitle": "Sáykes qánigelerdi tezirek tabıń hám jumısqa alıń.",
+      "e1Title": "Vakansiya jaratıń",
+      "e1Desc": "Talaplardı kirgiziń",
+      "e2Title": "Profillardi kóriń",
+      "e2Desc": "Talapkerler bazası",
+      "e3Title": "Baylanısıń",
+      "e3Desc": "Ishki chat arqalı sáwbet",
+      "stepBadge": "{current}-qádem",
+      "completedBadge": "Orınlanǵan",
+      "liveVacancies": "{count} belsendi vakansiya",
+      "liveProfiles": "{count} ashıq CV",
+      "liveApplications": "{count} arzańız",
+      "liveChats": "{count} sáwbet",
+      "actionStudent1": "CV jaratıw",
+      "actionStudent2": "Vakansiyalardı kóriw",
+      "actionStudent3": "Arza tapsırıw",
+      "actionEmployer1": "Vakansiya jaylastırıw",
+      "actionEmployer2": "Talapkerlerdi kóriw",
+      "actionEmployer3": "Chattı ashıw"
+    },
+    "finalCta": {
+      "title": "Ózbekstan talantlar ekotizimine qosılıń",
+      "subtitle": "Dizimnen ótiń hám karyerańızdaǵı keyingi qádemdi basıń.",
+      "studentBtn": "Men studentpen",
+      "employerBtn": "Men jumıs beriwshimen"
     }
   },
   "Dashboard": {
@@ -1588,7 +1709,10 @@
     "matchedSectionTitle": "Birinshi qatarda — baǵdarıńızǵa sáykes vakansiyalar ({count})",
     "matchedSectionDesc": "Rezyumeńiz yamasa tańlanǵan kásip boyınsha sáykes kompaniyalardıń vakansiyaları birinshi qatarda turadı, qalǵanı izine túsedi.",
     "otherSectionTitle": "Qalǵan barlıq vakansiyalar ({count})",
-    "matchBadge": "Sáykes: {score}%"
+    "matchBadge": "Sáykes: {score}%",
+    "bookmarkSave": "Saqlaw",
+    "bookmarkSaved": "Saqlandı",
+    "savedFilter": "Saqlanǵan ({count})"
   },
   "VacancyDetail": {
     "back": "← Barlıq vakansiyalarǵa qaytıw",
@@ -1643,6 +1767,14 @@
       "INTERESTED": "Qızıǵıwshılıq bar",
       "ACCEPTED": "Qabıllandı",
       "REJECTED": "Rad etildi"
-    }
+    },
+    "payToUnlock": "Tólem arqalı ashıw"
+  },
+  "ErrorBoundary": {
+    "eyebrow": "Kútilmegen qátelik",
+    "title": "Betti júklewde mashqala júz berdi",
+    "description": "Qayta urınıp kóriń yamasa bas betke qaytıń.",
+    "retry": "Qayta urınıw",
+    "home": "Bas bet"
   }
 }

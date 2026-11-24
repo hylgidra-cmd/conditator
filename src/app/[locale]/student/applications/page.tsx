@@ -60,7 +60,7 @@ export default async function StudentApplicationsPage() {
       .map((c) => [c.vacancyId, c.id]),
   );
 
-  const payCvLabel = "🔒 To'lov qilish";
+  const payCvLabel = t("payToUnlock");
 
   return (
     <div className="page-x font-ui space-y-8 py-8 sm:py-12">

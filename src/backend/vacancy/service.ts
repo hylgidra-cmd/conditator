@@ -1,9 +1,18 @@
 import type { Vacancy } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { VACANCY_PAGE_SIZE, type VacancyInput } from "./schema";
 
 const FIFTEEN_DAYS_MS = 15 * 24 * 60 * 60 * 1000;
+
+function invalidateLandingCache() {
+  try {
+    revalidateTag("landing-stats");
+  } catch {
+    // Tests and standalone scripts run without a Next.js cache store.
+  }
+}
 
 /** Brauzerga yuboriladigan ko'rinish. */
 export function vacancyView(vacancy: Vacancy) {
@@ -52,8 +61,8 @@ function toData(input: VacancyInput) {
   };
 }
 
-export function createVacancy(companyId: string, input: VacancyInput) {
-  return db.vacancy.create({
+export async function createVacancy(companyId: string, input: VacancyInput) {
+  const created = await db.vacancy.create({
     data: {
       companyId,
       ...toData(input),
@@ -61,6 +70,8 @@ export function createVacancy(companyId: string, input: VacancyInput) {
       expiresAt: new Date(Date.now() + FIFTEEN_DAYS_MS),
     },
   });
+  invalidateLandingCache();
+  return created;
 }
 
 /** Faqat o'z talabi. Boshqa kompaniyaniki bo'lsa ham "topilmadi" (borligi oshkor qilinmaydi). */
@@ -91,6 +102,7 @@ export async function updateVacancy(
     },
   });
   if (count === 0) throw new ApiError(404, "NOT_FOUND");
+  invalidateLandingCache();
   return getOwnVacancy(companyId, id);
 }
 
@@ -99,6 +111,7 @@ export async function deleteVacancy(companyId: string, id: string) {
     where: { id, companyId },
   });
   if (count === 0) throw new ApiError(404, "NOT_FOUND");
+  invalidateLandingCache();
 }
 
 /** Talablar tarixi: yangilari birinchi, server tomonda sahifalanadi. */

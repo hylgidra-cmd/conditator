@@ -17,6 +17,9 @@ import {
   isValidAudienceKey,
   rankVacanciesForAudience,
 } from "@/backend/vacancy/audience-match";
+import { listSavedVacancyIds } from "@/backend/vacancy/bookmarks";
+import { BookmarkButton } from "@/frontend/components/vacancy/bookmark-button";
+import { CompanyLogo } from "@/frontend/components/ui/company-logo";
 import { cn } from "@/frontend/components/ds/cn";
 import { Reveal } from "@/frontend/components/ds/motion";
 import {
@@ -86,10 +89,12 @@ function buildFilterHref(
     minSalary?: string;
     audience?: string;
     sort?: string;
+    saved?: string;
   },
   overrides: Partial<{
     audience: string | undefined;
     sort: string | undefined;
+    saved: string | undefined;
   }>,
 ): string {
   const merged = { ...current, ...overrides };
@@ -100,6 +105,7 @@ function buildFilterHref(
   if (merged.minSalary) params.set("minSalary", merged.minSalary);
   if (merged.audience) params.set("audience", merged.audience);
   if (merged.sort && merged.sort !== "match") params.set("sort", merged.sort);
+  if (merged.saved === "1") params.set("saved", "1");
   const qs = params.toString();
   return qs ? `/vacancies?${qs}` : "/vacancies";
 }
@@ -114,6 +120,7 @@ export default async function PublicVacanciesPage({
     minSalary?: string;
     audience?: string;
     sort?: string;
+    saved?: string;
   }>;
 }) {
   const user = await currentUser();
@@ -123,8 +130,9 @@ export default async function PublicVacanciesPage({
   }
 
   const sp = await searchParams;
-  const { q, workType, location, minSalary, audience } = sp;
+  const { q, workType, location, minSalary, audience, saved } = sp;
   const sortMode = parseSortMode(sp.sort);
+  const onlySaved = Boolean(user && saved === "1");
   const t = await getTranslations("VacanciesList");
 
   const now = new Date();
@@ -162,6 +170,16 @@ export default async function PublicVacanciesPage({
         { salaryFrom: { gte: parsedSalary } },
       ],
     });
+  }
+
+  const savedIdsPromise = user
+    ? listSavedVacancyIds(user.id)
+    : Promise.resolve<string[]>([]);
+
+  const savedIds = await savedIdsPromise;
+  const savedSet = new Set(savedIds);
+  if (onlySaved) {
+    andConditions.push({ id: { in: savedIds.length > 0 ? savedIds : ["__none__"] } });
   }
 
   const where: Prisma.VacancyWhereInput = {
@@ -285,36 +303,28 @@ export default async function PublicVacanciesPage({
       vacancy.company.industry.trim() !== vacancy.company.name.trim()
         ? `· ${vacancy.company.industry}`
         : null;
-    const companyInitial = (companyDisplay[0] ?? "C").toUpperCase();
 
     return (
       <Reveal key={vacancy.id} delay={REVEAL_DELAYS[idx % 4]}>
-        <Link
-          href={`/vacancies/${vacancy.id}`}
+        <article
           className={cn(
-            "bg-card shadow-soft hover:shadow-float group relative block overflow-hidden rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1",
+            "bg-card shadow-soft hover:shadow-float group relative overflow-hidden rounded-3xl border p-6 transition-all duration-300 hover:-translate-y-1",
             isAudienceMatch && sortMode !== "latest"
               ? "border-emerald-500/55 ring-1 ring-emerald-500/20"
               : "border-line hover:border-primary/45",
           )}
         >
           <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="flex min-w-0 items-start gap-3.5">
-              {vacancy.company.hasLogo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={`/api/companies/${vacancy.company.id}/logo`}
-                  alt={companyDisplay}
-                  className="size-12 shrink-0 rounded-2xl bg-white object-contain p-1 ring-1 ring-black/5"
-                />
-              ) : (
-                <span
-                  aria-hidden
-                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 text-base font-black text-white shadow-sm"
-                >
-                  {companyInitial}
-                </span>
-              )}
+            <Link
+              href={`/vacancies/${vacancy.id}`}
+              className="flex min-w-0 flex-1 items-start gap-3.5"
+            >
+              <CompanyLogo
+                companyId={vacancy.company.id}
+                companyName={companyDisplay}
+                hasLogo={vacancy.company.hasLogo}
+                sizeClass="size-12 rounded-2xl text-base"
+              />
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-subtle text-xs font-extrabold tracking-wider uppercase">
@@ -336,10 +346,10 @@ export default async function PublicVacanciesPage({
                   {vacancy.title}
                 </h2>
               </div>
-            </div>
+            </Link>
 
-            {/* Salary */}
-            <div className="flex items-center gap-3">
+            {/* Salary + Bookmark */}
+            <div className="flex items-center gap-2.5">
               {salaryLabel ? (
                 <span className="bg-primary-soft text-primary-text rounded-xl px-3.5 py-1.5 text-sm font-black tabular-nums">
                   {salaryLabel}
@@ -349,9 +359,21 @@ export default async function PublicVacanciesPage({
                   {t("salaryNegotiable")}
                 </span>
               )}
-              <span className="border-line bg-card-cool text-subtle group-hover:bg-primary group-hover:text-on-primary hidden size-9 items-center justify-center rounded-full border transition-colors sm:inline-flex">
+              <BookmarkButton
+                vacancyId={vacancy.id}
+                initialSaved={savedSet.has(vacancy.id)}
+                isAuthenticated={Boolean(user)}
+                loginNext={buildFilterHref(sp, {})}
+                saveLabel={t("bookmarkSave")}
+                savedLabel={t("bookmarkSaved")}
+              />
+              <Link
+                href={`/vacancies/${vacancy.id}`}
+                aria-label={vacancy.title}
+                className="border-line bg-card-cool text-subtle group-hover:bg-primary group-hover:text-on-primary hidden size-9 items-center justify-center rounded-full border transition-colors sm:inline-flex"
+              >
                 <ArrowRightIcon size={16} />
-              </span>
+              </Link>
             </div>
           </div>
 
@@ -401,7 +423,7 @@ export default async function PublicVacanciesPage({
               ) : null}
             </div>
           ) : null}
-        </Link>
+        </article>
       </Reveal>
     );
   }
@@ -453,6 +475,21 @@ export default async function PublicVacanciesPage({
                   </Link>
                 );
               })}
+              {user ? (
+                <Link
+                  href={buildFilterHref(sp, {
+                    saved: onlySaved ? undefined : "1",
+                  })}
+                  className={cn(
+                    "rounded-xl px-3 py-1.5 text-xs font-extrabold transition-all",
+                    onlySaved
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-xs"
+                      : "text-subtle hover:text-text",
+                  )}
+                >
+                  {t("savedFilter", { count: savedIds.length })}
+                </Link>
+              ) : null}
             </div>
           </div>
 
@@ -466,6 +503,7 @@ export default async function PublicVacanciesPage({
             {sortMode !== "match" ? (
               <input type="hidden" name="sort" value={sortMode} />
             ) : null}
+            {onlySaved ? <input type="hidden" name="saved" value="1" /> : null}
 
             <div className="relative">
               <SearchIcon

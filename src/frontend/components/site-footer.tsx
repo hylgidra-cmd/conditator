@@ -3,122 +3,83 @@ import { cn, FOCUS_RING } from "@/frontend/components/ds/cn";
 import { Logo } from "@/frontend/components/ds/logo";
 import {
   MailIcon,
-  MessageIcon,
   PhoneIcon,
   SendIcon,
 } from "@/frontend/components/icons";
+import { LocaleSwitcher } from "./locale-switcher";
 import { Link } from "@/i18n/navigation";
 import {
-  DEVELOPER_URL,
   EMAIL,
   EMAIL_URL,
   PHONE_DISPLAY,
   PHONE_URL,
-  TELEGRAM_HANDLE,
   TELEGRAM_URL,
 } from "@/backend/site";
 
-const LINK = cn(
-  "text-on-night/75 hover:text-on-night rounded-btn transition-colors",
+const LINK_STYLE = cn(
+  "text-subtle hover:text-primary-text rounded-md text-sm font-medium transition-colors",
   FOCUS_RING,
-  "focus-visible:outline-on-night",
 );
 
-/** Toʻq footer: logo va tavsif, ishlaydigan ichki havolalar, real aloqa kanallari. */
+/** Template-aligned light footer with 3 real link columns, verified channels, and upward language switcher. */
 export function SiteFooter() {
   const t = useTranslations("Footer");
-  const tHeader = useTranslations("Header");
+  const year = new Date().getFullYear();
 
   const columns = [
     {
-      title: t("company"),
+      title: t("platformTitle"),
       links: [
-        { href: "/#showcase", label: t("about") },
-        { href: "/#companies", label: t("companies") },
-        { href: "/support", label: tHeader("support") },
+        { href: "/#student-journey", label: t("navStudents") },
+        { href: "/#employer-section", label: t("navEmployers") },
+        { href: "/vacancies", label: t("navVacancies") },
+        { href: "/#how-it-works", label: t("navDiscover") },
       ],
     },
     {
-      title: t("features"),
+      title: t("resourcesTitle"),
       links: [
-        { href: "/vacancies", label: t("jobs") },
-        { href: "/#categories", label: tHeader("categories") },
-        { href: "/#profile", label: t("profile") },
+        { href: "/student/cv", label: t("cvLink") },
+        { href: "/student/personality", label: t("personalityLink") },
+        { href: "/support", label: t("supportLink") },
+      ],
+    },
+    {
+      title: t("actionsTitle"),
+      links: [
+        { href: "/company/vacancies/new", label: t("postVacancyLink") },
         { href: "/register", label: t("register") },
         { href: "/login", label: t("login") },
       ],
     },
   ];
 
-  const contacts = [
-    ...(PHONE_DISPLAY && PHONE_URL
-      ? [
-          {
-            href: PHONE_URL,
-            label: t("phoneLabel"),
-            value: PHONE_DISPLAY,
-            Icon: PhoneIcon,
-            external: false,
-            internal: false,
-          },
-        ]
-      : []),
-    {
-      href: EMAIL_URL,
-      label: t("emailLabel"),
-      value: EMAIL,
-      Icon: MailIcon,
-      external: false,
-      internal: false,
-    },
-    {
-      href: TELEGRAM_URL,
-      label: t("telegramLabel"),
-      value: TELEGRAM_HANDLE,
-      Icon: SendIcon,
-      external: true,
-      internal: false,
-    },
-    {
-      href: "/support",
-      label: tHeader("support"),
-      value: tHeader("supportAction"),
-      Icon: MessageIcon,
-      external: false,
-      internal: true,
-    },
-  ];
-
   return (
-    <footer className="bg-night text-on-night border-line/80 font-ui relative border-t">
-      <div
-        aria-hidden
-        className="via-primary/50 pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent"
-      />
-      <div className="page-x grid grid-cols-2 gap-x-6 gap-y-12 py-16 lg:grid-cols-[1.6fr_1fr_1fr_1.5fr] lg:gap-10 lg:py-20">
-        <div className="col-span-2 max-w-xs lg:col-span-1">
+    <footer className="font-ui border-line/70 bg-[#f4f5f2] text-text relative border-t dark:border-emerald-400/14 dark:bg-[#030d09]">
+      <div className="grid w-full grid-cols-1 gap-10 px-4 py-12 sm:px-8 lg:grid-cols-[1.5fr_1fr_1fr_1fr_auto] lg:items-start lg:gap-10 lg:px-12 lg:py-14">
+        {/* Brand column */}
+        <div className="space-y-3">
           <Link
             href="/"
-            aria-label={tHeader("homeAria")}
-            className={cn("inline-block", LINK)}
+            aria-label={t("navStudents")}
+            className={cn("inline-flex rounded-lg", FOCUS_RING)}
           >
-            <Logo name={tHeader("logoName")} tone="night" />
+            <Logo name="CANDIDATOR" />
           </Link>
-          <p className="text-on-night/75 mt-5 text-sm leading-relaxed">
-            {t("tagline")}
+          <p className="text-subtle max-w-xs text-sm leading-relaxed">
+            {t("shortTagline")}
           </p>
+          <p className="text-subtle/80 pt-1 text-xs">{t("rights", { year })}</p>
         </div>
 
-        {columns.map((column) => (
-          <nav key={column.title} aria-label={column.title}>
-            <h2 className="text-lg font-bold">{column.title}</h2>
-            <ul className="mt-4 flex flex-col gap-1.5 text-[0.9375rem]">
-              {column.links.map((link) => (
+        {/* 3 Real Destination Columns */}
+        {columns.map((col) => (
+          <nav key={col.title} aria-label={col.title} className="space-y-3">
+            <h2 className="text-text text-sm font-extrabold">{col.title}</h2>
+            <ul className="space-y-2">
+              {col.links.map((link) => (
                 <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className={cn("inline-block py-1", LINK)}
-                  >
+                  <Link href={link.href} className={LINK_STYLE}>
                     {link.label}
                   </Link>
                 </li>
@@ -127,59 +88,52 @@ export function SiteFooter() {
           </nav>
         ))}
 
-        <div className="col-span-2 lg:col-span-1">
-          <h2 className="text-lg font-bold">{t("contacts")}</h2>
-          <ul className="mt-5 flex flex-col gap-4 text-[0.9375rem]">
-            {contacts.map(({ href, label, value, Icon, external, internal }) => (
-              <li key={href}>
-                {internal ? (
-                  <Link
-                    href={href}
-                    className={cn("group inline-flex items-start gap-3", LINK)}
-                  >
-                    <span className="bg-on-night/10 text-primary group-hover:bg-primary group-hover:text-on-primary mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-colors">
-                      <Icon size={16} />
-                    </span>
-                    <span className="flex flex-col">
-                      <span className="text-on-night/60 text-xs">{label}</span>
-                      <span className="text-on-night break-all">{value}</span>
-                    </span>
-                  </Link>
-                ) : (
-                  <a
-                    href={href}
-                    {...(external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className={cn("group inline-flex items-start gap-3", LINK)}
-                  >
-                    <span className="bg-on-night/10 text-primary group-hover:bg-primary group-hover:text-on-primary mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full transition-colors">
-                      <Icon size={16} />
-                    </span>
-                    <span className="flex flex-col">
-                      <span className="text-on-night/60 text-xs">{label}</span>
-                      <span className="text-on-night break-all">{value}</span>
-                    </span>
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-on-night/10 border-t">
-        <p className="page-x text-on-night/60 py-6 text-center text-sm">
-          {t("rights", { year: new Date().getFullYear() })}{" "}
+        {/* Verified Contacts + Language Control */}
+        <div className="flex flex-wrap items-center gap-3 lg:flex-nowrap lg:justify-end">
           <a
-            href={DEVELOPER_URL}
+            href={TELEGRAM_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(LINK, "underline-offset-4 hover:underline")}
+            aria-label={t("telegramLabel")}
+            title={t("telegramLabel")}
+            className={cn(
+              "border-line bg-card text-text hover:border-primary/50 hover:text-primary-text inline-flex size-9 items-center justify-center rounded-full border shadow-xs transition-colors",
+              FOCUS_RING,
+            )}
           >
-            {t("credit")}
+            <SendIcon size={15} />
           </a>
-        </p>
+
+          <a
+            href={EMAIL_URL}
+            aria-label={`${t("emailLabel")}: ${EMAIL}`}
+            title={EMAIL}
+            className={cn(
+              "border-line bg-card text-text hover:border-primary/50 hover:text-primary-text inline-flex size-9 items-center justify-center rounded-full border shadow-xs transition-colors",
+              FOCUS_RING,
+            )}
+          >
+            <MailIcon size={15} />
+          </a>
+
+          {PHONE_DISPLAY && PHONE_URL ? (
+            <a
+              href={PHONE_URL}
+              aria-label={`${t("phoneLabel")}: ${PHONE_DISPLAY}`}
+              title={PHONE_DISPLAY}
+              className={cn(
+                "border-line bg-card text-text hover:border-primary/50 hover:text-primary-text inline-flex size-9 items-center justify-center rounded-full border shadow-xs transition-colors",
+                FOCUS_RING,
+              )}
+            >
+              <PhoneIcon size={15} />
+            </a>
+          ) : null}
+
+          <div className="border-line bg-card rounded-full border px-1 shadow-xs">
+            <LocaleSwitcher direction="up" />
+          </div>
+        </div>
       </div>
     </footer>
   );

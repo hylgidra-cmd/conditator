@@ -351,7 +351,7 @@ export default async function ReadinessPage({
                   className="border-line border-t"
                 >
                   <td className="p-3">{row.user.email}</td>
-                  <td className="p-3">{row.profession.nameUz}</td>
+                  <td className="p-3">{jobName(row.profession)}</td>
                   <td className="p-3">{row.personalityGroup}</td>
                   <td className="p-3">{row.typeCode}</td>
                   <td className="p-3">

@@ -46,7 +46,11 @@
     "myApplications": "Arizalarim",
     "support": "Qoʻllab-quvvatlash",
     "supportAction": "Yordam chatini ochish",
-    "categories": "Yoʻnalishlar"
+    "categories": "Yoʻnalishlar",
+    "navStudents": "Talabalar",
+    "navEmployers": "Ish beruvchilar",
+    "navVacancies": "Vakansiyalar",
+    "navDiscover": "Kashf etish"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -72,7 +76,19 @@
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
     "rights": "© {year} CANDIDATOR. Barcha huquqlar himoyalangan.",
-    "credit": "Sayt DENJI tomonidan ishlab chiqilgan."
+    "credit": "Sayt DENJI tomonidan ishlab chiqilgan.",
+    "shortTagline": "Talabalar. Ish beruvchilar. Karyera. O'zbekiston.",
+    "platformTitle": "Platforma",
+    "resourcesTitle": "Imkoniyatlar",
+    "actionsTitle": "Amallar",
+    "navStudents": "Talabalar",
+    "navEmployers": "Ish beruvchilar",
+    "navVacancies": "Vakansiyalar",
+    "navDiscover": "Qanday ishlaydi",
+    "supportLink": "Qo'llab-quvvatlash",
+    "cvLink": "CV yaratish",
+    "personalityLink": "Shaxsiyat testi",
+    "postVacancyLink": "Vakansiya joylash"
   },
   "NotFound": {
     "title": "Sahifa topilmadi",
@@ -540,7 +556,12 @@
       "candidates": "Nomzodlar",
       "decisions": "Tanlandi: {selected} · Mos emas: {rejected}",
       "applicationsCount": "Arizalar: {count}",
-      "viewApplications": "Arizalarni koʻrish"
+      "viewApplications": "Arizalarni koʻrish",
+      "status": {
+        "ACTIVE": "Faol",
+        "CLOSED": "Yopilgan",
+        "CANCELLED": "Bekor qilingan"
+      }
     },
     "pagination": {
       "prev": "Oldingi",
@@ -579,7 +600,8 @@
         "notSelected": "Xaritadan nuqta tanlang",
         "confirm": "Tanlash",
         "close": "Yopish"
-      }
+      },
+      "deleteConfirm": "Ushbu vakansiyani butunlay o'chirmoqchimisiz?"
     }
   },
   "Matches": {
@@ -789,7 +811,16 @@
       "provider": "Tizim",
       "amount": "Summa",
       "status": "Holat",
-      "date": "Sana"
+      "date": "Sana",
+      "currency": "so'm",
+      "subscriptionLabel": "Obuna — {plan} ({days} kun)",
+      "purposes": {
+        "CV_CREATION": "CV yaratish va faollashtirish",
+        "CV_ACTIVATION": "CV faollashtirish",
+        "WEEKLY_APPLY_PASS": "7 kunlik ariza ruxsatnomasi",
+        "VACANCY_UNLOCK": "Kompaniya obunasi",
+        "SUBSCRIPTION": "Kompaniya obunasi"
+      }
     }
   },
   "Theme": {
@@ -1198,17 +1229,31 @@
       "quote5": "Profilimni toʻldirdim va koʻp oʻtmay ish beruvchilardan suhbatga taklif kela boshladi."
     },
     "referenceHero": {
-      "badge": "O‘zbekistonning karyera platformasi",
-      "title": "Talabalar va ish beruvchilar bir platformada",
-      "description": "O‘zbekistonda ish toping, iste’dodli kadrlarni tanlang va karyerangizni rivojlantiring.",
+      "badge": "O'zbekistonning karyera platformasi",
+      "title": "Talabalar va ish beruvchilar haqiqiy karyera uchun birlashgan",
+      "description": "Imkoniyatlar topish, ko'nikmalarni rivojlantirish va O'zbekistonning yangi avlod mutaxassislarini shakllantirish uchun zamonaviy ekotizim.",
       "findJob": "Ish topish",
-      "hireTalent": "Xodim topish",
+      "hireTalent": "Kadr tanlash",
       "students": "Talabalar",
       "employers": "Ish beruvchilar",
-      "ecosystem": "Bir ekotizim",
-      "search": "Ish, kompaniya yoki ko‘nikma",
+      "ecosystem": "Yagona ekotizim",
+      "search": "Lavozim, kompaniya yoki ko'nikma",
       "location": "Joylashuv",
-      "country": "O‘zbekiston"
+      "country": "O'zbekiston",
+      "searchButton": "Qidirish",
+      "popularLabel": "Ommabop:",
+      "tagInternship": "Amaliyot",
+      "tagIt": "IT",
+      "tagMarketing": "Marketing",
+      "tagFinance": "Moliya",
+      "tagEngineering": "Muhandislik",
+      "cityTashkent": "Toshkent",
+      "cityNukus": "Nukus",
+      "citySamarkand": "Samarqand",
+      "cityBukhara": "Buxoro",
+      "cityFergana": "Farg'ona",
+      "cityAndijan": "Andijon",
+      "cityNamangan": "Namangan"
     },
     "opportunities": {
       "recent": "So‘nggi vakansiyalar",
@@ -1249,6 +1294,82 @@
       "joinSubtitle": "Akkaunt yarating va karyerangizda keyingi qadamni tashlang.",
       "joinStudent": "Men talabaman",
       "joinEmployer": "Men ish beruvchiman"
+    },
+    "vacanciesSection": {
+      "title": "So'nggi ish imkoniyatlari",
+      "viewAll": "Barcha vakansiyalar",
+      "applyBtn": "Topshirish",
+      "salaryNegotiable": "Maosh kelishiladi",
+      "fallbackCompany": "Tasdiqlangan ish beruvchi",
+      "bookmarkSave": "Vakansiyani saqlash",
+      "bookmarkSaved": "Saqlangan",
+      "emptyTitle": "Hozircha faol vakansiyalar joylashtirilmagan",
+      "emptyDesc": "Ish beruvchilar yangi takliflarni qo'shishi bilanoq shu yerda ko'rinadi.",
+      "emptyCta": "Vakansiyalar sahifasiga o'tish",
+      "errorTitle": "Vakansiyalarni yuklab bo'lmadi",
+      "errorDesc": "Server bilan aloqani tekshirib qayta urinib ko'ring.",
+      "errorRetry": "Qayta yuklash"
+    },
+    "studentJourney": {
+      "eyebrow": "TALABA YO'LI",
+      "title": "O'qishdan muvaffaqiyatli karyeragacha",
+      "subtitle": "Ko'nikma oshirish, tajriba to'plash va ishga kirish uchun aniq hamda qulay yo'l.",
+      "cta": "Yo'lni boshlash",
+      "pauseTrack": "Harakatni to'xtatish",
+      "resumeTrack": "Harakatni davom ettirish",
+      "step1Title": "Imkoniyatlarni kashf eting",
+      "step1Desc": "Faol amaliyot va vakansiyalar",
+      "step2Title": "Ko'nikmalaringizni baholang",
+      "step2Desc": "Shaxsiyat va kasbga yaroqlilik testi",
+      "step3Title": "Profilingizni kuchaytiring",
+      "step3Desc": "AI yordamida professional CV tuzish",
+      "step4Title": "Ishga taklif oling",
+      "step4Desc": "Arizalar holatini real vaqtda kuzating"
+    },
+    "employerSection": {
+      "title": "Oldinga intiladigan jamoa tuzing",
+      "subtitle": "Vakansiyangizni joylang, mos nomzodlarni ko'ring va to'g'ri muloqotni boshlang.",
+      "cta": "Ish beruvchilar uchun",
+      "towerAlt": "CANDIDATOR kompaniya binosi",
+      "vacancyCardLabel": "Vakansiya hujjati",
+      "folderLabel": "Nomzodlar papkasi"
+    },
+    "howItWorks": {
+      "title": "CANDIDATOR qanday ishlaydi",
+      "studentsHeading": "Talabalar uchun",
+      "studentsSubtitle": "Salohiyatingizni haqiqiy imkoniyatlarga aylantiring.",
+      "s1Title": "Profil yarating",
+      "s1Desc": "AI bilan CV tuzing",
+      "s2Title": "Ishlarni ko'ring",
+      "s2Desc": "Yo'nalish bo'yicha qidiruv",
+      "s3Title": "Ariza yuboring",
+      "s3Desc": "Tezkor topshirish",
+      "employersHeading": "Ish beruvchilar uchun",
+      "employersSubtitle": "Mos mutaxassislarni tezroq toping va yollang.",
+      "e1Title": "Vakansiya joylang",
+      "e1Desc": "Talablarni kiriting",
+      "e2Title": "Profillarni ko'ring",
+      "e2Desc": "Kandidatlar bazasi",
+      "e3Title": "Bog'laning",
+      "e3Desc": "Ichki chat orqali suhbat",
+      "stepBadge": "{current}-qadam",
+      "completedBadge": "Bajarilgan",
+      "liveVacancies": "{count} ta faol vakansiya",
+      "liveProfiles": "{count} ta ochiq CV",
+      "liveApplications": "{count} ta arizangiz",
+      "liveChats": "{count} ta suhbat",
+      "actionStudent1": "CV yaratish",
+      "actionStudent2": "Vakansiyalarni ko'rish",
+      "actionStudent3": "Ariza topshirish",
+      "actionEmployer1": "Vakansiya e'lon qilish",
+      "actionEmployer2": "Nomzodlarni ko'rish",
+      "actionEmployer3": "Chatni ochish"
+    },
+    "finalCta": {
+      "title": "O'zbekiston iqtidorlar ekotizimiga qo'shiling",
+      "subtitle": "Ro'yxatdan o'ting va karyerangizdagi navbatdagi qadamni tashlang.",
+      "studentBtn": "Men talabaman",
+      "employerBtn": "Men ish beruvchiman"
     }
   },
   "Dashboard": {
@@ -1588,7 +1709,10 @@
     "matchedSectionTitle": "Birinchi qatorda — yoʻnalishingizga mos vakansiyalar ({count})",
     "matchedSectionDesc": "Rezyume yoki tanlangan kasb boʻyicha mos kompaniya vakansiyalari yuqoriga chiqarildi, qolganlari pastda.",
     "otherSectionTitle": "Qolgan barcha vakansiyalar ({count})",
-    "matchBadge": "Mos: {score}%"
+    "matchBadge": "Mos: {score}%",
+    "bookmarkSave": "Saqlash",
+    "bookmarkSaved": "Saqlandi",
+    "savedFilter": "Saqlangan ({count})"
   },
   "VacancyDetail": {
     "back": "← Barcha vakansiyalarga qaytish",
@@ -1643,6 +1767,14 @@
       "INTERESTED": "Qiziqish bor",
       "ACCEPTED": "Qabul qilindi",
       "REJECTED": "Rad etildi"
-    }
+    },
+    "payToUnlock": "To'lov bilan ochish"
+  },
+  "ErrorBoundary": {
+    "eyebrow": "Kutilmagan xatolik",
+    "title": "Sahifani yuklashda muammo yuz berdi",
+    "description": "Qayta urinib ko'ring yoki bosh sahifaga qayting.",
+    "retry": "Qayta urinish",
+    "home": "Bosh sahifa"
   }
 }

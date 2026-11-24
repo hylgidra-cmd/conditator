@@ -278,7 +278,8 @@ export function PromoBillboardClient({
                 const workTypeLabel = job.workType
                   ? (workTypes[job.workType] ?? job.workType)
                   : null;
-                const initial = job.companyName.slice(0, 1).toUpperCase();
+                const companyLabel = job.companyName?.trim() || "Candidator";
+                const initial = companyLabel.slice(0, 1).toUpperCase();
 
                 return (
                   <Link
@@ -293,7 +294,7 @@ export function PromoBillboardClient({
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={`/api/companies/${job.companyId}/logo`}
-                              alt={job.companyName}
+                              alt={companyLabel}
                               className="size-9 shrink-0 rounded-xl bg-white object-contain p-1 ring-1 ring-black/5"
                             />
                           ) : (
@@ -302,7 +303,7 @@ export function PromoBillboardClient({
                             </span>
                           )}
                           <span className="text-text truncate text-xs font-extrabold">
-                            {job.companyName}
+                            {companyLabel}
                           </span>
                         </div>
 

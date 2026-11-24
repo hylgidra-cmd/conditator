@@ -12,7 +12,7 @@ import { ActivePageBadge, NavLinks } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
 const THEME_BUTTON = cn(
-  "bg-card-cool border-line text-text hover:bg-primary-soft hover:border-primary/40 inline-flex size-10 shrink-0 items-center justify-center rounded-xl border transition-colors",
+  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex size-9 shrink-0 items-center justify-center rounded-full border bg-white/80 transition-colors dark:bg-white/10 dark:text-white",
   FOCUS_RING,
 );
 
@@ -25,10 +25,10 @@ export async function SiteHeader() {
     : 0;
 
   const sections = [
-    { href: "/#showcase", label: t("students") },
-    { href: "/#employers", label: t("companies") },
-    { href: "/vacancies", label: t("jobs") },
-    { href: "/#categories", label: t("howItWorks") },
+    { href: "/#student-journey", label: t("navStudents") },
+    { href: "/#employer-section", label: t("navEmployers") },
+    { href: "/vacancies", label: t("navVacancies") },
+    { href: "/#how-it-works", label: t("navDiscover") },
   ];
 
   const roleLinks = user
@@ -68,7 +68,7 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="font-ui sticky top-0 z-40 w-full bg-[#f6f5f2]/92 backdrop-blur-md dark:bg-[#101b17]/92">
+    <header className="font-ui border-line/60 sticky top-0 z-40 w-full border-b bg-[#f6f5f2]/92 backdrop-blur-md dark:border-emerald-400/14 dark:bg-[#04110c]/92">
       <div className="relative flex h-16 w-full items-center gap-4 px-4 transition-all sm:px-8 lg:px-12">
         <Link
           href="/"
@@ -91,6 +91,7 @@ export async function SiteHeader() {
 
         <div className="ml-auto flex items-center gap-2 sm:gap-2.5 lg:ml-0">
           <LocaleSwitcher />
+          <span className="hidden sm:inline-flex">{themeToggle}</span>
           {user ? (
             <span className="hidden lg:block">
               <LogoutButton
@@ -105,7 +106,7 @@ export async function SiteHeader() {
               <Link
                 href="/login"
                 className={cn(
-                  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex h-9 items-center justify-center rounded-full border bg-white/80 px-5 text-xs font-bold transition-all dark:bg-white/10 dark:text-white",
+                  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex h-9 items-center justify-center rounded-full border bg-white/80 px-5 text-xs font-bold transition-all dark:border-emerald-300/32 dark:bg-[#081f17]/80 dark:text-white dark:hover:border-emerald-300/60 dark:hover:bg-[#0c2b20]",
                   FOCUS_RING,
                 )}
               >
@@ -114,7 +115,7 @@ export async function SiteHeader() {
               <Link
                 href="/register"
                 className={cn(
-                  "inline-flex h-9 items-center justify-center rounded-full bg-gradient-to-r from-[#0e8f5d] to-[#045238] px-5 text-xs font-bold text-white shadow-[0_6px_14px_rgb(6,95,67,0.22)] transition-all hover:brightness-110",
+                  "inline-flex h-9 items-center justify-center rounded-full bg-gradient-to-r from-[#0e8f5d] to-[#045238] px-5 text-xs font-bold text-white shadow-[0_6px_14px_rgb(6,95,67,0.22)] transition-all hover:brightness-110 dark:from-[#10b981] dark:to-[#059669] dark:shadow-[0_8px_20px_-4px_rgba(16,185,129,0.48)]",
                   FOCUS_RING,
                 )}
               >

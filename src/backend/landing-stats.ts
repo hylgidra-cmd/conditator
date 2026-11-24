@@ -9,7 +9,7 @@ export type FeaturedVacancy = {
   id: string;
   title: string;
   companyId: string;
-  companyName: string;
+  companyName: string | null;
   hasLogo: boolean;
   location: string | null;
   workType: string | null;
@@ -26,13 +26,6 @@ export type ApprovedCompanyBadge = {
   hasLogo: boolean;
 };
 
-export type CandidatePreview = {
-  id: string;
-  name: string;
-  role: string;
-  matchScore: number;
-};
-
 export type LandingStats = {
   activeVacancies: number;
   visibleCvs: number;
@@ -40,8 +33,8 @@ export type LandingStats = {
   approvedCompanyList: ApprovedCompanyBadge[];
   categoryCounts: Record<CategoryKey, number>;
   featuredVacancies: FeaturedVacancy[];
-  candidatePreviews: CandidatePreview[];
-  hiredRate: number;
+  hiredRate: number | null;
+  loadError: boolean;
 };
 
 const EMPTY_STATS: LandingStats = {
@@ -58,8 +51,8 @@ const EMPTY_STATS: LandingStats = {
     web: 0,
   },
   featuredVacancies: [],
-  candidatePreviews: [],
-  hiredRate: 70,
+  hiredRate: null,
+  loadError: true,
 };
 
 async function fetchLandingStats(): Promise<LandingStats> {
@@ -82,7 +75,6 @@ async function fetchLandingStats(): Promise<LandingStats> {
     companyRows,
     categoryRows,
     featuredRows,
-    candidateRows,
     appProgressRows,
   ] = await Promise.all([
     db.vacancy.count({ where: activeVacancyWhere }),
@@ -149,36 +141,11 @@ async function fetchLandingStats(): Promise<LandingStats> {
         },
       },
     }),
-    db.$queryRaw<
-      Array<{
-        id: string;
-        title: string | null;
-        fullName: string | null;
-        field: string | null;
-        hideName: boolean | null;
-        bestScore: number | null;
-      }>
-    >(Prisma.sql`
-      SELECT
-        cv.id,
-        NULLIF(TRIM(cv.title), '') AS title,
-        NULLIF(TRIM(cv.data->>'fullName'), '') AS "fullName",
-        NULLIF(TRIM(cv.data #>> '{education,0,field}'), '') AS field,
-        COALESCE((cv.privacy->>'hideName')::boolean, false) AS "hideName",
-        (SELECT MAX(m.score)::int FROM "Match" m WHERE m."cvId" = cv.id) AS "bestScore"
-      FROM "Cv" cv
-      JOIN "User" u ON u.id = cv."userId"
-      WHERE cv."isVisible" = true
-        AND cv."savedAt" IS NOT NULL
-        AND u.status = 'ACTIVE'
-      ORDER BY cv."updatedAt" DESC
-      LIMIT 3
-    `),
     db.$queryRaw<Array<{ total: number; progressed: number }>>(Prisma.sql`
       SELECT
         COUNT(*)::int AS total,
         COUNT(*) FILTER (WHERE status IN ('VIEWED', 'INTERESTED', 'ACCEPTED'))::int AS progressed
-      FROM "Application"
+      FROM "VacancyApplication"
     `),
   ]);
 
@@ -192,32 +159,11 @@ async function fetchLandingStats(): Promise<LandingStats> {
     web: cat?.web ?? 0,
   };
 
-  const fallbackScores = [97, 95, 93];
-  const candidatePreviews: CandidatePreview[] = candidateRows.map((c, idx) => {
-    const rawName = !c.hideName && c.fullName ? c.fullName : null;
-    const parts = rawName ? rawName.split(/\s+/).filter(Boolean) : [];
-    const maskedName =
-      parts.length >= 2
-        ? `${parts[0]} ${parts[1][0]?.toUpperCase() ?? ""}.`
-        : parts[0] || `#${idx + 1}`;
-    const role = c.title || c.field || "CANDIDATOR";
-    const score =
-      c.bestScore && c.bestScore >= 75
-        ? Math.min(99, c.bestScore)
-        : fallbackScores[idx] ?? 92;
-    return {
-      id: c.id,
-      name: maskedName,
-      role,
-      matchScore: score,
-    };
-  });
-
   const appStat = appProgressRows[0];
   const hiredRate =
-    appStat && appStat.total >= 5 && appStat.progressed > 0
-      ? Math.max(68, Math.min(96, Math.round((appStat.progressed / appStat.total) * 100)))
-      : 70;
+    appStat && appStat.total > 0
+      ? Math.round((appStat.progressed / appStat.total) * 100)
+      : null;
 
   return {
     activeVacancies,
@@ -246,7 +192,7 @@ async function fetchLandingStats(): Promise<LandingStats> {
       title: v.title,
       companyId: v.company.id,
       companyName:
-        v.company.name?.trim() || v.company.industry?.trim() || "QMU (KarSU)",
+        v.company.name?.trim() || v.company.industry?.trim() || null,
       hasLogo: v.company.hasLogo,
       location: v.location,
       workType: v.workType,
@@ -255,16 +201,16 @@ async function fetchLandingStats(): Promise<LandingStats> {
       currency: v.currency,
       skills: v.skills.slice(0, 4),
     })),
-    candidatePreviews,
     hiredRate,
+    loadError: false,
   };
 }
 
-/** Bosh sahifa uchun bazadan real statistika (60 soniya keshlanadi). */
+/** Bosh sahifa uchun bazadan real statistika (30 soniya keshlanadi). */
 const cachedLandingStats = unstable_cache(
   fetchLandingStats,
-  ["landing-stats-v7"],
-  { revalidate: 60 },
+  ["landing-stats-v8"],
+  { revalidate: 30, tags: ["landing-stats"] },
 );
 
 /** Keep database errors outside the cache so the next request can retry. */

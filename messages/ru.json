@@ -46,7 +46,11 @@
     "myApplications": "Мои отклики",
     "support": "Поддержка",
     "supportAction": "Открыть чат поддержки",
-    "categories": "Направления"
+    "categories": "Направления",
+    "navStudents": "Студентам",
+    "navEmployers": "Работодателям",
+    "navVacancies": "Вакансии",
+    "navDiscover": "Обзор"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -72,7 +76,19 @@
     "emailLabel": "Email",
     "telegramLabel": "Telegram",
     "rights": "© {year} CANDIDATOR. Все права защищены.",
-    "credit": "Сайт разработан DENJI."
+    "credit": "Сайт разработан DENJI.",
+    "shortTagline": "Студенты. Работодатели. Карьера. Узбекистан.",
+    "platformTitle": "Платформа",
+    "resourcesTitle": "Возможности",
+    "actionsTitle": "Действия",
+    "navStudents": "Студенты",
+    "navEmployers": "Работодатели",
+    "navVacancies": "Вакансии",
+    "navDiscover": "Как работает",
+    "supportLink": "Поддержка",
+    "cvLink": "Создать резюме",
+    "personalityLink": "Тест личности",
+    "postVacancyLink": "Разместить вакансию"
   },
   "NotFound": {
     "title": "Страница не найдена",
@@ -540,7 +556,12 @@
       "candidates": "Кандидаты",
       "decisions": "Выбрано: {selected} · Не подходят: {rejected}",
       "applicationsCount": "Отклики: {count}",
-      "viewApplications": "Смотреть отклики"
+      "viewApplications": "Смотреть отклики",
+      "status": {
+        "ACTIVE": "Активна",
+        "CLOSED": "Закрыта",
+        "CANCELLED": "Отменена"
+      }
     },
     "pagination": {
       "prev": "Назад",
@@ -579,7 +600,8 @@
         "notSelected": "Выберите точку на карте",
         "confirm": "Выбрать",
         "close": "Закрыть"
-      }
+      },
+      "deleteConfirm": "Вы уверены, что хотите навсегда удалить эту вакансию?"
     }
   },
   "Matches": {
@@ -789,7 +811,16 @@
       "provider": "Система",
       "amount": "Сумма",
       "status": "Статус",
-      "date": "Дата"
+      "date": "Дата",
+      "currency": "сум",
+      "subscriptionLabel": "Подписка — {plan} ({days} дн.)",
+      "purposes": {
+        "CV_CREATION": "Создание и активация CV",
+        "CV_ACTIVATION": "Активация CV",
+        "WEEKLY_APPLY_PASS": "Недельный доступ на отклики",
+        "VACANCY_UNLOCK": "Подписка компании",
+        "SUBSCRIPTION": "Подписка компании"
+      }
     }
   },
   "Theme": {
@@ -1199,16 +1230,30 @@
     },
     "referenceHero": {
       "badge": "Карьерная платформа Узбекистана",
-      "title": "Студенты и работодатели на одной платформе",
-      "description": "Находите работу, выбирайте талантливых специалистов и развивайте карьеру в Узбекистане.",
+      "title": "Студенты и работодатели объединены для реальной карьеры",
+      "description": "Современная экосистема талантов для поиска возможностей, развития навыков и построения будущего поколения специалистов Узбекистана.",
       "findJob": "Найти работу",
-      "hireTalent": "Найти сотрудника",
-      "students": "Студенты",
-      "employers": "Работодатели",
-      "ecosystem": "Одна экосистема",
-      "search": "Работа, компания или навык",
-      "location": "Местоположение",
-      "country": "Узбекистан"
+      "hireTalent": "Нанять таланты",
+      "students": "Студентам",
+      "employers": "Работодателям",
+      "ecosystem": "Единая экосистема",
+      "search": "Должность, компания или навык",
+      "location": "Локация",
+      "country": "Узбекистан",
+      "searchButton": "Найти",
+      "popularLabel": "Популярное:",
+      "tagInternship": "Стажировка",
+      "tagIt": "IT",
+      "tagMarketing": "Маркетинг",
+      "tagFinance": "Финансы",
+      "tagEngineering": "Инженерия",
+      "cityTashkent": "Ташкент",
+      "cityNukus": "Нукус",
+      "citySamarkand": "Самарканд",
+      "cityBukhara": "Бухара",
+      "cityFergana": "Фергана",
+      "cityAndijan": "Андижан",
+      "cityNamangan": "Наманган"
     },
     "opportunities": {
       "recent": "Новые вакансии",
@@ -1249,6 +1294,82 @@
       "joinSubtitle": "Создайте аккаунт и сделайте следующий шаг в карьере.",
       "joinStudent": "Я студент",
       "joinEmployer": "Я работодатель"
+    },
+    "vacanciesSection": {
+      "title": "Последние вакансии",
+      "viewAll": "Все вакансии",
+      "applyBtn": "Откликнуться",
+      "salaryNegotiable": "Зарплата по договорённости",
+      "fallbackCompany": "Проверенный работодатель",
+      "bookmarkSave": "Сохранить вакансию",
+      "bookmarkSaved": "Сохранено",
+      "emptyTitle": "Пока нет опубликованных активных вакансий",
+      "emptyDesc": "Как только работодатели опубликуют новые вакансии, они появятся здесь.",
+      "emptyCta": "Перейти к вакансиям",
+      "errorTitle": "Не удалось загрузить вакансии",
+      "errorDesc": "Проверьте соединение и повторите попытку.",
+      "errorRetry": "Обновить"
+    },
+    "studentJourney": {
+      "eyebrow": "ПУТЬ СТУДЕНТА",
+      "title": "От обучения к успешной карьере",
+      "subtitle": "Понятный и удобный путь к развитию навыков, опыту и трудоустройству.",
+      "cta": "Начать путь",
+      "pauseTrack": "Остановить движение",
+      "resumeTrack": "Продолжить движение",
+      "step1Title": "Открывайте возможности",
+      "step1Desc": "Актуальные стажировки и вакансии",
+      "step2Title": "Определите сильные стороны",
+      "step2Desc": "Тест личности и профориентация",
+      "step3Title": "Усильте профиль",
+      "step3Desc": "Создайте AI-резюме и PDF",
+      "step4Title": "Получите работу",
+      "step4Desc": "Отслеживайте отклики и чаты"
+    },
+    "employerSection": {
+      "title": "Соберите сильную команду",
+      "subtitle": "Публикуйте вакансии, находите подходящих кандидатов и начинайте диалог.",
+      "cta": "Для работодателей",
+      "towerAlt": "Здание работодателя CANDIDATOR",
+      "vacancyCardLabel": "Документ вакансии",
+      "folderLabel": "Папка кандидатов"
+    },
+    "howItWorks": {
+      "title": "Как работает CANDIDATOR",
+      "studentsHeading": "Для студентов",
+      "studentsSubtitle": "Превратите потенциал в реальные карьерные предложения.",
+      "s1Title": "Создайте профиль",
+      "s1Desc": "AI-конструктор CV",
+      "s2Title": "Ищите вакансии",
+      "s2Desc": "Фильтр по навыкам",
+      "s3Title": "Откликнитесь",
+      "s3Desc": "Быстрый отклик",
+      "employersHeading": "Для работодателей",
+      "employersSubtitle": "Находите и нанимайте нужных специалистов быстрее.",
+      "e1Title": "Создайте вакансию",
+      "e1Desc": "Укажите требования",
+      "e2Title": "Изучайте профили",
+      "e2Desc": "База кандидатов",
+      "e3Title": "Свяжитесь",
+      "e3Desc": "Общение в чате",
+      "stepBadge": "Шаг {current}",
+      "completedBadge": "Выполнено",
+      "liveVacancies": "{count} активных вакансий",
+      "liveProfiles": "{count} открытых CV",
+      "liveApplications": "{count} ваших откликов",
+      "liveChats": "{count} диалогов",
+      "actionStudent1": "Создать CV",
+      "actionStudent2": "Смотреть вакансии",
+      "actionStudent3": "Подать отклик",
+      "actionEmployer1": "Разместить вакансию",
+      "actionEmployer2": "Смотреть кандидатов",
+      "actionEmployer3": "Открыть чат"
+    },
+    "finalCta": {
+      "title": "Присоединяйтесь к экосистеме талантов",
+      "subtitle": "Создайте аккаунт и сделайте следующий шаг в своей карьере.",
+      "studentBtn": "Я студент",
+      "employerBtn": "Я работодатель"
     }
   },
   "Dashboard": {
@@ -1588,7 +1709,10 @@
     "matchedSectionTitle": "В первом ряду — подходящие вашему профилю вакансии ({count})",
     "matchedSectionDesc": "Вакансии профильных компаний по вашему резюме или выбранной сфере показаны первыми, остальные идут следом.",
     "otherSectionTitle": "Остальные открытые вакансии ({count})",
-    "matchBadge": "Совпадение: {score}%"
+    "matchBadge": "Совпадение: {score}%",
+    "bookmarkSave": "Сохранить",
+    "bookmarkSaved": "Сохранено",
+    "savedFilter": "Сохранённые ({count})"
   },
   "VacancyDetail": {
     "back": "← Назад ко всем вакансиям",
@@ -1643,6 +1767,14 @@
       "INTERESTED": "Есть интерес",
       "ACCEPTED": "Принято",
       "REJECTED": "Отклонено"
-    }
+    },
+    "payToUnlock": "Открыть после оплаты"
+  },
+  "ErrorBoundary": {
+    "eyebrow": "Непредвиденная ошибка",
+    "title": "Не удалось загрузить страницу",
+    "description": "Попробуйте обновить страницу или вернитесь на главную.",
+    "retry": "Попробовать снова",
+    "home": "На главную"
   }
 }

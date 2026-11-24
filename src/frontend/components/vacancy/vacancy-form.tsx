@@ -107,7 +107,7 @@ export function VacancyForm({
 
   async function onDelete() {
     if (!vacancyId || deleting || pending) return;
-    if (!window.confirm("Ushbu vakansiyani butunlay o'chirmoqchimisiz?")) {
+    if (!window.confirm(t("deleteConfirm"))) {
       return;
     }
     setDeleting(true);

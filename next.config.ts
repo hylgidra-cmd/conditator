@@ -35,7 +35,7 @@ const nextConfig: NextConfig = {
     ];
   },
   // Chromium boshqaruvchisi bundle ga kirmaydi; standalone/Vercel ga node_modules dan olinadi.
-  serverExternalPackages: ["playwright-core", "@sparticuz/chromium"],
+  serverExternalPackages: ["playwright-core", "@sparticuz/chromium", "exceljs"],
   // PDF ga joylanadigan shriftlar va Vercel serverless Chromium binarilari obrazga tushsin.
   outputFileTracingIncludes: {
     "/api/cv/me/pdf": [

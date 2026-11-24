@@ -9,16 +9,33 @@ import {
   useErrorText,
 } from "@/frontend/components/ui/form";
 import { Link, useRouter } from "@/i18n/navigation";
-import { postJson } from "@/backend/client/api";
+import { getJson, postJson } from "@/backend/client/api";
+
+function safeNextTarget(raw?: string): string | null {
+  if (!raw) return null;
+  const trimmed = raw.trim();
+  if (
+    !trimmed.startsWith("/") ||
+    trimmed.startsWith("//") ||
+    trimmed.includes("\\") ||
+    /[\r\n]/.test(trimmed)
+  ) {
+    return null;
+  }
+  const stripped = trimmed.replace(/^\/(kk|uz|ru|en)(?=\/|$)/, "");
+  return stripped || "/";
+}
 
 export function LoginForm({
   resetDone,
   registered,
   email: initialEmail,
+  nextPath,
 }: {
   resetDone: boolean;
   registered: boolean;
   email?: string;
+  nextPath?: string;
 }) {
   const t = useTranslations("Auth.login");
   const errorText = useErrorText();
@@ -43,20 +60,38 @@ export function LoginForm({
         password: form.get("password"),
       },
     );
-    setPending(false);
     if (result.ok) {
-      const target =
-        result.data.role === "STUDENT"
-          ? "/student/cv"
-          : result.data.role === "COMPANY"
-            ? "/company"
-            : result.data.role === "ADMIN"
-              ? "/admin"
-              : "/account";
+      const explicitNext = safeNextTarget(nextPath);
+      if (explicitNext) {
+        setPending(false);
+        router.replace(explicitNext);
+        router.refresh();
+        return;
+      }
+
+      let target =
+        result.data.role === "COMPANY"
+          ? "/company"
+          : result.data.role === "ADMIN"
+            ? "/admin"
+            : "/account";
+
+      if (result.data.role === "STUDENT") {
+        const statusRes = await getJson<{ testComplete: boolean }>(
+          "/api/onboarding/status",
+        );
+        target =
+          statusRes.ok && !statusRes.data.testComplete
+            ? "/student/personality"
+            : "/student/cv";
+      }
+
+      setPending(false);
       router.replace(target);
       router.refresh();
       return;
     }
+    setPending(false);
     if (result.fields) setFields(result.fields);
     else setError(result.error);
   }

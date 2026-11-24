@@ -12,6 +12,8 @@ import {
   buildAlternates,
   safeJsonLd,
 } from "@/backend/seo";
+import { listSavedVacancyIds } from "@/backend/vacancy/bookmarks";
+import { BookmarkButton } from "@/frontend/components/vacancy/bookmark-button";
 import { Reveal } from "@/frontend/components/ds/motion";
 import { ArrowLeftIcon } from "@/frontend/components/icons";
 import { ApplyModal } from "@/frontend/components/vacancy/apply-modal";
@@ -126,7 +128,10 @@ export default async function VacancyDetailPage({
     ? locale
     : routing.defaultLocale;
   const user = await currentUser();
-  const t = await getTranslations("VacancyDetail");
+  const [t, tList] = await Promise.all([
+    getTranslations("VacancyDetail"),
+    getTranslations("VacanciesList"),
+  ]);
 
   const vacancy = await db.vacancy.findUnique({
     where: { id },
@@ -176,6 +181,9 @@ export default async function VacancyDetailPage({
     freeTrialAvailable: false,
     applyPassUntil: null,
   };
+
+  const savedIds = user ? await listSavedVacancyIds(user.id) : [];
+  const isSaved = savedIds.includes(vacancy.id);
 
   if (user && user.role === "STUDENT") {
     const [cvs, app, conv, pass] = await Promise.all([
@@ -339,8 +347,16 @@ export default async function VacancyDetailPage({
               </div>
             </div>
 
-            {/* Salary */}
-            <div className="text-left sm:text-right">
+            {/* Salary & Bookmark */}
+            <div className="flex flex-wrap items-center gap-3 text-left sm:justify-end sm:text-right">
+              <BookmarkButton
+                vacancyId={vacancy.id}
+                initialSaved={isSaved}
+                isAuthenticated={Boolean(user)}
+                loginNext={`/vacancies/${vacancy.id}`}
+                saveLabel={tList("bookmarkSave")}
+                savedLabel={tList("bookmarkSaved")}
+              />
               {vacancy.salaryFrom || vacancy.salaryTo ? (
                 <div className="border-primary/25 bg-primary/8 rounded-2xl border px-4 py-2.5">
                   <span className="text-primary block text-xs font-bold tracking-wider uppercase">

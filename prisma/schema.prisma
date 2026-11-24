@@ -157,6 +157,7 @@ model User {
   professionLinks    UserProfession[]
   readinessProfiles  ReadinessProfile[]
   userLanguages      UserLanguage[]
+  savedVacancies     SavedVacancy[]
 
   @@index([role, status])
 }
@@ -444,12 +445,13 @@ model Vacancy {
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 
-  company      Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  matches      Match[]
-  applications VacancyApplication[]
-  stages       CandidateStage[]
-  unlocks      VacancyUnlock[]
-  conversations Conversation[]
+  company        Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  matches        Match[]
+  applications   VacancyApplication[]
+  stages         CandidateStage[]
+  unlocks        VacancyUnlock[]
+  conversations  Conversation[]
+  savedVacancies SavedVacancy[]
 
   @@index([companyId, createdAt])
   @@index([status])
@@ -761,4 +763,18 @@ model SupportMessage {
 
   @@index([threadId, createdAt])
   @@index([threadId, readAt])
+}
+
+model SavedVacancy {
+  id        String   @id @default(cuid())
+  userId    String
+  vacancyId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vacancy Vacancy @relation(fields: [vacancyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vacancyId])
+  @@index([userId, createdAt])
+  @@index([vacancyId])
 }

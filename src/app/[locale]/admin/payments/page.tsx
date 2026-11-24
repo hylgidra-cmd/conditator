@@ -9,14 +9,6 @@ import { MANUAL_CARD_HOLDER, MANUAL_CARD_NUMBER } from "@/backend/payment/servic
 
 export const dynamic = "force-dynamic";
 
-const PURPOSE_LABELS: Record<string, string> = {
-  CV_CREATION: "CV yaratish va faollashtirish",
-  CV_ACTIVATION: "CV faollashtirish",
-  WEEKLY_APPLY_PASS: "7 kunlik ariza ruxsatnomasi",
-  VACANCY_UNLOCK: "Kompaniya obunasi",
-  SUBSCRIPTION: "Kompaniya obunasi",
-};
-
 export default async function AdminPaymentsPage() {
   await requireAdminPage();
   const t = await getTranslations("Admin");
@@ -134,9 +126,14 @@ export default async function AdminPaymentsPage() {
               const hasReceipt = Boolean(details?.hasReceipt);
               const purposeDisplay =
                 details?.planName && details?.durationDays
-                  ? `Obuna — ${details.planName} (${details.durationDays} kun)`
-                  : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
-              const amountDisplay = `${p.amount.toLocaleString("en-US")} so'm`;
+                  ? t("payments.subscriptionLabel", {
+                      plan: details.planName,
+                      days: details.durationDays,
+                    })
+                  : t.has(`payments.purposes.${p.purpose}`)
+                    ? t(`payments.purposes.${p.purpose}` as "payments.purposes.CV_CREATION")
+                    : p.purpose;
+              const amountDisplay = `${p.amount.toLocaleString("en-US")} ${t("payments.currency")}`;
 
               return (
                 <li
@@ -210,8 +207,13 @@ export default async function AdminPaymentsPage() {
                   const hasReceipt = Boolean(details?.hasReceipt);
                   const purposeDisplay =
                     details?.planName && details?.durationDays
-                      ? `Obuna — ${details.planName} (${details.durationDays} kun)`
-                      : (PURPOSE_LABELS[p.purpose] ?? p.purpose);
+                      ? t("payments.subscriptionLabel", {
+                          plan: details.planName,
+                          days: details.durationDays,
+                        })
+                      : t.has(`payments.purposes.${p.purpose}`)
+                        ? t(`payments.purposes.${p.purpose}` as "payments.purposes.CV_CREATION")
+                        : p.purpose;
 
                   return (
                     <tr

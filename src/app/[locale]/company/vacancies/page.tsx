@@ -81,12 +81,7 @@ export default async function VacanciesPage({
                     .filter(Boolean)
                     .join(" ")
                 : null;
-            const statusText =
-              vacancy.status === "ACTIVE"
-                ? "Faol"
-                : vacancy.status === "CLOSED"
-                  ? "Yopilgan"
-                  : "Bekor qilingan";
+            const statusText = t(`list.status.${vacancy.status}`);
             const statusClass =
               vacancy.status === "ACTIVE"
                 ? "border-emerald-500/30 bg-success-soft text-success"

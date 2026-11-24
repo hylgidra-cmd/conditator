@@ -89,7 +89,16 @@ const include = {
       },
     },
   },
-  profession: { select: { id: true, nameUz: true, parentId: true } },
+  profession: {
+    select: {
+      id: true,
+      nameKk: true,
+      nameUz: true,
+      nameRu: true,
+      nameEn: true,
+      parentId: true,
+    },
+  },
 } as const;
 
 export async function listReadinessCandidates(

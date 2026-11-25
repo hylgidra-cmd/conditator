@@ -118,7 +118,10 @@
       "noAccount": "No account yet?",
       "registerLink": "Sign up",
       "resetDone": "Password updated. Log in with your new password.",
-      "registered": "You are registered. Now sign in with your email and password."
+      "registered": "You are registered. Now sign in with your email and password.",
+      "subtitle": "Sign in to continue your career journey",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
     },
     "forgot": {
       "title": "Reset password",
@@ -144,6 +147,15 @@
       "success": "Password updated successfully.",
       "backToAccount": "Back to dashboard",
       "forgotLink": "Forgot password?"
+    },
+    "footer": {
+      "studentTitle": "For students",
+      "studentDesc": "Find opportunities & grow",
+      "employerTitle": "For employers",
+      "employerDesc": "Find talent & build teams"
+    },
+    "globe": {
+      "ariaLabel": "Registan glass globe — click to release falling autumn leaves"
     }
   },
   "Account": {

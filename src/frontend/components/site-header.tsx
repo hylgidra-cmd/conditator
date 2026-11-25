@@ -12,7 +12,7 @@ import { ActivePageBadge, NavLinks } from "./nav-links";
 import { ThemeToggle } from "./theme-toggle";
 
 const THEME_BUTTON = cn(
-  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex size-9 shrink-0 items-center justify-center rounded-full border bg-white/80 transition-colors dark:bg-white/10 dark:text-white",
+  "border-line/90 text-text hover:border-primary/60 hover:bg-white inline-flex size-9 shrink-0 items-center justify-center rounded-full border bg-white/80 transition-colors dark:border-emerald-300/30 dark:bg-white/10 dark:text-white dark:hover:border-emerald-300/60 dark:hover:bg-white/20",
   FOCUS_RING,
 );
 
@@ -68,8 +68,8 @@ export async function SiteHeader() {
   );
 
   return (
-    <header className="font-ui border-line/60 sticky top-0 z-40 w-full border-b bg-[#f6f5f2]/92 backdrop-blur-md dark:border-emerald-400/14 dark:bg-[#04110c]/92">
-      <div className="relative flex h-16 w-full items-center gap-4 px-4 transition-all sm:px-8 lg:px-12">
+    <header className="font-ui border-line/50 sticky top-0 z-40 w-full border-b bg-[#fcfdfb]/94 backdrop-blur-md dark:border-emerald-400/14 dark:bg-[#04110c]/92">
+      <div className="relative flex h-16 w-full items-center gap-4 px-4 transition-all sm:px-8 lg:h-[74px] lg:px-14">
         <Link
           href="/"
           aria-label={t("homeAria")}

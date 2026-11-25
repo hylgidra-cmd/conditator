@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: Props) {
   const { reset, registered, email, next } = await searchParams;
   const t = await getTranslations("Auth.login");
   return (
-    <AuthCard title={t("title")}>
+    <AuthCard title={t("title")} subtitle={t("subtitle")}>
       <LoginForm
         resetDone={reset === "1"}
         registered={registered === "1"}

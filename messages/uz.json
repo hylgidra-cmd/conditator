@@ -118,7 +118,10 @@
       "noAccount": "Akkauntingiz yoʻqmi?",
       "registerLink": "Roʻyxatdan oʻtish",
       "resetDone": "Parol yangilandi. Yangi parol bilan kiring.",
-      "registered": "Roʻyxatdan oʻtdingiz. Endi email va parolingiz bilan kiring."
+      "registered": "Roʻyxatdan oʻtdingiz. Endi email va parolingiz bilan kiring.",
+      "subtitle": "Karyera yoʻlingizni davom ettirish uchun tizimga kiring",
+      "showPassword": "Parolni koʻrsatish",
+      "hidePassword": "Parolni yashirish"
     },
     "forgot": {
       "title": "Parolni tiklash",
@@ -144,6 +147,15 @@
       "success": "Parol muvaffaqiyatli yangilandi.",
       "backToAccount": "Kabinetga qaytish",
       "forgotLink": "Parolni unutdingizmi?"
+    },
+    "footer": {
+      "studentTitle": "Talabalar uchun",
+      "studentDesc": "Imkoniyatlarni toping va oʻsing",
+      "employerTitle": "Ish beruvchilar uchun",
+      "employerDesc": "Iqtidorlarni toping va jamoa quring"
+    },
+    "globe": {
+      "ariaLabel": "Registon shisha globusi — kuzgi barglarni koʻrish uchun bosing"
     }
   },
   "Account": {

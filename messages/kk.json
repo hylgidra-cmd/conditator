@@ -118,7 +118,10 @@
       "noAccount": "Akkauntıńız joq pa?",
       "registerLink": "Dizimnen ótiw",
       "resetDone": "Parol jańalandı. Jańa parol menen kiriń.",
-      "registered": "Dizimnen óttińiz. Endi email hám parolıńız benen kiriń."
+      "registered": "Dizimnen óttińiz. Endi email hám parolıńız benen kiriń.",
+      "subtitle": "Karyera jolıńızdı dawam ettiriw ushın sistemaǵa kiriń",
+      "showPassword": "Paroldı kórsetiw",
+      "hidePassword": "Paroldı jasırıw"
     },
     "forgot": {
       "title": "Paroldı tiklew",
@@ -144,6 +147,15 @@
       "success": "Parol tabıslı jańalandı.",
       "backToAccount": "Kabinetke qaytıw",
       "forgotLink": "Paroldı umıttıńız ba?"
+    },
+    "footer": {
+      "studentTitle": "Studentler ushın",
+      "studentDesc": "Múmkinshiliklerdi tabıń hám ósiń",
+      "employerTitle": "Jumıs beriwshiler ushın",
+      "employerDesc": "Qábiletlilerdi tabıń hám topar qurıń"
+    },
+    "globe": {
+      "ariaLabel": "Registan shiyshe globusı — gúzgi japıraqlardı kóriw ushın basıń"
     }
   },
   "Account": {

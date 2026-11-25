@@ -1,0 +1,323 @@
+.authShell {
+  position: relative;
+  min-height: calc(100svh - 4.625rem);
+  overflow-x: hidden;
+  overflow-y: clip;
+  background-color: #f6f8f6;
+}
+
+:global([data-theme="dark"]) .authShell {
+  background-color: #020c08;
+}
+
+/* Photorealistic 3D studio silk-ribbon & glossy tabletop backdrop (Light & Dark) */
+.studioBackdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.studioBgLight {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+.studioBgDark {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+}
+
+:global([data-theme="dark"]) .studioBgLight {
+  display: none;
+}
+
+:global([data-theme="dark"]) .studioBgDark {
+  display: block;
+}
+
+/* Enlarged left-side globe firmly grounded on the glossy tabletop & shifted 15px left */
+.stageWrap {
+  position: relative;
+  width: clamp(340px, 52vw, 860px);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  margin-inline: auto;
+  user-select: none;
+  isolation: isolate;
+  cursor: pointer;
+  outline: none;
+}
+
+@media (min-width: 1024px) {
+  .stageWrap {
+    transform: translate3d(-15px, 22px, 0);
+  }
+}
+
+.stageWrap:focus-visible {
+  outline: 2px solid rgba(5, 139, 87, 0.65);
+  outline-offset: 8px;
+  border-radius: 9999px;
+}
+
+@media (max-width: 1023px) {
+  .stageWrap {
+    width: min(335px, 88vw);
+  }
+}
+
+/* Subtle restrained emerald halo around the sphere */
+.ambientGlow {
+  position: absolute;
+  inset: 8%;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(16, 185, 129, 0.08) 0%,
+    rgba(52, 211, 153, 0.03) 45%,
+    transparent 68%
+  );
+  filter: blur(26px);
+}
+
+:global([data-theme="dark"]) .ambientGlow {
+  background: radial-gradient(
+    circle at 50% 48%,
+    rgba(16, 185, 129, 0.34) 0%,
+    rgba(52, 211, 153, 0.14) 46%,
+    transparent 70%
+  );
+  filter: blur(32px);
+}
+
+/*
+ * Physically grounded contact shadow & tabletop sheen directly touching
+ * the glass pedestal rim (pedestal bottom is at y = 90.23% => bottom = 9.77%).
+ */
+.pedestalContact {
+  position: absolute;
+  left: 24.5%;
+  right: 24.5%;
+  bottom: 8.6%;
+  height: 3.1%;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 2;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(15, 23, 42, 0.34) 0%,
+    rgba(6, 78, 59, 0.2) 52%,
+    transparent 82%
+  );
+  filter: blur(3.5px);
+}
+
+.pedestalSpread {
+  position: absolute;
+  left: 17%;
+  right: 17%;
+  bottom: 4.6%;
+  height: 7.4%;
+  border-radius: 9999px;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    ellipse at 50% 25%,
+    rgba(15, 23, 42, 0.16) 0%,
+    rgba(6, 78, 59, 0.11) 42%,
+    transparent 78%
+  );
+  filter: blur(11px);
+}
+
+:global([data-theme="dark"]) .pedestalContact {
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(0, 0, 0, 0.72) 0%,
+    rgba(2, 24, 16, 0.45) 58%,
+    transparent 85%
+  );
+  filter: blur(4px);
+}
+
+:global([data-theme="dark"]) .pedestalSpread {
+  bottom: 3.6%;
+  height: 10%;
+  background: radial-gradient(
+    ellipse at 50% 22%,
+    rgba(254, 232, 160, 0.44) 0%,
+    rgba(52, 211, 153, 0.3) 44%,
+    rgba(16, 185, 129, 0.12) 68%,
+    transparent 82%
+  );
+  filter: blur(13px);
+}
+
+.rearOrbitLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+
+/* Grounded globe container — firmly seated on the glossy tabletop (NO air float) */
+.globeGroundedLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.globeInner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 90%;
+}
+
+.globeShake {
+  animation: snowGlobeShake 540ms cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+@keyframes snowGlobeShake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-1.5deg);
+  }
+  42% {
+    transform: rotate(1.3deg);
+  }
+  65% {
+    transform: rotate(-0.7deg);
+  }
+  84% {
+    transform: rotate(0.35deg);
+  }
+}
+
+.globeImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+:global([data-theme="dark"]) .globeImg {
+  filter: drop-shadow(0 0 22px rgba(16, 185, 129, 0.16));
+}
+
+.leavesCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.frontOrbitLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .globeShake {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Auth card matching BOTH Light & Dark reference templates */
+.authCardSurface {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  border: 1px solid rgba(15, 23, 42, 0.065);
+  background:
+    radial-gradient(
+      430px 330px at 96% 4%,
+      rgba(16, 185, 129, 0.16) 0%,
+      rgba(16, 185, 129, 0.045) 48%,
+      transparent 76%
+    ),
+    linear-gradient(
+      165deg,
+      rgba(255, 255, 255, 0.97) 0%,
+      rgba(252, 253, 253, 0.95) 100%
+    );
+  box-shadow:
+    0 24px 60px -18px rgba(15, 23, 42, 0.11),
+    0 4px 16px -6px rgba(6, 78, 59, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.96) inset;
+  backdrop-filter: blur(20px);
+}
+
+:global([data-theme="dark"]) .authCardSurface {
+  border: 1px solid rgba(52, 211, 153, 0.42);
+  background:
+    radial-gradient(
+      440px 320px at 88% 8%,
+      rgba(16, 185, 129, 0.28) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      340px 260px at 14% 92%,
+      rgba(16, 185, 129, 0.16) 0%,
+      transparent 70%
+    ),
+    linear-gradient(
+      155deg,
+      rgba(7, 44, 33, 0.84) 0%,
+      rgba(3, 19, 14, 0.92) 100%
+    );
+  box-shadow:
+    0 34px 78px -20px rgba(0, 0, 0, 0.82),
+    0 0 34px -8px rgba(16, 185, 129, 0.3),
+    0 1px 0 rgba(167, 243, 208, 0.28) inset;
+}
+
+.cardTopGleam {
+  display: none;
+}
+
+:global([data-theme="dark"]) .cardTopGleam {
+  display: block;
+  position: absolute;
+  top: -2px;
+  left: 28px;
+  width: 185px;
+  height: 5px;
+  border-radius: 9999px;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    rgba(236, 253, 245, 1) 0%,
+    rgba(52, 211, 153, 0.72) 45%,
+    transparent 80%
+  );
+  filter: blur(2px);
+  z-index: 20;
+}

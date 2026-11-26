@@ -1,0 +1,357 @@
+.stage {
+  position: relative;
+  min-height: calc(100dvh - 74px);
+  width: 100%;
+  overflow: hidden;
+  background: linear-gradient(155deg, #f6fbf9 0%, #eef8f3 54%, #e5f4ec 100%);
+  color: #0d2119;
+  isolation: isolate;
+}
+
+:global([data-theme="dark"]) .stage {
+  background: linear-gradient(155deg, #020b07 0%, #04140e 52%, #03100b 100%);
+  color: #effaf4;
+}
+
+/* Studio Silk-Ribbon Backgrounds */
+.bgTopLayer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: min(920px, 100%);
+  pointer-events: none;
+  z-index: -2;
+  background-image: url("/account/account-bg-light.webp");
+  background-repeat: no-repeat;
+  background-position: right top;
+  background-size: cover;
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 50%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 1) 50%,
+    transparent 100%
+  );
+  opacity: 0.96;
+}
+
+:global([data-theme="dark"]) .bgTopLayer {
+  background-image: url("/account/account-bg-dark.webp");
+  opacity: 0.96;
+}
+
+.bgBottomLayer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 540px;
+  pointer-events: none;
+  z-index: -2;
+  background-image: url("/account/account-bg-light.webp");
+  background-repeat: no-repeat;
+  background-position: right bottom;
+  background-size: cover;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.95) 28%, transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.95) 28%,
+    transparent 100%
+  );
+  opacity: 0.9;
+}
+
+:global([data-theme="dark"]) .bgBottomLayer {
+  background-image: url("/account/account-bg-dark.webp");
+  opacity: 0.88;
+}
+
+.ambientGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(
+      640px 420px at 86% 8%,
+      rgba(16, 185, 129, 0.09),
+      transparent 70%
+    ),
+    radial-gradient(
+      560px 380px at 90% 94%,
+      rgba(16, 185, 129, 0.08),
+      transparent 70%
+    );
+}
+
+:global([data-theme="dark"]) .ambientGlow {
+  background:
+    radial-gradient(
+      680px 440px at 84% 8%,
+      rgba(16, 185, 129, 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      560px 380px at 14% 26%,
+      rgba(16, 185, 129, 0.08),
+      transparent 68%
+    ),
+    radial-gradient(
+      600px 420px at 88% 95%,
+      rgba(16, 185, 129, 0.13),
+      transparent 70%
+    );
+}
+
+/* Primary Cards */
+.card {
+  position: relative;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.93);
+  border: 1px solid rgba(13, 120, 82, 0.09);
+  box-shadow:
+    0 12px 30px -14px rgba(8, 56, 38, 0.075),
+    0 2px 6px rgba(8, 56, 38, 0.025);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition:
+    border-color 200ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+:global([data-theme="dark"]) .card {
+  background: linear-gradient(
+    165deg,
+    rgba(8, 30, 21, 0.88) 0%,
+    rgba(4, 18, 13, 0.92) 100%
+  );
+  border: 1px solid rgba(45, 212, 150, 0.21);
+  box-shadow:
+    0 18px 42px -16px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(110, 231, 183, 0.11);
+}
+
+.kpiCard {
+  composes: card;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: rgba(14, 147, 95, 0.28);
+  box-shadow:
+    0 16px 34px -14px rgba(8, 86, 56, 0.13),
+    0 3px 8px rgba(8, 56, 38, 0.04);
+}
+
+:global([data-theme="dark"]) .kpiCard:hover {
+  border-color: rgba(52, 234, 176, 0.42);
+  box-shadow:
+    0 20px 44px -14px rgba(0, 0, 0, 0.82),
+    0 0 24px -8px rgba(16, 185, 129, 0.25),
+    inset 0 1px 0 rgba(110, 231, 183, 0.18);
+}
+
+/* Soft Inner Sub-Surfaces */
+.subSurface {
+  border-radius: 14px;
+  background: #f6fbf8;
+  border: 1px solid rgba(13, 120, 82, 0.08);
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+
+:global([data-theme="dark"]) .subSurface {
+  background: rgba(10, 37, 26, 0.62);
+  border: 1px solid rgba(45, 212, 150, 0.15);
+}
+
+.interactiveRow {
+  composes: subSurface;
+}
+
+.interactiveRow:hover {
+  background: #eef8f3;
+  border-color: rgba(14, 147, 95, 0.24);
+  transform: translateX(2px);
+}
+
+:global([data-theme="dark"]) .interactiveRow:hover {
+  background: rgba(14, 52, 36, 0.82);
+  border-color: rgba(52, 234, 176, 0.34);
+}
+
+/* Avatar Square + Glow */
+.avatarBox {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #11ad70 0%, #077d4f 100%);
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    0 14px 30px -6px rgba(13, 158, 102, 0.44),
+    0 0 28px rgba(16, 185, 129, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+:global([data-theme="dark"]) .avatarBox {
+  background: linear-gradient(145deg, #16ba7a 0%, #088554 100%);
+  border: 2px solid rgba(167, 243, 208, 0.68);
+  box-shadow:
+    0 0 38px rgba(16, 185, 129, 0.46),
+    0 12px 26px -6px rgba(0, 0, 0, 0.6);
+}
+
+/* Icon Badges */
+.iconBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #e7f7ef;
+  color: #0b8455;
+  border: 1px solid rgba(14, 147, 95, 0.12);
+}
+
+:global([data-theme="dark"]) .iconBadge {
+  background: rgba(16, 74, 51, 0.58);
+  color: #34eab0;
+  border: 1px solid rgba(52, 234, 176, 0.2);
+}
+
+/* Primary & Secondary Action Buttons */
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #0d8a59 0%, #076c45 100%);
+  color: #ffffff;
+  border: 1px solid rgba(6, 95, 62, 0.4);
+  box-shadow: 0 8px 18px -6px rgba(8, 118, 76, 0.38);
+  font-weight: 700;
+  transition:
+    filter 180ms ease,
+    transform 150ms ease,
+    box-shadow 180ms ease;
+}
+
+.primaryBtn:hover {
+  filter: brightness(1.06);
+  box-shadow: 0 11px 22px -6px rgba(8, 118, 76, 0.48);
+}
+
+.primaryBtn:active {
+  transform: scale(0.985);
+}
+
+:global([data-theme="dark"]) .primaryBtn {
+  background: linear-gradient(180deg, #14aa70 0%, #0b8053 100%);
+  border: 1px solid rgba(110, 231, 183, 0.28);
+  box-shadow: 0 10px 24px -6px rgba(16, 185, 129, 0.42);
+}
+
+.outlineBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 13px;
+  background: #f8fcfa;
+  color: #102a20;
+  border: 1px solid rgba(13, 120, 82, 0.16);
+  font-weight: 700;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    transform 150ms ease;
+}
+
+.outlineBtn:hover {
+  background: #ecf8f2;
+  border-color: rgba(14, 147, 95, 0.36);
+}
+
+.outlineBtn:active {
+  transform: scale(0.985);
+}
+
+:global([data-theme="dark"]) .outlineBtn {
+  background: rgba(11, 40, 28, 0.65);
+  color: #e6f9f0;
+  border: 1px solid rgba(52, 234, 176, 0.24);
+}
+
+:global([data-theme="dark"]) .outlineBtn:hover {
+  background: rgba(16, 58, 41, 0.85);
+  border-color: rgba(52, 234, 176, 0.45);
+}
+
+/* Weekly Application Pass Banner */
+.passBanner {
+  border-radius: 16px;
+  background: linear-gradient(135deg, #e5f7ee 0%, #daf2e6 100%);
+  border: 1px solid rgba(14, 147, 95, 0.18);
+}
+
+:global([data-theme="dark"]) .passBanner {
+  background: linear-gradient(
+    135deg,
+    rgba(13, 58, 40, 0.78) 0%,
+    rgba(8, 40, 28, 0.86) 100%
+  );
+  border: 1px solid rgba(52, 234, 176, 0.24);
+}
+
+/* Waving Hand Micro-Animation */
+.waveHand {
+  display: inline-block;
+  transform-origin: 72% 74%;
+  animation: gentleWave 2.4s ease-in-out 0.35s 1;
+}
+
+.waveHand:hover {
+  animation: gentleWave 1.4s ease-in-out infinite;
+}
+
+@keyframes gentleWave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  18% {
+    transform: rotate(14deg);
+  }
+  36% {
+    transform: rotate(-8deg);
+  }
+  54% {
+    transform: rotate(12deg);
+  }
+  72% {
+    transform: rotate(-4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waveHand,
+  .waveHand:hover {
+    animation: none;
+  }
+  .kpiCard:hover,
+  .interactiveRow:hover {
+    transform: none;
+  }
+}

@@ -36,6 +36,7 @@ export type ErrorCode =
   | "CV_PAYMENT_REQUIRED"
   | "APPLY_PASS_REQUIRED"
   | "SUBSCRIPTION_REQUIRED"
+  | "CANNOT_REVOKE_CURRENT_SESSION"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

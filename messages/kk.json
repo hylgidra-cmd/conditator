@@ -50,7 +50,9 @@
     "navStudents": "Studentler",
     "navEmployers": "Jumıs beriwshiler",
     "navVacancies": "Vakansiyalar",
-    "navDiscover": "Kózden keshiriw"
+    "navDiscover": "Kózden keshiriw",
+    "studentBadge": "Student",
+    "employerBadge": "Jumıs beriwshi"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -251,7 +253,8 @@
     "ALREADY_APPLIED": "Siz bul vakansiyaǵa aldın arza jibergensiz.",
     "CV_PAYMENT_REQUIRED": "Dáslep CV di aktivlestiriw tólemin (5 000 soʻm) ámelge asırıń.",
     "APPLY_PASS_REQUIRED": "Háptelik CV tapsırıw ruxsatı (5 000 soʻm / 7 kún) kerek.",
-    "SUBSCRIPTION_REQUIRED": "Talaban kontaktları hám PDF rezyumeni kóriw ushın kompaniya abunası kerek."
+    "SUBSCRIPTION_REQUIRED": "Talaban kontaktları hám PDF rezyumeni kóriw ushın kompaniya abunası kerek.",
+    "CANNOT_REVOKE_CURRENT_SESSION": "Ámeldegi qurılma sessiyasın bul jerden óshirip bolmaydı."
   },
   "Form": {
     "submitting": "Jiberilmekte…"
@@ -1788,5 +1791,345 @@
     "description": "Qayta urınıp kóriń yamasa bas betke qaytıń.",
     "retry": "Qayta urınıw",
     "home": "Bas bet"
+  },
+  "StudentAccount": {
+    "eyebrow": "STUDENT KABINETI",
+    "greeting": "Xosh keldińiz, {name}!",
+    "heroSubtitle": "Rezyumeńizdi basqarıń, arzalardı baqlap barıń hám Candidator platformasında jańa imkaniyatlardı ashıń.",
+    "studentAccountBadge": "Student akkauntı",
+    "editProfile": "Profildi ózgertiw",
+    "signOut": "Shıǵıw",
+    "signingOut": "Shıǵılmaqta...",
+    "personalInfo": "Jeke maǵlıwmatlar",
+    "roleStudent": "Student",
+    "addInfo": "Kiritiw",
+    "notSpecified": "Kórsetilmegen",
+    "unknownCompany": "Kompaniya",
+    "viewAll": "Hámmesi",
+    "fields": {
+      "role": "Rol",
+      "education": "Bilimlendiriw",
+      "city": "Qala",
+      "phone": "Baylanıs telefonı",
+      "created": "Dizimnen ótken sáne"
+    },
+    "completion": {
+      "title": "Profildiń toltırılıwı",
+      "subtitle": "Sizge sáykes vakansiyalar kóbirek shıǵıwı ushın profildi tolıq toltırıń.",
+      "photo": "Súwret",
+      "education": "Bilimlendiriw",
+      "skills": "Kónlikpeler",
+      "cv": "CV (rezyume)",
+      "cta": "Profildi toltırıw"
+    },
+    "kpi": {
+      "applications": "Meniń arzalarım",
+      "savedVacancies": "Saqlanǵan vakansiyalar",
+      "unreadMessages": "Oqılmaǵan xabarlar"
+    },
+    "cvCard": {
+      "title": "Meniń CV im",
+      "upToDate": "Jańalanǵan",
+      "draft": "Qaralama",
+      "defaultFile": "Meniń rezyumem (Student)",
+      "lastUpdated": "Sońǵı jańalanıw: {date}",
+      "notCreatedHint": "Ele saqlanǵan CV joq — bir neshe minutta jaratıń",
+      "updateBtn": "CV di jańalaw",
+      "viewBtn": "CV di kóriw",
+      "downloadPdf": "PDF júklep alıw"
+    },
+    "appsCard": {
+      "title": "Meniń arzalarım",
+      "recentTitle": "Sońǵı arzalar",
+      "empty": "Házirshe jiberilgen arzalar joq.",
+      "colEmployer": "Jumıs beriwshi",
+      "colPosition": "Lawazım",
+      "colStatus": "Jaǵdayı",
+      "colDate": "Sáne"
+    },
+    "appStatus": {
+      "submitted": "Jiberildi",
+      "inReview": "Kórip shıǵılmaqta",
+      "responded": "Juwap alındı",
+      "rejected": "Qabıl etilmedi"
+    },
+    "pass": {
+      "title": "Háptelik arza ruxsatnaması",
+      "activeDesc": "elsendi — 7 kún ámel qıladı",
+      "pendingDesc": "Tólem cheki administrator tekseriwinde",
+      "inactiveDesc": "7 kún dawamında sheklewsiz arza jiberiw imkaniyatı",
+      "expiresIn": "{days} kúnde pitiedi",
+      "pendingBadge": "Tekserilmekte",
+      "renewBtn": "Uzaytıw",
+      "activateBtn": "Iske qosıw"
+    },
+    "savedCard": {
+      "title": "Saqlanǵan vakansiyalar",
+      "empty": "Házirshe saqlanǵan vakansiyalar joq.",
+      "removeAria": "Saqlanǵanlardan óshiriw"
+    },
+    "messagesCard": {
+      "title": "Sońǵı xabarlar",
+      "empty": "Házirshe jańa xabarlasıwlar joq.",
+      "today": "Búgin",
+      "yesterday": "Keshe",
+      "attachment": "Biriktirilgen fayl",
+      "directSubject": "Vakansiya boyınsha xabarlasıw",
+      "supportSender": "Candidator Járdem",
+      "supportSubject": "Qollap-quwatlaw xızmeti"
+    },
+    "quickActions": {
+      "title": "Tez ámeller",
+      "browseVacancies": "Vakansiyalardı kóriw",
+      "updateCv": "CV imdi jańalaw",
+      "myApplications": "Meniń arzalarım",
+      "messages": "Xabarlar",
+      "personalityTest": "Minezi testi"
+    },
+    "privacyCard": {
+      "title": "Kupiyalılıq hám qáwipsizlik",
+      "privacySettings": "Kupiyalılıq sazlawları",
+      "accountSecurity": "Akkaunt qáwipsizligi",
+      "activeSessions": "Belsendi sessiyalar"
+    },
+    "langCard": {
+      "title": "Til sazlawı",
+      "label": "Interfeys tili"
+    },
+    "passwordCard": {
+      "title": "Parol",
+      "changePassword": "Paroldi ózgertiw"
+    },
+    "modals": {
+      "close": "Jabıw",
+      "cancel": "Biykar etiw",
+      "save": "Saqlaw",
+      "saving": "Saqlanbaqta...",
+      "editTitle": "Profildi ózgertiw",
+      "editSubtitle": "Jeke maǵlıwmatlarıńız kabinette hám rezyumeńizde birdey saqlanadı.",
+      "uploadPhoto": "Súwret júklew",
+      "removePhoto": "Óshiriw",
+      "photoError": "Súwretti oqıp bolmadı. JPG yamasa PNG tańlań.",
+      "fieldFullName": "Atı hám familiyası",
+      "placeholderFullName": "Mısalı: Madiyar Doshmanov",
+      "fieldEducation": "Bilimlendiriw baǵdarı hám kurs",
+      "placeholderEducation": "Mısalı: Bakalavr, Kompyuter ilimleri (3-kurs)",
+      "fieldCity": "Qala",
+      "placeholderCity": "Mısalı: Nókis",
+      "fieldPhone": "Baylanıs telefonı",
+      "placeholderPhone": "+998 90 123 45 67",
+      "privacyTitle": "Kupiyalılıq sazlawları",
+      "privacySubtitle": "Kompaniyalar kóre alatugın CV maǵlıwmatların ózińiz basqarıń.",
+      "cvSearchableTitle": "Kompaniyalar izlewinde kóriniw",
+      "cvSearchableHint": "Jumıs beriwshiler CV ińizdi bazadan taba aladı.",
+      "cvSearchableLockedHint": "Izlewde qosıw ushın dáslep CV di saqlań hám aktivlestiriń.",
+      "privacyHideName": "Atı hám familiyasın jasırıw",
+      "privacyHidePhone": "Telefon nomerdi jasırıw",
+      "privacyHideEmail": "Email mánzildi jasırıw",
+      "privacyHideAddress": "Qala hám mánzildi jasırıw",
+      "privacyHidePhoto": "Profil súwretin jasırıw",
+      "securityTitle": "Akkaunt qáwipsizligi",
+      "securitySubtitle": "Kiriw qorǵawı hám qurılmalar qadaǵalawı",
+      "securityEmailLabel": "Tiymekli email mánzil",
+      "verifiedBadge": "Tastıyıqlanǵan",
+      "unverifiedBadge": "Tastıyıqlanbaǵan",
+      "securityCreatedInfo": "Akkaunt ashılǵan sáne: {date}",
+      "changePasswordAction": "Paroldi jańalaw",
+      "passwordProtectionHint": "Kúshli parol ornatıw",
+      "sessionsTitle": "Belsendi sessiyalar",
+      "viewDevicesHint": "Kirilgen qurılmalar dizimi",
+      "signOutOthersTitle": "Basqa barlıq qurılmalardan shıǵıw",
+      "signOutOthersDesc": "Ámeldegi brauzerden tısqarı barlıq telefon hám kompyuterlerdegi sessiyalar jabıladı.",
+      "signOutOthersBtn": "Basqa sessiyalardı jabıw",
+      "signOutOthersSuccess": "Basqa barlıq qurılmalardaǵı sessiyalar jabıldı.",
+      "sessionsSubtitle": "Akkauntıńızǵa házir jalǵanǵan brauzer hám qurılmalar",
+      "noSessions": "Belsendi sessiyalar tabılmadı.",
+      "currentDevice": "Ámeldegi qurılma",
+      "revokeBtn": "Shıǵarıw",
+      "passwordModalTitle": "Paroldi ózgertiw",
+      "passwordModalSubtitle": "Jańa parol ornatılǵannan soń basqa qurılmalardaǵı sessiyalar jabıladı.",
+      "currentPassword": "Ámeldegi parol",
+      "newPassword": "Jańa parol",
+      "confirmPassword": "Jańa paroldi tastıyıqlań",
+      "showPasswords": "Parollerdi kórsetiw",
+      "passwordMismatch": "Jańa parol hám tastıyıqlaw sáykes kelmedi.",
+      "updatePasswordBtn": "Paroldi jańalaw",
+      "passwordUpdatedSuccess": "Parolińiz tabıslı jańalandı!",
+      "weeklyPassModalTitle": "Háptelik arza ruxsatnaması (7 kún)",
+      "weeklyPassModalSubtitle": "5 000 sum esabına 7 kún dawamında barlıq vakansiyalarǵa sheklewsiz arza jiberiń."
+    }
+  },
+  "EmployerAccount": {
+    "eyebrow": "JUMIS BERIWSHI KABINETI",
+    "greeting": "Xosh keldińiz, {name}!",
+    "heroSubtitle": "Vakansiyalarıńızdı basqarıń, talabanlardı kórip shıǵıń, qánigeler menen baylanısıń hám komandańızdı keńeytiń.",
+    "defaultIndustry": "Kompaniya / Jumıs beriwshi",
+    "verifiedBadge": "Tastıyıqlanǵan",
+    "pendingBadge": "Tekserilmekte",
+    "rejectedBadge": "Qabıl etilmedi",
+    "editCompanyProfile": "Kompaniya profilin ózgertiw",
+    "viewCompanyPage": "Kompaniya betin kóriw",
+    "companyDetails": "Kompaniya maǵlıwmatları",
+    "addInfo": "Kiritiw",
+    "notSpecified": "Kórsetilmegen",
+    "teamEmployees": "{size} xızmetker",
+    "candidateFallback": "Talaban",
+    "viewAll": "Hámmesi",
+    "fields": {
+      "industry": "Taraw",
+      "city": "Qala",
+      "website": "Veb-sayt",
+      "contactEmail": "Baylanıs emaili",
+      "teamSize": "Komanda kólemi"
+    },
+    "completion": {
+      "title": "Kompaniya profiliniń toltırılıwı",
+      "subtitle": "Talabanlar isenimin arttırıw ushın kompaniya profilin tolıq toltırıń.",
+      "logo": "Kompaniya logotipi",
+      "description": "Kompaniya táriypi",
+      "contacts": "Baylanıs maǵlıwmatları",
+      "verification": "Tastıyıqlaw (Verifikaciya)",
+      "cta": "Profildi toltırıw"
+    },
+    "kpi": {
+      "activeVacancies": "Belsendi vakansiyalar",
+      "newApplications": "Jańa arzalar",
+      "candidatesInReview": "Kórip shıǵılmaqta",
+      "unreadMessages": "Oqılmaǵan xabarlar"
+    },
+    "workTypes": {
+      "FULL_TIME": "Tolıq stavka",
+      "PART_TIME": "Jarım stavka",
+      "REMOTE": "Aralıqtan",
+      "INTERNSHIP": "Ámeliyat"
+    },
+    "vacanciesCard": {
+      "title": "Belsendi vakansiyalar",
+      "empty": "Házirshe járiyalanǵan vakansiyalar joq.",
+      "colTitle": "Vakansiya atı",
+      "colLocation": "Jaylasıwı",
+      "colType": "Jumıs túri",
+      "colStatus": "Jaǵdayı",
+      "colActions": "Ámeller",
+      "statusActive": "Belsendi",
+      "statusPaused": "Toqtatılǵan",
+      "editBtn": "Ózgertiw",
+      "viewBtn": "Kóriw",
+      "pauseAria": "Vakansiyanı waqtınsha toqtatıw",
+      "resumeAria": "Vakansiyanı iske qosıw"
+    },
+    "pipelineCard": {
+      "title": "Talabanlar aǵımı (Pipeline)",
+      "viewApplications": "Arzalardı kóriw"
+    },
+    "stages": {
+      "new": "Jańa",
+      "inReview": "Kórip shıǵılmaqta",
+      "interview": "Sáwbet",
+      "decision": "Qarar",
+      "accepted": "Qabıllandı",
+      "rejected": "Qabıl etilmedi"
+    },
+    "applicantsCard": {
+      "title": "Sońǵı talabanlar",
+      "empty": "Házirshe vakansiyalarıńızǵa kelgen arzalar joq.",
+      "colApplicant": "Talaban",
+      "colRole": "Lawazımı",
+      "colSkills": "Kónlikpeler",
+      "colAppliedOn": "Sáne",
+      "colStatus": "Jaǵdayı"
+    },
+    "messagesCard": {
+      "title": "Kompaniyanıń sońǵı xabarları",
+      "empty": "Házirshe jańa xabarlasıwlar joq.",
+      "today": "Búgin",
+      "yesterday": "Keshe",
+      "attachment": "Biriktirilgen fayl",
+      "directSubject": "Vakansiya boyınsha xabarlasıw",
+      "supportSender": "Candidator Járdem",
+      "supportSubject": "Qollap-quwatlaw xızmeti"
+    },
+    "quickActions": {
+      "title": "Tez ámeller",
+      "postVacancy": "Vakansiya jaylastırıw",
+      "manageVacancies": "Vakansiyalardı basqarıw",
+      "reviewApplications": "Talabanlardı kóriw",
+      "openMessages": "Xabarlardı ashıw",
+      "analytics": "Statistika hám esabat"
+    },
+    "subscriptionCard": {
+      "title": "Jazılıw tarifi",
+      "defaultPlan": "Professional",
+      "pendingTitle": "Tólem tekserilmekte",
+      "freeTitle": "Baslanǵısh (Biypul)",
+      "active": "Belsendi",
+      "pending": "Admin tastıyıǵı kútilmekte",
+      "inactive": "Belsendi emes",
+      "expires": "Ámel qılıw múddeti: {date}",
+      "fromPrice": "14 900 sumnan — barlıq kontaktlar hám PDF ler",
+      "manageBtn": "Jazılıwdı basqarıw"
+    },
+    "verificationCard": {
+      "title": "Tastıyıqlaw (Verifikaciya)",
+      "verified": "Kompaniya tastıyıqlanǵan",
+      "pending": "Tekseriw barısında",
+      "rejected": "Qayta kórip shıǵıw kerek",
+      "verifiedDesc": "Kompaniyańız Candidator platformasında tastıyıqlanǵan. Talabanlar profilińizge isenedi.",
+      "pendingDesc": "Kompaniya maǵlıwmatların toltırıń — administrator teksergennen soń tastıyıq belgisi beriledi.",
+      "detailsBtn": "Tolıq maǵlıwmat"
+    },
+    "securityCard": {
+      "title": "Akkaunt qáwipsizligi",
+      "changePassword": "Paroldi ózgertiw",
+      "twoFactor": "Eki basqıshlı qorǵaw",
+      "activeSessions": "Belsendi sessiyalar",
+      "signOut": "Akkaunttan shıǵıw",
+      "signingOut": "Shıǵılmaqta..."
+    },
+    "modals": {
+      "close": "Jabıw",
+      "cancel": "Biykar etiw",
+      "save": "Saqlaw",
+      "saving": "Saqlanbaqta...",
+      "editTitle": "Kompaniya profilin ózgertiw",
+      "editSubtitle": "Vakansiyalarda hám kompaniya betinde kórinetugın maǵlıwmatlar",
+      "uploadLogo": "Logotip júklew",
+      "removeLogo": "Óshiriw",
+      "logoError": "Logotipti oqıp bolmadı. JPG, PNG yamasa WebP tańlań.",
+      "fieldCompanyName": "Kompaniya atı",
+      "placeholderCompanyName": "Mısalı: TechNova",
+      "fieldIndustry": "Jumıs tarawı",
+      "placeholderIndustry": "Mısalı: Málimleme texnologiyaları",
+      "fieldCity": "Qala",
+      "placeholderCity": "Mısalı: Nókis",
+      "fieldTeamSize": "Xızmetkerler sanı",
+      "selectTeamSize": "Tańlań...",
+      "fieldWebsite": "Veb-sayt",
+      "fieldContactEmail": "Baylanıs emaili (HR)",
+      "fieldDescription": "Kompaniya haqqında qısqasha táriyp",
+      "placeholderDescription": "Kompaniyańızdıń jumısı hám imkaniyatlar haqqında jazıń...",
+      "subModalTitle": "Kompaniya jazılıw tarifleri",
+      "subModalSubtitle": "Jazılıw iske qosılıwı menen barlıq talabanlar kontaktları hám PDF rezyumeleri ashıladı.",
+      "viewPaymentHistory": "Tólemler tariyxın kóriw",
+      "verifyModalTitle": "Kompaniya verifikaciyası",
+      "verifyModalSubtitle": "Isenimlilik hám platforma imkaniyatları",
+      "verifyApprovedStatus": "{name} rásmiy tastıyıqlanǵan",
+      "verifyPendingStatus": "Kompaniyańız házir administrator tekseriwinde",
+      "verifyRejectedStatus": "Kompaniya maǵlıwmatların jańalap qayta xabarlasıń",
+      "verifyApprovedOn": "Tastıyıqlanǵan sáne: {date}",
+      "verifyBenefit1": "Vakansiyalarda «Tastıyıqlanǵan» jasıl isenim belgisi",
+      "verifyBenefit2": "Ashıq CV ler bazası hám AI saralaw imkaniyatı",
+      "verifyBenefit3": "Talabanlar menen tuwrıdan-tuwrı chat arqalı baylanıs",
+      "contactSupport": "Qollap-quwatlaw menen baylanısıw",
+      "twoFactorTitle": "Eki basqıshlı qorǵaw",
+      "twoFactorSubtitle": "Qosımsha akkaunt qorǵawın qosıw yamasa óshiriw ushın parolińizdi tastıyıqlań.",
+      "twoFactorStatusLabel": "Eki basqıshlı tekseriw jaǵdayı",
+      "twoFactorOn": "Qosılǵan",
+      "twoFactorOff": "Óshirilgen",
+      "confirmWithPassword": "Tastıyıqlaw ushın ámeldegi parol",
+      "twoFactorUpdated": "Qáwipsizlik sazlawı jańalandı!",
+      "enableTwoFactorBtn": "Qosıw",
+      "disableTwoFactorBtn": "Óshiriw"
+    }
   }
 }

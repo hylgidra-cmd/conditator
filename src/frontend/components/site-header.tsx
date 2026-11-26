@@ -43,8 +43,8 @@ export async function SiteHeader() {
           : []),
         ...(user.role === "COMPANY"
           ? [
-              { href: "/company/students", label: t("students") },
               { href: "/company/vacancies", label: t("vacancies") },
+              { href: "/company/students", label: t("students") },
               { href: "/chat", label: t("chat") },
               { href: "/company", label: t("company") },
             ]
@@ -93,14 +93,63 @@ export async function SiteHeader() {
           <LocaleSwitcher />
           <span className="hidden sm:inline-flex">{themeToggle}</span>
           {user ? (
-            <span className="hidden lg:block">
-              <LogoutButton
+            user.role === "STUDENT" || user.role === "COMPANY" ? (
+              <Link
+                href="/account"
                 className={cn(
-                  buttonClass({ variant: "outline", size: "sm" }),
-                  "!rounded-full !px-5",
+                  "hidden h-9 items-center gap-2 rounded-full border border-[#cce9dc] bg-[#f1fbf6] px-4 text-xs font-bold text-[#0c3f2c] shadow-[0_2px_8px_rgba(10,92,62,0.06)] transition-all hover:border-[#0e935f]/60 hover:bg-[#e5f7ee] lg:inline-flex dark:border-[#1c6648] dark:bg-[#0a2419] dark:text-[#dcfce9] dark:shadow-[0_4px_14px_rgba(0,0,0,0.35)] dark:hover:border-[#34eab0]/60 dark:hover:bg-[#0f3123]",
+                  FOCUS_RING,
                 )}
-              />
-            </span>
+              >
+                {user.role === "STUDENT" ? (
+                  <svg
+                    aria-hidden
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[#0c8a58] dark:text-[#34eab0]"
+                  >
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                    <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" />
+                  </svg>
+                ) : (
+                  <svg
+                    aria-hidden
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-[#0c8a58] dark:text-[#34eab0]"
+                  >
+                    <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                )}
+                <span>
+                  {user.role === "STUDENT"
+                    ? t("studentBadge")
+                    : t("employerBadge")}
+                </span>
+              </Link>
+            ) : (
+              <span className="hidden lg:block">
+                <LogoutButton
+                  className={cn(
+                    buttonClass({ variant: "outline", size: "sm" }),
+                    "!rounded-full !px-5",
+                  )}
+                />
+              </span>
+            )
           ) : (
             <div className="hidden items-center gap-2.5 sm:flex">
               <Link

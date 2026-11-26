@@ -50,7 +50,9 @@
     "navStudents": "Students",
     "navEmployers": "Employers",
     "navVacancies": "Vacancies",
-    "navDiscover": "Discover"
+    "navDiscover": "Discover",
+    "studentBadge": "Student",
+    "employerBadge": "Employer"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -251,7 +253,8 @@
     "ALREADY_APPLIED": "You have already applied to this vacancy.",
     "CV_PAYMENT_REQUIRED": "Please pay the CV activation fee (5,000 UZS) first.",
     "APPLY_PASS_REQUIRED": "Weekly application pass required (5,000 UZS / 7 days).",
-    "SUBSCRIPTION_REQUIRED": "An active company subscription is required to view candidate contacts and download PDFs."
+    "SUBSCRIPTION_REQUIRED": "An active company subscription is required to view candidate contacts and download PDFs.",
+    "CANNOT_REVOKE_CURRENT_SESSION": "Cannot revoke the current device session from here."
   },
   "Form": {
     "submitting": "Sending…"
@@ -1788,5 +1791,345 @@
     "description": "Try reloading this view or return to the homepage.",
     "retry": "Try again",
     "home": "Go home"
+  },
+  "StudentAccount": {
+    "eyebrow": "STUDENT ACCOUNT",
+    "greeting": "Welcome back, {name}!",
+    "heroSubtitle": "Manage your CV, track applications, and discover new opportunities on Candidator.",
+    "studentAccountBadge": "Student account",
+    "editProfile": "Edit profile",
+    "signOut": "Sign out",
+    "signingOut": "Signing out...",
+    "personalInfo": "Personal information",
+    "roleStudent": "Student",
+    "addInfo": "Add",
+    "notSpecified": "Not specified",
+    "unknownCompany": "Company",
+    "viewAll": "View all",
+    "fields": {
+      "role": "Role",
+      "education": "Education",
+      "city": "City",
+      "phone": "Contact phone",
+      "created": "Account created"
+    },
+    "completion": {
+      "title": "Profile completion",
+      "subtitle": "Complete your profile to get more relevant opportunities.",
+      "photo": "Photo",
+      "education": "Education",
+      "skills": "Skills",
+      "cv": "CV (resume)",
+      "cta": "Complete profile"
+    },
+    "kpi": {
+      "applications": "My Applications",
+      "savedVacancies": "Saved Vacancies",
+      "unreadMessages": "Unread Messages"
+    },
+    "cvCard": {
+      "title": "My CV",
+      "upToDate": "Up to date",
+      "draft": "Draft",
+      "defaultFile": "My CV (Student)",
+      "lastUpdated": "Last updated: {date}",
+      "notCreatedHint": "No saved CV yet — create yours in minutes",
+      "updateBtn": "Update CV",
+      "viewBtn": "View CV",
+      "downloadPdf": "Download PDF"
+    },
+    "appsCard": {
+      "title": "My applications",
+      "recentTitle": "Recent applications",
+      "empty": "No applications submitted yet.",
+      "colEmployer": "Employer",
+      "colPosition": "Position",
+      "colStatus": "Status",
+      "colDate": "Date"
+    },
+    "appStatus": {
+      "submitted": "Submitted",
+      "inReview": "In review",
+      "responded": "Response received",
+      "rejected": "Rejected"
+    },
+    "pass": {
+      "title": "Weekly application pass",
+      "activeDesc": "Active — valid for 7 days",
+      "pendingDesc": "Payment receipt is under admin review",
+      "inactiveDesc": "Unlimited vacancy applications for 7 days",
+      "expiresIn": "Expires in {days} days",
+      "pendingBadge": "Pending review",
+      "renewBtn": "Renew",
+      "activateBtn": "Activate"
+    },
+    "savedCard": {
+      "title": "Saved vacancies",
+      "empty": "No saved vacancies yet.",
+      "removeAria": "Remove from saved vacancies"
+    },
+    "messagesCard": {
+      "title": "Recent messages",
+      "empty": "No recent messages yet.",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "attachment": "Attachment",
+      "directSubject": "Update on your application",
+      "supportSender": "Candidator Support",
+      "supportSubject": "Support conversation"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "browseVacancies": "Browse vacancies",
+      "updateCv": "Update my CV",
+      "myApplications": "My applications",
+      "messages": "Messages",
+      "personalityTest": "Personality test"
+    },
+    "privacyCard": {
+      "title": "Privacy & security",
+      "privacySettings": "Privacy settings",
+      "accountSecurity": "Account security",
+      "activeSessions": "Active sessions"
+    },
+    "langCard": {
+      "title": "Language preference",
+      "label": "Interface language"
+    },
+    "passwordCard": {
+      "title": "Password",
+      "changePassword": "Change password"
+    },
+    "modals": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "editTitle": "Edit profile",
+      "editSubtitle": "Your personal details stay synced across your account and CV.",
+      "uploadPhoto": "Upload photo",
+      "removePhoto": "Remove",
+      "photoError": "Could not read image. Please pick a JPG or PNG file.",
+      "fieldFullName": "Full name",
+      "placeholderFullName": "e.g. Madiyar Doshmanov",
+      "fieldEducation": "Education & year",
+      "placeholderEducation": "e.g. BSc, Computer Science (3rd year)",
+      "fieldCity": "City",
+      "placeholderCity": "e.g. Tashkent",
+      "fieldPhone": "Contact phone",
+      "placeholderPhone": "+998 90 123 45 67",
+      "privacyTitle": "Privacy settings",
+      "privacySubtitle": "Control which parts of your CV are visible to employers.",
+      "cvSearchableTitle": "Visible in employer search",
+      "cvSearchableHint": "Allow companies to discover your CV in candidate search.",
+      "cvSearchableLockedHint": "Save and activate your CV first to enable employer search visibility.",
+      "privacyHideName": "Hide full name",
+      "privacyHidePhone": "Hide phone number",
+      "privacyHideEmail": "Hide email address",
+      "privacyHideAddress": "Hide city & address",
+      "privacyHidePhoto": "Hide profile photo",
+      "securityTitle": "Account security",
+      "securitySubtitle": "Sign-in protection and device management",
+      "securityEmailLabel": "Primary email",
+      "verifiedBadge": "Verified",
+      "unverifiedBadge": "Unverified",
+      "securityCreatedInfo": "Account created on {date}",
+      "changePasswordAction": "Change password",
+      "passwordProtectionHint": "Update your sign-in password",
+      "sessionsTitle": "Active sessions",
+      "viewDevicesHint": "Manage signed-in devices",
+      "signOutOthersTitle": "Sign out of all other devices",
+      "signOutOthersDesc": "Revokes active sessions on all phones and computers except this browser.",
+      "signOutOthersBtn": "Sign out other devices",
+      "signOutOthersSuccess": "All other device sessions have been revoked.",
+      "sessionsSubtitle": "Browsers and devices currently signed in to your account",
+      "noSessions": "No active sessions found.",
+      "currentDevice": "Current device",
+      "revokeBtn": "Revoke",
+      "passwordModalTitle": "Change password",
+      "passwordModalSubtitle": "Updating your password will sign out other active devices for security.",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "showPasswords": "Show passwords",
+      "passwordMismatch": "New password and confirmation do not match.",
+      "updatePasswordBtn": "Update password",
+      "passwordUpdatedSuccess": "Your password has been updated!",
+      "weeklyPassModalTitle": "Weekly application pass (7 days)",
+      "weeklyPassModalSubtitle": "Apply to unlimited vacancies for 7 days for 5,000 UZS."
+    }
+  },
+  "EmployerAccount": {
+    "eyebrow": "EMPLOYER ACCOUNT",
+    "greeting": "Welcome back, {name}!",
+    "heroSubtitle": "Manage your vacancies, review candidates, communicate with talent, and grow your team on Candidator.",
+    "defaultIndustry": "Company / Employer",
+    "verifiedBadge": "Verified",
+    "pendingBadge": "Pending",
+    "rejectedBadge": "Declined",
+    "editCompanyProfile": "Edit company profile",
+    "viewCompanyPage": "View company page",
+    "companyDetails": "Company details",
+    "addInfo": "Add",
+    "notSpecified": "Not specified",
+    "teamEmployees": "{size} employees",
+    "candidateFallback": "Candidate",
+    "viewAll": "View all",
+    "fields": {
+      "industry": "Industry",
+      "city": "City",
+      "website": "Website",
+      "contactEmail": "Contact email",
+      "teamSize": "Team size"
+    },
+    "completion": {
+      "title": "Company profile completion",
+      "subtitle": "Complete your company profile to build trust with candidates.",
+      "logo": "Company logo",
+      "description": "Company description",
+      "contacts": "Contact details",
+      "verification": "Verification",
+      "cta": "Complete profile"
+    },
+    "kpi": {
+      "activeVacancies": "Active Vacancies",
+      "newApplications": "New Applications",
+      "candidatesInReview": "Candidates in Review",
+      "unreadMessages": "Unread Messages"
+    },
+    "workTypes": {
+      "FULL_TIME": "Full-time",
+      "PART_TIME": "Part-time",
+      "REMOTE": "Remote",
+      "INTERNSHIP": "Internship"
+    },
+    "vacanciesCard": {
+      "title": "Active vacancies",
+      "empty": "No vacancies published yet.",
+      "colTitle": "Vacancy title",
+      "colLocation": "Location",
+      "colType": "Type",
+      "colStatus": "Status",
+      "colActions": "Actions",
+      "statusActive": "Active",
+      "statusPaused": "Paused",
+      "editBtn": "Edit",
+      "viewBtn": "View",
+      "pauseAria": "Pause vacancy",
+      "resumeAria": "Resume vacancy"
+    },
+    "pipelineCard": {
+      "title": "Applicant pipeline overview",
+      "viewApplications": "View applications"
+    },
+    "stages": {
+      "new": "New",
+      "inReview": "In review",
+      "interview": "Interview",
+      "decision": "Decision",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "applicantsCard": {
+      "title": "Recent applicants",
+      "empty": "No applications received yet.",
+      "colApplicant": "Applicant",
+      "colRole": "Role applied for",
+      "colSkills": "Skills",
+      "colAppliedOn": "Applied on",
+      "colStatus": "Status"
+    },
+    "messagesCard": {
+      "title": "Recent company messages",
+      "empty": "No recent messages yet.",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "attachment": "Attachment",
+      "directSubject": "Application inquiry",
+      "supportSender": "Candidate Support",
+      "supportSubject": "Support conversation"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "postVacancy": "Post a vacancy",
+      "manageVacancies": "Manage vacancies",
+      "reviewApplications": "Review applications",
+      "openMessages": "Open messages",
+      "analytics": "Analytics & reports"
+    },
+    "subscriptionCard": {
+      "title": "Subscription plan",
+      "defaultPlan": "Professional",
+      "pendingTitle": "Payment under review",
+      "freeTitle": "Starter (Free)",
+      "active": "Active",
+      "pending": "Pending approval",
+      "inactive": "Inactive",
+      "expires": "Expires: {date}",
+      "fromPrice": "From 14,900 UZS — unlock all candidate contacts",
+      "manageBtn": "Manage subscription"
+    },
+    "verificationCard": {
+      "title": "Verification",
+      "verified": "Company verified",
+      "pending": "Pending verification",
+      "rejected": "Verification required",
+      "verifiedDesc": "Your company is verified on Candidator. Candidates can trust your profile.",
+      "pendingDesc": "Complete your company details — once approved by admin, your verified badge activates.",
+      "detailsBtn": "Verification details"
+    },
+    "securityCard": {
+      "title": "Account security",
+      "changePassword": "Change password",
+      "twoFactor": "Two-step verification",
+      "activeSessions": "Active sessions",
+      "signOut": "Sign out",
+      "signingOut": "Signing out..."
+    },
+    "modals": {
+      "close": "Close",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "saving": "Saving...",
+      "editTitle": "Edit company profile",
+      "editSubtitle": "Details shown on your vacancies and employer profile",
+      "uploadLogo": "Upload logo",
+      "removeLogo": "Remove",
+      "logoError": "Could not read logo image. Please pick JPG, PNG, or WebP.",
+      "fieldCompanyName": "Company name",
+      "placeholderCompanyName": "e.g. TechNova",
+      "fieldIndustry": "Industry",
+      "placeholderIndustry": "e.g. Information Technology",
+      "fieldCity": "City",
+      "placeholderCity": "e.g. Tashkent",
+      "fieldTeamSize": "Team size",
+      "selectTeamSize": "Select...",
+      "fieldWebsite": "Website",
+      "fieldContactEmail": "Contact email (HR)",
+      "fieldDescription": "Company description",
+      "placeholderDescription": "Describe your company mission, team culture, and opportunities...",
+      "subModalTitle": "Company subscription plans",
+      "subModalSubtitle": "Unlock candidate phone numbers, emails, and full PDF resumes.",
+      "viewPaymentHistory": "View payment history",
+      "verifyModalTitle": "Company verification",
+      "verifyModalSubtitle": "Trust badge and employer platform capabilities",
+      "verifyApprovedStatus": "{name} is officially verified",
+      "verifyPendingStatus": "Your company is currently awaiting admin review",
+      "verifyRejectedStatus": "Please update your company details and contact support",
+      "verifyApprovedOn": "Verified on: {date}",
+      "verifyBenefit1": "Trusted green Verified badge on all your job postings",
+      "verifyBenefit2": "Access to open candidate CVs and AI candidate matching",
+      "verifyBenefit3": "Direct messaging with applicants on Candidator",
+      "contactSupport": "Contact support",
+      "twoFactorTitle": "Two-step verification",
+      "twoFactorSubtitle": "Confirm your current password to enable or disable two-step protection.",
+      "twoFactorStatusLabel": "Two-step protection status",
+      "twoFactorOn": "Enabled",
+      "twoFactorOff": "Disabled",
+      "confirmWithPassword": "Confirm with current password",
+      "twoFactorUpdated": "Security setting updated!",
+      "enableTwoFactorBtn": "Enable",
+      "disableTwoFactorBtn": "Disable"
+    }
   }
 }

@@ -13,6 +13,21 @@ export function SiteChrome({ children }: { children: ReactNode }) {
   return useIsDashboard() ? null : children;
 }
 
+/** Kabinet, kirish va chat sahifalarida marketing footer yashiriladi. */
+export function SiteFooterChrome({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  if (
+    useIsDashboard() ||
+    pathname === "/account" ||
+    pathname === "/login" ||
+    pathname === "/register" ||
+    pathname === "/chat"
+  ) {
+    return null;
+  }
+  return children;
+}
+
 /** Sayt <main> i: sahifa kirish animatsiyasi bilan. */
 export function SiteMain({ children }: { children: ReactNode }) {
   const pathname = usePathname();

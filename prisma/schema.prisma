@@ -125,17 +125,23 @@ enum PaymentStatus {
 // ---------- Foydalanuvchilar va kirish ----------
 
 model User {
-  id              String     @id @default(cuid())
-  email           String     @unique /// har doim kichik harflarda saqlanadi
-  passwordHash    String /// argon2id
-  role            Role
-  status          UserStatus @default(ACTIVE)
-  emailVerifiedAt DateTime?
-  locale          Lang       @default(kk)
-  consentAt       DateTime? /// shaxsiy ma'lumotlarni qayta ishlashga rozilik
-  applyPassUntil  DateTime? /// haftalik CV topshirish ruxsati tugash vaqti
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
+  id               String     @id @default(cuid())
+  email            String     @unique /// har doim kichik harflarda saqlanadi
+  passwordHash     String /// argon2id
+  role             Role
+  status           UserStatus @default(ACTIVE)
+  emailVerifiedAt  DateTime?
+  locale           Lang       @default(kk)
+  consentAt        DateTime? /// shaxsiy ma'lumotlarni qayta ishlashga rozilik
+  applyPassUntil   DateTime? /// haftalik CV topshirish ruxsati tugash vaqti
+  fullName         String? /// talaba shaxsiy kabinet profili (CV bilan sinxronlanadi)
+  phone            String?
+  city             String?
+  educationSummary String?
+  avatarUrl        String? /// siqilgan data URL (≤ 180 KB), faqat profil sahifasida o'qiladi
+  twoFactorEnabled Boolean    @default(false) /// ikki bosqichli email himoyasi
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 
   sessions           Session[]
   emailCodes         EmailCode[]
@@ -169,6 +175,8 @@ model Session {
   id        String   @id @default(cuid())
   userId    String
   tokenHash String   @unique
+  userAgent String?
+  ipAddress String?
   expiresAt DateTime
   createdAt DateTime @default(now())
 
@@ -445,9 +453,13 @@ model Company {
   userId            String    @unique
   name              String?
   country           String?
+  city              String?
   industry          String?
   size              String? /// xodimlar soni oralig'i, masalan "11-50"
+  website           String?
+  contactEmail      String?
   contactPerson     String?
+  description       String?
   logoPath          String?
   hasLogo           Boolean   @default(false) /// logoPath base64 ni o'qimasdan bor-yo'qligini tez tekshirish uchun
   approval          Approval  @default(PENDING)

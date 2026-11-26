@@ -51,6 +51,9 @@ export const POST = route(async (request) => {
   ]);
 
   const response = NextResponse.json({ ok: true });
-  await createSession(response, user.id);
+  await createSession(response, user.id, {
+    userAgent: request.headers.get("user-agent"),
+    ipAddress: clientIp(request),
+  });
   return response;
 });

@@ -9,7 +9,11 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/frontend/components/site-footer";
-import { SiteChrome, SiteMain } from "@/frontend/components/site-chrome";
+import {
+  SiteChrome,
+  SiteFooterChrome,
+  SiteMain,
+} from "@/frontend/components/site-chrome";
 import { SiteHeader } from "@/frontend/components/site-header";
 import { ClientMessages } from "@/i18n/client-messages";
 import {
@@ -137,9 +141,9 @@ export default async function LocaleLayout({ children, params }: Props) {
             <SiteHeader />
           </SiteChrome>
           <SiteMain>{children}</SiteMain>
-          <SiteChrome>
+          <SiteFooterChrome>
             <SiteFooter />
-          </SiteChrome>
+          </SiteFooterChrome>
         </ClientMessages>
       </body>
     </html>

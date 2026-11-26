@@ -4,6 +4,18 @@ import { PrismaClient } from "@prisma/client";
 
 const STATEMENTS = [
   `ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "hasLogo" BOOLEAN NOT NULL DEFAULT false`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "fullName" TEXT`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "phone" TEXT`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "city" TEXT`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "educationSummary" TEXT`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "avatarUrl" TEXT`,
+  `ALTER TABLE "Session" ADD COLUMN IF NOT EXISTS "userAgent" TEXT`,
+  `ALTER TABLE "Session" ADD COLUMN IF NOT EXISTS "ipAddress" TEXT`,
+  `ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "twoFactorEnabled" BOOLEAN NOT NULL DEFAULT false`,
+  `ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "city" TEXT`,
+  `ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "website" TEXT`,
+  `ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "contactEmail" TEXT`,
+  `ALTER TABLE "Company" ADD COLUMN IF NOT EXISTS "description" TEXT`,
   `UPDATE "Company" SET "hasLogo" = true WHERE "logoPath" IS NOT NULL AND length("logoPath") > 0 AND "hasLogo" = false`,
   `CREATE INDEX IF NOT EXISTS "Session_expiresAt_idx" ON "Session"("expiresAt")`,
   `CREATE INDEX IF NOT EXISTS "EmailCode_expiresAt_idx" ON "EmailCode"("expiresAt")`,
@@ -29,7 +41,12 @@ async function main() {
     console.log("sync-db-hardening: DATABASE_URL yo'q, o'tkazib yuborildi.");
     return;
   }
-  const prisma = new PrismaClient();
+  const rawUrl = process.env.DATABASE_URL.trim();
+  const sep = rawUrl.includes("?") ? "&" : "?";
+  const dbUrl = rawUrl.includes("connect_timeout=")
+    ? rawUrl
+    : `${rawUrl}${sep}connect_timeout=25`;
+  const prisma = new PrismaClient({ datasources: { db: { url: dbUrl } } });
   try {
     for (const sql of STATEMENTS) {
       try {

@@ -78,11 +78,9 @@ export function LoginForm({
       }
 
       let target =
-        result.data.role === "COMPANY"
-          ? "/company"
-          : result.data.role === "ADMIN"
-            ? "/admin"
-            : "/account";
+        result.data.role === "ADMIN"
+          ? "/admin"
+          : "/account";
 
       if (result.data.role === "STUDENT") {
         const statusRes = await getJson<{ testComplete: boolean }>(

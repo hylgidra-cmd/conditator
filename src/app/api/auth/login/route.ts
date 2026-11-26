@@ -14,6 +14,9 @@ export const POST = route(async (request) => {
   rateLimit(`login:${ip}:${input.email}`, LIMITS.login);
   const user = await login(input);
   const response = NextResponse.json({ ok: true, role: user.role });
-  await createSession(response, user.id);
+  await createSession(response, user.id, {
+    userAgent: request.headers.get("user-agent"),
+    ipAddress: ip,
+  });
   return response;
 });

@@ -50,7 +50,9 @@
     "navStudents": "Студентам",
     "navEmployers": "Работодателям",
     "navVacancies": "Вакансии",
-    "navDiscover": "Обзор"
+    "navDiscover": "Обзор",
+    "studentBadge": "Студент",
+    "employerBadge": "Работодатель"
   },
   "LocaleSwitcher": {
     "label": "Язык",
@@ -251,7 +253,8 @@
     "ALREADY_APPLIED": "Вы уже подали заявку на эту вакансию.",
     "CV_PAYMENT_REQUIRED": "Сначала оплатите активацию резюме (5 000 сум).",
     "APPLY_PASS_REQUIRED": "Требуется недельный доступ на отклики (5 000 сум / 7 дней).",
-    "SUBSCRIPTION_REQUIRED": "Для просмотра контактов кандидата и скачивания PDF требуется подписка компании."
+    "SUBSCRIPTION_REQUIRED": "Для просмотра контактов кандидата и скачивания PDF требуется подписка компании.",
+    "CANNOT_REVOKE_CURRENT_SESSION": "Нельзя завершить текущую сессию отсюда."
   },
   "Form": {
     "submitting": "Отправка…"
@@ -1788,5 +1791,345 @@
     "description": "Попробуйте обновить страницу или вернитесь на главную.",
     "retry": "Попробовать снова",
     "home": "На главную"
+  },
+  "StudentAccount": {
+    "eyebrow": "КАБИНЕТ СТУДЕНТА",
+    "greeting": "С возвращением, {name}!",
+    "heroSubtitle": "Управляйте своим резюме, отслеживайте отклики и открывайте новые возможности на Candidator.",
+    "studentAccountBadge": "Аккаунт студента",
+    "editProfile": "Редактировать профиль",
+    "signOut": "Выйти",
+    "signingOut": "Выход...",
+    "personalInfo": "Личная информация",
+    "roleStudent": "Студент",
+    "addInfo": "Указать",
+    "notSpecified": "Не указано",
+    "unknownCompany": "Компания",
+    "viewAll": "Все",
+    "fields": {
+      "role": "Роль",
+      "education": "Образование",
+      "city": "Город",
+      "phone": "Контактный телефон",
+      "created": "Дата регистрации"
+    },
+    "completion": {
+      "title": "Заполненность профиля",
+      "subtitle": "Заполните профиль полностью, чтобы получать больше подходящих вакансий.",
+      "photo": "Фото",
+      "education": "Образование",
+      "skills": "Навыки",
+      "cv": "CV (резюме)",
+      "cta": "Заполнить профиль"
+    },
+    "kpi": {
+      "applications": "Мои отклики",
+      "savedVacancies": "Сохранённые вакансии",
+      "unreadMessages": "Непрочитанные"
+    },
+    "cvCard": {
+      "title": "Моё резюме",
+      "upToDate": "Актуально",
+      "draft": "Черновик",
+      "defaultFile": "Моё резюме (Студент)",
+      "lastUpdated": "Обновлено: {date}",
+      "notCreatedHint": "Резюме ещё не сохранено — создайте за пару минут",
+      "updateBtn": "Обновить CV",
+      "viewBtn": "Открыть CV",
+      "downloadPdf": "Скачать PDF"
+    },
+    "appsCard": {
+      "title": "Мои отклики",
+      "recentTitle": "Последние отклики",
+      "empty": "Пока нет отправленных откликов.",
+      "colEmployer": "Работодатель",
+      "colPosition": "Позиция",
+      "colStatus": "Статус",
+      "colDate": "Дата"
+    },
+    "appStatus": {
+      "submitted": "Отправлено",
+      "inReview": "На рассмотрении",
+      "responded": "Ответ получен",
+      "rejected": "Отклонено"
+    },
+    "pass": {
+      "title": "Недельный пропуск откликов",
+      "activeDesc": "Активен — действует 7 дней",
+      "pendingDesc": "Чек оплаты проверяется администратором",
+      "inactiveDesc": "Безлимитные отклики на вакансии в течение 7 дней",
+      "expiresIn": "Осталось {days} дн.",
+      "pendingBadge": "На проверке",
+      "renewBtn": "Продлить",
+      "activateBtn": "Активировать"
+    },
+    "savedCard": {
+      "title": "Сохранённые вакансии",
+      "empty": "Пока нет сохранённых вакансий.",
+      "removeAria": "Убрать из сохранённых"
+    },
+    "messagesCard": {
+      "title": "Последние сообщения",
+      "empty": "Пока нет диалогов.",
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "attachment": "Вложенный файл",
+      "directSubject": "Переписка по вакансии",
+      "supportSender": "Поддержка Candidator",
+      "supportSubject": "Служба поддержки"
+    },
+    "quickActions": {
+      "title": "Быстрые действия",
+      "browseVacancies": "Смотреть вакансии",
+      "updateCv": "Обновить моё CV",
+      "myApplications": "Мои отклики",
+      "messages": "Сообщения",
+      "personalityTest": "Тест личности"
+    },
+    "privacyCard": {
+      "title": "Приватность и безопасность",
+      "privacySettings": "Настройки приватности",
+      "accountSecurity": "Безопасность аккаунта",
+      "activeSessions": "Активные сессии"
+    },
+    "langCard": {
+      "title": "Язык интерфейса",
+      "label": "Выберите язык"
+    },
+    "passwordCard": {
+      "title": "Пароль",
+      "changePassword": "Сменить пароль"
+    },
+    "modals": {
+      "close": "Закрыть",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "saving": "Сохранение...",
+      "editTitle": "Редактировать профиль",
+      "editSubtitle": "Ваши данные синхронизируются между кабинетом и резюме.",
+      "uploadPhoto": "Загрузить фото",
+      "removePhoto": "Удалить",
+      "photoError": "Не удалось прочитать изображение. Выберите JPG или PNG.",
+      "fieldFullName": "Имя и фамилия",
+      "placeholderFullName": "Например: Мадияр Дошманов",
+      "fieldEducation": "Образование и курс",
+      "placeholderEducation": "Например: Бакалавр, Компьютерные науки (3 курс)",
+      "fieldCity": "Город",
+      "placeholderCity": "Например: Ташкент",
+      "fieldPhone": "Контактный телефон",
+      "placeholderPhone": "+998 90 123 45 67",
+      "privacyTitle": "Настройки приватности",
+      "privacySubtitle": "Управляйте тем, какие данные вашего резюме видят работодатели.",
+      "cvSearchableTitle": "Видимость в поиске работодателей",
+      "cvSearchableHint": "Компании смогут находить ваше CV в базе кандидатов.",
+      "cvSearchableLockedHint": "Чтобы включить видимость, сначала сохраните и активируйте CV.",
+      "privacyHideName": "Скрывать имя и фамилию",
+      "privacyHidePhone": "Скрывать номер телефона",
+      "privacyHideEmail": "Скрывать email адрес",
+      "privacyHideAddress": "Скрывать город и адрес",
+      "privacyHidePhoto": "Скрывать фотографию профиля",
+      "securityTitle": "Безопасность аккаунта",
+      "securitySubtitle": "Защита входа и управление устройствами",
+      "securityEmailLabel": "Основной email",
+      "verifiedBadge": "Подтверждён",
+      "unverifiedBadge": "Не подтверждён",
+      "securityCreatedInfo": "Аккаунт создан: {date}",
+      "changePasswordAction": "Сменить пароль",
+      "passwordProtectionHint": "Обновить пароль входа",
+      "sessionsTitle": "Активные сессии",
+      "viewDevicesHint": "Подключённые устройства",
+      "signOutOthersTitle": "Выйти на всех других устройствах",
+      "signOutOthersDesc": "Завершит все активные сессии на других телефонах и компьютерах, кроме текущего.",
+      "signOutOthersBtn": "Завершить другие сессии",
+      "signOutOthersSuccess": "Все остальные сессии успешно завершены.",
+      "sessionsSubtitle": "Устройства и браузеры, вошедшие в ваш аккаунт",
+      "noSessions": "Активных сессий не найдено.",
+      "currentDevice": "Текущее устройство",
+      "revokeBtn": "Завершить",
+      "passwordModalTitle": "Смена пароля",
+      "passwordModalSubtitle": "После смены пароля все сессии на других устройствах будут закрыты.",
+      "currentPassword": "Текущий пароль",
+      "newPassword": "Новый пароль",
+      "confirmPassword": "Подтвердите новый пароль",
+      "showPasswords": "Показать пароли",
+      "passwordMismatch": "Новый пароль и подтверждение не совпадают.",
+      "updatePasswordBtn": "Обновить пароль",
+      "passwordUpdatedSuccess": "Пароль успешно обновлён!",
+      "weeklyPassModalTitle": "Недельный пропуск откликов (7 дней)",
+      "weeklyPassModalSubtitle": "Отправляйте отклики на любые вакансии без ограничений 7 дней за 5 000 сум."
+    }
+  },
+  "EmployerAccount": {
+    "eyebrow": "КАБИНЕТ РАБОТОДАТЕЛЯ",
+    "greeting": "С возвращением, {name}!",
+    "heroSubtitle": "Управляйте вакансиями, рассматривайте отклики, общайтесь с талантами и развивайте команду на Candidator.",
+    "defaultIndustry": "Компания / Работодатель",
+    "verifiedBadge": "Подтверждена",
+    "pendingBadge": "На проверке",
+    "rejectedBadge": "Отклонена",
+    "editCompanyProfile": "Редактировать профиль компании",
+    "viewCompanyPage": "Страница компании",
+    "companyDetails": "Данные компании",
+    "addInfo": "Указать",
+    "notSpecified": "Не указано",
+    "teamEmployees": "{size} сотрудников",
+    "candidateFallback": "Кандидат",
+    "viewAll": "Все",
+    "fields": {
+      "industry": "Отрасль",
+      "city": "Город",
+      "website": "Веб-сайт",
+      "contactEmail": "Контактный email",
+      "teamSize": "Размер команды"
+    },
+    "completion": {
+      "title": "Заполненность профиля компании",
+      "subtitle": "Заполните профиль компании, чтобы повысить доверие кандидатов.",
+      "logo": "Логотип компании",
+      "description": "Описание компании",
+      "contacts": "Контактные данные",
+      "verification": "Верификация",
+      "cta": "Заполнить профиль"
+    },
+    "kpi": {
+      "activeVacancies": "Активные вакансии",
+      "newApplications": "Новые отклики",
+      "candidatesInReview": "На рассмотрении",
+      "unreadMessages": "Непрочитанные"
+    },
+    "workTypes": {
+      "FULL_TIME": "Полная занятость",
+      "PART_TIME": "Частичная",
+      "REMOTE": "Удалённо",
+      "INTERNSHIP": "Стажировка"
+    },
+    "vacanciesCard": {
+      "title": "Активные вакансии",
+      "empty": "Пока нет опубликованных вакансий.",
+      "colTitle": "Вакансия",
+      "colLocation": "Локация",
+      "colType": "Формат",
+      "colStatus": "Статус",
+      "colActions": "Действия",
+      "statusActive": "Активна",
+      "statusPaused": "Пауза",
+      "editBtn": "Изм.",
+      "viewBtn": "Отклики",
+      "pauseAria": "Приостановить вакансию",
+      "resumeAria": "Возобновить вакансию"
+    },
+    "pipelineCard": {
+      "title": "Воронка кандидатов",
+      "viewApplications": "Смотреть отклики"
+    },
+    "stages": {
+      "new": "Новые",
+      "inReview": "На рассмотрении",
+      "interview": "Интервью",
+      "decision": "Решение",
+      "accepted": "Принят",
+      "rejected": "Отклонён"
+    },
+    "applicantsCard": {
+      "title": "Последние отклики",
+      "empty": "Пока нет откликов на ваши вакансии.",
+      "colApplicant": "Кандидат",
+      "colRole": "Позиция",
+      "colSkills": "Навыки",
+      "colAppliedOn": "Дата",
+      "colStatus": "Статус"
+    },
+    "messagesCard": {
+      "title": "Последние сообщения компании",
+      "empty": "Пока нет диалогов.",
+      "today": "Сегодня",
+      "yesterday": "Вчера",
+      "attachment": "Вложенный файл",
+      "directSubject": "Отклик по вакансии",
+      "supportSender": "Поддержка Candidator",
+      "supportSubject": "Служба поддержки"
+    },
+    "quickActions": {
+      "title": "Быстрые действия",
+      "postVacancy": "Разместить вакансию",
+      "manageVacancies": "Управление вакансиями",
+      "reviewApplications": "База кандидатов",
+      "openMessages": "Открыть сообщения",
+      "analytics": "Аналитика и отчёты"
+    },
+    "subscriptionCard": {
+      "title": "Тариф подписки",
+      "defaultPlan": "Professional",
+      "pendingTitle": "Оплата на проверке",
+      "freeTitle": "Базовый (Бесплатно)",
+      "active": "Активна",
+      "pending": "Ожидает подтверждения",
+      "inactive": "Не активна",
+      "expires": "Действует до: {date}",
+      "fromPrice": "От 14 900 сум — все контакты и PDF резюме",
+      "manageBtn": "Управление подпиской"
+    },
+    "verificationCard": {
+      "title": "Верификация",
+      "verified": "Компания подтверждена",
+      "pending": "На модерации",
+      "rejected": "Требуется уточнение",
+      "verifiedDesc": "Ваша компания подтверждена на Candidator. Кандидаты доверяют вашему профилю.",
+      "pendingDesc": "Заполните данные компании — после проверки модератором появится знак верификации.",
+      "detailsBtn": "Подробнее о верификации"
+    },
+    "securityCard": {
+      "title": "Безопасность аккаунта",
+      "changePassword": "Сменить пароль",
+      "twoFactor": "Двухэтапная защита",
+      "activeSessions": "Активные сессии",
+      "signOut": "Выйти из аккаунта",
+      "signingOut": "Выход..."
+    },
+    "modals": {
+      "close": "Закрыть",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "saving": "Сохранение...",
+      "editTitle": "Редактировать профиль компании",
+      "editSubtitle": "Информация, отображаемая в вакансиях и профиле работодателя",
+      "uploadLogo": "Загрузить логотип",
+      "removeLogo": "Удалить",
+      "logoError": "Не удалось прочитать логотип. Выберите JPG, PNG или WebP.",
+      "fieldCompanyName": "Название компании",
+      "placeholderCompanyName": "Например: TechNova",
+      "fieldIndustry": "Отрасль",
+      "placeholderIndustry": "Например: Информационные технологии",
+      "fieldCity": "Город",
+      "placeholderCity": "Например: Ташкент",
+      "fieldTeamSize": "Размер команды",
+      "selectTeamSize": "Выберите...",
+      "fieldWebsite": "Веб-сайт",
+      "fieldContactEmail": "Контактный email (HR)",
+      "fieldDescription": "Описание компании",
+      "placeholderDescription": "Расскажите о деятельности вашей компании, культуре и возможностях для кандидатов...",
+      "subModalTitle": "Тарифы подписки для компаний",
+      "subModalSubtitle": "После активации открываются телефоны, email и PDF-резюме всех кандидатов.",
+      "viewPaymentHistory": "История платежей",
+      "verifyModalTitle": "Верификация компании",
+      "verifyModalSubtitle": "Статус проверки и возможности работодателя",
+      "verifyApprovedStatus": "{name} официально подтверждена",
+      "verifyPendingStatus": "Ваша компания проходит проверку модератором",
+      "verifyRejectedStatus": "Обновите данные компании и свяжитесь с поддержкой",
+      "verifyApprovedOn": "Дата подтверждения: {date}",
+      "verifyBenefit1": "Зелёный знак «Подтверждена» на всех вакансиях",
+      "verifyBenefit2": "Доступ к базе резюме и AI-подбору кандидатов",
+      "verifyBenefit3": "Прямой чат с соискателями на платформе",
+      "contactSupport": "Связаться с поддержкой",
+      "twoFactorTitle": "Двухэтапная защита",
+      "twoFactorSubtitle": "Подтвердите текущий пароль для включения или отключения двухэтапной защиты.",
+      "twoFactorStatusLabel": "Статус двухэтапной защиты",
+      "twoFactorOn": "Включена",
+      "twoFactorOff": "Выключена",
+      "confirmWithPassword": "Текущий пароль для подтверждения",
+      "twoFactorUpdated": "Настройка безопасности обновлена!",
+      "enableTwoFactorBtn": "Включить",
+      "disableTwoFactorBtn": "Выключить"
+    }
   }
 }

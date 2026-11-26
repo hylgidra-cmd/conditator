@@ -13,18 +13,30 @@ export type SessionUser = Pick<
   "id" | "email" | "role" | "status" | "locale"
 >;
 
-function hashToken(token: string): string {
+export function hashToken(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
+
+export type SessionMeta = {
+  userAgent?: string | null;
+  ipAddress?: string | null;
+};
 
 export async function createSession(
   response: NextResponse,
   userId: string,
+  meta?: SessionMeta,
 ): Promise<void> {
   const token = randomBytes(32).toString("base64url");
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
   await db.session.create({
-    data: { userId, tokenHash: hashToken(token), expiresAt },
+    data: {
+      userId,
+      tokenHash: hashToken(token),
+      userAgent: meta?.userAgent ? meta.userAgent.slice(0, 300) : null,
+      ipAddress: meta?.ipAddress ? meta.ipAddress.slice(0, 64) : null,
+      expiresAt,
+    },
   });
   response.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,

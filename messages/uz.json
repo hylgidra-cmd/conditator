@@ -50,7 +50,9 @@
     "navStudents": "Talabalar",
     "navEmployers": "Ish beruvchilar",
     "navVacancies": "Vakansiyalar",
-    "navDiscover": "Kashf etish"
+    "navDiscover": "Kashf etish",
+    "studentBadge": "Talaba",
+    "employerBadge": "Ish beruvchi"
   },
   "LocaleSwitcher": {
     "label": "Til",
@@ -251,7 +253,8 @@
     "ALREADY_APPLIED": "Siz ushbu vakansiyaga allaqachon ariza yuborgansiz.",
     "CV_PAYMENT_REQUIRED": "Avval CV ni faollashtirish toʻlovini (5 000 soʻm) amalga oshiring.",
     "APPLY_PASS_REQUIRED": "Haftalik CV topshirish ruxsati (5 000 soʻm / 7 kun) kerak.",
-    "SUBSCRIPTION_REQUIRED": "Nomzod kontaktlari va PDF rezyumeni koʻrish uchun kompaniya obunasi kerak."
+    "SUBSCRIPTION_REQUIRED": "Nomzod kontaktlari va PDF rezyumeni koʻrish uchun kompaniya obunasi kerak.",
+    "CANNOT_REVOKE_CURRENT_SESSION": "Joriy qurilma sessiyasini bu yerdan oʻchirib boʻlmaydi."
   },
   "Form": {
     "submitting": "Yuborilmoqda…"
@@ -1788,5 +1791,345 @@
     "description": "Qayta urinib ko'ring yoki bosh sahifaga qayting.",
     "retry": "Qayta urinish",
     "home": "Bosh sahifa"
+  },
+  "StudentAccount": {
+    "eyebrow": "TALABA KABINETI",
+    "greeting": "Xush kelibsiz, {name}!",
+    "heroSubtitle": "Rezyumengizni boshqaring, arizalaringizni kuzating va Candidator’da yangi imkoniyatlarni kashf eting.",
+    "studentAccountBadge": "Talaba akkaunti",
+    "editProfile": "Profilni tahrirlash",
+    "signOut": "Chiqish",
+    "signingOut": "Chiqilmoqda...",
+    "personalInfo": "Shaxsiy maʼlumotlar",
+    "roleStudent": "Talaba",
+    "addInfo": "Kiritish",
+    "notSpecified": "Kiritilmagan",
+    "unknownCompany": "Kompaniya",
+    "viewAll": "Barchasi",
+    "fields": {
+      "role": "Rol",
+      "education": "Taʼlim",
+      "city": "Shahar",
+      "phone": "Aloqa telefoni",
+      "created": "Roʻyxatdan oʻtgan sana"
+    },
+    "completion": {
+      "title": "Profil toʻldirilganligi",
+      "subtitle": "Sizga mos vakansiyalar koʻproq chiqishi uchun profilingizni toʻliq toʻldiring.",
+      "photo": "Rasm",
+      "education": "Taʼlim",
+      "skills": "Koʻnikmalar",
+      "cv": "CV (rezyume)",
+      "cta": "Profilni toʻldirish"
+    },
+    "kpi": {
+      "applications": "Mening arizalarim",
+      "savedVacancies": "Saqlangan vakansiyalar",
+      "unreadMessages": "Oʻqilmagan xabarlar"
+    },
+    "cvCard": {
+      "title": "Mening CV im",
+      "upToDate": "Yangilangan",
+      "draft": "Qoralama",
+      "defaultFile": "Mening rezyumem (Talaba)",
+      "lastUpdated": "Oxirgi yangilanish: {date}",
+      "notCreatedHint": "Hali saqlangan CV mavjud emas — bir necha daqiqada yarating",
+      "updateBtn": "CV ni yangilash",
+      "viewBtn": "CV ni koʻrish",
+      "downloadPdf": "PDF yuklab olish"
+    },
+    "appsCard": {
+      "title": "Mening arizalarim",
+      "recentTitle": "Soʻnggi arizalar",
+      "empty": "Hozircha yuborilgan arizalar yoʻq.",
+      "colEmployer": "Ish beruvchi",
+      "colPosition": "Lavozim",
+      "colStatus": "Holati",
+      "colDate": "Sana"
+    },
+    "appStatus": {
+      "submitted": "Yuborilgan",
+      "inReview": "Koʻrib chiqilmoqda",
+      "responded": "Javob olingan",
+      "rejected": "Rad etilgan"
+    },
+    "pass": {
+      "title": "Haftalik ariza ruxsatnomasi",
+      "activeDesc": "Faol — 7 kun amal qiladi",
+      "pendingDesc": "Toʻlov cheki administrator tekshiruvida",
+      "inactiveDesc": "7 kun davomida cheksiz ariza yuborish imkoniyati",
+      "expiresIn": "{days} kunda tugaydi",
+      "pendingBadge": "Tekshirilmoqda",
+      "renewBtn": "Uzaytirish",
+      "activateBtn": "Faollashtirish"
+    },
+    "savedCard": {
+      "title": "Saqlangan vakansiyalar",
+      "empty": "Hozircha saqlangan vakansiyalar yoʻq.",
+      "removeAria": "Saqlanganlardan olib tashlash"
+    },
+    "messagesCard": {
+      "title": "Soʻnggi xabarlar",
+      "empty": "Hozircha yangi yozishmalar yoʻq.",
+      "today": "Bugun",
+      "yesterday": "Kecha",
+      "attachment": "Biriktirilgan fayl",
+      "directSubject": "Vakansiya boʻyicha yozishma",
+      "supportSender": "Candidator Yordam",
+      "supportSubject": "Qoʻllab-quvvatlash xizmati"
+    },
+    "quickActions": {
+      "title": "Tezkor amallar",
+      "browseVacancies": "Vakansiyalarni koʻrish",
+      "updateCv": "CV imni yangilash",
+      "myApplications": "Mening arizalarim",
+      "messages": "Xabarlar",
+      "personalityTest": "Shaxsiyat testi"
+    },
+    "privacyCard": {
+      "title": "Maxfiylik va xavfsizlik",
+      "privacySettings": "Maxfiylik sozlamalari",
+      "accountSecurity": "Akkaunt xavfsizligi",
+      "activeSessions": "Faol sessiyalar"
+    },
+    "langCard": {
+      "title": "Til sozlamasi",
+      "label": "Interfeys tili"
+    },
+    "passwordCard": {
+      "title": "Parol",
+      "changePassword": "Parolni oʻzgartirish"
+    },
+    "modals": {
+      "close": "Yopish",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "saving": "Saqlanmoqda...",
+      "editTitle": "Profilni tahrirlash",
+      "editSubtitle": "Shaxsiy maʼlumotlaringiz kabinetda va rezyumengizda sinxron saqlanadi.",
+      "uploadPhoto": "Rasm yuklash",
+      "removePhoto": "Oʻchirish",
+      "photoError": "Rasmni oʻqib boʻlmadi. JPG yoki PNG rasm tanlang.",
+      "fieldFullName": "Ism va familiya",
+      "placeholderFullName": "Masalan: Madiyor Doshmanov",
+      "fieldEducation": "Taʼlim yoʻnalishi va bosqich",
+      "placeholderEducation": "Masalan: Bakalavr, Kompyuter injiniringi (3-kurs)",
+      "fieldCity": "Shahar",
+      "placeholderCity": "Masalan: Toshkent",
+      "fieldPhone": "Aloqa telefoni",
+      "placeholderPhone": "+998 90 123 45 67",
+      "privacyTitle": "Maxfiylik sozlamalari",
+      "privacySubtitle": "Kompaniyalar koʻra oladigan CV maʼlumotlarini oʻzingiz boshqaring.",
+      "cvSearchableTitle": "Kompaniyalar qidiruvida koʻrinish",
+      "cvSearchableHint": "Ish beruvchilar CV ingizni nomzodlar bazasidan topa oladi.",
+      "cvSearchableLockedHint": "Qidiruvda yoqish uchun avval CV ni toʻldirib saqlang va faollashtiring.",
+      "privacyHideName": "Ism va familiyani yashirish",
+      "privacyHidePhone": "Telefon raqamni yashirish",
+      "privacyHideEmail": "Email manzilni yashirish",
+      "privacyHideAddress": "Shahar va manzilni yashirish",
+      "privacyHidePhoto": "Profil rasmini yashirish",
+      "securityTitle": "Akkaunt xavfsizligi",
+      "securitySubtitle": "Kirish himoyasi va qurilmalar nazorati",
+      "securityEmailLabel": "Asosiy email manzil",
+      "verifiedBadge": "Tasdiqlangan",
+      "unverifiedBadge": "Tasdiqlanmagan",
+      "securityCreatedInfo": "Akkaunt ochilgan sana: {date}",
+      "changePasswordAction": "Parolni yangilash",
+      "passwordProtectionHint": "Kuchli parol oʻrnatish",
+      "sessionsTitle": "Faol sessiyalar",
+      "viewDevicesHint": "Kirilgan qurilmalar roʻyxati",
+      "signOutOthersTitle": "Boshqa barcha qurilmalardan chiqish",
+      "signOutOthersDesc": "Joriy brauzerdan tashqari barcha telefon va kompyuterlardagi sessiyalar yopiladi.",
+      "signOutOthersBtn": "Boshqa sessiyalarni yopish",
+      "signOutOthersSuccess": "Boshqa barcha qurilmalardagi sessiyalar yopildi.",
+      "sessionsSubtitle": "Akkauntingizga hozir ulangan brauzer va qurilmalar",
+      "noSessions": "Faol sessiyalar topilmadi.",
+      "currentDevice": "Joriy qurilma",
+      "revokeBtn": "Chiqarish",
+      "passwordModalTitle": "Parolni oʻzgartirish",
+      "passwordModalSubtitle": "Yangi parol oʻrnatilgach, xavfsizlik uchun boshqa qurilmalardagi sessiyalar yopiladi.",
+      "currentPassword": "Joriy parol",
+      "newPassword": "Yangi parol",
+      "confirmPassword": "Yangi parolni tasdiqlang",
+      "showPasswords": "Parollarni koʻrsatish",
+      "passwordMismatch": "Yangi parol va tasdiqlash mos kelmadi.",
+      "updatePasswordBtn": "Parolni yangilash",
+      "passwordUpdatedSuccess": "Parolingiz muvaffaqiyatli yangilandi!",
+      "weeklyPassModalTitle": "Haftalik ariza ruxsatnomasi (7 kun)",
+      "weeklyPassModalSubtitle": "5 000 soʻm evaziga 7 kun davomida barcha vakansiyalarga cheklovsiz ariza yuboring."
+    }
+  },
+  "EmployerAccount": {
+    "eyebrow": "ISH BERUVCHI KABINETI",
+    "greeting": "Xush kelibsiz, {name}!",
+    "heroSubtitle": "Vakansiyalaringizni boshqaring, nomzodlarni koʻrib chiqing, iqtidorlar bilan bogʻlaning va jamoangizni kengaytiring.",
+    "defaultIndustry": "Kompaniya / Ish beruvchi",
+    "verifiedBadge": "Tasdiqlangan",
+    "pendingBadge": "Moderatsiyada",
+    "rejectedBadge": "Rad etilgan",
+    "editCompanyProfile": "Kompaniya profilini tahrirlash",
+    "viewCompanyPage": "Kompaniya sahifasini koʻrish",
+    "companyDetails": "Kompaniya maʼlumotlari",
+    "addInfo": "Kiritish",
+    "notSpecified": "Kiritilmagan",
+    "teamEmployees": "{size} xodim",
+    "candidateFallback": "Nomzod",
+    "viewAll": "Barchasi",
+    "fields": {
+      "industry": "Soha",
+      "city": "Shahar",
+      "website": "Veb-sayt",
+      "contactEmail": "Aloqa emaili",
+      "teamSize": "Jamoa hajmi"
+    },
+    "completion": {
+      "title": "Kompaniya profili toʻldirilganligi",
+      "subtitle": "Nomzodlar ishonchini oshirish uchun kompaniya profilingizni toʻliq toʻldiring.",
+      "logo": "Kompaniya logotipi",
+      "description": "Kompaniya tavsifi",
+      "contacts": "Aloqa maʼlumotlari",
+      "verification": "Tasdiqlash (Verifikatsiya)",
+      "cta": "Profilni toʻldirish"
+    },
+    "kpi": {
+      "activeVacancies": "Faol vakansiyalar",
+      "newApplications": "Yangi arizalar",
+      "candidatesInReview": "Koʻrib chiqilayotganlar",
+      "unreadMessages": "Oʻqilmagan xabarlar"
+    },
+    "workTypes": {
+      "FULL_TIME": "Toʻliq stavka",
+      "PART_TIME": "Yarim stavka",
+      "REMOTE": "Masofaviy",
+      "INTERNSHIP": "Amaliyot"
+    },
+    "vacanciesCard": {
+      "title": "Faol vakansiyalar",
+      "empty": "Hozircha eʼlon qilingan vakansiyalar yoʻq.",
+      "colTitle": "Vakansiya nomi",
+      "colLocation": "Joylashuv",
+      "colType": "Ish turi",
+      "colStatus": "Holati",
+      "colActions": "Amallar",
+      "statusActive": "Faol",
+      "statusPaused": "Toʻxtatilgan",
+      "editBtn": "Tahrirlash",
+      "viewBtn": "Koʻrish",
+      "pauseAria": "Vakansiyani vaqtincha toʻxtatish",
+      "resumeAria": "Vakansiyani faollashtirish"
+    },
+    "pipelineCard": {
+      "title": "Nomzodlar oqimi (Pipeline)",
+      "viewApplications": "Arizalarni koʻrish"
+    },
+    "stages": {
+      "new": "Yangi",
+      "inReview": "Koʻrib chiqilmoqda",
+      "interview": "Suhbat",
+      "decision": "Qaror",
+      "accepted": "Qabul qilindi",
+      "rejected": "Rad etildi"
+    },
+    "applicantsCard": {
+      "title": "Soʻnggi nomzodlar",
+      "empty": "Hozircha vakansiyalaringizga kelgan arizalar yoʻq.",
+      "colApplicant": "Nomzod",
+      "colRole": "Topshirgan lavozimi",
+      "colSkills": "Koʻnikmalar",
+      "colAppliedOn": "Sana",
+      "colStatus": "Holati"
+    },
+    "messagesCard": {
+      "title": "Kompaniyaning soʻnggi xabarlari",
+      "empty": "Hozircha yangi yozishmalar yoʻq.",
+      "today": "Bugun",
+      "yesterday": "Kecha",
+      "attachment": "Biriktirilgan fayl",
+      "directSubject": "Vakansiya boʻyicha murojaat",
+      "supportSender": "Candidator Yordam",
+      "supportSubject": "Qoʻllab-quvvatlash xizmati"
+    },
+    "quickActions": {
+      "title": "Tezkor amallar",
+      "postVacancy": "Vakansiya joylash",
+      "manageVacancies": "Vakansiyalarni boshqarish",
+      "reviewApplications": "Nomzodlarni koʻrish",
+      "openMessages": "Xabarlarni ochish",
+      "analytics": "Statistika va hisobot"
+    },
+    "subscriptionCard": {
+      "title": "Obuna tarifi",
+      "defaultPlan": "Professional",
+      "pendingTitle": "Toʻlov tekshirilmoqda",
+      "freeTitle": "Boshlangʻich (Bepul)",
+      "active": "Faol",
+      "pending": "Admin tasdigʻi kutilmoqda",
+      "inactive": "Faol emas",
+      "expires": "Amal qilish muddati: {date}",
+      "fromPrice": "14 900 soʻm dan — barcha kontaktlar va PDF lar",
+      "manageBtn": "Obunani boshqarish"
+    },
+    "verificationCard": {
+      "title": "Tasdiqlash (Verifikatsiya)",
+      "verified": "Kompaniya tasdiqlangan",
+      "pending": "Tekshiruv jarayonida",
+      "rejected": "Qayta koʻrib chiqish kerak",
+      "verifiedDesc": "Kompaniyangiz Candidator’da tasdiqlangan. Nomzodlar profilingizga toʻliq ishonch bildiradi.",
+      "pendingDesc": "Kompaniya maʼlumotlarini toʻldiring — administrator tekshirgach tasdiqlangan belgi beriladi.",
+      "detailsBtn": "Batafsil maʼlumot"
+    },
+    "securityCard": {
+      "title": "Akkaunt xavfsizligi",
+      "changePassword": "Parolni oʻzgartirish",
+      "twoFactor": "Ikki bosqichli himoya",
+      "activeSessions": "Faol sessiyalar",
+      "signOut": "Akkauntdan chiqish",
+      "signingOut": "Chiqilmoqda..."
+    },
+    "modals": {
+      "close": "Yopish",
+      "cancel": "Bekor qilish",
+      "save": "Saqlash",
+      "saving": "Saqlanmoqda...",
+      "editTitle": "Kompaniya profilini tahrirlash",
+      "editSubtitle": "Vakansiyalarda va kompaniya sahifasida koʻrinadigan maʼlumotlar",
+      "uploadLogo": "Logotip yuklash",
+      "removeLogo": "Oʻchirish",
+      "logoError": "Logotip rasmini oʻqib boʻlmadi. JPG, PNG yoki WebP tanlang.",
+      "fieldCompanyName": "Kompaniya nomi",
+      "placeholderCompanyName": "Masalan: TechNova",
+      "fieldIndustry": "Faoliyat sohasi",
+      "placeholderIndustry": "Masalan: Axborot texnologiyalari",
+      "fieldCity": "Shahar",
+      "placeholderCity": "Masalan: Toshkent",
+      "fieldTeamSize": "Xodimlar soni",
+      "selectTeamSize": "Tanlang...",
+      "fieldWebsite": "Veb-sayt",
+      "fieldContactEmail": "Aloqa emaili (HR)",
+      "fieldDescription": "Kompaniya haqida qisqacha tavsif",
+      "placeholderDescription": "Kompaniyangiz faoliyati, jamoa madaniyati va nomzodlar uchun imkoniyatlar haqida yozing...",
+      "subModalTitle": "Kompaniya obuna tariflari",
+      "subModalSubtitle": "Obuna faollashishi bilan barcha nomzodlarning telefon, email va PDF rezyumelari ochiladi.",
+      "viewPaymentHistory": "Toʻlovlar tarixini koʻrish",
+      "verifyModalTitle": "Kompaniya verifikatsiyasi",
+      "verifyModalSubtitle": "Ishonchlilik va platforma imkoniyatlari holati",
+      "verifyApprovedStatus": "{name} rasmiy tasdiqlangan",
+      "verifyPendingStatus": "Kompaniyangiz hozir administrator tekshiruvida",
+      "verifyRejectedStatus": "Kompaniya maʼlumotlarini yangilab qayta murojaat qiling",
+      "verifyApprovedOn": "Tasdiqlangan sana: {date}",
+      "verifyBenefit1": "Vakansiyalarda «Tasdiqlangan» yashil ishonch belgisi",
+      "verifyBenefit2": "Ochiq CV lar bazasi va AI nomzod saralash imkoniyati",
+      "verifyBenefit3": "Nomzodlar bilan toʻgʻridan-toʻgʻri chat orqali muloqot",
+      "contactSupport": "Qoʻllab-quvvatlash bilan bogʻlanish",
+      "twoFactorTitle": "Ikki bosqichli himoya",
+      "twoFactorSubtitle": "Qoʻshimcha akunnt himoyasini yoqish yoki oʻchirish uchun parolingizni tasdiqlang.",
+      "twoFactorStatusLabel": "Ikki bosqichli tekshiruv holati",
+      "twoFactorOn": "Yoqilgan",
+      "twoFactorOff": "Oʻchirilgan",
+      "confirmWithPassword": "Tasdiqlash uchun joriy parolingiz",
+      "twoFactorUpdated": "Xavfsizlik sozlamasi yangilandi!",
+      "enableTwoFactorBtn": "Yoqish",
+      "disableTwoFactorBtn": "Oʻchirish"
+    }
   }
 }

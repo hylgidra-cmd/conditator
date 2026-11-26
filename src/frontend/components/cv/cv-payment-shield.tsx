@@ -86,13 +86,11 @@ function isEditableTarget(target: EventTarget | null): boolean {
  */
 export function CvPaymentShield({
   isPaid,
-  watermarkTag,
   onUnlockClick,
   children,
 }: Props) {
   const [blackout, setBlackout] = useState(false);
   const [warningReason, setWarningReason] = useState<string | null>(null);
-  const [clockTick, setClockTick] = useState(0);
 
   useEffect(() => {
     if (isPaid) return;
@@ -174,18 +172,12 @@ export function CvPaymentShield({
     window.addEventListener("beforeprint", handleBeforePrint);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Har 3 soniyada dinamik suv belgisi (watermark) o'rnini siljitish (ekran zapisga qarshi)
-    const interval = window.setInterval(() => {
-      setClockTick((prev) => (prev + 1) % 6);
-    }, 3000);
-
     return () => {
       window.removeEventListener("keydown", handleKeyDown, { capture: true });
       window.removeEventListener("keyup", handleKeyUp, { capture: true });
       window.removeEventListener("blur", handleBlur);
       window.removeEventListener("beforeprint", handleBeforePrint);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.clearInterval(interval);
       unregisterDisplayMedia();
     };
   }, [isPaid]);
@@ -193,11 +185,6 @@ export function CvPaymentShield({
   if (isPaid) {
     return <>{children}</>;
   }
-
-  const wmText = watermarkTag
-    ? `CANDIDATOR · TO'LANMAGAN · ${watermarkTag}`
-    : "CANDIDATOR · TO'LANMAGAN NUSXA · SKRINSHOT TAQIQLANGAN";
-  const shiftPx = (clockTick % 3) * 14;
 
   return (
     <div
@@ -252,7 +239,7 @@ export function CvPaymentShield({
         ) : null}
       </div>
 
-      {/* Asosiy CV kontenti + Dinamik suv belgisi + Qora himoya pardasi */}
+      {/* Asosiy CV kontenti + Qora himoya pardasi */}
       <div className="cv-unpaid-protected-content relative overflow-hidden rounded-2xl">
         <div
           className={
@@ -263,29 +250,6 @@ export function CvPaymentShield({
         >
           {children}
         </div>
-
-        {/* Zich va harakatlanuvchi diagonal suv belgisi (ekran zapis va telefon kamera/skrinshotini yaroqsiz qiladi) */}
-        {!blackout ? (
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-20 overflow-hidden"
-            style={{
-              transform: `translate(${shiftPx}px, ${shiftPx}px)`,
-              transition: "transform 1.2s ease-in-out",
-            }}
-          >
-            <div className="grid h-[140%] w-[140%] -translate-x-[15%] -translate-y-[15%] -rotate-24 grid-cols-2 gap-y-16 opacity-35">
-              {Array.from({ length: 18 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-center text-center text-xs font-black tracking-[0.2em] text-slate-900/75 uppercase sm:text-sm"
-                >
-                  {wmText}
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
 
         {/* Skrinshot / Fokus yo'qolishi / Ekran yozish aniqlanganda chiqadigan qora qalqon */}
         {blackout ? (

@@ -43,8 +43,8 @@ export async function SiteHeader() {
           : []),
         ...(user.role === "COMPANY"
           ? [
-              { href: "/company/vacancies", label: t("vacancies") },
               { href: "/company/students", label: t("students") },
+              { href: "/company/vacancies", label: t("vacancies") },
               { href: "/chat", label: t("chat") },
               { href: "/company", label: t("company") },
             ]

@@ -22,6 +22,8 @@ import {
 } from "@/frontend/components/cv-templates/cv-templates";
 import { PhotoCropperModal } from "./photo-cropper-modal";
 import { CvPaymentShield } from "./cv-payment-shield";
+import { ProfessionSkillPicker } from "./profession-skill-picker";
+import styles from "./cv-studio.module.css";
 
 const POPULAR_LANGUAGES = [
   "Qaraqalpaq tili",
@@ -337,7 +339,7 @@ type Props = {
   onOpenPayment?: () => void;
   onChange: (draft: CvDraft) => void;
   onSave: () => void;
-  onRestart: () => void;
+  onRestart?: () => void;
 };
 
 export function CvStepBuilder({
@@ -352,10 +354,10 @@ export function CvStepBuilder({
   onOpenPayment,
   onChange,
   onSave,
-  onRestart,
 }: Props) {
   const t = useTranslations("StudentCv.onboarding");
   const tCv = useTranslations("StudentCv");
+  const tStudio = useTranslations("CvStudio");
   const [currentStep, setCurrentStep] = useState(1);
   const [generatingAboutMe, setGeneratingAboutMe] = useState(false);
   const [customSkills, setCustomSkills] = useState<string[] | null>(null);
@@ -673,22 +675,74 @@ export function CvStepBuilder({
     { id: 6, key: "finalize", label: t("steps.finalize") },
   ];
 
+  const renderStepIcon = (id: number) => {
+    switch (id) {
+      case 1:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        );
+      case 2:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+        );
+      case 3:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+            <path d="M6 12v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5" />
+          </svg>
+        );
+      case 4:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polygon points="12 2 2 7 12 12 22 7 12 2" />
+            <polyline points="2 17 12 22 22 17" />
+            <polyline points="2 12 12 17 22 12" />
+          </svg>
+        );
+      case 5:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+            <path d="M2 12h20" />
+          </svg>
+        );
+      default:
+        return (
+          <svg aria-hidden width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+            <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+          </svg>
+        );
+    }
+  };
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Top Wizard Control */}
-      <div className="border-border bg-surface flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-5 py-3 shadow-sm">
+      <div className={`${styles.panel} flex flex-wrap items-center justify-between gap-3 px-5 py-3`}>
         <div className="flex items-center gap-3">
-          <span className="text-muted text-xs font-bold tracking-wider uppercase">
-            {currentStep}/6 — {stepsList[currentStep - 1]?.label}
+          <span className="inline-flex items-center rounded-full bg-[#e3f7ec] px-2.5 py-0.5 text-[11px] font-extrabold text-[#09754b] dark:bg-[#0f4530] dark:text-[#3be7a3]">
+            {currentStep}/6
+          </span>
+          <span className="text-xs font-extrabold tracking-wide text-[#10291f] dark:text-[#e6f7ee]">
+            {stepsList[currentStep - 1]?.label}
           </span>
         </div>
 
         {/* CV Language Switcher in Header */}
-        <div className="flex items-center gap-2">
-          <span className="text-muted hidden text-[11px] font-semibold sm:inline">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="hidden text-[11px] font-semibold text-[#5b7a6d] sm:inline dark:text-[#8bb5a3]">
             {t("cvLanguage")}:
           </span>
-          <div className="bg-muted/20 border-border/60 flex rounded-xl border p-1">
+          <div className="flex rounded-xl border border-[#cde6da] bg-[#f6fcf9] p-1 dark:border-[#1c5940] dark:bg-[#072016]">
             {CV_LANGUAGES.map((lang) => {
               const isActive = draft.language === lang.code;
               return (
@@ -696,10 +750,10 @@ export function CvStepBuilder({
                   key={lang.code}
                   type="button"
                   onClick={() => onChange({ ...draft, language: lang.code })}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
+                  className={`cursor-pointer rounded-lg px-2.5 py-1 text-xs font-bold transition-all ${
                     isActive
-                      ? "bg-brand text-brand-foreground shadow-xs"
-                      : "text-muted hover:text-foreground"
+                      ? "bg-[#0c8a58] text-white shadow-xs dark:bg-[#27eba0] dark:text-[#032216]"
+                      : "text-[#517164] hover:text-[#0d241b] dark:text-[#8cb7a5] dark:hover:text-white"
                   }`}
                 >
                   {lang.label}
@@ -707,59 +761,57 @@ export function CvStepBuilder({
               );
             })}
           </div>
-          <button
-            type="button"
-            onClick={onRestart}
-            className="text-muted hover:text-foreground ml-2 text-xs font-semibold"
-          >
-            {t("restartWizard")}
-          </button>
         </div>
       </div>
 
-      {/* Main 3-Column / Responsive Split Layout */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 xl:gap-8">
-        {/* Left Column: Step Navigation (2 cols on desktop) */}
+      {/* Main 3-Column Studio Split Layout */}
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 xl:gap-6">
+        {/* Left Column: Vertical Timeline Stepper (2 cols on desktop) */}
         <div className="lg:col-span-2">
-          <nav className="border-border bg-surface sticky top-20 space-y-1.5 rounded-3xl border p-3 shadow-sm">
-            {stepsList.map((s) => {
-              const isCurrent = currentStep === s.id;
-              const isPast = currentStep > s.id;
+          <nav className={`${styles.panel} sticky top-20 p-3.5`}>
+            <div className="relative space-y-2 pl-4 before:pointer-events-none before:absolute before:top-4 before:bottom-4 before:left-[6px] before:w-[1.5px] before:bg-[#cde6da] dark:before:bg-[#1a563e]">
+              {stepsList.map((s) => {
+                const isCurrent = currentStep === s.id;
+                const isPast = currentStep > s.id;
 
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setCurrentStep(s.id)}
-                  className={`flex w-full items-center gap-2.5 rounded-2xl px-3 py-2.5 text-left text-xs font-semibold transition-all ${
-                    isCurrent
-                      ? "bg-brand text-brand-foreground shadow"
-                      : isPast
-                        ? "text-foreground hover:bg-muted/40"
-                        : "text-muted hover:bg-muted/20"
-                  }`}
-                >
-                  <span
-                    className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                      isCurrent
-                        ? "text-brand bg-white"
-                        : isPast
-                          ? "bg-emerald-500 text-white"
-                          : "border-border text-muted border"
-                    }`}
-                  >
-                    {isPast ? "✓" : s.id}
-                  </span>
-                  <span>{s.label}</span>
-                </button>
-              );
-            })}
+                return (
+                  <div key={s.id} className="relative flex items-center">
+                    <span
+                      aria-hidden
+                      className={`absolute -left-[16px] flex size-3.5 items-center justify-center rounded-full border-2 transition ${
+                        isCurrent
+                          ? "border-[#0e935f] bg-[#0e935f] shadow-[0_0_0_4px_rgba(14,147,95,0.2)] dark:border-[#27eba0] dark:bg-[#27eba0] dark:shadow-[0_0_0_4px_rgba(39,235,160,0.22)]"
+                          : isPast
+                            ? "border-[#0e935f] bg-[#0e935f] dark:border-[#34eab0] dark:bg-[#34eab0]"
+                            : "border-[#b8d8c9] bg-white dark:border-[#22694c] dark:bg-[#061c13]"
+                      }`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(s.id)}
+                      className={`flex w-full cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-xs font-bold transition-all ${
+                        isCurrent
+                          ? "bg-[#dff6ea] text-[#097349] shadow-xs dark:bg-[#0f4530] dark:text-[#3be7a3]"
+                          : isPast
+                            ? "text-[#143025] hover:bg-[#edf8f2] dark:text-[#d4ede1] dark:hover:bg-[#0b2f21]"
+                            : "text-[#58786b] hover:bg-[#f2faf6] dark:text-[#88b2a0] dark:hover:bg-[#09271b]"
+                      }`}
+                    >
+                      <span className="shrink-0 opacity-90">
+                        {renderStepIcon(s.id)}
+                      </span>
+                      <span className="truncate">{s.label}</span>
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           </nav>
         </div>
 
         {/* Center Column: Form Inputs (5 cols on desktop) */}
         <div className="space-y-6 lg:col-span-5">
-          <div className="border-border bg-surface space-y-6 rounded-3xl border p-6 shadow-sm sm:p-8">
+          <div className={`${styles.panel} space-y-6 p-5 sm:p-7`}>
             {/* Step 1: Contact Details */}
             {currentStep === 1 && (
               <div className="space-y-5">
@@ -1309,6 +1361,13 @@ export function CvStepBuilder({
                     }
                     placeholder="JavaScript, React, Figma, Python..."
                     className="border-border bg-surface focus:ring-brand/40 w-full rounded-xl border p-3 text-sm outline-none focus:ring-2"
+                  />
+
+                  {/* TZ 3: Kasb papkasi bo'yicha eng kerakli 6 ko'nikma shabloni */}
+                  <ProfessionSkillPicker
+                    cvTitle={draft.title}
+                    currentSkillsText={draft.skillsText}
+                    onAddSkill={addSkillChip}
                   />
 
                   {/* Makemycv Suggestion Chips */}
@@ -2349,21 +2408,52 @@ export function CvStepBuilder({
             )}
 
             {/* Bottom Form Navigation Buttons */}
-            <div className="border-border/60 flex items-center justify-between gap-2 border-t pt-4">
-              <button
-                type="button"
-                disabled={currentStep === 1}
-                onClick={() => setCurrentStep((prev) => Math.max(1, prev - 1))}
-                className="border-border text-muted hover:text-foreground rounded-xl border px-5 py-2.5 text-xs font-bold disabled:opacity-30"
-              >
-                {t("prev")}
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-2.5 border-t border-[#e4f1eb] pt-5 dark:border-[#154531]">
+              <div className="flex items-center gap-2">
+                {currentStep > 1 ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setCurrentStep((prev) => Math.max(1, prev - 1))
+                    }
+                    className="h-10 cursor-pointer rounded-xl border border-[#cde6da] bg-white px-4 text-xs font-bold text-[#2b4d3f] transition hover:border-[#0e935f] dark:border-[#1f6246] dark:bg-[#072016] dark:text-[#c7ebd9] dark:hover:border-[#34eab0]"
+                  >
+                    ← {t("prev")}
+                  </button>
+                ) : null}
+
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={onSave}
+                  className="inline-flex h-10 cursor-pointer items-center gap-1.5 rounded-xl border border-[#cde6da] bg-white px-4 text-xs font-bold text-[#143025] transition hover:border-[#0e935f] hover:bg-[#f4fbf7] disabled:opacity-55 dark:border-[#1f6246] dark:bg-[#072016] dark:text-[#e4f8ee] dark:hover:border-[#34eab0]"
+                >
+                  <svg
+                    aria-hidden
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                    <polyline points="17 21 17 13 7 13 7 21" />
+                    <polyline points="7 3 7 8 15 8" />
+                  </svg>
+                  <span>
+                    {saving ? tStudio("savingBtn") : tStudio("saveDraftBtn")}
+                  </span>
+                </button>
+              </div>
 
               {/* Mobile Preview Trigger */}
               <button
                 type="button"
                 onClick={() => setFullscreenOpen(true)}
-                className="border-brand/40 bg-brand/10 text-brand hover:bg-brand/20 rounded-xl border px-3 py-2 text-xs font-bold transition-colors lg:hidden"
+                className="inline-flex h-10 cursor-pointer items-center rounded-xl border border-[#0e935f]/35 bg-[#e6f7ef] px-3 text-xs font-bold text-[#09754b] lg:hidden dark:border-[#34eab0]/40 dark:bg-[#0e3b29] dark:text-[#3be7a3]"
               >
                 {"⛶ "}
                 {t("fullscreenPreview")}
@@ -2375,48 +2465,44 @@ export function CvStepBuilder({
                   onClick={() =>
                     setCurrentStep((prev) => Math.min(6, prev + 1))
                   }
-                  className="bg-brand text-brand-foreground rounded-xl px-6 py-2.5 text-xs font-bold shadow hover:opacity-95"
+                  className={`${styles.ctaBtn} h-10 cursor-pointer px-5 text-xs`}
                 >
-                  {t("next")}
+                  <span>{tStudio("nextStepBtn")}</span>
+                  <span>→</span>
                 </button>
               ) : (
                 <button
                   type="button"
                   disabled={saving}
                   onClick={onSave}
-                  className="bg-brand text-brand-foreground rounded-xl px-7 py-2.5 text-xs font-black shadow hover:opacity-95 disabled:opacity-60"
+                  className={`${styles.ctaBtn} h-10 cursor-pointer px-6 text-xs disabled:opacity-60`}
                 >
-                  {saving ? tCv("save") : t("finish")}
+                  {saving ? tStudio("savingBtn") : tStudio("finishSaveBtn")}
                 </button>
               )}
             </div>
           </div>
         </div>
 
-        {/* Right Column: Live A4 Document Paper Preview (5 cols on desktop) */}
+        {/* Right Column: Sticky Live CV Preview Panel (5 cols on desktop) */}
         <div className="hidden lg:col-span-5 lg:block">
-          <div className="border-border bg-muted/20 sticky top-20 rounded-3xl border p-4 shadow-sm">
-            <div className="mb-3 flex items-center justify-between gap-2 px-1">
-              <div className="flex items-center gap-2">
-                <span className="text-muted text-xs font-bold tracking-wider uppercase">
-                  {t("livePreview")}
-                </span>
-                <span className="bg-brand/10 text-brand rounded-full px-2 py-0.5 text-[10px] font-bold">
-                  {CV_TEMPLATE_NAMES[activeTemplateId] || draft.templateId}
-                </span>
-              </div>
+          <div className={`${styles.panel} sticky top-20 space-y-3.5 p-4 sm:p-5`}>
+            <div className="flex items-center justify-between gap-2">
+              <h2 className="text-[16px] font-extrabold text-[#0d241b] dark:text-[#effaf4]">
+                {tStudio("previewHeading")}
+              </h2>
 
               {/* Zoom & Fullscreen Controls */}
               <div className="flex items-center gap-1">
-                {[0.5, 0.6, 0.75].map((scale) => (
+                {[0.5, 0.58, 0.72].map((scale) => (
                   <button
                     key={scale}
                     type="button"
                     onClick={() => setZoomScale(scale)}
-                    className={`rounded-lg px-2 py-1 text-[10px] font-bold transition-colors ${
+                    className={`cursor-pointer rounded-lg px-2 py-1 text-[10px] font-bold transition-colors ${
                       zoomScale === scale
-                        ? "bg-brand text-brand-foreground"
-                        : "bg-surface border-border text-muted hover:text-foreground border"
+                        ? "bg-[#0c8a58] text-white dark:bg-[#27eba0] dark:text-[#032216]"
+                        : "border border-[#cde6da] bg-[#f8fcfa] text-[#557568] hover:text-[#0d241b] dark:border-[#1d5e43] dark:bg-[#072016] dark:text-[#8bb5a3]"
                     }`}
                   >
                     {Math.round(scale * 100)}%
@@ -2426,23 +2512,59 @@ export function CvStepBuilder({
                   type="button"
                   onClick={() => setFullscreenOpen(true)}
                   title={t("fullscreenPreview")}
-                  className="bg-surface border-border text-foreground hover:bg-muted/40 rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-colors"
+                  className="cursor-pointer rounded-lg border border-[#cde6da] bg-[#f8fcfa] px-2.5 py-1 text-[11px] font-bold text-[#143025] transition hover:border-[#0e935f] dark:border-[#1d5e43] dark:bg-[#072016] dark:text-[#e4f8ee]"
                 >
                   {"⛶"}
                 </button>
               </div>
             </div>
 
-            {/* A4 Paper Scaled Wrapper (Centered, non-clipped) */}
+            {/* Quick Template Dropdown Selector (15 templates + Obyektivka) */}
+            <div className="relative flex items-center">
+              <svg
+                aria-hidden
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="pointer-events-none absolute left-3 text-[#0c8a58] dark:text-[#34eab0]"
+              >
+                <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+                <path d="M14 2v4a2 2 0 0 0 2 2h4" />
+              </svg>
+              <select
+                aria-label={tStudio("steps.template")}
+                value={activeTemplateId}
+                onChange={(e) => {
+                  const nextId = e.target.value as CvTemplateId;
+                  onChange({ ...draft, templateId: nextId });
+                  setSelectedCategory(getCategoryForTemplate(nextId));
+                }}
+                className="h-10 w-full cursor-pointer rounded-xl border border-[#cde6da] bg-[#f8fcfa] pr-3 pl-9 text-xs font-extrabold text-[#0d241b] outline-none transition focus:border-[#0e935f] dark:border-[#1d5e43] dark:bg-[#072016] dark:text-[#effaf4] dark:focus:border-[#34eab0]"
+              >
+                {Object.entries(CV_TEMPLATE_NAMES).map(([id, name]) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* A4 Paper Scaled Wrapper (Crisp White Paper in Light & Dark) */}
             <CvPaymentShield
               isPaid={Boolean(isPaid)}
               onUnlockClick={savedAt ? onOpenPayment : undefined}
             >
-              <div className="border-border bg-surface relative w-full overflow-hidden rounded-2xl border shadow-md">
+              <div className="relative w-full overflow-hidden rounded-2xl border border-[#d6eae0] bg-white shadow-sm dark:border-[#1c5940]">
                 <div
                   className="flex justify-center transition-transform duration-200"
                   style={{
-                    height: `${1123 * zoomScale + 32}px`,
+                    height: `${Math.min(540, 1123 * zoomScale + 24)}px`,
+                    overflowY: "auto",
                   }}
                 >
                   <div
@@ -2467,6 +2589,61 @@ export function CvStepBuilder({
                 </div>
               </div>
             </CvPaymentShield>
+
+            {/* Bottom PDF Download CTA Button */}
+            {savedAt && isPaid ? (
+              <a
+                href={
+                  cvId
+                    ? `/api/cv/me/pdf?cvId=${encodeURIComponent(cvId)}`
+                    : "/api/cv/me/pdf"
+                }
+                target="_blank"
+                rel="noreferrer"
+                className={`${styles.pdfBtn} h-11 w-full text-xs sm:text-sm`}
+              >
+                <svg
+                  aria-hidden
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+                <span>{tStudio("downloadPdfBtn")}</span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={savedAt && onOpenPayment ? onOpenPayment : onSave}
+                disabled={saving}
+                className={`${styles.pdfBtn} h-11 w-full cursor-pointer text-xs sm:text-sm disabled:opacity-60`}
+              >
+                <svg
+                  aria-hidden
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.1"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" x2="12" y1="15" y2="3" />
+                </svg>
+                <span>{tStudio("downloadPdfBtn")}</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

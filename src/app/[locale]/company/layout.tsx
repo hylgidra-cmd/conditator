@@ -16,7 +16,16 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <ClientMessages
-      namespaces={["Company", "Vacancies", "Matches", "Candidate", "StudentCv"]}
+      namespaces={[
+        "Company",
+        "Vacancies",
+        "Matches",
+        "Candidate",
+        "StudentCv",
+        "Payment",
+        "CompanyTalentExplorer",
+        "VacancyPostStudio",
+      ]}
     >
       {children}
     </ClientMessages>

@@ -644,8 +644,44 @@ async function seedPersonalityAndProfessions() {
     data: suggestionRows,
     skipDuplicates: true,
   });
+
+  // Backend TZ 3: 125 kasb x 6 ko'nikma shabloni (idempotent: admin tahrirlarini ustiga yozmaydi)
+  const skillTemplates = JSON.parse(
+    readFileSync(join(__dirname, "profession-skill-templates.json"), "utf8"),
+  ) as Array<{
+    professionId: string;
+    position: number;
+    nameUz: string;
+    nameKk: string;
+    nameRu: string;
+    nameEn: string;
+    descriptionUz: string;
+    descriptionKk: string;
+    descriptionRu: string;
+    descriptionEn: string;
+    synonyms: string[];
+  }>;
+  if (skillTemplates.length > 0) {
+    await db.professionSkillTemplate.createMany({
+      data: skillTemplates.map((item) => ({
+        professionId: item.professionId,
+        position: item.position,
+        nameUz: item.nameUz,
+        nameKk: item.nameKk,
+        nameRu: item.nameRu,
+        nameEn: item.nameEn,
+        descriptionUz: item.descriptionUz,
+        descriptionKk: item.descriptionKk,
+        descriptionRu: item.descriptionRu,
+        descriptionEn: item.descriptionEn,
+        synonyms: item.synonyms,
+        isActive: true,
+      })),
+      skipDuplicates: true,
+    });
+  }
   console.log(
-    `Shaxsiyat banki (${statementRows.length} gap + ${choiceRows.length} tanlov), 16 tip va ${suggestionRows.length} kasb tavsiyasi tayyor.`,
+    `Shaxsiyat banki (${statementRows.length} gap + ${choiceRows.length} tanlov), 16 tip, ${suggestionRows.length} kasb tavsiyasi va ${skillTemplates.length} ta ko'nikma shabloni tayyor.`,
   );
 }
 

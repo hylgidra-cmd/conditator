@@ -163,8 +163,9 @@ model User {
   personalityAttempts PersonalityAttempt[]
   professionLinks    UserProfession[]
   readinessProfiles  ReadinessProfile[]
-  userLanguages      UserLanguage[]
-  savedVacancies     SavedVacancy[]
+  userLanguages          UserLanguage[]
+  savedVacancies         SavedVacancy[]
+  updatedSkillTemplates  ProfessionSkillTemplate[] @relation("SkillTemplateUpdatedBy")
 
   @@index([role, status])
 }
@@ -236,6 +237,7 @@ model Cv {
   likes        CandidateLike[]
   stages       CandidateStage[]
   payments     Payment[]
+  skillMatches CvSkillMatch[]
 
   @@index([userId])
   @@index([userId, updatedAt])
@@ -391,8 +393,52 @@ model Profession {
   readiness       ReadinessProfile[]
   vacancies       Vacancy[]
   typeSuggestion  ProfessionTypeSuggestion?
+  skillTemplates  ProfessionSkillTemplate[]
+  cvSkillMatches  CvSkillMatch[]
 
   @@index([parentId, isActive, sort])
+}
+
+model ProfessionSkillTemplate {
+  id            String   @id @default(cuid())
+  professionId  String
+  position      Int /// 1..6
+  nameUz        String
+  nameKk        String
+  nameRu        String
+  nameEn        String
+  descriptionUz String
+  descriptionKk String
+  descriptionRu String
+  descriptionEn String
+  synonyms      String[] @default([])
+  isActive      Boolean  @default(true)
+  updatedById   String?
+  updatedAt     DateTime @updatedAt
+  createdAt     DateTime @default(now())
+
+  profession Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+  updatedBy  User?      @relation("SkillTemplateUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@unique([professionId, position])
+  @@index([professionId, isActive, position])
+}
+
+model CvSkillMatch {
+  id              String   @id @default(cuid())
+  cvId            String
+  professionId    String
+  matchedCount    Int      @default(0) /// 0..6
+  matchedSkillIds String[] @default([])
+  missingSkillIds String[] @default([])
+  recalculatedAt  DateTime @default(now())
+
+  cv         Cv         @relation(fields: [cvId], references: [id], onDelete: Cascade)
+  profession Profession @relation(fields: [professionId], references: [id], onDelete: Cascade)
+
+  @@unique([cvId, professionId])
+  @@index([professionId, matchedCount])
+  @@index([cvId, matchedCount])
 }
 
 model ProfessionTypeSuggestion {
@@ -800,6 +846,8 @@ enum AdminAction {
   PERSONALITY_SETTING_EDIT
   PROFESSION_EDIT
   USER_PROFESSION_EDIT
+  SKILL_TEMPLATE_EDIT
+  SKILL_TEMPLATE_IMPORT
 }
 
 /// Admin harakatlari jurnali. Admin o'chirilsa ham yozuv qoladi (adminId bo'shatiladi).

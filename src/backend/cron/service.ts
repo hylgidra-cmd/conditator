@@ -1,6 +1,7 @@
 import { Prisma, VacancyStatus } from "@prisma/client";
 import { refreshCompanyStatsSnapshot } from "@/backend/company/stats";
 import { db } from "@/backend/db";
+import { recalculateAllCvSkillMatches } from "@/backend/skill-templates/service";
 
 /**
  * Kunlik baza texnik xizmati va 15 kunlik vakansiya qoidasi:
@@ -63,10 +64,16 @@ export async function runFifteenDaysCron() {
     `),
   ]);
 
-  // 3. Kompaniya statistika snapshotini kechasi yangilash
+  // 3. Kompaniya statistika snapshotini va CV ko'nikma mosliklarini kechasi yangilash
   await refreshCompanyStatsSnapshot().catch((err) => {
     console.error("Stats snapshot refresh error:", err);
   });
+  const recalculatedCvSkillMatches = await recalculateAllCvSkillMatches().catch(
+    (err) => {
+      console.error("CV skill match recalculation error:", err);
+      return 0;
+    },
+  );
 
   return {
     closedVacanciesCount: closedVacancies.count,
@@ -76,6 +83,7 @@ export async function runFifteenDaysCron() {
     deletedNotificationsCount: deletedNotifications.count,
     deletedAiLogsCount: deletedAiLogs.count,
     prunedPaymentReceiptsCount: Number(prunedPaymentReceipts),
+    recalculatedCvSkillMatches,
     timestamp: now.toISOString(),
   };
 }

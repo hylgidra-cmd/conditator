@@ -182,6 +182,12 @@ export function MatchPanel({
                         {"Xarakteri mos"}
                       </span>
                     ) : null}
+                    {item.skillMatchCount !== null &&
+                    item.skillMatchCount !== undefined ? (
+                      <span className="bg-primary-soft text-primary-text rounded-full px-2.5 py-0.5 text-xs font-extrabold">
+                        {`Ko'nikmalar: ${item.skillMatchCount} / 6`}
+                      </span>
+                    ) : null}
                   </div>
                   <div className="flex flex-wrap items-center gap-2">
                     {item.personality?.personalityMatchPct !== null &&

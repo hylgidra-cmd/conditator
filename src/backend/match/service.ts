@@ -44,6 +44,7 @@ export type MatchItem = {
   matchedTerms: string[] | null;
   skills: string[];
   location: string | null;
+  skillMatchCount?: number | null;
   /** Kompaniya qarori: "Tanlandi" / "Mos emas". */
   decision: MatchDecision;
   stage?: CandidateStageType;
@@ -159,25 +160,41 @@ async function loadState(
     candidates.map((row) => [row.id, matchHash(vacancy, row, locale)]),
   );
   const candidateIds = candidates.map((row) => row.id);
-  const [stored, likesData, stagesData, unlocked] = await Promise.all([
-    db.match.findMany({
-      where: {
-        vacancyId: vacancy.id,
-        cvId: { in: candidateIds },
-      },
-    }),
-    db.candidateLike.findMany({
-      where: { cvId: { in: candidateIds } },
-      select: { cvId: true, companyId: true },
-    }),
-    db.candidateStage.findMany({
-      where: {
-        vacancyId: vacancy.id,
-        cvId: { in: candidateIds },
-      },
-    }),
-    isVacancyUnlocked(vacancy.companyId, vacancy.id),
-  ]);
+  const [stored, likesData, stagesData, skillMatchesData, unlocked] =
+    await Promise.all([
+      db.match.findMany({
+        where: {
+          vacancyId: vacancy.id,
+          cvId: { in: candidateIds },
+        },
+      }),
+      db.candidateLike.findMany({
+        where: { cvId: { in: candidateIds } },
+        select: { cvId: true, companyId: true },
+      }),
+      db.candidateStage.findMany({
+        where: {
+          vacancyId: vacancy.id,
+          cvId: { in: candidateIds },
+        },
+      }),
+      db.cvSkillMatch.findMany({
+        where: {
+          cvId: { in: candidateIds },
+          ...(vacancy.professionId ? { professionId: vacancy.professionId } : {}),
+        },
+        orderBy: { matchedCount: "desc" },
+        select: { cvId: true, matchedCount: true },
+      }),
+      isVacancyUnlocked(vacancy.companyId, vacancy.id),
+    ]);
+
+  const skillMatchMap = new Map<string, number>();
+  for (const sm of skillMatchesData) {
+    if (!skillMatchMap.has(sm.cvId)) {
+      skillMatchMap.set(sm.cvId, sm.matchedCount);
+    }
+  }
 
   const likesMap = new Map<string, { count: number; byThisCompany: boolean }>();
   for (const like of likesData) {
@@ -204,6 +221,7 @@ async function loadState(
     decisions: new Map(stored.map((match) => [match.cvId, match.decision])),
     likesMap,
     stagesMap,
+    skillMatchMap,
     isVacancyUnlocked: unlocked,
     stale: candidates.filter((row) => !validIds.has(row.id)),
   };
@@ -238,6 +256,7 @@ function aiOutcome(state: State): MatchOutcome {
         matchedTerms: null,
         decision: match.decision,
         stage: state.stagesMap.get(match.cvId),
+        skillMatchCount: state.skillMatchMap.get(match.cvId) ?? null,
         ...displayInfo(row, isLocked),
       };
     })

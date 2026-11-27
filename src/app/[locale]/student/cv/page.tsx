@@ -1,22 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
-
-export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("Header");
-  return { title: t("myCv") };
-}
-import {
-  emptyCvData,
-  type CvDraft,
-  type CvTemplateId,
-  draftFromData,
-  type WorkTypeValue,
-  type CvPrivacyState,
-} from "@/frontend/components/cv/types";
-import { CvWorkspace } from "@/frontend/components/cv/cv-workspace";
-import { redirect } from "@/i18n/navigation";
 import { currentUser } from "@/backend/auth/current-user";
-import { activeResult } from "@/backend/personality/service";
 import { cvDataSchema } from "@/backend/cv/schema";
 import {
   getMatchingVacanciesForCv,
@@ -28,6 +12,23 @@ import type {
   CvDocumentLabels,
   CvDocumentLanguage,
 } from "@/backend/cv-document/types";
+import { activeResult } from "@/backend/personality/service";
+import styles from "@/frontend/components/cv/cv-studio.module.css";
+import { CvWorkspace } from "@/frontend/components/cv/cv-workspace";
+import {
+  type CvDraft,
+  type CvPrivacyState,
+  type CvTemplateId,
+  draftFromData,
+  emptyCvData,
+  type WorkTypeValue,
+} from "@/frontend/components/cv/types";
+import { redirect } from "@/i18n/navigation";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Header");
+  return { title: t("myCv") };
+}
 
 export default async function StudentCvPage({
   searchParams,
@@ -44,7 +45,7 @@ export default async function StudentCvPage({
   const { cvId, new: newParam, payment } = await searchParams;
   const isNew = newParam === "1";
 
-  const t = await getTranslations("StudentCv");
+  const tStudio = await getTranslations("CvStudio");
   const [cv, rawCvs] = await Promise.all([
     isNew ? Promise.resolve(null) : getOwnCv(user.id, cvId),
     getOwnCvs(user.id),
@@ -97,26 +98,40 @@ export default async function StudentCvPage({
   }));
 
   return (
-    <div className="mx-auto w-full max-w-[1680px] space-y-6 px-3 py-6 sm:px-6 lg:px-8">
-      <div>
-        <h1 className="text-2xl font-bold">{t("title")}</h1>
-        {!cv ? <p className="text-muted mt-1 text-sm">{t("empty")}</p> : null}
+    <div className={`${styles.stage} font-ui`}>
+      <div className="mx-auto w-full max-w-[1440px] space-y-5 px-4 pt-5 pb-16 sm:px-6 lg:px-10 lg:pt-6">
+        {/* ================= STUDIO HERO BANNER (3D CV GLASS + PEN) ================= */}
+        <section className={styles.heroWrap}>
+          <div aria-hidden className={styles.heroArtwork} />
+          <div aria-hidden className={styles.heroScrim} />
+          <div className="relative z-10 flex min-h-[152px] flex-col justify-center px-6 py-6 sm:min-h-[178px] sm:px-10 lg:min-h-[196px] lg:px-12">
+            <div className="max-w-xl">
+              <h1 className="text-[28px] leading-[1.14] font-extrabold tracking-tight text-[#0b2017] sm:text-[36px] lg:text-[40px] dark:text-[#f4fbf8]">
+                {tStudio("heroTitle")}
+              </h1>
+              <p className="mt-2 text-sm font-medium text-[#47675a] sm:text-base dark:text-[#9ec5b4]">
+                {tStudio("heroSubtitle")}
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <CvWorkspace
+          key={isNew ? "new-cv" : (cv?.id ?? "default-cv")}
+          initialDraft={draft}
+          initialMeta={{
+            id: cv?.id,
+            savedAt: cv?.savedAt?.toISOString() ?? null,
+            isVisible: cv?.isVisible ?? false,
+            isPaid: cv?.isPaid ?? false,
+          }}
+          labelsMap={allLabels}
+          allCvs={allCvs}
+          matchingVacancies={matchingVacancies}
+          isNewCv={isNew}
+          paymentSuccess={payment === "success"}
+        />
       </div>
-      <CvWorkspace
-        key={isNew ? "new-cv" : (cv?.id ?? "default-cv")}
-        initialDraft={draft}
-        initialMeta={{
-          id: cv?.id,
-          savedAt: cv?.savedAt?.toISOString() ?? null,
-          isVisible: cv?.isVisible ?? false,
-          isPaid: cv?.isPaid ?? false,
-        }}
-        labelsMap={allLabels}
-        allCvs={allCvs}
-        matchingVacancies={matchingVacancies}
-        isNewCv={isNew}
-        paymentSuccess={payment === "success"}
-      />
     </div>
   );
 }

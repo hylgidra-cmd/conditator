@@ -166,6 +166,52 @@ export function CompanyStatsView({
   const [experienceBand, setExperienceBand] = useState("");
   const [personalityGroup, setPersonalityGroup] = useState("");
   const [loading, setLoading] = useState(false);
+  const [expandedProfId, setExpandedProfId] = useState<string | null>(null);
+  const [profSkillsMap, setProfSkillsMap] = useState<
+    Record<
+      string,
+      Array<{
+        id: string;
+        position: number;
+        name: string;
+        matchedCount: number | null;
+        belowThreshold: boolean;
+        totalCandidates: number | null;
+        totalBelowThreshold: boolean;
+      }>
+    >
+  >({});
+  const [loadingProfSkillsId, setLoadingProfSkillsId] = useState<string | null>(
+    null,
+  );
+
+  async function toggleExpandProfession(professionId: string) {
+    if (expandedProfId === professionId) {
+      setExpandedProfId(null);
+      return;
+    }
+    setExpandedProfId(professionId);
+    if (profSkillsMap[professionId]) return;
+    setLoadingProfSkillsId(professionId);
+    try {
+      const res = await fetch(
+        `/api/company/statistics/professions/${encodeURIComponent(professionId)}/skills?locale=${locale}`,
+      );
+      if (res.ok) {
+        const json = (await res.json()) as {
+          skills?: (typeof profSkillsMap)[string];
+        };
+        if (json.skills) {
+          setProfSkillsMap((prev) => ({
+            ...prev,
+            [professionId]: json.skills ?? [],
+          }));
+        }
+      }
+    } finally {
+      setLoadingProfSkillsId(null);
+    }
+  }
 
   const buildQuery = useCallback(() => {
     const p = new URLSearchParams();
@@ -327,23 +373,71 @@ export function CompanyStatsView({
             <p className="text-subtle text-sm">{t.empty}</p>
           ) : (
             <div className="max-h-96 space-y-2 overflow-y-auto pr-1">
-              {data.professions.map((row) => (
-                <Link
-                  key={row.professionId}
-                  href={studentsHref({ professionId: row.professionId })}
-                  className="border-line hover:border-primary/50 bg-canvas/50 flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 transition-colors"
-                >
-                  <div>
-                    <p className="text-text text-sm font-bold">
-                      {row.professionName}
-                    </p>
-                    <p className="text-subtle text-xs">{row.areaName}</p>
+              {data.professions.map((row) => {
+                const isOpen = expandedProfId === row.professionId;
+                const skills = profSkillsMap[row.professionId] ?? [];
+                return (
+                  <div
+                    key={row.professionId}
+                    className="border-line bg-canvas/50 rounded-xl border transition-colors"
+                  >
+                    <div className="flex items-center justify-between gap-3 px-3.5 py-2.5">
+                      <button
+                        type="button"
+                        onClick={() => toggleExpandProfession(row.professionId)}
+                        className="flex flex-1 cursor-pointer items-center justify-between gap-2 text-left"
+                      >
+                        <div>
+                          <p className="text-text text-sm font-bold">
+                            {row.professionName}
+                          </p>
+                          <p className="text-subtle text-xs">{row.areaName}</p>
+                        </div>
+                        <span className="text-subtle text-xs font-bold">
+                          {isOpen ? "▴" : "▾"}
+                        </span>
+                      </button>
+                      <Link
+                        href={studentsHref({ professionId: row.professionId })}
+                        className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary shrink-0 rounded-full px-3 py-1 text-xs font-extrabold transition-colors"
+                      >
+                        {formatCount(row)}
+                      </Link>
+                    </div>
+
+                    {isOpen ? (
+                      <div className="border-line/70 border-t px-3.5 py-2.5">
+                        {loadingProfSkillsId === row.professionId ? (
+                          <p className="text-subtle text-xs">{t.loading}</p>
+                        ) : skills.length === 0 ? (
+                          <p className="text-subtle text-xs">{t.empty}</p>
+                        ) : (
+                          <ul className="space-y-1.5">
+                            {skills.map((sk) => (
+                              <li
+                                key={sk.id}
+                                className="flex items-center justify-between gap-2 text-xs"
+                              >
+                                <span className="text-text font-semibold">
+                                  {sk.position}. {sk.name}
+                                </span>
+                                <span className="text-primary-text shrink-0 font-extrabold">
+                                  {sk.belowThreshold
+                                    ? t.lessThanFive
+                                    : sk.totalBelowThreshold ||
+                                        sk.totalCandidates === null
+                                      ? String(sk.matchedCount)
+                                      : `${sk.matchedCount} / ${sk.totalCandidates}`}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ) : null}
                   </div>
-                  <span className="bg-primary-soft text-primary-text shrink-0 rounded-full px-3 py-1 text-xs font-extrabold">
-                    {formatCount(row)}
-                  </span>
-                </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

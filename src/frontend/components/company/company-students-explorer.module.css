@@ -1,0 +1,329 @@
+.stage {
+  position: relative;
+  min-height: calc(100dvh - 74px);
+  width: 100%;
+  background: linear-gradient(180deg, #f4fbf7 0%, #eef7f3 50%, #f3f9f6 100%);
+  color: #0d2119;
+  isolation: isolate;
+}
+
+:global([data-theme="dark"]) .stage {
+  background: linear-gradient(180deg, #020c08 0%, #04140e 48%, #03100b 100%);
+  color: #effaf4;
+}
+
+/* ================= HERO BANNER ================= */
+.heroWrap {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(14, 130, 88, 0.12);
+  background:
+    radial-gradient(
+      62% 95% at 8% 100%,
+      rgba(110, 231, 183, 0.32) 0%,
+      rgba(110, 231, 183, 0) 72%
+    ),
+    linear-gradient(105deg, #ebf8f2 0%, #f0faf5 48%, #e6f6ee 100%);
+  box-shadow: 0 16px 38px -18px rgba(7, 58, 39, 0.1);
+}
+
+:global([data-theme="dark"]) .heroWrap {
+  border: 1px solid rgba(45, 212, 150, 0.22);
+  background:
+    radial-gradient(
+      58% 95% at 10% 100%,
+      rgba(16, 185, 129, 0.18) 0%,
+      rgba(16, 185, 129, 0) 72%
+    ),
+    linear-gradient(105deg, #020e09 0%, #03140d 48%, #041911 100%);
+  box-shadow:
+    0 22px 50px -18px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(110, 231, 183, 0.12);
+}
+
+.heroArtwork {
+  position: absolute;
+  top: -6%;
+  right: 0;
+  height: 112%;
+  width: auto;
+  aspect-ratio: 1408 / 768;
+  pointer-events: none;
+  background-image: url("/company/talent-hero-light.webp");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 100% 100%;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.36) 18%,
+    rgba(0, 0, 0, 0.84) 34%,
+    #000000 46%,
+    #000000 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.36) 18%,
+    rgba(0, 0, 0, 0.84) 34%,
+    #000000 46%,
+    #000000 100%
+  );
+  animation: heroFloat 7s ease-in-out infinite;
+}
+
+:global([data-theme="dark"]) .heroArtwork {
+  background-image: url("/company/talent-hero-dark.webp");
+}
+
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(238, 249, 244, 0.94) 0%,
+    rgba(238, 249, 244, 0.78) 40%,
+    rgba(238, 249, 244, 0.05) 60%,
+    rgba(238, 249, 244, 0) 100%
+  );
+}
+
+:global([data-theme="dark"]) .heroScrim {
+  background: linear-gradient(
+    90deg,
+    rgba(2, 14, 9, 0.94) 0%,
+    rgba(3, 18, 12, 0.78) 40%,
+    rgba(3, 18, 12, 0.06) 60%,
+    rgba(3, 18, 12, 0) 100%
+  );
+}
+
+@media (max-width: 767px) {
+  .heroArtwork {
+    top: 0;
+    right: -26px;
+    height: 100%;
+    width: auto;
+    opacity: 0.44;
+  }
+
+  .heroScrim {
+    background: linear-gradient(
+      90deg,
+      rgba(238, 249, 244, 0.96) 0%,
+      rgba(238, 249, 244, 0.86) 58%,
+      rgba(238, 249, 244, 0.35) 100%
+    );
+  }
+
+  :global([data-theme="dark"]) .heroScrim {
+    background: linear-gradient(
+      90deg,
+      rgba(2, 14, 9, 0.95) 0%,
+      rgba(3, 18, 12, 0.86) 58%,
+      rgba(3, 18, 12, 0.38) 100%
+    );
+  }
+}
+
+/* ================= SEARCH DOCK & CTA ================= */
+.searchDock {
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(13, 120, 82, 0.11);
+  box-shadow: 0 10px 28px -14px rgba(8, 56, 38, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+:global([data-theme="dark"]) .searchDock {
+  background: rgba(5, 23, 16, 0.9);
+  border: 1px solid rgba(45, 212, 150, 0.22);
+  box-shadow:
+    0 18px 40px -16px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(110, 231, 183, 0.09);
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #0d8556 0%, #076842 100%);
+  color: #ffffff;
+  font-weight: 800;
+  border: 1px solid rgba(6, 95, 62, 0.45);
+  box-shadow: 0 8px 18px -6px rgba(8, 118, 76, 0.36);
+  transition:
+    filter 180ms ease,
+    transform 150ms ease,
+    box-shadow 180ms ease;
+}
+
+.ctaBtn:hover {
+  filter: brightness(1.07);
+}
+
+.ctaBtn:active {
+  transform: scale(0.985);
+}
+
+:global([data-theme="dark"]) .ctaBtn {
+  background: linear-gradient(180deg, #27eba0 0%, #14c983 100%);
+  color: #032216;
+  border: 1px solid rgba(167, 243, 208, 0.55);
+  box-shadow: 0 8px 24px -5px rgba(34, 230, 155, 0.44);
+}
+
+/* ================= PANELS & CANDIDATE CARDS ================= */
+.panel {
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(13, 120, 82, 0.09);
+  box-shadow:
+    0 10px 26px -14px rgba(8, 56, 38, 0.07),
+    0 2px 5px rgba(8, 56, 38, 0.02);
+}
+
+:global([data-theme="dark"]) .panel {
+  background: linear-gradient(
+    165deg,
+    rgba(7, 27, 19, 0.92) 0%,
+    rgba(4, 17, 12, 0.96) 100%
+  );
+  border: 1px solid rgba(45, 212, 150, 0.2);
+  box-shadow:
+    0 18px 40px -16px rgba(0, 0, 0, 0.75),
+    inset 0 1px 0 rgba(110, 231, 183, 0.09);
+}
+
+.candidateCard {
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(13, 120, 82, 0.1);
+  box-shadow: 0 4px 14px -8px rgba(8, 56, 38, 0.07);
+  transition:
+    border-color 170ms ease,
+    background-color 170ms ease,
+    transform 170ms ease,
+    box-shadow 170ms ease;
+}
+
+.candidateCard:hover {
+  transform: translateY(-1px);
+  border-color: rgba(14, 147, 95, 0.35);
+}
+
+:global([data-theme="dark"]) .candidateCard {
+  background: rgba(8, 31, 22, 0.78);
+  border: 1px solid rgba(45, 212, 150, 0.15);
+  box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.65);
+}
+
+:global([data-theme="dark"]) .candidateCard:hover {
+  border-color: rgba(52, 234, 176, 0.4);
+  background: rgba(11, 41, 29, 0.88);
+}
+
+.candidateCardActive {
+  background: linear-gradient(135deg, #e5f8ee 0%, #eefaf4 100%) !important;
+  border-color: #129b65 !important;
+  box-shadow:
+    0 0 0 1px rgba(18, 155, 101, 0.25),
+    0 10px 22px -10px rgba(8, 108, 69, 0.18);
+}
+
+:global([data-theme="dark"]) .candidateCardActive {
+  background: linear-gradient(
+    135deg,
+    rgba(16, 76, 52, 0.78) 0%,
+    rgba(8, 39, 27, 0.92) 100%
+  ) !important;
+  border-color: #34eab0 !important;
+  box-shadow:
+    0 0 0 1px rgba(52, 234, 176, 0.35),
+    0 14px 28px -10px rgba(0, 0, 0, 0.78);
+}
+
+/* ================= FOLDED-CORNER DOG-EAR CV SHEET ================= */
+.cvSheetOuter {
+  position: relative;
+  filter: drop-shadow(0 12px 24px rgba(8, 56, 38, 0.06));
+}
+
+:global([data-theme="dark"]) .cvSheetOuter {
+  filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.65));
+}
+
+.cvSheet {
+  position: relative;
+  border-radius: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(13, 120, 82, 0.14);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 36px) 0,
+    100% 36px,
+    100% 100%,
+    0 100%
+  );
+}
+
+:global([data-theme="dark"]) .cvSheet {
+  background: linear-gradient(
+    165deg,
+    rgba(11, 46, 33, 0.86) 0%,
+    rgba(6, 26, 19, 0.95) 100%
+  );
+  border: 1px solid rgba(52, 234, 176, 0.3);
+}
+
+.cvDogEar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 37px;
+  height: 37px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.skillChip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  padding: 2px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #e3f6ec;
+  color: #09754b;
+  border: 1px solid rgba(14, 147, 95, 0.16);
+}
+
+:global([data-theme="dark"]) .skillChip {
+  background: rgba(16, 74, 51, 0.75);
+  color: #4ef0b2;
+  border: 1px solid rgba(52, 234, 176, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroArtwork {
+    animation: none;
+  }
+  .candidateCard:hover {
+    transform: none;
+  }
+}

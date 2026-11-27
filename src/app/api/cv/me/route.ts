@@ -10,6 +10,7 @@ import {
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 import { rebuildReadiness } from "@/backend/readiness/service";
+import { recalculateCvSkillMatchesForCv } from "@/backend/skill-templates/service";
 
 /** Talabaning o'z CV si. Boshqa talabaning CV siga yo'l yo'q: faqat sessiyadagi foydalanuvchi. */
 export const GET = route(async (request) => {
@@ -23,6 +24,7 @@ export const PUT = route(async (request) => {
   const input = await parseJson(request, cvSaveSchema, 700_000);
   const cv = await saveOwnCv(user.id, input);
   await rebuildReadiness(user.id);
+  await recalculateCvSkillMatchesForCv(cv.id).catch(() => undefined);
   return NextResponse.json({ cv });
 });
 

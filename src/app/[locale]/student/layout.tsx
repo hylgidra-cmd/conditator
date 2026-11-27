@@ -14,5 +14,9 @@ export default async function Layout({ children }: { children: ReactNode }) {
     return redirect({ href: "/account", locale });
   }
 
-  return <ClientMessages namespaces={["StudentCv"]}>{children}</ClientMessages>;
+  return (
+    <ClientMessages namespaces={["StudentCv", "CvStudio"]}>
+      {children}
+    </ClientMessages>
+  );
 }

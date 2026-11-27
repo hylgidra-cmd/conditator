@@ -31,9 +31,9 @@ export function NavLinks({
             href={item.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "font-ui relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] whitespace-nowrap transition-colors duration-200",
+              "font-ui relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] whitespace-nowrap transition-all duration-200",
               active
-                ? "text-[#0b8757] font-extrabold after:pointer-events-none after:absolute after:right-2.5 after:-bottom-[18px] after:left-2.5 after:h-[2.5px] after:rounded-full after:bg-[#0e935f] dark:text-[#34eab0] dark:after:bg-[#34eab0]"
+                ? "border border-[#0e935f]/22 bg-[#e4f7ee] font-extrabold text-[#0a7c50] shadow-[0_2px_8px_rgba(14,147,95,0.08)] dark:border-[#34eab0]/38 dark:bg-[#0b3323] dark:text-[#34eab0]"
                 : "text-text/80 hover:text-primary-text font-semibold",
               FOCUS_RING,
             )}

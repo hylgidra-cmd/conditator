@@ -1,66 +1,119 @@
-import type { Metadata } from "next";
 import type { Prisma } from "@prisma/client";
-import { getLocale, getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { requireCompanyPage } from "@/backend/company/page";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { evaluateCvQuality } from "@/backend/cv/quality";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
-import { personalityGroup } from "@/backend/personality/score";
-import { formatDate } from "@/backend/format-date";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
-import { CompanySubscribeButton } from "@/frontend/components/company/company-subscription-plans";
-import { StudentsSubscriptionBar } from "@/frontend/components/company/students-subscription-bar";
-import { Reveal } from "@/frontend/components/ds/motion";
+import { personalityGroup as getPersonalityGroup } from "@/backend/personality/score";
 import {
-  PlusIcon,
-  SearchIcon,
-  SparkIcon,
-  UsersIcon,
-} from "@/frontend/components/icons";
+  type CandidateExplorerItem,
+  CompanyStudentsExplorer,
+  type DirectionKey,
+} from "@/frontend/components/company/company-students-explorer";
 import { Link } from "@/i18n/navigation";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const t = await getTranslations("CompanyStudents");
-  return { title: t("title") };
+  const t = await getTranslations("CompanyTalentExplorer");
+  return { title: t("heroTitle") };
 }
 
-const REVEAL_DELAYS = [0, 75, 150, 225] as const;
-const readinessLabels = {
-  jobs: "Barcha kasblar",
-  groups: "Barcha guruhlar",
-  languages: "Barcha til darajalari",
-  experience: "Barcha tajriba",
-  filter: "Filtrlash",
-  languageBands: [
-    ["NATIVE_ONLY", "0"],
-    ["ONE", "1"],
-    ["TWO_PLUS", "2+"],
-  ] as const,
-  experienceBands: [
-    ["NONE", "0"],
-    ["UNDER_1", "<1"],
-    ["ONE_TO_THREE", "1–3"],
-    ["OVER_3", "3+"],
-  ] as const,
-};
-const personalitySummary = (item: {
-  typeCode: string;
-  identity: string;
-  mindPct: number;
-  energyPct: number;
-  naturePct: number;
-  tacticsPct: number;
-  identityPct: number;
-}) =>
-  `${personalityGroup(item.typeCode)} · ${item.typeCode}-${item.identity} · M ${item.mindPct}% · E ${item.energyPct}% · N ${item.naturePct}% · T ${item.tacticsPct}% · I ${item.identityPct}%`;
+function normalizeRegion(raw: string | null | undefined): string {
+  if (!raw) return "";
+  const lower = raw.toLowerCase();
+  if (lower.includes("toshkent") || lower.includes("tashkent"))
+    return "Toshkent";
+  if (lower.includes("samarqand") || lower.includes("samarkand"))
+    return "Samarqand";
+  if (lower.includes("buxoro") || lower.includes("bukhara")) return "Buxoro";
+  if (lower.includes("andijon") || lower.includes("andijan")) return "Andijon";
+  if (lower.includes("nukus") || lower.includes("no'kis") || lower.includes("nukis") || lower.includes("qoraqalpoq"))
+    return "Nukus";
+  if (lower.includes("farg")) return "Farg'ona";
+  if (lower.includes("namangan")) return "Namangan";
+  if (lower.includes("xorazm") || lower.includes("urganch")) return "Xorazm";
+  if (lower.includes("qashqadaryo") || lower.includes("qarshi"))
+    return "Qashqadaryo";
+  if (lower.includes("navoiy")) return "Navoiy";
+  return raw.split(",")[0]?.trim() || "";
+}
+
+function detectDirections(haystack: string): DirectionKey[] {
+  const h = haystack.toLowerCase();
+  const dirs: DirectionKey[] = [];
+
+  if (
+    /(frontend|backend|fullstack|dasturchi|developer|software|react|node|javascript|typescript|python|java|php|golang|html|css|mobile|flutter|ios|android|qa|devops)/.test(
+      h,
+    )
+  ) {
+    dirs.push("dev");
+  }
+  if (/(dizayn|design|figma|ui\/ux|ux|grafik|illustrator|photoshop|3d)/.test(h)) {
+    dirs.push("design");
+  }
+  if (/(product|mahsulot|project manager|agile|scrum|jira|pm|ba)/.test(h)) {
+    dirs.push("product");
+  }
+  if (
+    /(data|analitik|analytics|sql|power bi|tableau|machine learning|scikit|excel|statistika|bi)/.test(
+      h,
+    )
+  ) {
+    dirs.push("data");
+  }
+  if (/(marketing|smm|target|seo|kontent|copywrit|brand|pr|sotuv|sales)/.test(h)) {
+    dirs.push("marketing");
+  }
+  if (
+    /(moliya|finance|buxgalter|accounting|audit|bank|iqtisod|hr|boshqaruv|menejer)/.test(
+      h,
+    )
+  ) {
+    dirs.push("finance");
+  }
+
+  if (dirs.length === 0) dirs.push("dev");
+  return dirs;
+}
+
+function formatCompactName(name: string): string {
+  const clean = name.trim();
+  if (!clean) return "";
+  const parts = clean.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) {
+    const first = parts[0];
+    const second = parts[1];
+    if (first && second && !first.endsWith(".") && !second.endsWith(".")) {
+      return `${first[0]?.toUpperCase()}. ${second}`;
+    }
+  }
+  return clean;
+}
+
+function extractInitials(name: string, fallbackRole: string): string {
+  const source = name.replace(/[()]/g, " ").trim() || fallbackRole.trim();
+  const parts = source
+    .split(/[\s.]+/)
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+  if (parts.length >= 2) {
+    return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
+  }
+  if (parts.length === 1 && parts[0].length >= 2) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+  return "CV";
+}
 
 export default async function CompanyStudentsPage({
   searchParams,
 }: {
   searchParams: Promise<{
     q?: string;
-    tier?: string;
+    location?: string;
     professionId?: string;
     personalityGroup?: string;
     typeCode?: string;
@@ -71,11 +124,10 @@ export default async function CompanyStudentsPage({
 }) {
   const { company } = await requireCompanyPage();
   const t = await getTranslations("Company");
-  const tStudents = await getTranslations("CompanyStudents");
-  const tWork = await getTranslations("StudentCv.workTypes");
+  const tExplorer = await getTranslations("CompanyTalentExplorer");
   const {
     q,
-    tier = "all",
+    location,
     professionId,
     personalityGroup,
     typeCode,
@@ -83,7 +135,6 @@ export default async function CompanyStudentsPage({
     languageBand,
     experienceBand,
   } = await searchParams;
-  const query = q?.trim().toLowerCase() ?? "";
   const readinessCriteria: Prisma.ReadinessProfileWhereInput = {
     ...(professionId ? { professionId } : {}),
     ...(personalityGroup ? { personalityGroup } : {}),
@@ -93,10 +144,10 @@ export default async function CompanyStudentsPage({
   };
   const hasReadinessFilter = Boolean(
     professionId ||
-    personalityGroup ||
-    typeCode ||
-    languageBand ||
-    experienceBand,
+      personalityGroup ||
+      typeCode ||
+      languageBand ||
+      experienceBand,
   );
 
   if (company.approval !== "APPROVED") {
@@ -104,7 +155,7 @@ export default async function CompanyStudentsPage({
       <div className="page-x font-ui max-w-3xl space-y-6 py-8 sm:py-12">
         <div className="border-line bg-card/85 shadow-float flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-6 backdrop-blur-xl">
           <h1 className="text-h2 text-text font-extrabold tracking-tight">
-            {tStudents("title")}
+            {tExplorer("heroTitle")}
           </h1>
           <Link
             href="/company"
@@ -120,8 +171,7 @@ export default async function CompanyStudentsPage({
     );
   }
 
-  const now = new Date();
-  const [cvs, hasActiveAbuna, professions] = await Promise.all([
+  const [cvs, hasActiveAbuna, companyVacancies] = await Promise.all([
     db.cv.findMany({
       where: {
         isVisible: true,
@@ -144,27 +194,9 @@ export default async function CompanyStudentsPage({
               }
             : {}),
         },
-        ...(query
-          ? {
-              OR: [
-                { searchText: { contains: query, mode: "insensitive" } },
-                { title: { contains: query, mode: "insensitive" } },
-                {
-                  AND: [
-                    {
-                      NOT: {
-                        privacy: { path: ["hideAddress"], equals: true },
-                      },
-                    },
-                    { location: { contains: query, mode: "insensitive" } },
-                  ],
-                },
-              ],
-            }
-          : {}),
       },
       orderBy: { savedAt: "desc" },
-      take: query ? 80 : 60,
+      take: 100,
       select: {
         id: true,
         userId: true,
@@ -176,8 +208,18 @@ export default async function CompanyStudentsPage({
         savedAt: true,
         data: true,
         privacy: true,
+        skillMatches: {
+          ...(professionId ? { where: { professionId } } : {}),
+          orderBy: { matchedCount: "desc" },
+          take: 1,
+          select: { matchedCount: true },
+        },
         user: {
           select: {
+            fullName: true,
+            city: true,
+            educationSummary: true,
+            avatarUrl: true,
             personalityResults: {
               where: { archivedAt: null, invalidatedAt: null },
               take: 1,
@@ -185,11 +227,6 @@ export default async function CompanyStudentsPage({
               select: {
                 typeCode: true,
                 identity: true,
-                mindPct: true,
-                energyPct: true,
-                naturePct: true,
-                tacticsPct: true,
-                identityPct: true,
               },
             },
           },
@@ -197,45 +234,35 @@ export default async function CompanyStudentsPage({
       },
     }),
     isCompanySubscribedOrUnlocked(company.id),
-    db.profession.findMany({
-      where: { parentId: { not: null }, isActive: true },
-      orderBy: { nameUz: "asc" },
-      select: {
-        id: true,
-        nameKk: true,
-        nameUz: true,
-        nameRu: true,
-        nameEn: true,
-      },
+    db.vacancy.findMany({
+      where: { companyId: company.id, status: "ACTIVE" },
+      orderBy: { createdAt: "desc" },
+      take: 25,
+      select: { id: true, title: true },
     }),
   ]);
-  const locale = await getLocale();
-  const profName = (p: {
-    nameKk: string;
-    nameUz: string;
-    nameRu: string;
-    nameEn: string;
-  }) =>
-    locale === "kk"
-      ? p.nameKk
-      : locale === "ru"
-        ? p.nameRu
-        : locale === "en"
-          ? p.nameEn
-          : p.nameUz;
 
   const cvIds = cvs.map((c) => c.id);
-  const companyMatches =
+  const [companyMatches, likedRows] =
     cvIds.length > 0
-      ? await db.match.findMany({
-          where: {
-            vacancy: { companyId: company.id },
-            cvId: { in: cvIds },
-          },
-          select: { cvId: true, score: true, reason: true },
-          orderBy: { score: "desc" },
-        })
-      : [];
+      ? await Promise.all([
+          db.match.findMany({
+            where: {
+              vacancy: { companyId: company.id },
+              cvId: { in: cvIds },
+            },
+            select: { cvId: true, score: true, reason: true },
+            orderBy: { score: "desc" },
+          }),
+          db.candidateLike.findMany({
+            where: {
+              companyId: company.id,
+              cvId: { in: cvIds },
+            },
+            select: { cvId: true },
+          }),
+        ])
+      : [[], []];
 
   const bestMatchByCv = new Map<string, { score: number; reason: string }>();
   for (const m of companyMatches) {
@@ -244,7 +271,10 @@ export default async function CompanyStudentsPage({
     }
   }
 
-  const evaluatedItems = cvs
+  const candidateFallback = tExplorer("candidateFallback");
+  const roleFallback = tExplorer("roleFallback");
+
+  const candidates: CandidateExplorerItem[] = cvs
     .map((cv) => {
       const parsed = cvDataSchema.safeParse(cv.data);
       const matchInfo = bestMatchByCv.get(cv.id);
@@ -255,400 +285,125 @@ export default async function CompanyStudentsPage({
             aiReason: matchInfo?.reason ?? null,
           })
         : {
-            score: 40,
+            score: 55,
             isMukammal: false,
-            tier: "BOSHLANGICH" as const,
-            aiSummary: "AI tahlili: Boshlang'ich CV",
           };
 
-      // Variant 1: Obunasiz barcha CV larning kontaktlari, F.I.Sh va PDF i qulflangan (teaser ko'rinadi).
       const isLocked = !hasActiveAbuna;
+      const privacy = parsePrivacy(cv.privacy);
       const safe = parsed.success
-        ? sanitizeCvData(parsed.data, {
-            privacy: parsePrivacy(cv.privacy),
-            isLocked,
-          })
+        ? sanitizeCvData(parsed.data, { privacy, isLocked })
         : null;
+
+      const rawFullName =
+        !isLocked && !privacy.hideName
+          ? safe?.fullName || cv.user.fullName || candidateFallback
+          : safe?.fullName || candidateFallback;
+
+      const cleanTitle =
+        cv.title && cv.title !== "Mening rezyumem"
+          ? cv.title
+          : safe?.experience[0]?.position || roleFallback;
+
+      const displayLocation = privacy.hideAddress
+        ? null
+        : safe?.location || cv.location || cv.user.city || null;
+
+      const educationList =
+        safe?.education && safe.education.length > 0
+          ? safe.education
+          : cv.user.educationSummary
+            ? [
+                {
+                  institution: cv.user.educationSummary,
+                  degree: null,
+                  field: null,
+                  startYear: null,
+                  endYear: null,
+                },
+              ]
+            : [];
+
+      const mergedSkills =
+        cv.skills.length > 0 ? cv.skills : (safe?.skills ?? []);
+
+      const langList =
+        safe?.languages && safe.languages.length > 0
+          ? safe.languages
+          : cv.languages.map((l) => ({ name: l, level: null }));
+
+      const pers = cv.user.personalityResults[0] ?? null;
+      const personalityLabel = pers
+        ? `${getPersonalityGroup(pers.typeCode)} · ${pers.typeCode}-${pers.identity}`
+        : null;
+
+      const directionHaystack = [
+        cleanTitle,
+        safe?.goal ?? "",
+        ...mergedSkills,
+        ...(safe?.projects ?? []).map((p) => `${p.name} ${p.description ?? ""}`),
+        ...(safe?.experience ?? []).map(
+          (e) => `${e.position ?? ""} ${e.organization}`,
+        ),
+      ].join(" ");
+
+      const photo =
+        !isLocked && !privacy.hidePhoto
+          ? safe?.photo || cv.user.avatarUrl || null
+          : null;
 
       return {
         id: cv.id,
-        title: cv.title,
-        fullName: safe?.fullName || cv.title || tStudents("title"),
+        fullName: rawFullName,
+        shortName: isLocked ? rawFullName : formatCompactName(rawFullName),
+        initials: extractInitials(
+          !privacy.hideName
+            ? parsed.success
+              ? parsed.data.fullName || cv.user.fullName || ""
+              : cv.user.fullName || ""
+            : "",
+          cleanTitle,
+        ),
+        photo,
+        roleTitle: cleanTitle,
         about: safe?.goal || "",
-        location:
-          safe?.location ??
-          (parsePrivacy(cv.privacy).hideAddress
-            ? "Yashirin hudud"
-            : cv.location),
-        workType: cv.workTypes[0] ?? null,
-        skills: cv.skills,
-        languages: cv.languages,
-        savedAt: cv.savedAt,
-        isLocked,
-        score: quality.score,
+        location: displayLocation,
+        regionKey: normalizeRegion(displayLocation),
+        workTypes:
+          cv.workTypes.length > 0 ? cv.workTypes : ["FULL_TIME" as const],
+        skills: mergedSkills,
+        languages: langList,
+        education: educationList,
+        experience: safe?.experience ?? [],
+        projects: safe?.projects ?? [],
+        contact: {
+          email: safe?.contact.email ?? null,
+          phone: safe?.contact.phone ?? null,
+          telegram: safe?.contact.telegram || safe?.telegram || null,
+          github: safe?.contact.github || safe?.github || null,
+        },
+        personalityLabel,
+        aiScore: quality.score,
+        skillMatchCount: cv.skillMatches[0]?.matchedCount ?? null,
         isMukammal: quality.isMukammal,
-        aiSummary: quality.aiSummary,
-        personality: cv.user.personalityResults[0] ?? null,
+        isLocked,
+        directionKeys: detectDirections(directionHaystack),
+        savedAtMs: cv.savedAt ? cv.savedAt.getTime() : 0,
       };
     })
-    .sort((a, b) => b.score - a.score);
-
-  const mukammalCount = evaluatedItems.filter((i) => i.isMukammal).length;
-  const openCount = evaluatedItems.filter((i) => !i.isMukammal).length;
-
-  const items = evaluatedItems.filter((item) => {
-    if (tier === "mukammal") return item.isMukammal;
-    if (tier === "open") return !item.isMukammal;
-    return true;
-  });
-
-  const subUntilLabel =
-    company.subscriptionUntil && company.subscriptionUntil > now
-      ? formatDate(company.subscriptionUntil)
-      : null;
-
-  const tabAllLabel = `Barchasi (${evaluatedItems.length})`;
-  const tabMukammalLabel = `🌟 Mukammal CV lar 80–100% (${mukammalCount})`;
-  const tabStandardLabel = `📄 Standart CV lar <80% (${openCount})`;
-  const openDetailsLabel = "Profilni ko'rish";
-  const unlockBtnLabel = "🔓 Obuna olish";
-  const activeFilters = new URLSearchParams();
-  for (const [key, value] of Object.entries({
-    q,
-    professionId,
-    personalityGroup,
-    typeCode,
-    language,
-    languageBand,
-    experienceBand,
-  })) {
-    if (value) activeFilters.set(key, value);
-  }
-  const tabHref = (nextTier: string) => {
-    const next = new URLSearchParams(activeFilters);
-    if (nextTier !== "all") next.set("tier", nextTier);
-    return `/company/students${next.size ? `?${next.toString()}` : ""}`;
-  };
+    .sort((a, b) => {
+      if (b.aiScore !== a.aiScore) return b.aiScore - a.aiScore;
+      return b.savedAtMs - a.savedAtMs;
+    });
 
   return (
-    <div className="page-x font-ui space-y-6 py-8 sm:py-12">
-      <Reveal>
-        <div className="border-line bg-card/85 shadow-float relative overflow-hidden rounded-3xl border p-6 backdrop-blur-xl sm:p-8">
-          <div
-            aria-hidden
-            className="bg-primary/10 pointer-events-none absolute -top-24 -right-24 size-64 rounded-full blur-3xl"
-          />
-          <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
-            <div>
-              <h1 className="text-h2 text-text font-extrabold tracking-tight">
-                {tStudents("title")}
-              </h1>
-              <p className="text-subtle mt-1 text-sm">
-                {tStudents("subtitle", { count: items.length })}
-              </p>
-            </div>
-            <Link
-              href="/company/vacancies/new"
-              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
-            >
-              <PlusIcon size={15} />
-              {tStudents("newVacancy")}
-            </Link>
-          </div>
-
-          <form method="get" className="relative z-10 mt-6 flex gap-2.5">
-            {tier !== "all" ? (
-              <input type="hidden" name="tier" value={tier} />
-            ) : null}
-            <div className="relative flex-1">
-              <SearchIcon
-                size={16}
-                className="text-subtle pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
-              />
-              <input
-                type="search"
-                name="q"
-                defaultValue={q ?? ""}
-                placeholder={tStudents("searchPlaceholder")}
-                className="border-line bg-canvas text-text placeholder:text-subtle focus:border-primary w-full rounded-2xl border py-2.5 pr-4 pl-10 text-sm transition-colors outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover inline-flex items-center gap-2 rounded-2xl px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.98]"
-            >
-              <SearchIcon size={15} />
-              {tStudents("searchButton")}
-            </button>
-          </form>
-
-          <form
-            method="get"
-            className="relative z-10 mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-6"
-          >
-            {q && <input type="hidden" name="q" value={q} />}
-            <select
-              name="professionId"
-              defaultValue={professionId ?? ""}
-              className="border-line rounded-xl border p-2 text-xs"
-              aria-label="Kasb"
-            >
-              <option value="">{readinessLabels.jobs}</option>
-              {professions.map((profession) => (
-                <option key={profession.id} value={profession.id}>
-                  {profName(profession)}
-                </option>
-              ))}
-            </select>
-            <select
-              name="personalityGroup"
-              defaultValue={personalityGroup ?? ""}
-              className="border-line rounded-xl border p-2 text-xs"
-              aria-label="Guruh"
-            >
-              <option value="">{readinessLabels.groups}</option>
-              {["NT", "NF", "SJ", "SP"].map((group) => (
-                <option key={group} value={group}>
-                  {group}
-                </option>
-              ))}
-            </select>
-            <input
-              name="typeCode"
-              defaultValue={typeCode ?? ""}
-              placeholder="Tip"
-              className="border-line rounded-xl border p-2 text-xs"
-            />
-            <input
-              name="language"
-              defaultValue={language ?? ""}
-              placeholder="Til"
-              className="border-line rounded-xl border p-2 text-xs"
-            />
-            <select
-              name="languageBand"
-              defaultValue={languageBand ?? ""}
-              className="border-line rounded-xl border p-2 text-xs"
-              aria-label="Til darajasi"
-            >
-              <option value="">{readinessLabels.languages}</option>
-              {readinessLabels.languageBands.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <select
-              name="experienceBand"
-              defaultValue={experienceBand ?? ""}
-              className="border-line rounded-xl border p-2 text-xs"
-              aria-label="Tajriba"
-            >
-              <option value="">{readinessLabels.experience}</option>
-              {readinessLabels.experienceBands.map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-            <button className="bg-primary text-on-primary rounded-xl px-3 py-2 text-xs">
-              {readinessLabels.filter}
-            </button>
-          </form>
-
-          {/* Filter Tabs: All / Mukammal (80-100%) / Standard (<80%) */}
-          <div className="relative z-10 mt-5 flex flex-wrap gap-2">
-            <Link
-              href={tabHref("all")}
-              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
-                tier === "all"
-                  ? "bg-primary text-on-primary shadow-primary"
-                  : "border-line bg-canvas text-text hover:border-primary border"
-              }`}
-            >
-              {tabAllLabel}
-            </Link>
-            <Link
-              href={tabHref("mukammal")}
-              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
-                tier === "mukammal"
-                  ? "bg-primary text-on-primary shadow-primary"
-                  : "border-line bg-canvas text-text hover:border-primary border"
-              }`}
-            >
-              {tabMukammalLabel}
-            </Link>
-            <Link
-              href={tabHref("open")}
-              className={`rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
-                tier === "open"
-                  ? "bg-primary text-on-primary shadow-primary"
-                  : "border-line bg-canvas text-text hover:border-primary border"
-              }`}
-            >
-              {tabStandardLabel}
-            </Link>
-          </div>
-        </div>
-      </Reveal>
-
-      <Reveal delay={75}>
-        <StudentsSubscriptionBar
-          hasActiveAbuna={hasActiveAbuna}
-          subscriptionUntilLabel={subUntilLabel}
-          mukammalCount={mukammalCount}
-          openCount={openCount}
-        />
-      </Reveal>
-
-      {items.length === 0 ? (
-        <Reveal>
-          <div className="border-line bg-card/85 shadow-soft rounded-3xl border p-12 text-center backdrop-blur-md">
-            <UsersIcon size={30} className="text-subtle mx-auto mb-3" />
-            <p className="text-subtle text-sm font-medium">
-              {tStudents("empty")}
-            </p>
-          </div>
-        </Reveal>
-      ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {items.map((item, idx) => {
-            const extraSkillsLabel =
-              item.skills.length > 6 ? `+${item.skills.length - 6}` : null;
-            const aiBadgeLabel = item.isMukammal
-              ? `🌟 Mukammal CV (${item.score}%)`
-              : `📄 AI bahosi: ${item.score}%`;
-            const lockStatusText = item.isLocked
-              ? "🔒 Kontakt va PDF obuna bilan"
-              : "🔓 Obuna bilan ochiq";
-            return (
-              <li key={item.id}>
-                <Reveal delay={REVEAL_DELAYS[idx % 4]} className="h-full">
-                  <div
-                    className={`bg-card/90 shadow-soft hover:shadow-float flex h-full flex-col justify-between gap-4 rounded-3xl border p-5 backdrop-blur-md transition-all duration-300 hover:-translate-y-1 ${
-                      item.isMukammal
-                        ? "border-primary/45 hover:border-primary"
-                        : "border-line hover:border-primary/40"
-                    }`}
-                  >
-                    <div className="space-y-3">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-extrabold ${
-                            item.isMukammal
-                              ? "bg-primary text-on-primary shadow-primary"
-                              : "border-line bg-canvas text-text border"
-                          }`}
-                        >
-                          <SparkIcon size={12} />
-                          {aiBadgeLabel}
-                        </span>
-                        {item.savedAt ? (
-                          <span className="text-subtle shrink-0 text-xs font-medium">
-                            {formatDate(item.savedAt)}
-                          </span>
-                        ) : null}
-                      </div>
-
-                      <div>
-                        <h2 className="text-text text-base font-extrabold">
-                          {item.fullName}
-                        </h2>
-                        {item.title ? (
-                          <p className="text-primary-text mt-0.5 text-xs font-bold">
-                            {item.title}
-                          </p>
-                        ) : null}
-                      </div>
-
-                      {item.personality && (
-                        <div className="border-line rounded-xl border p-2 text-xs">
-                          {personalitySummary(item.personality)}
-                        </div>
-                      )}
-
-                      <div className="border-primary/20 bg-primary-soft/45 text-text rounded-2xl border px-3 py-2 text-xs leading-relaxed">
-                        {item.aiSummary}
-                      </div>
-
-                      {item.about ? (
-                        <p className="text-subtle line-clamp-2 text-xs leading-relaxed">
-                          {item.about}
-                        </p>
-                      ) : null}
-
-                      <div className="text-subtle flex flex-wrap gap-2 text-xs font-medium">
-                        {item.location ? <span>{item.location}</span> : null}
-                        {item.workType ? (
-                          <span>{tWork(item.workType)}</span>
-                        ) : null}
-                        {item.languages.length > 0 ? (
-                          <span>{item.languages.join(", ")}</span>
-                        ) : null}
-                      </div>
-
-                      {item.skills.length > 0 ? (
-                        <div className="flex flex-wrap gap-1.5 pt-1">
-                          {item.skills.slice(0, 6).map((skill) => (
-                            <span
-                              key={skill}
-                              className="border-line bg-card-cool text-text rounded-lg border px-2 py-0.5 text-[11px] font-semibold"
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {extraSkillsLabel ? (
-                            <span className="text-subtle self-center text-[11px] font-semibold">
-                              {extraSkillsLabel}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <div className="border-line/70 flex flex-wrap items-center justify-between gap-2 border-t pt-3 text-xs">
-                      <span
-                        className={
-                          item.isLocked
-                            ? "text-warning font-extrabold"
-                            : "text-success font-extrabold"
-                        }
-                      >
-                        {lockStatusText}
-                      </span>
-
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/company/students/${item.id}`}
-                          className="border-line bg-canvas text-text hover:border-primary rounded-xl border px-3 py-1.5 font-bold transition-colors"
-                        >
-                          {openDetailsLabel}
-                        </Link>
-                        {item.isLocked ? (
-                          <CompanySubscribeButton
-                            variant="compact"
-                            label={unlockBtnLabel}
-                            cvId={item.id}
-                          />
-                        ) : (
-                          <a
-                            href={`/api/cv/${item.id}/pdf`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="bg-primary-soft text-primary-text hover:bg-primary hover:text-on-primary rounded-xl px-3.5 py-1.5 font-bold transition-colors"
-                          >
-                            {tStudents("viewPdf")}
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Reveal>
-              </li>
-            );
-          })}
-        </ul>
-      )}
-    </div>
+    <CompanyStudentsExplorer
+      candidates={candidates}
+      initialLikedIds={likedRows.map((r) => r.cvId)}
+      hasActiveSubscription={hasActiveAbuna}
+      companyVacancies={companyVacancies}
+      initialQuery={q ?? ""}
+      initialRegion={normalizeRegion(location)}
+    />
   );
 }

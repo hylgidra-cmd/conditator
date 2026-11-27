@@ -1,4 +1,5 @@
 import { VacancyStatus } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { writeAdminLog } from "@/backend/admin/log";
@@ -54,6 +55,11 @@ export const PATCH = route<Context>(async (request, { params }) => {
     },
   });
 
+  try {
+    revalidateTag("landing-stats");
+  } catch {
+    // Ignore outside Next cache
+  }
   return NextResponse.json({ ok: true, status: updated.status });
 });
 
@@ -78,5 +84,10 @@ export const DELETE = route<Context>(async (request, { params }) => {
     details: { deleted: true, title: existing.title },
   });
 
+  try {
+    revalidateTag("landing-stats");
+  } catch {
+    // Ignore outside Next cache
+  }
   return NextResponse.json({ ok: true });
 });

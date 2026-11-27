@@ -294,17 +294,29 @@ export async function recalculateCvSkillMatchesForCv(cvId: string) {
  * Tungi cron yoki admin o'zgarishidan keyin barcha faol CV lar uchun CvSkillMatch ni qayta hisoblash.
  */
 export async function recalculateAllCvSkillMatches(): Promise<number> {
-  const cvs = await db.cv.findMany({
-    where: { savedAt: { not: null }, user: { status: "ACTIVE" } },
-    select: { id: true },
-    take: 500,
-  });
-
   let updated = 0;
-  for (const cv of cvs) {
-    const rows = await recalculateCvSkillMatchesForCv(cv.id);
-    if (rows.length > 0) updated += 1;
+  let cursor: string | undefined;
+  const BATCH_SIZE = 200;
+
+  while (true) {
+    const cvs = await db.cv.findMany({
+      where: { savedAt: { not: null }, user: { status: "ACTIVE" } },
+      select: { id: true },
+      orderBy: { id: "asc" },
+      take: BATCH_SIZE,
+      ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
+    });
+    if (cvs.length === 0) break;
+
+    for (const cv of cvs) {
+      const rows = await recalculateCvSkillMatchesForCv(cv.id);
+      if (rows.length > 0) updated += 1;
+    }
+
+    cursor = cvs[cvs.length - 1]?.id;
+    if (cvs.length < BATCH_SIZE) break;
   }
+
   return updated;
 }
 
@@ -827,7 +839,13 @@ export async function importSkillTemplatesFromBuffer(params: {
 
   for (const [professionId, group] of grouped.entries()) {
     const sorted = [...group].sort((a, b) => a.position - b.position);
-    if (sorted.length !== 6) {
+    const uniquePositions = new Set(sorted.map((s) => s.position));
+    if (
+      sorted.length !== 6 ||
+      uniquePositions.size !== 6 ||
+      sorted[0]?.position !== 1 ||
+      sorted[5]?.position !== 6
+    ) {
       skippedInvalidCount += 1;
       continue;
     }

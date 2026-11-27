@@ -1,6 +1,7 @@
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { cvDataSchema } from "@/backend/cv/schema";
+import { formatDate } from "@/backend/format-date";
 import { notFound } from "next/navigation";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { CandidateControls } from "@/frontend/components/admin/candidate-controls";
@@ -61,7 +62,7 @@ export default async function CandidatePage({
       {result && (
         <section className="border-line rounded-2xl border p-5">
           <h2 className="text-xl font-bold">{title}</h2>
-          <p>{result.createdAt.toLocaleDateString()}</p>
+          <p>{formatDate(result.createdAt)}</p>
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-5">
             {[
               ["Mind", result.mindPct],

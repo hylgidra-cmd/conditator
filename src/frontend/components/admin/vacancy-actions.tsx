@@ -27,6 +27,8 @@ export function AdminVacancyActions({ vacancyId, initialStatus }: Props) {
     if (res.ok) {
       setStatus(res.data.status);
       router.refresh();
+    } else {
+      window.alert("Vakansiya holatini o'zgartirib bo'lmadi.");
     }
   }
 
@@ -40,6 +42,8 @@ export function AdminVacancyActions({ vacancyId, initialStatus }: Props) {
     setBusy(false);
     if (res.ok) {
       router.refresh();
+    } else {
+      window.alert("Vakansiyani o'chirib bo'lmadi.");
     }
   }
 

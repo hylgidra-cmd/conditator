@@ -1,12 +1,17 @@
 import type { Prisma } from "@prisma/client";
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { requireCompanyPage } from "@/backend/company/page";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { evaluateCvQuality } from "@/backend/cv/quality";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
+import {
+  getGroupName,
+  getLocaleKey,
+  PERSONALITY_TYPE_BY_CODE,
+} from "@/backend/personality/catalog";
 import { personalityGroup as getPersonalityGroup } from "@/backend/personality/score";
 import {
   type CandidateExplorerItem,
@@ -123,6 +128,7 @@ export default async function CompanyStudentsPage({
   }>;
 }) {
   const { company } = await requireCompanyPage();
+  const localeKey = getLocaleKey(await getLocale());
   const t = await getTranslations("Company");
   const tExplorer = await getTranslations("CompanyTalentExplorer");
   const {
@@ -176,6 +182,23 @@ export default async function CompanyStudentsPage({
       where: {
         isVisible: true,
         savedAt: { not: null },
+        ...(q?.trim()
+          ? {
+              OR: [
+                { title: { contains: q.trim(), mode: "insensitive" } },
+                { location: { contains: q.trim(), mode: "insensitive" } },
+                { user: { fullName: { contains: q.trim(), mode: "insensitive" } } },
+              ],
+            }
+          : {}),
+        ...(location?.trim()
+          ? {
+              OR: [
+                { location: { contains: location.trim(), mode: "insensitive" } },
+                { user: { city: { contains: location.trim(), mode: "insensitive" } } },
+              ],
+            }
+          : {}),
         user: {
           status: "ACTIVE",
           ...(hasReadinessFilter
@@ -333,9 +356,16 @@ export default async function CompanyStudentsPage({
           : cv.languages.map((l) => ({ name: l, level: null }));
 
       const pers = cv.user.personalityResults[0] ?? null;
-      const personalityLabel = pers
-        ? `${getPersonalityGroup(pers.typeCode)} · ${pers.typeCode}-${pers.identity}`
+      const persGroupCode = pers ? getPersonalityGroup(pers.typeCode) : null;
+      const persTypeTitle = pers
+        ? (PERSONALITY_TYPE_BY_CODE.get(pers.typeCode)?.title[localeKey] ?? null)
         : null;
+      const personalityLabel =
+        persGroupCode && persTypeTitle
+          ? `${getGroupName(persGroupCode, localeKey)} · ${persTypeTitle}`
+          : persGroupCode
+            ? getGroupName(persGroupCode, localeKey)
+            : null;
 
       const directionHaystack = [
         cleanTitle,
@@ -357,7 +387,7 @@ export default async function CompanyStudentsPage({
         fullName: rawFullName,
         shortName: isLocked ? rawFullName : formatCompactName(rawFullName),
         initials: extractInitials(
-          !privacy.hideName
+          !isLocked && !privacy.hideName
             ? parsed.success
               ? parsed.data.fullName || cv.user.fullName || ""
               : cv.user.fullName || ""

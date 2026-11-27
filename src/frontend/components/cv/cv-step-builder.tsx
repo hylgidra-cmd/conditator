@@ -934,23 +934,14 @@ export function CvStepBuilder({
                       {"📷 Rasm yuklash"}
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg,image/webp"
                         onChange={handlePhotoFileSelect}
                         className="hidden"
                       />
                     </label>
-                    <input
-                      type="url"
-                      value={data.photo ?? ""}
-                      onChange={(e) =>
-                        onChange({
-                          ...draft,
-                          data: { ...data, photo: e.target.value },
-                        })
-                      }
-                      placeholder={t("photoUrlPlaceholder")}
-                      className="border-border bg-surface focus:ring-brand/40 min-w-0 flex-1 rounded-xl border px-3 py-2 text-xs outline-none focus:ring-2"
-                    />
+                    <span className="text-muted min-w-0 flex-1 truncate text-xs">
+                      {data.photo ? "✓ Rasm yuklangan" : t("photoUrlPlaceholder")}
+                    </span>
                     {data.photo && (
                       <button
                         type="button"

@@ -123,7 +123,12 @@
       "registered": "Dizimnen óttińiz. Endi email hám parolıńız benen kiriń.",
       "subtitle": "Karyera jolıńızdı dawam ettiriw ushın sistemaǵa kiriń",
       "showPassword": "Paroldı kórsetiw",
-      "hidePassword": "Paroldı jasırıw"
+      "hidePassword": "Paroldı jasırıw",
+      "twoFactorTitle": "Eki basqıshlı tastıyıqlaw",
+      "twoFactorHint": "Emailıńızǵa jiberilgen 6 sanlı tastıyıqlaw kodın kirgiziń.",
+      "twoFactorCode": "Tastıyıqlaw kodı",
+      "twoFactorVerify": "Tastıyıqlaw hám kiriw",
+      "twoFactorBack": "Artqa qaytıw"
     },
     "forgot": {
       "title": "Paroldı tiklew",
@@ -254,7 +259,9 @@
     "CV_PAYMENT_REQUIRED": "Dáslep CV di aktivlestiriw tólemin (5 000 soʻm) ámelge asırıń.",
     "APPLY_PASS_REQUIRED": "Háptelik CV tapsırıw ruxsatı (5 000 soʻm / 7 kún) kerek.",
     "SUBSCRIPTION_REQUIRED": "Talaban kontaktları hám PDF rezyumeni kóriw ushın kompaniya abunası kerek.",
-    "CANNOT_REVOKE_CURRENT_SESSION": "Ámeldegi qurılma sessiyasın bul jerden óshirip bolmaydı."
+    "CANNOT_REVOKE_CURRENT_SESSION": "Ámeldegi qurılma sessiyasın bul jerden óshirip bolmaydı.",
+    "PASSWORD_TOO_WEAK": "Bul parol júdá ápiwayı. Basqa qıyınıraq parol tańlań.",
+    "TWO_FACTOR_EXPIRED": "Tastıyıqlaw waqtı tamamlandı. Qayta login hám parol kirgiziń."
   },
   "Form": {
     "submitting": "Jiberilmekte…"
@@ -263,6 +270,10 @@
     "reset": {
       "subject": "Candidator: paroldı tiklew kodı",
       "body": "Assalawma áleykum!\n\nParoldı tiklew kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger siz bunı soramaǵan bolsańız, bul xattı esapqa almań.\n\nCandidator komandası"
+    },
+    "login2fa": {
+      "subject": "Candidator: sistemаǵa kiriw kodı",
+      "body": "Assalawma aleykum!\n\nAkkountıńızǵa kiriw ushın tastıyıqlaw kodı: {code}\n\nKod {minutes} minut ámel etedi. Eger bul siz bolmasańız, parolińizdi tez arada ózgertiń.\n\nCandidator jámááti"
     }
   },
   "StudentCv": {

@@ -9,10 +9,27 @@ export const emailSchema = z
     z.email({ error: "INVALID_EMAIL" }).max(254, { error: "INVALID_EMAIL" }),
   );
 
+const COMMON_PASSWORDS = new Set([
+  "12345678",
+  "123456789",
+  "1234567890",
+  "password",
+  "password123",
+  "qwerty123",
+  "qwertyui",
+  "11111111",
+  "00000000",
+  "admin123",
+  "candidator",
+]);
+
 export const passwordSchema = z
   .string({ error: "PASSWORD_TOO_SHORT" })
   .min(8, { error: "PASSWORD_TOO_SHORT" })
-  .max(128, { error: "PASSWORD_TOO_LONG" });
+  .max(128, { error: "PASSWORD_TOO_LONG" })
+  .refine((val) => !COMMON_PASSWORDS.has(val.trim().toLowerCase()), {
+    error: "PASSWORD_TOO_WEAK",
+  });
 
 export const codeSchema = z
   .string()
@@ -39,4 +56,8 @@ export const resetSchema = z.object({
   email: emailSchema,
   code: codeSchema,
   password: passwordSchema,
+});
+export const twoFactorLoginVerifySchema = z.object({
+  challengeToken: z.string().min(16).max(512),
+  code: codeSchema,
 });

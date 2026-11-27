@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/backend/auth/session";
-import { ApiError } from "@/backend/http/errors";
+import { ApiError, readBodyLimited } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
 import { importSkillTemplatesFromBuffer } from "@/backend/skill-templates/service";
 
@@ -9,7 +9,13 @@ const MAX_IMPORT_BYTES = 8 * 1024 * 1024; // 8 MB
 /** POST /api/admin/skill-templates/import — Excel (.xlsx) yoki CSV fayldan ommaviy yuklash. */
 export const POST = route(async (request) => {
   const admin = await requireRole(request, "ADMIN");
-  const form = await request.formData();
+  const raw = await readBodyLimited(request, MAX_IMPORT_BYTES + 256 * 1024);
+  const limitedReq = new Request(request.url, {
+    method: "POST",
+    headers: request.headers,
+    body: new Uint8Array(raw),
+  });
+  const form = await limitedReq.formData();
   const file = form.get("file");
   if (!(file instanceof File)) {
     throw new ApiError(400, "VALIDATION");

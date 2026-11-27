@@ -9,6 +9,10 @@ import {
   parseFilters,
 } from "@/backend/readiness/query";
 
+function safeCell(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
 export const GET = route(async (request) => {
   await requireRole(request, "ADMIN");
   const filters = parseFilters(request.nextUrl.searchParams);
@@ -36,17 +40,19 @@ export const GET = route(async (request) => {
       : null;
     const cv = parsed?.success ? parsed.data : null;
     sheet.addRow({
-      name: cv?.fullName ?? "",
-      email: row.user.email,
-      profession: row.profession.nameUz,
+      name: safeCell(cv?.fullName ?? ""),
+      email: safeCell(row.user.email),
+      profession: safeCell(row.profession.nameUz),
       group: row.personalityGroup,
       type: row.typeCode,
-      languages: row.user.userLanguages
-        .map((item) => `${item.language} (${item.level})`)
-        .join(", "),
+      languages: safeCell(
+        row.user.userLanguages
+          .map((item) => `${item.language} (${item.level})`)
+          .join(", "),
+      ),
       languageBand: row.languageBand,
       experienceBand: row.experienceBand,
-      region: cv?.location ?? "",
+      region: safeCell(cv?.location ?? ""),
       score: row.readinessScore,
     });
   }

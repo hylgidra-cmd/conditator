@@ -76,17 +76,17 @@ function loadLeaflet(): Promise<LeafletLib> {
     return Promise.resolve(window.L);
   }
   return new Promise((resolve, reject) => {
-    const cssId = "leaflet-css-cdn";
+    const cssId = "leaflet-css-local";
     if (!document.getElementById(cssId)) {
       const link = document.createElement("link");
       link.id = cssId;
       link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+      link.href = "/vendor/leaflet/leaflet.css";
       document.head.appendChild(link);
     }
 
     const existing = document.getElementById(
-      "leaflet-js-cdn",
+      "leaflet-js-local",
     ) as HTMLScriptElement | null;
     if (existing) {
       existing.addEventListener("load", () => {
@@ -97,8 +97,8 @@ function loadLeaflet(): Promise<LeafletLib> {
     }
 
     const script = document.createElement("script");
-    script.id = "leaflet-js-cdn";
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+    script.id = "leaflet-js-local";
+    script.src = "/vendor/leaflet/leaflet.js";
     script.async = true;
     script.onload = () => {
       if (window.L) resolve(window.L);

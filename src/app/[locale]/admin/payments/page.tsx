@@ -2,18 +2,28 @@ import { Prisma } from "@prisma/client";
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { AdminPaymentRowActions } from "@/frontend/components/admin/payment-actions";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { formatDateTime } from "@/backend/format-date";
 import { MANUAL_CARD_HOLDER, MANUAL_CARD_NUMBER } from "@/backend/payment/service";
 
+const PAGE_SIZE = 50;
+
 export const dynamic = "force-dynamic";
 
-export default async function AdminPaymentsPage() {
+export default async function AdminPaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   await requireAdminPage();
   const t = await getTranslations("Admin");
+  const sp = await searchParams;
+  const parsedPage = Number.parseInt(sp.page ?? "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
-  const [payments, completedAgg, pendingCount] = await Promise.all([
+  const [payments, totalPayments, completedAgg, pendingCount] = await Promise.all([
     db.payment.findMany({
       select: {
         id: true,
@@ -26,8 +36,10 @@ export default async function AdminPaymentsPage() {
         company: { select: { name: true } },
       },
       orderBy: { createdAt: "desc" },
-      take: 100,
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
     }),
+    db.payment.count(),
     db.payment.aggregate({
       where: { status: "COMPLETED" },
       _sum: { amount: true },
@@ -35,6 +47,7 @@ export default async function AdminPaymentsPage() {
     }),
     db.payment.count({ where: { status: "PENDING" } }),
   ]);
+  const pageCount = Math.max(1, Math.ceil(totalPayments / PAGE_SIZE));
 
   const paymentIds = payments.map((p) => p.id);
   const metaRows =
@@ -258,6 +271,11 @@ export default async function AdminPaymentsPage() {
               </tbody>
             </table>
           </div>
+          <Pagination
+            page={page}
+            pageCount={pageCount}
+            pathname="/admin/payments"
+          />
         </>
       )}
     </div>

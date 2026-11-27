@@ -33,7 +33,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function StudentCvPage({
   searchParams,
 }: {
-  searchParams: Promise<{ cvId?: string; new?: string; payment?: string }>;
+  searchParams: Promise<{
+    cvId?: string;
+    new?: string;
+    payment?: string;
+    saved?: string;
+  }>;
 }) {
   const user = await currentUser();
   const locale = await getLocale();
@@ -42,7 +47,7 @@ export default async function StudentCvPage({
   if (!(await activeResult(user.id)))
     return redirect({ href: "/student/personality", locale });
 
-  const { cvId, new: newParam, payment } = await searchParams;
+  const { cvId, new: newParam, payment, saved } = await searchParams;
   const isNew = newParam === "1";
 
   const tStudio = await getTranslations("CvStudio");
@@ -129,7 +134,7 @@ export default async function StudentCvPage({
           allCvs={allCvs}
           matchingVacancies={matchingVacancies}
           isNewCv={isNew}
-          paymentSuccess={payment === "success"}
+          paymentSuccess={payment === "success" || saved === "1"}
         />
       </div>
     </div>

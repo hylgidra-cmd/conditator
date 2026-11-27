@@ -37,6 +37,7 @@ export type ErrorCode =
   | "APPLY_PASS_REQUIRED"
   | "SUBSCRIPTION_REQUIRED"
   | "CANNOT_REVOKE_CURRENT_SESSION"
+  | "TWO_FACTOR_EXPIRED"
   | "SERVER_ERROR";
 
 export class ApiError extends Error {

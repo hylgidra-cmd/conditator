@@ -1,24 +1,39 @@
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { ComplaintResolveButtons } from "@/frontend/components/admin/complaint-resolve-buttons";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { formatDateTime } from "@/backend/format-date";
 
+const PAGE_SIZE = 50;
+
 export const dynamic = "force-dynamic";
 
-export default async function AdminComplaintsPage() {
+export default async function AdminComplaintsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   await requireAdminPage();
   const t = await getTranslations("Admin");
+  const sp = await searchParams;
+  const parsedPage = Number.parseInt(sp.page ?? "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
-  const complaints = await db.complaint.findMany({
-    include: {
-      reporter: { select: { email: true } },
-      reportedUser: { select: { email: true } },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+  const [complaints, total] = await Promise.all([
+    db.complaint.findMany({
+      include: {
+        reporter: { select: { email: true } },
+        reportedUser: { select: { email: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.complaint.count(),
+  ]);
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
@@ -92,6 +107,11 @@ export default async function AdminComplaintsPage() {
           </table>
         </div>
       )}
+      <Pagination
+        page={page}
+        pageCount={pageCount}
+        pathname="/admin/complaints"
+      />
     </div>
   );
 }

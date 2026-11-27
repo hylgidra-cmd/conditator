@@ -14,8 +14,10 @@ export default async function CompanyStatsPage() {
   }
   const isAdmin = user.role === "ADMIN";
   if (!isAdmin) {
-    const company = await db.company.findUnique({
-      where: { userId: user.id },
+    const company = await db.company.findFirst({
+      where: {
+        OR: [{ userId: user.id }, { members: { some: { userId: user.id } } }],
+      },
       select: { approval: true },
     });
     if (company?.approval !== "APPROVED") {

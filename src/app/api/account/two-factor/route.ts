@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyPassword } from "@/backend/auth/password";
-import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { LIMITS, rateLimitDistributed } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import { db } from "@/backend/db";
+import { emailConfigured } from "@/backend/env";
 import { ApiError, parseJson } from "@/backend/http/errors";
 import { clientIp } from "@/backend/http/request";
 import { route } from "@/backend/http/route";
@@ -18,12 +19,19 @@ const twoFactorPatchSchema = z.object({
 
 export const PATCH = route(async (request) => {
   const sessionUser = await requireRole(request);
-  rateLimit(`verify:${clientIp(request)}:${sessionUser.id}`, LIMITS.verify);
+  await rateLimitDistributed(
+    `verify:${clientIp(request)}:${sessionUser.id}`,
+    LIMITS.verify,
+  );
 
   const { enabled, currentPassword } = await parseJson(
     request,
     twoFactorPatchSchema,
   );
+
+  if (enabled && !emailConfigured()) {
+    throw new ApiError(503, "EMAIL_UNAVAILABLE");
+  }
 
   const user = await db.user.findUnique({
     where: { id: sessionUser.id },

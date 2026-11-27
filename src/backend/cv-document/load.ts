@@ -128,14 +128,29 @@ export function docxContentDisposition(fullName: string | null): string {
  */
 export async function loadVisibleCvDocument(
   cvId: string,
-  options?: { isLocked?: boolean; isOwnerOrAdmin?: boolean },
+  options?: {
+    isLocked?: boolean;
+    isOwnerOrAdmin?: boolean;
+    appliedCompanyId?: string;
+  },
 ): Promise<(CvDocumentInput & { id: string }) | null> {
   const cv = await db.cv.findFirst({
     where: {
       id: cvId,
-      isVisible: true,
       savedAt: { not: null },
       user: { status: "ACTIVE" },
+      ...(options?.appliedCompanyId
+        ? {
+            OR: [
+              { isVisible: true },
+              {
+                applications: {
+                  some: { vacancy: { companyId: options.appliedCompanyId } },
+                },
+              },
+            ],
+          }
+        : { isVisible: true }),
     },
     select: {
       id: true,

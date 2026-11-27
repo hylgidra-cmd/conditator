@@ -41,16 +41,26 @@ export function CandidateActions({
   const [updatingStage, setUpdatingStage] = useState(false);
   const [togglingLike, setTogglingLike] = useState(false);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   async function handleStageChange(newStage: CandidateStageType) {
+    const prevStage = stage;
     setUpdatingStage(true);
+    setActionError(null);
     setStage(newStage);
     try {
-      await postJson(`/api/vacancies/${vacancyId}/candidates/${cvId}/stage`, {
-        stage: newStage,
-      });
+      const res = await postJson(
+        `/api/vacancies/${vacancyId}/candidates/${cvId}/stage`,
+        { stage: newStage },
+      );
+      if (!res.ok) {
+        setStage(prevStage);
+        setActionError("Bosqichni saqlab bo'lmadi. Qayta urinib ko'ring.");
+      }
     } catch (err) {
       console.error(err);
+      setStage(prevStage);
+      setActionError("Tarmoq xatosi. Bosqich saqlanmadi.");
     } finally {
       setUpdatingStage(false);
     }
@@ -59,6 +69,7 @@ export function CandidateActions({
   async function handleLike() {
     if (togglingLike) return;
     setTogglingLike(true);
+    setActionError(null);
     try {
       const res = await postJson<{ liked: boolean; totalLikes: number }>(
         `/api/candidates/${cvId}/like`,
@@ -67,9 +78,12 @@ export function CandidateActions({
       if (res.ok) {
         setLiked(res.data.liked);
         setLikes(res.data.totalLikes);
+      } else {
+        setActionError("Amalni bajarib bo'lmadi.");
       }
     } catch (err) {
       console.error(err);
+      setActionError("Tarmoq xatosi.");
     } finally {
       setTogglingLike(false);
     }
@@ -77,6 +91,11 @@ export function CandidateActions({
 
   return (
     <div className="space-y-4">
+      {actionError ? (
+        <div className="border-red-500/30 bg-red-500/10 text-red-700 rounded-xl border px-3.5 py-2 text-xs font-semibold dark:text-red-300">
+          {actionError}
+        </div>
+      ) : null}
       {/* Subscription Locked Banner (Variant 1) */}
       {isLocked && (
         <div className="rounded-3xl border border-emerald-500/35 bg-gradient-to-br from-[#051812] via-[#08261D] to-[#0D3D31] p-5 text-white shadow-lg">

@@ -26,7 +26,6 @@ async function assertConversationParticipant(
 
 function isSafeFileUrl(url: string): boolean {
   if (url.includes("\\") || /[\r\n]/.test(url)) return false;
-  if (url.startsWith("https://")) return true;
   return url.startsWith("/") && !url.startsWith("//");
 }
 
@@ -285,7 +284,7 @@ export async function ensureConversationForCompany(
   if (!vacancy || !cv) return undefined;
 
   const hasAccess = await isCompanySubscribedOrUnlocked(company.id, vacancy.id);
-  if (!hasAccess) return undefined;
+  if (!hasAccess) throw new ApiError(403, "SUBSCRIPTION_REQUIRED");
 
   const conversation = await db.conversation.upsert({
     where: {

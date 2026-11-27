@@ -16,6 +16,10 @@ const querySchema = z.object({
   locale: z.enum(["uz", "kk", "ru", "en"]).optional(),
 });
 
+function safeCell(value: string): string {
+  return /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+}
+
 export const GET = route(async (request) => {
   const user = await requireRole(request, "COMPANY", "ADMIN");
   const isAdmin = user.role === "ADMIN";
@@ -48,8 +52,8 @@ export const GET = route(async (request) => {
   profSheet.getRow(1).font = { bold: true };
   for (const row of stats.professions) {
     profSheet.addRow({
-      area: row.areaName,
-      profession: row.professionName,
+      area: safeCell(row.areaName),
+      profession: safeCell(row.professionName),
       count: row.masked ? "5 dan kam" : row.count,
     });
   }
@@ -62,7 +66,7 @@ export const GET = route(async (request) => {
   skillSheet.getRow(1).font = { bold: true };
   for (const row of stats.skills) {
     skillSheet.addRow({
-      skill: row.skill,
+      skill: safeCell(row.skill),
       count: row.masked ? "5 dan kam" : row.count,
     });
   }
@@ -76,8 +80,8 @@ export const GET = route(async (request) => {
   persSheet.getRow(1).font = { bold: true };
   for (const row of stats.types) {
     persSheet.addRow({
-      group: row.groupName,
-      type: row.typeName,
+      group: safeCell(row.groupName),
+      type: safeCell(row.typeName),
       count: row.masked ? "5 dan kam" : row.count,
     });
   }

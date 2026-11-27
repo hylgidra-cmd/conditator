@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireRole } from "@/backend/auth/session";
+import { requireApprovedCompany } from "@/backend/company/access";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 import { route } from "@/backend/http/route";
@@ -32,8 +33,16 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
     const isOwner = cv.userId === user.id;
     const isAdmin = user.role === "ADMIN";
     if (!isOwner && !isAdmin) {
-      if (user.role !== "COMPANY" || !cv.isVisible || !cv.savedAt) {
+      if (user.role !== "COMPANY" || !cv.savedAt) {
         throw new ApiError(403, "FORBIDDEN");
+      }
+      const { company } = await requireApprovedCompany(request);
+      if (!cv.isVisible) {
+        const applied = await db.vacancyApplication.findFirst({
+          where: { cvId: cv.id, vacancy: { companyId: company.id } },
+          select: { id: true },
+        });
+        if (!applied) throw new ApiError(403, "FORBIDDEN");
       }
     }
 

@@ -39,6 +39,59 @@ export function LoginForm({
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>();
   const [fields, setFields] = useState<Record<string, string>>({});
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+
+  async function completeLoginRedirect(role?: string) {
+    const explicitNext = safeNextTarget(nextPath);
+    if (explicitNext) {
+      setPending(false);
+      router.replace(explicitNext);
+      router.refresh();
+      return;
+    }
+
+    let target = role === "ADMIN" ? "/admin" : "/account";
+
+    if (role === "STUDENT") {
+      const statusRes = await getJson<{ testComplete: boolean }>(
+        "/api/onboarding/status",
+      );
+      target =
+        statusRes.ok && !statusRes.data.testComplete
+          ? "/student/personality"
+          : "/student/cv";
+    }
+
+    setPending(false);
+    router.replace(target);
+    router.refresh();
+  }
+
+  async function onSubmitTwoFactor(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!challengeToken) return;
+    const trimmed = twoFactorCode.trim();
+    if (!/^\d{6}$/.test(trimmed)) {
+      setError(undefined);
+      setFields({ code: "CODE_FORMAT" });
+      return;
+    }
+    setPending(true);
+    setError(undefined);
+    setFields({});
+    const result = await postJson<{ ok: boolean; role?: string }>(
+      "/api/auth/login/verify-2fa",
+      { challengeToken, code: trimmed },
+    );
+    if (result.ok) {
+      await completeLoginRedirect(result.data.role);
+      return;
+    }
+    setPending(false);
+    if (result.fields) setFields(result.fields);
+    else setError(result.error);
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -61,45 +114,89 @@ export function LoginForm({
     setPending(true);
     setError(undefined);
     setFields({});
-    const result = await postJson<{ ok: boolean; role?: string }>(
-      "/api/auth/login",
-      {
-        email,
-        password,
-      },
-    );
+    const result = await postJson<{
+      ok: boolean;
+      role?: string;
+      requiresTwoFactor?: boolean;
+      challengeToken?: string;
+    }>("/api/auth/login", {
+      email,
+      password,
+    });
     if (result.ok) {
-      const explicitNext = safeNextTarget(nextPath);
-      if (explicitNext) {
+      if (result.data.requiresTwoFactor && result.data.challengeToken) {
         setPending(false);
-        router.replace(explicitNext);
-        router.refresh();
+        setChallengeToken(result.data.challengeToken);
+        setTwoFactorCode("");
         return;
       }
-
-      let target =
-        result.data.role === "ADMIN"
-          ? "/admin"
-          : "/account";
-
-      if (result.data.role === "STUDENT") {
-        const statusRes = await getJson<{ testComplete: boolean }>(
-          "/api/onboarding/status",
-        );
-        target =
-          statusRes.ok && !statusRes.data.testComplete
-            ? "/student/personality"
-            : "/student/cv";
-      }
-
-      setPending(false);
-      router.replace(target);
-      router.refresh();
+      await completeLoginRedirect(result.data.role);
       return;
     }
     setPending(false);
     if (result.fields) setFields(result.fields);
     else setError(result.error);
+  }
+
+  if (challengeToken) {
+    return (
+      <form
+        method="post"
+        onSubmit={onSubmitTwoFactor}
+        className="space-y-5 lg:space-y-6"
+        noValidate
+      >
+        <div className="space-y-1">
+          <h2 className="text-text text-lg font-bold">{t("twoFactorTitle")}</h2>
+          <p className="text-muted text-sm">{t("twoFactorHint")}</p>
+        </div>
+        <FormAlert>{errorText(error)}</FormAlert>
+        <div className="space-y-2">
+          <label
+            htmlFor="login-2fa-code"
+            className="text-text block text-sm font-bold lg:text-[15.5px]"
+          >
+            {t("twoFactorCode")}
+          </label>
+          <input
+            id="login-2fa-code"
+            name="code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            maxLength={6}
+            required
+            value={twoFactorCode}
+            onChange={(e) => setTwoFactorCode(e.target.value)}
+            className="h-12 w-full rounded-xl border border-[#e3e5e4] bg-[#efefef] px-4 text-center text-lg font-bold tracking-[0.35em] text-slate-900 outline-none transition-all focus:border-[#058b57] focus:bg-white focus:ring-2 focus:ring-emerald-500/20 lg:h-[54px] dark:border-emerald-200/25 dark:bg-white/[0.04] dark:text-white dark:focus:border-emerald-400 dark:focus:bg-white/[0.06]"
+          />
+          {fields.code ? (
+            <p className="text-danger text-xs font-medium">
+              {errorText(fields.code)}
+            </p>
+          ) : null}
+        </div>
+        <button
+          type="submit"
+          disabled={pending}
+          className="flex h-13 w-full cursor-pointer items-center justify-center gap-2 rounded-full bg-[#068955] px-6 text-base font-bold text-white shadow-[0_12px_26px_-10px_rgba(6,137,85,0.62)] transition-all hover:bg-[#057448] active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 lg:h-[58px] lg:text-[18px] dark:bg-gradient-to-r dark:from-[#0aa66c] dark:to-[#058755] dark:hover:brightness-105"
+        >
+          <span>{t("twoFactorVerify")}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setChallengeToken(null);
+            setTwoFactorCode("");
+            setError(undefined);
+            setFields({});
+          }}
+          className="text-subtle hover:text-text w-full text-center text-sm font-semibold underline"
+        >
+          {t("twoFactorBack")}
+        </button>
+      </form>
+    );
   }
 
   return (

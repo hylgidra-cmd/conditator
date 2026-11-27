@@ -23,7 +23,10 @@ function safeReturnPath(
 }
 
 export async function GET(req: Request) {
-  if (process.env.NODE_ENV === "production") {
+  if (
+    process.env.NODE_ENV === "production" ||
+    process.env.ENABLE_TEST_PAYMENTS !== "true"
+  ) {
     return NextResponse.json(
       { error: "TEST_PAYMENTS_DISABLED" },
       { status: 403 },

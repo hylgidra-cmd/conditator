@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { hashPassword, verifyPassword } from "@/backend/auth/password";
-import { LIMITS, rateLimit } from "@/backend/auth/rate-limit";
+import { LIMITS, rateLimitDistributed } from "@/backend/auth/rate-limit";
 import { passwordSchema } from "@/backend/auth/schemas";
 import { createSession, requireRole } from "@/backend/auth/session";
 import { db } from "@/backend/db";
@@ -19,7 +19,10 @@ const changePasswordSchema = z.object({
 
 export const POST = route(async (request) => {
   const sessionUser = await requireRole(request);
-  rateLimit(`verify:${clientIp(request)}:${sessionUser.id}`, LIMITS.verify);
+  await rateLimitDistributed(
+    `verify:${clientIp(request)}:${sessionUser.id}`,
+    LIMITS.verify,
+  );
 
   const { currentPassword, newPassword } = await parseJson(
     request,

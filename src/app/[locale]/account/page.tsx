@@ -349,7 +349,7 @@ export default async function AccountPage() {
         sortAt: lastMsg.createdAt.getTime(),
         row: {
           id: conv.id,
-          href: `/chat?c=${encodeURIComponent(conv.id)}`,
+          href: `/chat?id=${encodeURIComponent(conv.id)}`,
           senderName,
           initials: makeInitials(senderName),
           subject: conv.vacancy?.title || tStudent("messagesCard.directSubject"),
@@ -676,9 +676,7 @@ export default async function AccountPage() {
       const priv = parsePrivacy(app.cv.privacy);
       const rawName = cvJson?.fullName?.trim() || "";
       const visibleName =
-        subActive && !priv.hideName && rawName
-          ? maskName(rawName)
-          : maskName(rawName);
+        subActive && !priv.hideName && rawName ? rawName : maskName(rawName);
 
       const matchedStage = app.vacancy.stages.find(
         (s) => s.cvId === app.cvId,
@@ -758,7 +756,7 @@ export default async function AccountPage() {
         sortAt: lastMsg.createdAt.getTime(),
         row: {
           id: conv.id,
-          href: `/chat?c=${encodeURIComponent(conv.id)}`,
+          href: `/chat?id=${encodeURIComponent(conv.id)}`,
           senderName: candName,
           initials: makeInitials(candName),
           subject:

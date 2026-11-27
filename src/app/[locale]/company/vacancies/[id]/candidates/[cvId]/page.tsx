@@ -65,9 +65,12 @@ export default async function CandidatePage({
       db.cv.findFirst({
         where: {
           id: cvId,
-          isVisible: true,
           savedAt: { not: null },
           user: { status: "ACTIVE" },
+          OR: [
+            { isVisible: true },
+            { applications: { some: { vacancy: { companyId: company.id } } } },
+          ],
         },
         select: { title: true, data: true },
       }),
@@ -115,7 +118,10 @@ export default async function CandidatePage({
         })
       : null;
 
-  const cv = await loadVisibleCvDocument(cvId, { isLocked });
+  const cv = await loadVisibleCvDocument(cvId, {
+    isLocked,
+    appliedCompanyId: company.id,
+  });
   if (!cv) notFound();
 
   try {

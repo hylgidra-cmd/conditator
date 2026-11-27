@@ -1,9 +1,11 @@
 import { getTranslations } from "next-intl/server";
+import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { SkillTemplateManager } from "@/frontend/components/admin/skill-template-manager";
 
 export default async function AdminSkillTemplatesPage() {
+  await requireAdminPage();
   const t = await getTranslations("Admin");
   const areas = await db.profession.findMany({
     where: { parentId: null, isActive: true },

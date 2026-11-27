@@ -16,6 +16,7 @@ type Context = { params: Promise<{ id: string }> };
 const bodySchema = z.object({
   locale: z.enum(["kk", "uz", "ru", "en"]),
   filters: companyFiltersSchema.optional(),
+  onlyPersonalityMatch: z.boolean().optional(),
 });
 
 /**
@@ -25,7 +26,10 @@ const bodySchema = z.object({
 export const POST = route<Context>(async (request, { params }) => {
   const { user, company } = await requireApprovedCompany(request);
   const vacancy = await getOwnVacancy(company.id, (await params).id);
-  const { locale, filters } = await parseJson(request, bodySchema);
+  const { locale, filters, onlyPersonalityMatch } = await parseJson(
+    request,
+    bodySchema,
+  );
   rateLimit(`match:${company.id}`, LIMITS.matchRun);
   const outcome = await runMatching({
     company,
@@ -35,6 +39,10 @@ export const POST = route<Context>(async (request, { params }) => {
     filters,
   });
   return NextResponse.json(
-    await attachCompanyPersonality(outcome, { vacancy, locale }),
+    await attachCompanyPersonality(outcome, {
+      vacancy,
+      locale,
+      onlyPersonalityMatch,
+    }),
   );
 });

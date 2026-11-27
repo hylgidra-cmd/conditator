@@ -123,7 +123,12 @@
       "registered": "Roʻyxatdan oʻtdingiz. Endi email va parolingiz bilan kiring.",
       "subtitle": "Karyera yoʻlingizni davom ettirish uchun tizimga kiring",
       "showPassword": "Parolni koʻrsatish",
-      "hidePassword": "Parolni yashirish"
+      "hidePassword": "Parolni yashirish",
+      "twoFactorTitle": "Ikki bosqichli tasdiqlash",
+      "twoFactorHint": "Emailingizga yuborilgan 6 xonali tasdiqlash kodini kiriting.",
+      "twoFactorCode": "Tasdiqlash kodi",
+      "twoFactorVerify": "Tasdiqlash va kirish",
+      "twoFactorBack": "Orqaga qaytish"
     },
     "forgot": {
       "title": "Parolni tiklash",
@@ -254,7 +259,9 @@
     "CV_PAYMENT_REQUIRED": "Avval CV ni faollashtirish toʻlovini (5 000 soʻm) amalga oshiring.",
     "APPLY_PASS_REQUIRED": "Haftalik CV topshirish ruxsati (5 000 soʻm / 7 kun) kerak.",
     "SUBSCRIPTION_REQUIRED": "Nomzod kontaktlari va PDF rezyumeni koʻrish uchun kompaniya obunasi kerak.",
-    "CANNOT_REVOKE_CURRENT_SESSION": "Joriy qurilma sessiyasini bu yerdan oʻchirib boʻlmaydi."
+    "CANNOT_REVOKE_CURRENT_SESSION": "Joriy qurilma sessiyasini bu yerdan oʻchirib boʻlmaydi.",
+    "PASSWORD_TOO_WEAK": "Bu parol juda oddiy. Boshqa murakkabroq parol tanlang.",
+    "TWO_FACTOR_EXPIRED": "Tasdiqlash muddati tugadi. Qayta login va parol kiriting."
   },
   "Form": {
     "submitting": "Yuborilmoqda…"
@@ -263,6 +270,10 @@
     "reset": {
       "subject": "Candidator: parolni tiklash kodi",
       "body": "Assalomu alaykum!\n\nParolni tiklash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar buni siz soʻramagan boʻlsangiz, bu xatga eʼtibor bermang.\n\nCandidator jamoasi"
+    },
+    "login2fa": {
+      "subject": "Candidator: tizimga kirish kodi",
+      "body": "Assalomu alaykum!\n\nHisobingizga kirish uchun tasdiqlash kodi: {code}\n\nKod {minutes} daqiqa amal qiladi. Agar bu siz boʻlmasangiz, parolingizni zudlik bilan almashtiring.\n\nCandidator jamoasi"
     }
   },
   "StudentCv": {

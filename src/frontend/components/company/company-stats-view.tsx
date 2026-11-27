@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { formatDate } from "@/backend/format-date";
 import { Link } from "@/i18n/navigation";
 
 type Lang = "uz" | "kk" | "ru" | "en";
@@ -239,10 +240,7 @@ export function CompanyStatsView({
   const formatCount = (item: { display: string; masked: boolean }) =>
     item.masked ? t.lessThanFive : item.display;
 
-  const formattedDate = new Intl.DateTimeFormat(
-    locale === "ru" ? "ru-RU" : "uz-UZ",
-    { day: "2-digit", month: "2-digit", year: "numeric" },
-  ).format(new Date(data.updatedAt));
+  const formattedDate = formatDate(data.updatedAt);
 
   const studentsHref = (extra: Record<string, string>) => {
     const p = new URLSearchParams();

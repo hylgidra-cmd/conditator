@@ -530,7 +530,7 @@ export function VacanciesExplorer({
           <div className="relative z-10 flex min-h-[216px] flex-col justify-center px-6 pt-8 pb-11 sm:min-h-[264px] sm:px-10 lg:min-h-[296px] lg:px-12">
             <div className="max-w-lg">
               <h1 className="text-[30px] leading-[1.12] font-extrabold tracking-tight text-[#0b2017] sm:text-[40px] lg:text-[44px] dark:text-[#f4fbf8]">
-                {t("heroTitleLine1")}
+                {t("heroTitleLine1")}{" "}
                 <br />
                 {t("heroTitleLine2")}
               </h1>

@@ -323,12 +323,12 @@ export default async function ReadinessPage({
           <button className="bg-primary text-on-primary rounded-xl px-4 py-2">
             {t.search}
           </button>
-          <Link
+          <a
             href={`/api/admin/readiness/export?${query.toString()}`}
             className="border-line rounded-xl border px-4 py-2 text-center"
           >
             {t.export}
-          </Link>
+          </a>
         </form>
         <div className="border-line overflow-x-auto rounded-2xl border">
           <table className="w-full text-left text-sm">

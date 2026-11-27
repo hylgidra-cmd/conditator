@@ -79,7 +79,13 @@ export function SkillTemplateManager({ areas }: { areas: AreaTreeNode[] }) {
       const res = await fetch(
         `/api/admin/professions/${encodeURIComponent(profId)}/skill-template`,
       );
-      if (!res.ok) return;
+      if (!res.ok) {
+        setMessage({
+          tone: "err",
+          text: "Kasb ko'nikmalarini yuklab bo'lmadi. Qayta urinib ko'ring.",
+        });
+        return;
+      }
       const data = (await res.json()) as {
         professionName: string;
         skills: Array<{
@@ -234,21 +240,33 @@ export function SkillTemplateManager({ areas }: { areas: AreaTreeNode[] }) {
         skippedInvalidCount?: number;
       };
       if (res.ok && json.ok) {
-        setMessage({
-          tone: "ok",
-          text: `Import yakunlandi: ${json.updatedProfessions ?? 0} ta kasb yangilandi${
-            json.skippedInvalidCount
-              ? `, ${json.skippedInvalidCount} ta kasb (6 ta bo'lmagani uchun) o'tkazib yuborildi`
-              : ""
-          }.`,
-        });
-        void loadProfession(selectedProfId);
+        if ((json.updatedProfessions ?? 0) === 0) {
+          setMessage({
+            tone: "err",
+            text: "Faylda mos kasb topilmadi yoki barcha kasblar 6 tadan bo'lmagani uchun o'tkazib yuborildi.",
+          });
+        } else {
+          setMessage({
+            tone: "ok",
+            text: `Import yakunlandi: ${json.updatedProfessions ?? 0} ta kasb yangilandi${
+              json.skippedInvalidCount
+                ? `, ${json.skippedInvalidCount} ta kasb (6 ta bo'lmagani uchun) o'tkazib yuborildi`
+                : ""
+            }.`,
+          });
+          void loadProfession(selectedProfId);
+        }
       } else {
         setMessage({
           tone: "err",
           text: "Excel/CSV faylini yuklashda xatolik yuz berdi.",
         });
       }
+    } catch {
+      setMessage({
+        tone: "err",
+        text: "Faylni o'qishda yoki serverga yuborishda xatolik yuz berdi.",
+      });
     } finally {
       setImporting(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

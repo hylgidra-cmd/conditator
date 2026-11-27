@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { formatDate } from "@/backend/format-date";
 import { useRouter } from "@/i18n/navigation";
 import type {
   ClientQuestionItem,
@@ -163,17 +164,22 @@ export function PersonalityTest({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [retaking, setRetaking] = useState(false);
+  const [canRetake, setCanRetake] = useState(false);
   const advanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setCanRetake(
+      !result ||
+        Date.now() - new Date(result.createdAt).getTime() >=
+          retakeDays * 86400000,
+    );
+  }, [result, retakeDays]);
 
   useEffect(() => {
     return () => {
       if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     };
   }, []);
-
-  const canRetake =
-    !result ||
-    Date.now() - new Date(result.createdAt).getTime() >= retakeDays * 86400000;
 
   async function startAttempt() {
     setBusy(true);
@@ -202,13 +208,17 @@ export function PersonalityTest({
     setAttempt({ ...attempt, answers: nextAnswers });
 
     // Har javob darhol serverga saqlanadi
-    fetch(`/api/personality/attempts/${attempt.id}/answers`, {
+    void fetch(`/api/personality/attempts/${attempt.id}/answers`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ answers: { [questionId]: answerKey } }),
-    }).catch(() => {
-      setError(t.error);
-    });
+    })
+      .then((res) => {
+        if (!res.ok) setError(t.error);
+      })
+      .catch(() => {
+        setError(t.error);
+      });
 
     if (advanceTimerRef.current) clearTimeout(advanceTimerRef.current);
     if (index < attempt.questions.length - 1) {
@@ -231,11 +241,15 @@ export function PersonalityTest({
     setError("");
     try {
       // Yakunlashdan oldin barcha javoblar saqlanganiga ishonch hosil qilamiz
-      await fetch(`/api/personality/attempts/${attempt.id}/answers`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answers: attempt.answers }),
-      });
+      const saveRes = await fetch(
+        `/api/personality/attempts/${attempt.id}/answers`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ answers: attempt.answers }),
+        },
+      );
+      if (!saveRes.ok) throw new Error("save answers failed");
       const response = await fetch(
         `/api/personality/attempts/${attempt.id}/finish`,
         {
@@ -280,10 +294,7 @@ export function PersonalityTest({
 
   // 1. Natija ekrani (agar faol test ketmayotgan bo'lsa va natija bor bo'lsa)
   if (result && !attempt && !retaking) {
-    const formattedDate = new Intl.DateTimeFormat(
-      locale === "ru" ? "ru-RU" : "uz-UZ",
-      { day: "2-digit", month: "2-digit", year: "numeric" },
-    ).format(new Date(result.createdAt));
+    const formattedDate = formatDate(result.createdAt);
 
     return (
       <main className="page-x mx-auto max-w-4xl space-y-6 py-8 sm:py-12">

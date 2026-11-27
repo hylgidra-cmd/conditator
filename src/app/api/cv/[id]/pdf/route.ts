@@ -25,7 +25,10 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
     if (isLocked) {
       throw new ApiError(403, "SUBSCRIPTION_REQUIRED");
     }
-    const cv = await loadVisibleCvDocument(cvId, { isLocked: false });
+    const cv = await loadVisibleCvDocument(cvId, {
+      isLocked: false,
+      appliedCompanyId: company.id,
+    });
     if (!cv) throw new ApiError(404, "NOT_FOUND");
     await db.cvView.create({
       data: { cvId: cv.id, companyId: company.id, pdf: true },

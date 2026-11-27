@@ -1,4 +1,5 @@
 import { type Prisma, type UserStatus } from "@prisma/client";
+import { revalidateTag } from "next/cache";
 import {
   AI_LIMIT_SETTING,
   monthlyLimitUsd,
@@ -185,6 +186,11 @@ export async function setCompanyApproval(
       to: company.approval,
     },
   });
+  try {
+    revalidateTag("landing-stats");
+  } catch {
+    // Ignore outside Next cache
+  }
   return company;
 }
 

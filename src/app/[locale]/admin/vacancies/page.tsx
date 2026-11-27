@@ -1,10 +1,13 @@
 import { getTranslations } from "next-intl/server";
 import { AdminNav } from "@/frontend/components/admin/admin-nav";
 import { AdminVacancyActions } from "@/frontend/components/admin/vacancy-actions";
+import { Pagination } from "@/frontend/components/ui/pagination";
 import { Link } from "@/i18n/navigation";
 import { requireAdminPage } from "@/backend/admin/page";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
+
+const PAGE_SIZE = 50;
 
 const STATUS_BADGE: Record<string, string> = {
   ACTIVE: "bg-success-soft text-success border border-emerald-500/30",
@@ -12,28 +15,40 @@ const STATUS_BADGE: Record<string, string> = {
   CANCELLED: "bg-danger-soft text-danger border border-red-500/30",
 };
 
-export default async function AdminVacanciesPage() {
+export default async function AdminVacanciesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   await requireAdminPage();
   const t = await getTranslations("Admin.vacancies");
+  const sp = await searchParams;
+  const parsedPage = Number.parseInt(sp.page ?? "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
 
-  const vacancies = await db.vacancy.findMany({
-    include: {
-      company: {
-        select: {
-          id: true,
-          name: true,
-          contactPerson: true,
-          approval: true,
-          user: { select: { email: true } },
+  const [vacancies, total] = await Promise.all([
+    db.vacancy.findMany({
+      include: {
+        company: {
+          select: {
+            id: true,
+            name: true,
+            contactPerson: true,
+            approval: true,
+            user: { select: { email: true } },
+          },
+        },
+        _count: {
+          select: { applications: true },
         },
       },
-      _count: {
-        select: { applications: true },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-  });
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    }),
+    db.vacancy.count(),
+  ]);
+  const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="page-x font-ui max-w-6xl space-y-6 py-8 sm:py-12">
@@ -126,6 +141,11 @@ export default async function AdminVacanciesPage() {
           </table>
         </div>
       )}
+      <Pagination
+        page={page}
+        pageCount={pageCount}
+        pathname="/admin/vacancies"
+      />
     </div>
   );
 }

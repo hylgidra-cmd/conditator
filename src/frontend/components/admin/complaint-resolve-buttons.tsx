@@ -24,7 +24,11 @@ export function ComplaintResolveButtons({
       status: nextStatus,
     });
     setPending(false);
-    if (res.ok) router.refresh();
+    if (res.ok) {
+      router.refresh();
+    } else {
+      window.alert("Shikoyat holatini yangilab bo'lmadi.");
+    }
   }
 
   return (

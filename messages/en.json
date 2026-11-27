@@ -123,7 +123,12 @@
       "registered": "You are registered. Now sign in with your email and password.",
       "subtitle": "Sign in to continue your career journey",
       "showPassword": "Show password",
-      "hidePassword": "Hide password"
+      "hidePassword": "Hide password",
+      "twoFactorTitle": "Two-factor verification",
+      "twoFactorHint": "Enter the 6-digit verification code sent to your email.",
+      "twoFactorCode": "Verification code",
+      "twoFactorVerify": "Verify and sign in",
+      "twoFactorBack": "Back"
     },
     "forgot": {
       "title": "Reset password",
@@ -254,7 +259,9 @@
     "CV_PAYMENT_REQUIRED": "Please pay the CV activation fee (5,000 UZS) first.",
     "APPLY_PASS_REQUIRED": "Weekly application pass required (5,000 UZS / 7 days).",
     "SUBSCRIPTION_REQUIRED": "An active company subscription is required to view candidate contacts and download PDFs.",
-    "CANNOT_REVOKE_CURRENT_SESSION": "Cannot revoke the current device session from here."
+    "CANNOT_REVOKE_CURRENT_SESSION": "Cannot revoke the current device session from here.",
+    "PASSWORD_TOO_WEAK": "This password is too common. Please choose a stronger one.",
+    "TWO_FACTOR_EXPIRED": "Verification expired. Please sign in again with your password."
   },
   "Form": {
     "submitting": "Sending…"
@@ -263,6 +270,10 @@
     "reset": {
       "subject": "Candidator: password reset code",
       "body": "Hello!\n\nYour password reset code: {code}\n\nThe code is valid for {minutes} minutes. If you did not request this, please ignore this email.\n\nThe Candidator team"
+    },
+    "login2fa": {
+      "subject": "Candidator: sign-in verification code",
+      "body": "Hello!\n\nYour verification code to sign in: {code}\n\nThis code is valid for {minutes} minutes. If this was not you, change your password immediately.\n\nCandidator team"
     }
   },
   "StudentCv": {

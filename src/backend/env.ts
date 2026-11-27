@@ -38,12 +38,14 @@ export function serverEnv(): ServerEnv {
     throw new Error(`Muhit o'zgaruvchilari noto'g'ri yoki yo'q: ${fields}`);
   }
   const env = parsed.data;
-  if (
-    env.APP_URL.startsWith("https://") &&
-    env.AUTH_SECRET?.startsWith("dev-only")
-  ) {
+  const isProdRuntime =
+    (process.env.NODE_ENV === "production" ||
+      process.env.VERCEL_ENV === "production" ||
+      env.APP_URL.startsWith("https://")) &&
+    process.env.NEXT_PHASE !== "phase-production-build";
+  if (isProdRuntime && (!env.AUTH_SECRET || env.AUTH_SECRET.startsWith("dev-only"))) {
     throw new Error(
-      "Production uchun AUTH_SECRET almashtirilmagan (dev-only qiymat).",
+      "Production uchun AUTH_SECRET sozlanmagan yoki dev-only qiymat.",
     );
   }
   cached = env;

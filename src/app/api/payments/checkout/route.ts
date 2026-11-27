@@ -1,7 +1,7 @@
 import { PaymentPurpose, PaymentProvider } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { rateLimit } from "@/backend/auth/rate-limit";
+import { rateLimitDistributed } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import { db } from "@/backend/db";
 import { ApiError, parseJson } from "@/backend/http/errors";
@@ -28,7 +28,10 @@ const checkoutSchema = z.object({
 
 export const POST = route(async (request) => {
   const user = await requireRole(request);
-  rateLimit(`checkout:${user.id}`, { max: 15, windowMs: 10 * 60_000 });
+  await rateLimitDistributed(`checkout:${user.id}`, {
+    max: 15,
+    windowMs: 10 * 60_000,
+  });
   const input = await parseJson(request, checkoutSchema);
 
   if (

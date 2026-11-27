@@ -18,7 +18,10 @@ export const GET = route<{ params: Promise<{ id: string }> }>(
     const cvId = (await params).id;
     const vacancyId = new URL(request.url).searchParams.get("vacancyId");
     const isLocked = await isCvLockedForCompany(cvId, company.id, vacancyId);
-    const cv = await loadVisibleCvDocument(cvId, { isLocked });
+    const cv = await loadVisibleCvDocument(cvId, {
+      isLocked,
+      appliedCompanyId: company.id,
+    });
     if (!cv) throw new ApiError(404, "NOT_FOUND");
     await db.cvView.create({ data: { cvId: cv.id, companyId: company.id } });
     return NextResponse.json({ cv, isLocked });

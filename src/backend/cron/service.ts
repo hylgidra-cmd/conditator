@@ -49,6 +49,9 @@ export async function runFifteenDaysCron() {
     db.emailCode.deleteMany({
       where: { expiresAt: { lte: now } },
     }),
+    db.rateLimitBucket.deleteMany({
+      where: { resetAt: { lte: now } },
+    }),
     db.notification.deleteMany({
       where: { isRead: true, createdAt: { lte: ninetyDaysAgo } },
     }),

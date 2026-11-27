@@ -123,7 +123,9 @@ export function CvWorkspace({
     setNotice(t("savedNotice"));
     setMode("complete");
     if (wasNew) {
-      router.replace(`/student/cv?cvId=${encodeURIComponent(result.data.cv.id)}`);
+      router.replace(
+        `/student/cv?cvId=${encodeURIComponent(result.data.cv.id)}&saved=1`,
+      );
     } else {
       router.refresh();
     }

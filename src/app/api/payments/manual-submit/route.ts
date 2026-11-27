@@ -2,7 +2,7 @@ import { randomBytes } from "node:crypto";
 import { PaymentProvider, PaymentPurpose, PaymentStatus } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { rateLimit } from "@/backend/auth/rate-limit";
+import { rateLimitDistributed } from "@/backend/auth/rate-limit";
 import { requireRole } from "@/backend/auth/session";
 import {
   ensureSupportThread,
@@ -41,7 +41,10 @@ const PURPOSE_LABELS: Record<PaymentPurpose, string> = {
 
 export const POST = route(async (request) => {
   const user = await requireRole(request);
-  rateLimit(`manual-pay:${user.id}`, { max: 10, windowMs: 10 * 60_000 });
+  await rateLimitDistributed(`manual-pay:${user.id}`, {
+    max: 10,
+    windowMs: 10 * 60_000,
+  });
   // Siqilgan mobil chek rasmlari (~100-350 KB) uchun yetarli, baza diskini to'ldirmaslik uchun 1.5 MB chegara.
   const input = await parseJson(request, manualSubmitSchema, 1_500_000);
 

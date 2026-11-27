@@ -151,15 +151,31 @@ export default async function VacancyDetailPage({
     },
   });
 
-  if (
+  const isExpiredOrClosed =
     !vacancy ||
     vacancy.status !== "ACTIVE" ||
     vacancy.company.approval !== "APPROVED" ||
     vacancy.company.user.status !== "ACTIVE" ||
-    (vacancy.expiresAt && vacancy.expiresAt <= new Date())
+    Boolean(vacancy.expiresAt && vacancy.expiresAt <= new Date());
+
+  let existingApplicationForClosedCheck: { id: string } | null = null;
+  if (
+    isExpiredOrClosed &&
+    vacancy &&
+    vacancy.company.approval === "APPROVED" &&
+    vacancy.company.user.status === "ACTIVE" &&
+    user?.role === "STUDENT"
   ) {
+    existingApplicationForClosedCheck = await db.vacancyApplication.findFirst({
+      where: { vacancyId: vacancy.id, studentId: user.id },
+      select: { id: true },
+    });
+  }
+
+  if (isExpiredOrClosed && !existingApplicationForClosedCheck) {
     notFound();
   }
+  if (!vacancy) notFound();
 
   // If student, check if they have CVs and if already applied
   let studentCvs: {

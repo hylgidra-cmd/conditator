@@ -26,3 +26,21 @@ export async function sendResetEmail(
     text: t("reset.body", { code, minutes: CODE_TTL_MS / 60_000 }),
   });
 }
+
+/** Ikki bosqichli kirish (2FA) tasdiqlash kodini foydalanuvchi tilida yuboradi. */
+export async function sendLogin2faEmail(
+  to: string,
+  locale: Lang,
+  code: string,
+): Promise<void> {
+  const t = createTranslator({
+    locale,
+    messages: MESSAGES[locale],
+    namespace: "Email",
+  });
+  await sendMail({
+    to,
+    subject: t("login2fa.subject"),
+    text: t("login2fa.body", { code, minutes: CODE_TTL_MS / 60_000 }),
+  });
+}

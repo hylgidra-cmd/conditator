@@ -1,7 +1,7 @@
+import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
 
-// Xotiradagi oddiy cheklov (bitta ilova nusxasi uchun yetarli, MVP).
-// Bir nechta nusxa ishga tushirilsa, Redis yoki bazaga ko'chirish kerak.
+// Xotiradagi tezkor cheklov + muhim nuqtalar uchun Postgres taqsimlangan cheklov.
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
@@ -42,6 +42,41 @@ export function rateLimit(
   }
   bucket.count += 1;
   if (bucket.count > limit.max) throw new ApiError(429, "RATE_LIMITED");
+}
+
+/**
+ * Serverless muhit (Vercel) uchun Postgres bazasida atomik rate-limit.
+ * Auth, 2FA, AI va to'lov so'rovlarida barcha nusxalar bo'ylab umumiy hisob yuritadi.
+ */
+export async function rateLimitDistributed(
+  key: string,
+  limit: { max: number; windowMs: number },
+): Promise<void> {
+  const safeKey = key.slice(0, 240);
+  const nextReset = new Date(Date.now() + limit.windowMs);
+  try {
+    const rows = await db.$queryRaw<Array<{ count: number }>>`
+      INSERT INTO "RateLimitBucket" ("key", "count", "resetAt")
+      VALUES (${safeKey}, 1, ${nextReset})
+      ON CONFLICT ("key") DO UPDATE SET
+        "count" = CASE
+          WHEN "RateLimitBucket"."resetAt" <= NOW() THEN 1
+          ELSE "RateLimitBucket"."count" + 1
+        END,
+        "resetAt" = CASE
+          WHEN "RateLimitBucket"."resetAt" <= NOW() THEN ${nextReset}
+          ELSE "RateLimitBucket"."resetAt"
+        END
+      RETURNING "count"
+    `;
+    const count = rows[0]?.count ?? 1;
+    if (count > limit.max) {
+      throw new ApiError(429, "RATE_LIMITED");
+    }
+  } catch (error) {
+    if (error instanceof ApiError) throw error;
+    rateLimit(safeKey, limit);
+  }
 }
 
 export function resetRateLimits(): void {

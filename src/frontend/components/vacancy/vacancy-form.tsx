@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { requestJson } from "@/backend/client/api";
 import {
@@ -87,6 +87,7 @@ export function VacancyForm({
   matchesHref?: string;
   matchesLabel?: string;
 }) {
+  const locale = useLocale();
   const t = useTranslations("Vacancies.form");
   const tStudio = useTranslations("VacancyPostStudio");
   const tWork = useTranslations("StudentCv.workTypes");
@@ -112,8 +113,12 @@ export function VacancyForm({
     setTemplateNotice(null);
     try {
       const res = await fetch(
-        `/api/professions/${encodeURIComponent(values.professionId)}/skill-template?locale=uz`,
+        `/api/professions/${encodeURIComponent(values.professionId)}/skill-template?locale=${encodeURIComponent(locale)}`,
       );
+      if (!res.ok) {
+        setTemplateNotice("Shablon ko'nikmalarini yuklab bo'lmadi.");
+        return;
+      }
       const data = (await res.json()) as {
         skills?: Array<{ name: string }>;
       };
@@ -136,6 +141,8 @@ export function VacancyForm({
             : "Barcha 6 ta ko'nikma allaqachon qo'shilgan",
         );
       }
+    } catch {
+      setTemplateNotice("Shablon ko'nikmalarini yuklab bo'lmadi.");
     } finally {
       setApplyingTemplate(false);
     }
@@ -245,6 +252,13 @@ export function VacancyForm({
     setFields(result.fields ?? {});
     if (result.fields?.title || result.fields?.rawText || result.fields?.location) {
       setStep(1);
+    } else if (
+      result.fields?.skills ||
+      result.fields?.languages ||
+      result.fields?.minExperienceYears ||
+      result.fields?.status
+    ) {
+      setStep(2);
     }
   }
 
@@ -728,6 +742,11 @@ export function VacancyForm({
                       placeholder={tStudio("languagesPlaceholder")}
                       className="h-11 w-full rounded-xl border border-[#cde6da] bg-[#f8fcfa] px-3.5 text-sm font-medium outline-none transition focus:border-[#0e935f] focus:bg-white dark:border-[#1d5e43] dark:bg-[#072016] dark:text-white dark:placeholder:text-[#78a391] dark:focus:border-[#34eab0] dark:focus:bg-[#09291d]"
                     />
+                    {fields.languages ? (
+                      <p className="text-danger mt-1 text-xs font-semibold">
+                        {errorText(fields.languages)}
+                      </p>
+                    ) : null}
                   </div>
 
                   <div>
@@ -748,6 +767,11 @@ export function VacancyForm({
                       placeholder={tStudio("experiencePlaceholder")}
                       className="h-11 w-full rounded-xl border border-[#cde6da] bg-[#f8fcfa] px-3.5 text-sm font-medium outline-none transition focus:border-[#0e935f] focus:bg-white dark:border-[#1d5e43] dark:bg-[#072016] dark:text-white dark:placeholder:text-[#78a391] dark:focus:border-[#34eab0] dark:focus:bg-[#09291d]"
                     />
+                    {fields.minExperienceYears ? (
+                      <p className="text-danger mt-1 text-xs font-semibold">
+                        {errorText(fields.minExperienceYears)}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
 

@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { getApplyPassStatus } from "@/backend/payment/service";
 import {
   CANONICAL_SITE_URL,
@@ -225,7 +226,7 @@ export default async function VacancyDetailPage({
       id: c.id,
       title: c.title,
       savedAt: c.savedAt?.toISOString() ?? null,
-      isPaid: c.isPaid,
+      isPaid: FREE_ACCESS_MODE ? true : c.isPaid,
     }));
     existingApplication = app;
     existingConversation = conv;

@@ -5,6 +5,7 @@ import { companyAccess } from "@/backend/company/access";
 import { requireCompanyPage } from "@/backend/company/page";
 import { db } from "@/backend/db";
 import { formatDate, formatDateTime } from "@/backend/format-date";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
 import { CompanySubscriptionPlans } from "@/frontend/components/company/company-subscription-plans";
 import { Reveal } from "@/frontend/components/ds/motion";
@@ -90,6 +91,9 @@ export default async function CompanyBillingPage() {
   const variantExplainDesc =
     "Obunasiz siz barcha nomzodlarning mutaxassisligi, ko'nikmalari, hududi va AI bahosini (%) ko'rasiz. Obuna faollashgach, barcha aloqa ma'lumotlari va PDF yuklash darhol ochiladi.";
   const activeFallbackText = "Kompaniya Obunasi faol";
+  const freeModeTitle = "Platforma barcha imkoniyatlari vaqtincha BEPUL";
+  const freeModeDesc =
+    "Hozirgi bosqichda kompaniyalar uchun nomzodlar kontaktlari, PDF rezyumelar, chat va AI saralash to'liq bepul ochiq. To'lov qilish shart emas.";
 
   return (
     <div className="page-x font-ui max-w-4xl space-y-6 py-8 sm:py-12">
@@ -143,19 +147,28 @@ export default async function CompanyBillingPage() {
         </section>
       </Reveal>
 
-      <Reveal delay={150}>
-        <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
-          <div className="space-y-1">
-            <h2 className="text-text text-lg font-extrabold">
-              {buyAbunaTitle}
-            </h2>
-            <p className="text-subtle text-sm leading-relaxed">
-              {buyAbunaDesc}
-            </p>
-          </div>
-          <CompanySubscriptionPlans />
-        </section>
-      </Reveal>
+      {FREE_ACCESS_MODE ? (
+        <Reveal delay={150}>
+          <section className="border-emerald-500/30 bg-success-soft text-success space-y-2 rounded-3xl border p-6 backdrop-blur-md">
+            <h2 className="text-lg font-extrabold">{freeModeTitle}</h2>
+            <p className="text-sm leading-relaxed opacity-90">{freeModeDesc}</p>
+          </section>
+        </Reveal>
+      ) : (
+        <Reveal delay={150}>
+          <section className="border-line bg-card/90 shadow-soft space-y-5 rounded-3xl border p-6 backdrop-blur-md">
+            <div className="space-y-1">
+              <h2 className="text-text text-lg font-extrabold">
+                {buyAbunaTitle}
+              </h2>
+              <p className="text-subtle text-sm leading-relaxed">
+                {buyAbunaDesc}
+              </p>
+            </div>
+            <CompanySubscriptionPlans />
+          </section>
+        </Reveal>
+      )}
 
       <Reveal delay={225}>
         <section className="border-line bg-card/90 shadow-soft space-y-4 rounded-3xl border p-6 backdrop-blur-md">

@@ -21,6 +21,8 @@ const privacyPatchSchema = z.object({
     .optional(),
 });
 
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
+
 export const PATCH = route(async (request) => {
   const user = await requireRole(request, "STUDENT");
   rateLimit(`account-privacy:${user.id}`, { max: 30, windowMs: 10 * 60_000 });
@@ -51,7 +53,7 @@ export const PATCH = route(async (request) => {
       data: {
         userId: user.id,
         isVisible: false,
-        isPaid: false,
+        isPaid: FREE_ACCESS_MODE,
         privacy: mergedPrivacy,
       },
       select: { id: true, isVisible: true, privacy: true },
@@ -68,7 +70,8 @@ export const PATCH = route(async (request) => {
   if (input.isVisible !== undefined) {
     if (input.isVisible) {
       if (!existing.savedAt) throw new ApiError(409, "CV_NOT_SAVED");
-      if (!existing.isPaid) throw new ApiError(402, "CV_PAYMENT_REQUIRED");
+      if (!FREE_ACCESS_MODE && !existing.isPaid)
+        throw new ApiError(402, "CV_PAYMENT_REQUIRED");
     }
     nextVisible = input.isVisible;
   }

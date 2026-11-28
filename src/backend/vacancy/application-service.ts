@@ -1,5 +1,6 @@
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { getApplyPassStatus } from "@/backend/payment/service";
 import { ApplicationStatus, CandidateStageType } from "@prisma/client";
 
@@ -47,12 +48,12 @@ export async function applyToVacancy(params: {
     throw new ApiError(400, "INVALID_OR_UNSAVED_CV");
   }
 
-  if (!cv.isPaid) {
+  if (!FREE_ACCESS_MODE && !cv.isPaid) {
     throw new ApiError(402, "CV_PAYMENT_REQUIRED");
   }
 
   const passStatus = await getApplyPassStatus(params.studentId);
-  if (!passStatus.canApply) {
+  if (!FREE_ACCESS_MODE && !passStatus.canApply) {
     throw new ApiError(402, "APPLY_PASS_REQUIRED");
   }
 

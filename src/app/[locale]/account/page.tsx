@@ -5,6 +5,7 @@ import { getUnreadMessageCount } from "@/backend/chat/unread";
 import { maskName, parsePrivacy } from "@/backend/cv/privacy";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
 import {
   EmployerAccountDashboard,
@@ -408,7 +409,7 @@ export default async function AccountPage() {
           initialPrivacy={{
             cvId: latestCv?.id ?? null,
             hasSavedCv: Boolean(latestCv?.savedAt),
-            isPaidCv: Boolean(latestCv?.isPaid),
+            isPaidCv: FREE_ACCESS_MODE ? true : Boolean(latestCv?.isPaid),
             isVisible: Boolean(latestCv?.isVisible),
             privacy: parsePrivacy(latestCv?.privacy),
           }}
@@ -1120,16 +1121,18 @@ export default async function AccountPage() {
                     </span>
                     <ArrowRightIcon size={15} className="text-subtle" />
                   </Link>
-                  <Link
-                    href="/company/billing"
-                    className="border-line bg-canvas hover:border-primary text-text flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition-colors"
-                  >
-                    <span className="flex items-center gap-2.5">
-                      <BriefcaseIcon size={16} className="text-primary" />
-                      {t("billingLink")}
-                    </span>
-                    <ArrowRightIcon size={15} className="text-subtle" />
-                  </Link>
+                  {!FREE_ACCESS_MODE ? (
+                    <Link
+                      href="/company/billing"
+                      className="border-line bg-canvas hover:border-primary text-text flex items-center justify-between rounded-2xl border px-4 py-3 text-sm font-bold transition-colors"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <BriefcaseIcon size={16} className="text-primary" />
+                        {t("billingLink")}
+                      </span>
+                      <ArrowRightIcon size={15} className="text-subtle" />
+                    </Link>
+                  ) : null}
                 </div>
               ) : (
                 <Link

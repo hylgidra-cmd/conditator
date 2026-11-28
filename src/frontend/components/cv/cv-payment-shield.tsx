@@ -79,21 +79,24 @@ function isEditableTarget(target: EventTarget | null): boolean {
   );
 }
 
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
+
 /**
  * To'lanmagan CV oldindan ko'rinishini skrinshot, ekran yozib olish, chop etish (Ctrl+P)
  * va nusxa ko'chirishdan himoyalaydigan ko'p qatlamli qalqon.
- * To'lov tasdiqlangach (`isPaid === true`) barcha cheklovlar avtomatik o'chiriladi.
+ * To'lov tasdiqlangach (`isPaid === true`) yoki vaqtinchalik bepul rejimda barcha cheklovlar o'chiriladi.
  */
 export function CvPaymentShield({
   isPaid,
   onUnlockClick,
   children,
 }: Props) {
+  const effectivePaid = FREE_ACCESS_MODE || isPaid;
   const [blackout, setBlackout] = useState(false);
   const [warningReason, setWarningReason] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isPaid) return;
+    if (effectivePaid) return;
 
     const triggerShield = (reason: string) => {
       setBlackout(true);
@@ -180,9 +183,9 @@ export function CvPaymentShield({
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       unregisterDisplayMedia();
     };
-  }, [isPaid]);
+  }, [effectivePaid]);
 
-  if (isPaid) {
+  if (effectivePaid) {
     return <>{children}</>;
   }
 

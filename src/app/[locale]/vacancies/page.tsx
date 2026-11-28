@@ -5,6 +5,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { currentUser } from "@/backend/auth/current-user";
 import { db } from "@/backend/db";
 import { formatDate } from "@/backend/format-date";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { getApplyPassStatus } from "@/backend/payment/service";
 import {
   CANONICAL_SITE_URL,
@@ -238,7 +239,7 @@ export default async function PublicVacanciesPage({
           studentCvs: studentCvs.map((c) => ({
             id: c.id,
             title: c.title || "CV",
-            isPaid: c.isPaid,
+            isPaid: FREE_ACCESS_MODE ? true : c.isPaid,
           })),
           appliedVacancyIds: appliedRows.map((r) => r.vacancyId),
         }}

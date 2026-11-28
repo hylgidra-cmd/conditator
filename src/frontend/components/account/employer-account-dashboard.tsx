@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { postJson, requestJson } from "@/backend/client/api";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { AnimatedNumber, Reveal } from "@/frontend/components/ds/motion";
 import { Link, useRouter } from "@/i18n/navigation";
 import {
@@ -1632,22 +1633,26 @@ export function EmployerAccountDashboard({
                         <line x1="3" x2="21" y1="10" y2="10" />
                       </svg>
                       <span>
-                        {subscription.active && subscription.expiresLabel
-                          ? t("subscriptionCard.expires", {
-                              date: subscription.expiresLabel,
-                            })
-                          : t("subscriptionCard.fromPrice")}
+                        {FREE_ACCESS_MODE
+                          ? "Barcha imkoniyatlar vaqtincha BEPUL"
+                          : subscription.active && subscription.expiresLabel
+                            ? t("subscriptionCard.expires", {
+                                date: subscription.expiresLabel,
+                              })
+                            : t("subscriptionCard.fromPrice")}
                       </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setActiveModal("subscription")}
-                      className="mt-3.5 flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[#bce3d1] bg-[#f4fbf7] text-xs font-extrabold text-[#0c3f2c] transition hover:border-[#0e935f] hover:bg-[#e6f7ef] dark:border-[#1f6548] dark:bg-[#0b291d] dark:text-[#dff8ec] dark:hover:border-[#34eab0]"
-                    >
-                      <span>{t("subscriptionCard.manageBtn")}</span>
-                      <span aria-hidden>→</span>
-                    </button>
+                    {!FREE_ACCESS_MODE ? (
+                      <button
+                        type="button"
+                        onClick={() => setActiveModal("subscription")}
+                        className="mt-3.5 flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl border border-[#bce3d1] bg-[#f4fbf7] text-xs font-extrabold text-[#0c3f2c] transition hover:border-[#0e935f] hover:bg-[#e6f7ef] dark:border-[#1f6548] dark:bg-[#0b291d] dark:text-[#dff8ec] dark:hover:border-[#34eab0]"
+                      >
+                        <span>{t("subscriptionCard.manageBtn")}</span>
+                        <span aria-hidden>→</span>
+                      </button>
+                    ) : null}
                   </section>
                 </Reveal>
 

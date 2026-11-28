@@ -4,6 +4,7 @@ import { companyAccess } from "@/backend/company/access";
 import { requireCompanyPage } from "@/backend/company/page";
 import { publicCompany } from "@/backend/company/profile";
 import { formatDate } from "@/backend/format-date";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { isCompanySubscribedOrUnlocked } from "@/backend/payment/service";
 import { CompanyLogo } from "@/frontend/components/company/company-logo";
 import { CompanyProfileForm } from "@/frontend/components/company/company-profile-form";
@@ -68,12 +69,14 @@ export default async function CompanyPage() {
               >
                 {statsLinkLabel}
               </Link>
-              <Link
-                href="/company/billing"
-                className="border-line bg-canvas text-text hover:border-primary rounded-2xl border px-4 py-2.5 text-xs font-bold transition-colors"
-              >
-                {t("billingLink")}
-              </Link>
+              {!FREE_ACCESS_MODE ? (
+                <Link
+                  href="/company/billing"
+                  className="border-line bg-canvas text-text hover:border-primary rounded-2xl border px-4 py-2.5 text-xs font-bold transition-colors"
+                >
+                  {t("billingLink")}
+                </Link>
+              ) : null}
               <Link
                 href="/company/vacancies"
                 className="bg-primary text-on-primary shadow-primary hover:bg-primary-hover rounded-2xl px-5 py-2.5 text-xs font-bold transition-all active:scale-[0.98]"
@@ -130,19 +133,23 @@ export default async function CompanyPage() {
             className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-2.5 text-sm font-medium ${hasActiveAbuna ? TONE.APPROVED : "border-line bg-card-cool/50 text-subtle"}`}
           >
             <span>
-              {hasActiveAbuna
-                ? company.subscriptionUntil &&
-                  company.subscriptionUntil > new Date()
-                  ? t("status.subscriptionActive", {
-                      date: formatDate(company.subscriptionUntil),
-                    })
-                  : "Kompaniya Obunasi faol"
-                : t("status.subscriptionInactive")}
+              {FREE_ACCESS_MODE
+                ? "Barcha imkoniyatlar vaqtincha BEPUL (ochiq kirish)"
+                : hasActiveAbuna
+                  ? company.subscriptionUntil &&
+                    company.subscriptionUntil > new Date()
+                    ? t("status.subscriptionActive", {
+                        date: formatDate(company.subscriptionUntil),
+                      })
+                    : "Kompaniya Obunasi faol"
+                  : t("status.subscriptionInactive")}
             </span>
-            <CompanySubscribeButton
-              variant="compact"
-              label={hasActiveAbuna ? extendSubBtnLabel : buySubBtnLabel}
-            />
+            {!FREE_ACCESS_MODE ? (
+              <CompanySubscribeButton
+                variant="compact"
+                label={hasActiveAbuna ? extendSubBtnLabel : buySubBtnLabel}
+              />
+            ) : null}
           </div>
           {company.approval === "APPROVED" ? (
             <div className="flex flex-wrap gap-3 pt-1">

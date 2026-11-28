@@ -183,10 +183,20 @@ export async function completePayment(
   });
 }
 
+import { FREE_ACCESS_MODE } from "./free-mode";
+
 /**
  * Checks whether a student can apply to vacancies (requires active 7-day prepaid pass, 5 000 UZS).
  */
 export async function getApplyPassStatus(userId: string) {
+  if (FREE_ACCESS_MODE) {
+    return {
+      canApply: true,
+      hasActivePass: true,
+      freeTrialAvailable: false,
+      applyPassUntil: null,
+    };
+  }
   const user = await db.user.findUnique({
     where: { id: userId },
     select: { applyPassUntil: true },
@@ -210,6 +220,7 @@ export async function isCompanySubscribedOrUnlocked(
   companyId: string,
   vacancyId?: string | null,
 ): Promise<boolean> {
+  if (FREE_ACCESS_MODE) return true;
   const now = new Date();
   const company = await db.company.findUnique({
     where: { id: companyId },

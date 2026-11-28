@@ -215,19 +215,23 @@ const STUDENT_CV_SELECT = {
   sourceText: true,
 } as const;
 
-export function getOwnCv(
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
+
+export async function getOwnCv(
   userId: string,
   cvId?: string,
 ): Promise<StudentCv | null> {
-  return db.cv.findFirst({
+  const cv = await db.cv.findFirst({
     where: cvId ? { id: cvId, userId } : { userId },
     orderBy: { updatedAt: "desc" },
     select: STUDENT_CV_SELECT,
   });
+  if (!cv) return null;
+  return FREE_ACCESS_MODE ? { ...cv, isPaid: true } : cv;
 }
 
 export async function getOwnCvs(userId: string) {
-  return db.cv.findMany({
+  const list = await db.cv.findMany({
     where: { userId },
     orderBy: { updatedAt: "desc" },
     select: {
@@ -245,6 +249,7 @@ export async function getOwnCvs(userId: string) {
       },
     },
   });
+  return FREE_ACCESS_MODE ? list.map((item) => ({ ...item, isPaid: true })) : list;
 }
 
 export type MatchingVacancyPreview = {
@@ -352,7 +357,7 @@ export async function saveOwnCv(
 
   if (input.createNew) {
     return db.cv.create({
-      data: { userId, isVisible: false, isPaid: false, ...fields },
+      data: { userId, isVisible: false, isPaid: FREE_ACCESS_MODE, ...fields },
       select: STUDENT_CV_SELECT,
     });
   }
@@ -366,7 +371,7 @@ export async function saveOwnCv(
     }
     return db.cv.update({
       where: { id: targetCvId },
-      data: fields,
+      data: { ...fields, ...(FREE_ACCESS_MODE ? { isPaid: true } : {}) },
       select: STUDENT_CV_SELECT,
     });
   }
@@ -379,13 +384,13 @@ export async function saveOwnCv(
   if (existing) {
     return db.cv.update({
       where: { id: existing.id },
-      data: fields,
+      data: { ...fields, ...(FREE_ACCESS_MODE ? { isPaid: true } : {}) },
       select: STUDENT_CV_SELECT,
     });
   }
 
   return db.cv.create({
-    data: { userId, isVisible: false, isPaid: false, ...fields },
+    data: { userId, isVisible: false, isPaid: FREE_ACCESS_MODE, ...fields },
     select: STUDENT_CV_SELECT,
   });
 }
@@ -409,14 +414,14 @@ export async function setOwnCvVisibility(
     orderBy: { updatedAt: "desc" },
     select: { id: true, savedAt: true, isPaid: true },
   });
-  // Saqlanmagan yoki to'lanmagan CV ni ochiq qilib bo'lmaydi.
+  // Saqlanmagan yoki (pulli rejimda) to'lanmagan CV ni ochiq qilib bo'lmaydi.
   if (!cv?.savedAt) throw new ApiError(409, "CV_NOT_SAVED");
-  if (isVisible && !cv.isPaid) {
+  if (!FREE_ACCESS_MODE && isVisible && !cv.isPaid) {
     throw new ApiError(402, "CV_PAYMENT_REQUIRED");
   }
   return db.cv.update({
     where: { id: cv.id },
-    data: { isVisible },
+    data: { isVisible, ...(FREE_ACCESS_MODE ? { isPaid: true } : {}) },
     select: STUDENT_CV_SELECT,
   });
 }

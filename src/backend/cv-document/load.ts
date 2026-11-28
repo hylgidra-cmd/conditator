@@ -2,6 +2,7 @@ import "server-only";
 import { parsePrivacy, sanitizeCvData } from "@/backend/cv/privacy";
 import { cvDataSchema } from "@/backend/cv/schema";
 import { db } from "@/backend/db";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 import { getActivePersonalityProfile } from "@/backend/personality/service";
 import type { CvDocumentInput } from "./types";
 
@@ -35,7 +36,7 @@ export async function loadSavedCvDocument(
     language: cv.language,
     workTypes: cv.workTypes,
     templateId: cv.templateId,
-    isPaid: cv.isPaid,
+    isPaid: FREE_ACCESS_MODE ? true : cv.isPaid,
     personality,
   };
 }

@@ -3,12 +3,13 @@ import type { NextRequest } from "next/server";
 import { requireRole, type SessionUser } from "@/backend/auth/session";
 import { db } from "@/backend/db";
 import { ApiError } from "@/backend/http/errors";
+import { FREE_ACCESS_MODE } from "@/backend/payment/free-mode";
 
 /**
  * Kompaniya nima qila oladi. Yagona qoida: sahifa ham, har bir endpoint ham shundan foydalanadi.
  * - Profil va talab: har qanday kompaniya (PENDING ham).
  * - CV ko'rish (ochiq CV lar): faqat admin tasdiqlagan kompaniya.
- * - AI saralash: tasdiqlangan + obuna faol (subscriptionUntil > hozir).
+ * - AI saralash: tasdiqlangan + obuna faol (yoki vaqtinchalik bepul rejim).
  */
 export function companyAccess(
   company: Pick<Company, "approval" | "subscriptionUntil">,
@@ -16,7 +17,8 @@ export function companyAccess(
 ) {
   const approved = company.approval === "APPROVED";
   const subscriptionActive =
-    company.subscriptionUntil !== null && company.subscriptionUntil > now;
+    FREE_ACCESS_MODE ||
+    (company.subscriptionUntil !== null && company.subscriptionUntil > now);
   return {
     approved,
     subscriptionActive,

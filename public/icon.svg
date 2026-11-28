@@ -1,18 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <rect width="100" height="100" rx="22" fill="#FFFFFF"/>
   <defs>
-    <linearGradient id="candidator-emerald-bg" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#062C22" />
-      <stop offset="55%" stop-color="#047857" />
-      <stop offset="100%" stop-color="#0D9488" />
+    <linearGradient id="c-dark" x1="18" y1="14" x2="78" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3A3D40"/>
+      <stop offset="50%" stop-color="#1D1F21"/>
+      <stop offset="100%" stop-color="#0E0F10"/>
     </linearGradient>
-    <linearGradient id="candidator-tie-grad" x1="40" y1="28" x2="58" y2="82" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#6EE7B7" />
-      <stop offset="55%" stop-color="#34D399" />
-      <stop offset="100%" stop-color="#FBBF24" />
+    <linearGradient id="tie-orange" x1="50" y1="26" x2="50" y2="86" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FF7A1F"/>
+      <stop offset="55%" stop-color="#EC5C12"/>
+      <stop offset="100%" stop-color="#C84106"/>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="100" height="100" rx="24" fill="url(#candidator-emerald-bg)" />
-  <path d="M 74 26 A 34 34 0 1 0 74 74 L 64.5 64.5 A 21 21 0 1 1 64.5 35.5 Z" fill="#FFFFFF" />
-  <path d="M 44 32 Q 44 31 45 31 L 53 31 Q 54 31 54 32 L 53 40.5 Q 53 41.5 52 41.5 L 46 41.5 Q 45 41.5 45 40.5 Z" fill="url(#candidator-tie-grad)" />
-  <path d="M 45.5 43 L 52.5 43 L 57.5 69.5 L 49 81 L 40.5 69.5 Z" fill="url(#candidator-tie-grad)" />
+  <!-- Matte black C arc -->
+  <path
+    d="M78.5 31.2A34.5 34.5 0 1 0 78.5 68.8L67.6 59.5A20.5 20.5 0 1 1 67.6 40.5Z"
+    fill="url(#c-dark)"
+  />
+  <!-- Orange necktie knot -->
+  <path
+    d="M44.5 28.5C44.5 27.2 46.2 26.2 50 26.2C53.8 26.2 55.5 27.2 55.5 28.5L53.4 36.2C53.1 37.1 52.2 37.6 50 37.6C47.8 37.6 46.9 37.1 46.6 36.2Z"
+    fill="url(#tie-orange)"
+  />
+  <!-- Orange necktie blade -->
+  <path
+    d="M46.8 39.2H53.2L57.5 76.5L50 85.5L42.5 76.5Z"
+    fill="url(#tie-orange)"
+  />
 </svg>
